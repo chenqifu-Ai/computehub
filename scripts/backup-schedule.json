@@ -1,0 +1,38 @@
+{
+  "backup_schedule": {
+    "daily_backup": {
+      "enabled": true,
+      "time": "02:00",
+      "retention_days": 7,
+      "include": ["workspace", "extensions", "config", "agents"],
+      "exclude": ["node_modules", ".git", "tmp", "logs"]
+    },
+    "weekly_full_backup": {
+      "enabled": true,
+      "day": "sunday",
+      "time": "03:00", 
+      "retention_days": 30,
+      "include": ["full_system"]
+    },
+    "on_change_backup": {
+      "enabled": true,
+      "trigger": ["config_change", "extension_install", "major_update"],
+      "retention_days": 14
+    }
+  },
+  "notification": {
+    "on_success": true,
+    "on_failure": true,
+    "channels": ["console", "log", "email"]
+  },
+  "verification": {
+    "md5_check": true,
+    "size_validation": true,
+    "restore_test": false
+  },
+  "storage": {
+    "local_path": "/root/.openclaw/backups",
+    "cloud_sync": false,
+    "external_drive": false
+  }
+}
