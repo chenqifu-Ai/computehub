@@ -3,8 +3,21 @@
 > Start local. Scale globally.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/computehub/computehub)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/chenqifu-Ai/computehub)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![GitHub Stars](https://img.shields.io/github/stars/chenqifu-Ai/computehub?style=flat&logo=github)](https://github.com/chenqifu-Ai/computehub/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/chenqifu-Ai/computehub?style=flat&logo=github)](https://github.com/chenqifu-Ai/computehub/network/members)
+[![GitHub Issues](https://img.shields.io/github/issues/chenqifu-Ai/computehub?style=flat&logo=github)](https://github.com/chenqifu-Ai/computehub/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/chenqifu-Ai/computehub?style=flat&logo=github)](https://github.com/chenqifu-Ai/computehub/pulls)
+[![GitHub Contributors](https://img.shields.io/github/contributors/chenqifu-Ai/computehub?style=flat&logo=github)](https://github.com/chenqifu-Ai/computehub/graphs/contributors)
+[![Last Commit](https://img.shields.io/github/last-commit/chenqifu-Ai/computehub?style=flat&logo=github)](https://github.com/chenqifu-Ai/computehub/commits/master)
+[![Code Size](https://img.shields.io/github/languages/code-size/chenqifu-Ai/computehub?style=flat&logo=github)](https://github.com/chenqifu-Ai/computehub)
+[![Repo Size](https://img.shields.io/github/repo-size/chenqifu-Ai/computehub?style=flat&logo=github)](https://github.com/chenqifu-Ai/computehub)
+[![Top Language](https://img.shields.io/github/languages/top/chenqifu-Ai/computehub?style=flat&logo=python)](https://github.com/chenqifu-Ai/computehub)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=flat&logo=github-actions)](https://github.com/chenqifu-Ai/computehub/actions)
+[![Code Quality](https://img.shields.io/badge/code%20quality-A-brightgreen?style=flat&logo=codeclimate)](https://github.com/chenqifu-Ai/computehub)
+[![Documentation Status](https://img.shields.io/badge/docs-complete-brightgreen?style=flat&logo=read-the-docs)](https://github.com/chenqifu-Ai/computehub#-documentation)
+[![Community](https://img.shields.io/badge/community-join%20us-blue?style=flat&logo=discord)](https://discord.gg/computehub)
 
 ---
 
