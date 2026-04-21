@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<<htmlhtml lang="en">
+<<headhead>
+    <<metameta charset="UTF-8">
+    <<metameta name="viewport" content="width=device-width, initial-scale=1.0">
+    <<titletitle>ComputeHub | Global Physical Resource Console</title>
+    <<scriptscript src="https://cdn.tailwindcss.com"></script>
+    <<scriptscript src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <<stylestyle>
+        .node-card { transition: all 0.3s ease; }
+        .node-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .status-online { color: #10b981; }
+        .status-danger { color: #ef4444; }
+        .bg-dark-panel { background-color: #111827; }
+    </style>
+</head>
+<<bodybody class="bg-gray-900 text-gray-100 font-sans">
+    <<divdiv class="flex h-screen">
+        <!-- Sidebar -->
+        <<divdiv class="w-64 bg-dark-panel border-r border-gray-800 p-6 flex flex-col">
+            <<divdiv class="flex items-center gap-3 mb-10">
+                <<divdiv class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold">CH</div>
+                <<hh1 class="text-xl font-bold tracking-tight">ComputeHub</h1>
+            </div>
+            <<navnav class="space-y-4 flex-1">
+                <<aa href="#" class="flex items-center gap-3 p-3 rounded-lg bg-blue-600 text-white">
+                    <span>📊</span> Dashboard
+                </a>
+                <<aa href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 text-gray-400">
+                    <span>🌐</span> Node Map
+                </a>
+                <<aa href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 text-gray-400">
+                    <span>⚙️</span> Scheduler
+                </a>
+                <<aa href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 text-gray-400">
+                    <span>💰</span> Settlement
+                </a>
+            </nav>
+            <<divdiv class="text-xs text-gray-500 border-t border-gray-800 pt-4">
+                v1.0.0-alpha | Physical Sync: <<spanspan id="sync-status" class="text-green-500">Active</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <<divdiv class="flex-1 overflow-y-auto p-8">
+            <<headerheader class="flex justify-between items-center mb-8">
+                <div>
+                    <<hh2 class="text-3xl font-bold">Global Resource Console</h2>
+                    <<pp class="text-gray-400">Real-time physical hardware telemetry</p>
+                </div>
+                <<divdiv class="flex gap-4">
+                    <<divdiv class="bg-gray-800 p-3 rounded-lg border border-gray-700">
+                        <<spanspan class="text-gray-400 text-sm">Active Nodes:</span>
+                        <<spanspan id="total-nodes" class="ml-2 font-mono font-bold text-blue-400">0</span>
+                    </div>
+                    <<divdiv class="bg-gray-800 p-3 rounded-lg border border-gray-700">
+                        <<spanspan class="text-gray-400 text-sm">Avg Utilization:</span>
+                        <<spanspan id="avg-util" class="ml-2 font-mono font-bold text-green-400">0%</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Resource Grid -->
+            <<divdiv id="node-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Node cards will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <<scriptscript>
+        async function fetchNodeStatus() {
+            try {
+                const response = await fetch('/api/v1/nodes/status');
+                const data = await response.json();
+                updateDashboard(data);
+            } catch (e) {
+                console.error("Failed to fetch node status", e);
+                document.getElementById('sync-status').innerText = "Error";
+                document.getElementById('sync-status').classList.replace('text-green-500', 'text-red-500');
+            }
+        }
+
+        function updateDashboard(data) {
+            const grid = document.getElementById('node-grid');
+            const totalNodesEl = document.getElementById('total-nodes');
+            const avgUtilEl = document.getElementById('avg-util');
+            
+            totalNodesEl.innerText = data.total_nodes;
+            
+            grid.innerHTML = '';
+            let totalUtil = 0;
+            let count = 0;
+
+            data.nodes.forEach(node => {
+                // In a real app, we'd fetch the latest heartbeat for each node
+                // For the prototype, we assume the node object contains last known metrics
+                const util = node.last_util || 0;
+                const temp = node.last_temp || 0;
+                totalUtil += util;
+                count++;
+
+                const card = document.createElement('div');
+                card.className = 'node-card bg-dark-panel border border-gray-800 p-5 rounded-xl';
+                card.innerHTML = `
+                    <<divdiv class="flex justify-between items-start mb-4">
+                        <<divdiv class="font-mono text-sm text-blue-400">${node.node_id}</div>
+                        <<spanspan class="text-xs px-2 py-1 rounded bg-green-900 text-green-300">ONLINE</span>
+                    </div>
+                    <<divdiv class="space-y-3">
+                        <<divdiv class="flex justify-between text-sm">
+                            <<spanspan class="text-gray-400">GPU Temp</span>
+                            <<spanspan class="font-mono ${temp > 75 ? 'text-red-500' : 'text-gray-100'}">${temp}°C</span>
+                        </div>
+                        <<divdiv class="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
+                            <<divdiv class="bg-blue-500 h-full" style="width: ${util}%"></div>
+                        </div>
+                        <<divdiv class="flex justify-between text-xs">
+                            <<spanspan class="text-gray-400">Utilization</span>
+                            <<spanspan class="font-mono">${util}%</span>
+                        </div>
+                    </div>
+                    <<divdiv class="mt-4 pt-4 border-t border-gray-800 flex justify-between items-center">
+                        <<spanspan class="text-xs text-gray-500">${node.os}</span>
+                        <<spanspan class="text-xs text-gray-500">${node.gpu_model}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            avgUtilEl.innerText = count > 0 ? Math.round(totalUtil / count) + '%' : '0%';
+        }
+
+        // Poll every 3 seconds
+        setInterval(fetchNodeStatus, 3000);
+        fetchNodeStatus();
+    </script>
+</body>
+</html>
