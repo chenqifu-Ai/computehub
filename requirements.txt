@@ -1,0 +1,58 @@
+# ComputeHub - Core Dependencies
+# Generated: 2026-04-22
+# Python: 3.10+
+
+# Web Framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# Database
+sqlalchemy==2.0.25
+psycopg2-binary==2.9.9
+alembic==1.13.1
+
+# Cache & Queue
+redis==5.0.1
+celery==5.3.6
+
+# Validation & Settings
+pydantic==2.5.3
+pydantic-settings==2.1.0
+
+# Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.1.2
+
+# HTTP Client
+httpx==0.26.0
+
+# Monitoring & Logging
+structlog==24.1.0
+prometheus-client==0.19.0
+
+# Utilities
+tenacity==8.2.3
+circuitbreaker==2.1.0
+transitions==0.9.0
+geoalchemy2==0.14.3  # PostGIS support
+
+# Node Monitoring
+pynvml==11.5.0
+psutil==5.9.7
+ping3==4.0.8
+
+# gRPC (future use)
+grpcio==1.60.0
+grpcio-tools==1.60.0
+
+# Testing
+pytest==7.4.4
+pytest-asyncio==0.23.3
+pytest-cov==4.1.0
+
+# Development
+black==24.1.0
+ruff==0.1.14
+mypy==1.8.0
