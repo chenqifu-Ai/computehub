@@ -3,7 +3,6 @@ Node Model - Represents compute nodes in the network
 """
 
 from sqlalchemy import Column, String, Integer, Float, DateTime, Boolean, Index
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from backend.models.base import Base
 import uuid
@@ -15,11 +14,11 @@ class Node(Base):
     
     __tablename__ = "nodes"
     
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String(255), nullable=False, index=True)
     
     # Status
-    status = Column(String(50), default="offline", index=True)  # online/offline/maintenance
+    status = Column(String(50), default="offline", index=True)
     
     # Hardware specs
     gpu_model = Column(String(255))
@@ -27,7 +26,7 @@ class Node(Base):
     cpu_cores = Column(Integer, default=0)
     memory_gb = Column(Integer, default=0)
     
-    # Location (for geo-based scheduling)
+    # Location
     country = Column(String(100))
     city = Column(String(100))
     latitude = Column(Float, nullable=True)
@@ -37,8 +36,8 @@ class Node(Base):
     last_heartbeat = Column(DateTime(timezone=True), default=func.now())
     
     # Metrics
-    gpu_utilization = Column(Float, default=0.0)  # 0-100
-    memory_utilization = Column(Float, default=0.0)  # 0-100
+    gpu_utilization = Column(Float, default=0.0)
+    memory_utilization = Column(Float, default=0.0)
     network_latency_ms = Column(Float, default=0.0)
     
     # Metadata
@@ -46,7 +45,7 @@ class Node(Base):
     created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
     
-    # Indexes for common queries
+    # Indexes
     __table_args__ = (
         Index('idx_nodes_status_active', 'status', 'is_active'),
     )

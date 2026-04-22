@@ -9,7 +9,7 @@ from contextlib import asynccontextmanager
 import structlog
 
 from backend.core.config import settings
-from backend.api.v1.routes import nodes, tasks, users
+from backend.api.v1.routes import nodes, tasks, users, cluster
 from backend.models import base
 
 # Configure structured logging
@@ -69,6 +69,7 @@ app.add_middleware(
 app.include_router(nodes.router, prefix="/api/v1/nodes", tags=["nodes"])
 app.include_router(tasks.router, prefix="/api/v1/tasks", tags=["tasks"])
 app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
+app.include_router(cluster.router, prefix="/api/v1/cluster", tags=["cluster"])
 
 
 @app.get("/health")

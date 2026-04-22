@@ -12,9 +12,8 @@ from backend.models.task import Task, TaskStatus
 from backend.models.base import async_session_maker
 from backend.api.v1.schemas.task import (
     TaskCreate,
-    TaskResponse,
-    TaskListResponse,
 )
+from backend.services.scheduler import SmartScheduler
 import structlog
 
 logger = structlog.get_logger()
@@ -33,16 +32,16 @@ async def get_db():
             raise
 
 
-@router.post("/", response_model=TaskResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=dict, status_code=status.HTTP_201_CREATED)
 async def create_task(
     task_data: TaskCreate,
     db = Depends(get_db),
 ):
-    """Create a new compute task"""
+    """Create a new compute task and schedule it"""
     logger.info("Creating new task", framework=task_data.framework)
     
     task = Task(
-        user_id=uuid.UUID("00000000-0000-0000-0000-000000000000"),
+        user_id="00000000-0000-0000-0000-000000000000",
         status=TaskStatus.PENDING,
         framework=task_data.framework,
         gpu_required=task_data.gpu_required,
@@ -57,11 +56,19 @@ async def create_task(
     await db.commit()
     await db.refresh(task)
     
-    logger.info("Task created successfully", task_id=str(task.id))
-    return task
+    # 智能调度：自动分配节点
+    scheduled = await SmartScheduler.schedule_task(db, task)
+    
+    if scheduled:
+        logger.info("Task created and scheduled", task_id=str(task.id))
+    else:
+        logger.warning("Task created but scheduling failed", task_id=str(task.id))
+    
+    await db.refresh(task)
+    return task.to_dict()
 
 
-@router.get("/", response_model=TaskListResponse)
+@router.get("", response_model=dict)
 async def list_tasks(
     status: str = None,
     limit: int = 100,
@@ -77,28 +84,38 @@ async def list_tasks(
     result = await db.execute(query)
     tasks = result.scalars().all()
     
-    return TaskListResponse(
-        tasks=[TaskResponse.model_validate(t) for t in tasks],
-        total=len(tasks)
-    )
+    return {
+        "tasks": [t.to_dict() for t in tasks],
+        "total": len(tasks)
+    }
 
 
-@router.get("/{task_id}", response_model=TaskResponse)
+@router.get("/{task_id}", response_model=dict)
 async def get_task(task_id: str, db = Depends(get_db)):
     """Get a specific task by ID"""
-    result = await db.execute(select(Task).where(Task.id == task_id))
+    try:
+        task_uuid = uuid.UUID(task_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid task ID format")
+    
+    result = await db.execute(select(Task).where(Task.id == task_uuid))
     task = result.scalar_one_or_none()
     
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
     
-    return task
+    return task.to_dict()
 
 
 @router.post("/{task_id}/cancel", response_model=dict)
 async def cancel_task(task_id: str, db = Depends(get_db)):
     """Cancel a pending or executing task"""
-    result = await db.execute(select(Task).where(Task.id == task_id))
+    try:
+        task_uuid = uuid.UUID(task_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid task ID format")
+    
+    result = await db.execute(select(Task).where(Task.id == task_uuid))
     task = result.scalar_one_or_none()
     
     if not task:

@@ -3,7 +3,6 @@ User Model - Platform users
 """
 
 from sqlalchemy import Column, String, DateTime, Boolean, Float
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from backend.models.base import Base
 import uuid
@@ -14,7 +13,7 @@ class User(Base):
     
     __tablename__ = "users"
     
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     email = Column(String(255), unique=True, nullable=False, index=True)
     username = Column(String(100), unique=True, nullable=False)
     
@@ -40,7 +39,7 @@ class User(Base):
         return f"<User(id={self.id}, email={self.email})>"
     
     def to_dict(self):
-        """Convert to dictionary for API response (exclude sensitive data)"""
+        """Convert to dictionary for API response"""
         return {
             "id": str(self.id),
             "email": self.email,

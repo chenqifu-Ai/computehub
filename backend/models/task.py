@@ -3,7 +3,6 @@ Task Model - Represents compute tasks
 """
 
 from sqlalchemy import Column, String, Integer, Float, DateTime, ForeignKey, Text, Enum as SQLEnum
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from backend.models.base import Base
@@ -27,28 +26,28 @@ class Task(Base):
     
     __tablename__ = "tasks"
     
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String(36), ForeignKey("users.id"), nullable=False)
     
     # Status tracking
     status = Column(SQLEnum(TaskStatus), default=TaskStatus.PENDING, index=True)
     
     # Assigned node
-    node_id = Column(UUID(as_uuid=True), ForeignKey("nodes.id"), nullable=True)
+    node_id = Column(String(36), ForeignKey("nodes.id"), nullable=True)
     
     # Task specifications
-    framework = Column(String(50))  # pytorch/tensorflow/jax
+    framework = Column(String(50))
     gpu_required = Column(Integer, default=1)
     duration_hours = Column(Integer, default=1)
     memory_required_gb = Column(Integer, default=8)
     
     # Task content
-    code_url = Column(Text)  # URL to code repository
-    data_url = Column(Text)  # URL to input data
-    parameters = Column(Text)  # JSON string of parameters
+    code_url = Column(Text)
+    data_url = Column(Text)
+    parameters = Column(Text)
     
     # Results
-    result_path = Column(Text)  # Path to output results
+    result_path = Column(Text)
     error_message = Column(Text)
     
     # Timing
