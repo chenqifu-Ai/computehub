@@ -1,97 +1,62 @@
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 from datetime import datetime
 import logging
-import psycopg2
-from psycopg2.extras import RealDictCursor
 import os
+import json
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("ComputeHub-Scheduler")
 
-# 数据库配置 (与 api/rest_api.py 一致)
-DB_CONFIG = {
-    "dbname": os.getenv("CH_DB_NAME", "computehub"),
-    "user": os.getenv("CH_DB_USER", "postgres"),
-    "password": os.getenv("CH_DB_PASS", "postgres"),
-    "host": os.getenv("CH_DB_HOST", "localhost"),
-    "port": os.getenv("CH_DB_PORT", "5432")
-}
-
 class SchedulingEngine:
     """
-    ComputeHub 物理感知调度引擎：基于物理实时指标挑选最优节点
+    ComputeHub 物理感知调度引擎 (Ultra-Light Version)
+    完全脱离 psycopg2 依赖，直接使用 JSON 缓存进行匹配
     """
-    def __init__(self):
-        self.db_conn = self._get_conn()
+    def __init__(self, storage_file="computehub_storage.json"):
+        self.storage_file = storage_file
 
-    def _get_conn(self):
-        try:
-            return psycopg2.connect(**DB_CONFIG)
-        except Exception as e:
-            logger.error(f"Scheduler DB connection failed: {e}")
-            return None
+    def _load_nodes(self) -> Dict:
+        if os.path.exists(self.storage_file):
+            try:
+                with open(self.storage_file, "r") as f:
+                    data = json.load(f)
+                    return data.get("nodes", {})
+            except Exception:
+                return {}
+        return {}
 
     def find_best_node(self, requirements: Dict) -> Optional[str]:
-        """
-        物理感知调度算法 (L3 Matching):
-        1. 必须在线 (last_seen <<  30s)
-        2. 必须满足硬件硬要求 (memory_total >= req_memory)
-        3. 优先级：利用率最低 (Utilization) -> 温度最低 (Temperature) -> 延迟最低
-        """
-        if not self.db_conn:
+        nodes = self._load_nodes()
+        if not nodes:
+            logger.warning("No nodes found in storage.")
             return None
 
-        try:
-            with self.db_conn.cursor(cursor_factory=RealDictCursor) as cur:
-                # 复杂查询：直接在 SQL 层完成初步过滤和物理排序
-                query = """
-                SELECT n.node_id, h.utilization, h.temperature
-                FROM nodes n
-                JOIN node_heartbeats h ON n.node_id = h.node_id
-                WHERE n.status = 'ONLINE' 
-                AND n.last_seen > NOW() - INTERVAL '30 seconds'
-                AND n.memory_total_mb >= %s
-                ORDER BY h.utilization ASC, h.temperature ASC
-                LIMIT 1
-                """
-                cur.execute(query, (requirements.get('memory_mb', 0),))
-                result = cur.fetchone()
-                
-                if result:
-                    logger.info(f"Matched Node: {result['node_id']} (Util: {result['utilization']}%, Temp: {result['temperature']}C)")
-                    return result['node_id']
-                
-                logger.warning("No suitable physical node found for requirements")
-                return None
-        except Exception as e:
-            logger.error(f"Scheduling error: {e}")
-            return None
+        req_mem = requirements.get("memory_mb", 0)
+        
+        # 调度逻辑：ONLINE -> Memory -> Utilization -> Temperature
+        best_node = None
+        best_score = float('inf')
 
-    def check_region_health(self, region_id: str) -> bool:
-        """
-        区域熔断逻辑原型
-        """
-        try:
-            with self.db_conn.cursor() as cur:
-                # 计算该区域在过去 1 分钟内的在线率
-                cur.execute(
-                    "SELECT count(*) as total, count(*) FILTER (WHERE last_seen > NOW() - INTERVAL '30 seconds') as online "
-                    "FROM nodes WHERE region = %s", (region_id,)
-                )
-                res = cur.fetchone()
-                if not res or res['total'] == 0: return True
-                
-                online_rate = res['online'] / res['total']
-                if online_rate <<  0.7: # 30% 失效率则熔断
-                    logger.error(f"Region {region_id} Fused! Online Rate: {online_rate:.2%}")
-                    return False
-                return True
-        except Exception as e:
-            logger.error(f"Region health check error: {e}")
-            return True
+        for node_id, info in nodes.items():
+            if info.get("status") != "ONLINE":
+                continue
+            
+            # 物理显存必须满足要求
+            if info.get("memory_total_mb", 0) < req_mem:
+                continue
+            
+            # 评分函数：Utilization * 0.7 + Temperature * 0.3 (越低越好)
+            util = info.get("last_util", 100)
+            temp = info.get("last_temp", 100)
+            score = util * 0.7 + temp * 0.3
+            
+            if score < best_score:
+                best_score = score
+                best_node = node_id
 
-if __name__ == "__main__":
-    # 简单模拟
-    engine = SchedulingEngine()
-    best_node = engine.find_best_node({"memory_mb": 8192})
-    print(f"Best Node for 8GB task: {best_node}")
+        if best_node:
+            logger.info(f"Matched node {best_node} with score {best_score:.2f}")
+        else:
+            logger.warning("No suitable ONLINE node found for requirements.")
+            
+        return best_node

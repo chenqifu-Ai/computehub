@@ -1,0 +1,184 @@
+ * Serving Flask app 'rest_api'
+ * Debug mode: off
+2026-04-22 07:27:16,600 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.23.41.96:8000
+2026-04-22 07:27:16,600 - INFO - [33mPress CTRL+C to quit[0m
+/root/.openclaw/workspace/ai_agent/code/computehub/api/rest_api.py:79: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "last_seen": datetime.utcnow().isoformat()
+2026-04-22 07:27:28,006 - INFO - Node Registered (JSON): test_node_1776814047
+2026-04-22 07:27:28,007 - INFO - 127.0.0.1 - - [22/Apr/2026 07:27:28] "POST /api/v1/node/register HTTP/1.1" 200 -
+/root/.openclaw/workspace/ai_agent/code/computehub/api/rest_api.py:97: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  node["last_seen"] = datetime.utcnow().isoformat()
+/root/.openclaw/workspace/ai_agent/code/computehub/api/rest_api.py:49: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "timestamp": datetime.utcnow().isoformat(),
+2026-04-22 07:27:28,021 - INFO - 127.0.0.1 - - [22/Apr/2026 07:27:28] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 07:27:28,031 - INFO - 127.0.0.1 - - [22/Apr/2026 07:27:28] "GET /api/v1/nodes/status HTTP/1.1" 200 -
+2026-04-22 07:27:28,044 - INFO - Node Registered (JSON): sched_test_node
+2026-04-22 07:27:28,044 - INFO - 127.0.0.1 - - [22/Apr/2026 07:27:28] "POST /api/v1/node/register HTTP/1.1" 200 -
+2026-04-22 07:27:28,060 - INFO - 127.0.0.1 - - [22/Apr/2026 07:27:28] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 07:27:28,072 - INFO - State Transition: PENDING -> MATCHING
+2026-04-22 07:27:28,072 - INFO - State Transition: MATCHING -> DEPLOYING
+2026-04-22 07:27:28,077 - INFO - Executing task_9418ff3a on test_node_1776814047...
+2026-04-22 07:27:28,078 - INFO - 127.0.0.1 - - [22/Apr/2026 07:27:28] "POST /api/v1/tasks/submit HTTP/1.1" 200 -
+2026-04-22 07:27:30,078 - INFO - Task task_9418ff3a COMPLETED.
+2026-04-22 08:23:24,033 - INFO - Node Registered (JSON): node_5bd6cd70
+2026-04-22 08:23:24,036 - INFO - 127.0.0.1 - - [22/Apr/2026 08:23:24] "POST /api/v1/node/register HTTP/1.1" 200 -
+2026-04-22 08:23:24,054 - INFO - 127.0.0.1 - - [22/Apr/2026 08:23:24] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:23:24,069 - INFO - State Transition: PENDING -> MATCHING
+2026-04-22 08:23:24,070 - INFO - State Transition: MATCHING -> DEPLOYING
+2026-04-22 08:23:24,074 - INFO - Executing task_085a2e62 on test_node_1776814047...
+2026-04-22 08:23:24,074 - INFO - 127.0.0.1 - - [22/Apr/2026 08:23:24] "POST /api/v1/tasks/submit HTTP/1.1" 200 -
+2026-04-22 08:23:25,094 - INFO - 127.0.0.1 - - [22/Apr/2026 08:23:25] "GET /api/v1/nodes/status HTTP/1.1" 200 -
+2026-04-22 08:23:26,076 - INFO - Task task_085a2e62 COMPLETED.
+2026-04-22 08:24:45,146 - INFO - Node Registered (JSON): node_localhost_9390
+2026-04-22 08:24:45,146 - INFO - 127.0.0.1 - - [22/Apr/2026 08:24:45] "POST /api/v1/node/register HTTP/1.1" 200 -
+2026-04-22 08:24:45,160 - INFO - 127.0.0.1 - - [22/Apr/2026 08:24:45] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:24:45,278 - INFO - Node Registered (JSON): node_localhost_4553
+2026-04-22 08:24:45,279 - INFO - 127.0.0.1 - - [22/Apr/2026 08:24:45] "POST /api/v1/node/register HTTP/1.1" 200 -
+2026-04-22 08:24:45,294 - INFO - 127.0.0.1 - - [22/Apr/2026 08:24:45] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:24:45,621 - INFO - Node Registered (JSON): node_localhost_4099
+2026-04-22 08:24:45,622 - INFO - 127.0.0.1 - - [22/Apr/2026 08:24:45] "POST /api/v1/node/register HTTP/1.1" 200 -
+2026-04-22 08:24:45,643 - INFO - 127.0.0.1 - - [22/Apr/2026 08:24:45] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:24:50,177 - INFO - 127.0.0.1 - - [22/Apr/2026 08:24:50] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:24:50,309 - INFO - 127.0.0.1 - - [22/Apr/2026 08:24:50] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:24:50,566 - INFO - Node Registered (JSON): node_d350f9a7
+2026-04-22 08:24:50,566 - INFO - 127.0.0.1 - - [22/Apr/2026 08:24:50] "POST /api/v1/node/register HTTP/1.1" 200 -
+2026-04-22 08:24:50,580 - INFO - 127.0.0.1 - - [22/Apr/2026 08:24:50] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:24:50,595 - INFO - State Transition: PENDING -> MATCHING
+2026-04-22 08:24:50,596 - INFO - State Transition: MATCHING -> DEPLOYING
+2026-04-22 08:24:50,597 - INFO - Executing task_f9953f62 on test_node_1776814047...
+2026-04-22 08:24:50,598 - INFO - 127.0.0.1 - - [22/Apr/2026 08:24:50] "POST /api/v1/tasks/submit HTTP/1.1" 200 -
+2026-04-22 08:24:50,670 - INFO - 127.0.0.1 - - [22/Apr/2026 08:24:50] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:24:51,619 - INFO - 127.0.0.1 - - [22/Apr/2026 08:24:51] "GET /api/v1/nodes/status HTTP/1.1" 200 -
+2026-04-22 08:24:52,598 - INFO - Task task_f9953f62 COMPLETED.
+2026-04-22 08:24:55,206 - INFO - 127.0.0.1 - - [22/Apr/2026 08:24:55] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:24:55,338 - INFO - 127.0.0.1 - - [22/Apr/2026 08:24:55] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:24:55,697 - INFO - 127.0.0.1 - - [22/Apr/2026 08:24:55] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:00,234 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:00] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:00,368 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:00] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:00,726 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:00] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:05,257 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:05] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:05,388 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:05] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:05,746 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:05] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:10,294 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:10] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:10,423 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:10] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:10,784 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:10] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:15,329 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:15] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:15,462 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:15] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:15,825 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:15] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:20,367 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:20] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:20,503 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:20] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:20,862 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:20] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:25,387 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:25] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:25,533 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:25] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:25,890 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:25] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:30,428 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:30] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:30,574 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:30] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:30,922 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:30] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:35,459 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:35] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:35,607 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:35] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:35,957 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:35] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:40,492 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:40] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:40,627 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:40] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:40,991 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:40] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:45,536 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:45] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:45,667 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:45] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:46,033 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:46] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:50,573 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:50] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:50,703 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:50] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:51,072 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:51] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:55,590 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:55] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:55,730 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:55] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:25:56,111 - INFO - 127.0.0.1 - - [22/Apr/2026 08:25:56] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:00,613 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:00] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:00,747 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:00] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:01,133 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:01] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:05,652 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:05] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:05,788 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:05] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:06,158 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:06] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:10,668 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:10] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:10,813 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:10] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:11,177 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:11] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:15,697 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:15] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:15,838 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:15] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:16,199 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:16] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:20,730 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:20] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:20,862 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:20] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:21,225 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:21] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:25,754 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:25] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:25,897 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:25] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:26,252 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:26] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:30,797 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:30] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:30,928 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:30] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:31,279 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:31] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:35,840 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:35] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:35,962 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:35] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:36,328 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:36] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:40,875 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:40] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:40,987 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:40] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:41,350 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:41] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:45,906 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:45] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:46,015 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:46] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:46,382 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:46] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:50,941 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:50] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:51,052 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:51] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:51,425 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:51] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:55,977 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:55] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:56,082 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:56] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:26:56,450 - INFO - 127.0.0.1 - - [22/Apr/2026 08:26:56] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:01,011 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:01] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:01,114 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:01] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:01,479 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:01] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:06,047 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:06] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:06,137 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:06] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:06,516 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:06] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:11,088 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:11] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:11,184 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:11] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:11,554 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:11] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:16,110 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:16] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:16,205 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:16] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:16,586 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:16] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:21,136 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:21] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:21,231 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:21] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:21,620 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:21] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:26,160 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:26] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:26,245 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:26] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:26,643 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:26] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:31,183 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:31] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:31,270 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:31] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:31,662 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:31] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:36,209 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:36] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:36,306 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:36] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:36,678 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:36] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:41,236 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:41] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:41,342 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:41] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:41,700 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:41] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:46,256 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:46] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:46,363 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:46] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:46,732 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:46] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:51,281 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:51] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:51,385 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:51] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:51,763 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:51] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:56,304 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:56] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:56,406 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:56] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:27:56,787 - INFO - 127.0.0.1 - - [22/Apr/2026 08:27:56] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:28:01,326 - INFO - 127.0.0.1 - - [22/Apr/2026 08:28:01] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:28:01,432 - INFO - 127.0.0.1 - - [22/Apr/2026 08:28:01] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:28:01,813 - INFO - 127.0.0.1 - - [22/Apr/2026 08:28:01] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:28:06,354 - INFO - 127.0.0.1 - - [22/Apr/2026 08:28:06] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:28:06,459 - INFO - 127.0.0.1 - - [22/Apr/2026 08:28:06] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:28:06,851 - INFO - 127.0.0.1 - - [22/Apr/2026 08:28:06] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:28:11,385 - INFO - 127.0.0.1 - - [22/Apr/2026 08:28:11] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:28:11,494 - INFO - 127.0.0.1 - - [22/Apr/2026 08:28:11] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:28:11,883 - INFO - 127.0.0.1 - - [22/Apr/2026 08:28:11] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:28:16,404 - INFO - 127.0.0.1 - - [22/Apr/2026 08:28:16] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:28:16,519 - INFO - 127.0.0.1 - - [22/Apr/2026 08:28:16] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:28:16,917 - INFO - 127.0.0.1 - - [22/Apr/2026 08:28:16] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:28:21,433 - INFO - 127.0.0.1 - - [22/Apr/2026 08:28:21] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:28:21,542 - INFO - 127.0.0.1 - - [22/Apr/2026 08:28:21] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:28:21,948 - INFO - 127.0.0.1 - - [22/Apr/2026 08:28:21] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:28:26,460 - INFO - 127.0.0.1 - - [22/Apr/2026 08:28:26] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:28:26,563 - INFO - 127.0.0.1 - - [22/Apr/2026 08:28:26] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -
+2026-04-22 08:28:26,975 - INFO - 127.0.0.1 - - [22/Apr/2026 08:28:26] "POST /api/v1/node/heartbeat HTTP/1.1" 200 -

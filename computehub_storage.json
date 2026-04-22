@@ -1,0 +1,1198 @@
+{
+  "nodes": {
+    "test_node_1776814047": {
+      "hardware_fingerprint": "fp_test",
+      "os": "Linux",
+      "gpu_model": "T4",
+      "memory_total_mb": 16384,
+      "status": "ONLINE",
+      "last_seen": "2026-04-21T23:27:28.018671",
+      "last_util": 10,
+      "last_temp": 40
+    },
+    "sched_test_node": {
+      "hardware_fingerprint": "fp_sched",
+      "os": "Linux",
+      "gpu_model": "Unknown",
+      "memory_total_mb": 0,
+      "status": "ONLINE",
+      "last_seen": "2026-04-21T23:27:28.056655",
+      "last_util": 5,
+      "last_temp": 30
+    },
+    "node_5bd6cd70": {
+      "hardware_fingerprint": "fp_6c6471ef3ca04705bffea4377a4f4248",
+      "os": "Linux",
+      "gpu_model": "NVIDIA A100",
+      "memory_total_mb": 40960,
+      "status": "ONLINE",
+      "last_seen": "2026-04-22T00:23:24.050249",
+      "last_util": 10,
+      "last_temp": 42
+    },
+    "node_localhost_9390": {
+      "hardware_fingerprint": "node_localhost_9390",
+      "os": "Linux",
+      "gpu_model": "Virtual-GPU-Alpha",
+      "memory_total_mb": 16384,
+      "status": "ONLINE",
+      "last_seen": "2026-04-22T00:28:26.452177",
+      "last_util": 14,
+      "last_temp": 67
+    },
+    "node_localhost_4553": {
+      "hardware_fingerprint": "node_localhost_4553",
+      "os": "Linux",
+      "gpu_model": "Virtual-GPU-Alpha",
+      "memory_total_mb": 16384,
+      "status": "ONLINE",
+      "last_seen": "2026-04-22T00:28:26.557093",
+      "last_util": 19,
+      "last_temp": 51
+    },
+    "node_localhost_4099": {
+      "hardware_fingerprint": "node_localhost_4099",
+      "os": "Linux",
+      "gpu_model": "Virtual-GPU-Alpha",
+      "memory_total_mb": 16384,
+      "status": "ONLINE",
+      "last_seen": "2026-04-22T00:28:26.967594",
+      "last_util": 9,
+      "last_temp": 54
+    },
+    "node_d350f9a7": {
+      "hardware_fingerprint": "fp_d7b41c15e6f14156b8a06212c51a784f",
+      "os": "Linux",
+      "gpu_model": "NVIDIA A100",
+      "memory_total_mb": 40960,
+      "status": "ONLINE",
+      "last_seen": "2026-04-22T00:24:50.577601",
+      "last_util": 10,
+      "last_temp": 42
+    }
+  },
+  "heartbeats": {
+    "test_node_1776814047": [
+      {
+        "timestamp": "2026-04-21T23:27:28.019635",
+        "temperature": 40,
+        "utilization": 10,
+        "power_draw": 50,
+        "memory_used": 1024
+      }
+    ],
+    "sched_test_node": [
+      {
+        "timestamp": "2026-04-21T23:27:28.057878",
+        "temperature": 30,
+        "utilization": 5,
+        "power_draw": 40,
+        "memory_used": 512
+      }
+    ],
+    "node_5bd6cd70": [
+      {
+        "timestamp": "2026-04-22T00:23:24.052075",
+        "temperature": 42,
+        "utilization": 10,
+        "power_draw": 120.5,
+        "memory_used": 2048
+      }
+    ],
+    "node_localhost_9390": [
+      {
+        "timestamp": "2026-04-22T00:24:45.149636",
+        "temperature": 74,
+        "utilization": 98,
+        "power_draw": 248.15086521944494,
+        "memory_total": 16384,
+        "memory_used": 3528
+      },
+      {
+        "timestamp": "2026-04-22T00:24:50.162495",
+        "temperature": 73,
+        "utilization": 26,
+        "power_draw": 184.72985508778314,
+        "memory_total": 16384,
+        "memory_used": 4028
+      },
+      {
+        "timestamp": "2026-04-22T00:24:55.179444",
+        "temperature": 40,
+        "utilization": 53,
+        "power_draw": 233.38502408486704,
+        "memory_total": 16384,
+        "memory_used": 8032
+      },
+      {
+        "timestamp": "2026-04-22T00:25:00.208108",
+        "temperature": 68,
+        "utilization": 31,
+        "power_draw": 141.73084798027043,
+        "memory_total": 16384,
+        "memory_used": 1586
+      },
+      {
+        "timestamp": "2026-04-22T00:25:05.236539",
+        "temperature": 73,
+        "utilization": 15,
+        "power_draw": 157.06546199112827,
+        "memory_total": 16384,
+        "memory_used": 1620
+      },
+      {
+        "timestamp": "2026-04-22T00:25:10.260357",
+        "temperature": 52,
+        "utilization": 17,
+        "power_draw": 198.32278975884788,
+        "memory_total": 16384,
+        "memory_used": 3158
+      },
+      {
+        "timestamp": "2026-04-22T00:25:15.297185",
+        "temperature": 65,
+        "utilization": 2,
+        "power_draw": 66.10551164991631,
+        "memory_total": 16384,
+        "memory_used": 6242
+      },
+      {
+        "timestamp": "2026-04-22T00:25:20.332212",
+        "temperature": 44,
+        "utilization": 96,
+        "power_draw": 210.23613128937902,
+        "memory_total": 16384,
+        "memory_used": 5976
+      },
+      {
+        "timestamp": "2026-04-22T00:25:25.369570",
+        "temperature": 66,
+        "utilization": 8,
+        "power_draw": 75.54167230062032,
+        "memory_total": 16384,
+        "memory_used": 7531
+      },
+      {
+        "timestamp": "2026-04-22T00:25:30.390036",
+        "temperature": 57,
+        "utilization": 11,
+        "power_draw": 165.70003947332117,
+        "memory_total": 16384,
+        "memory_used": 2118
+      },
+      {
+        "timestamp": "2026-04-22T00:25:35.431452",
+        "temperature": 68,
+        "utilization": 30,
+        "power_draw": 203.463175848009,
+        "memory_total": 16384,
+        "memory_used": 5669
+      },
+      {
+        "timestamp": "2026-04-22T00:25:40.461978",
+        "temperature": 71,
+        "utilization": 79,
+        "power_draw": 90.67048327169245,
+        "memory_total": 16384,
+        "memory_used": 2692
+      },
+      {
+        "timestamp": "2026-04-22T00:25:45.494799",
+        "temperature": 61,
+        "utilization": 25,
+        "power_draw": 120.04854217525039,
+        "memory_total": 16384,
+        "memory_used": 4719
+      },
+      {
+        "timestamp": "2026-04-22T00:25:50.538880",
+        "temperature": 69,
+        "utilization": 90,
+        "power_draw": 135.9141988943623,
+        "memory_total": 16384,
+        "memory_used": 1780
+      },
+      {
+        "timestamp": "2026-04-22T00:25:55.575208",
+        "temperature": 63,
+        "utilization": 79,
+        "power_draw": 106.4194202703095,
+        "memory_total": 16384,
+        "memory_used": 4004
+      },
+      {
+        "timestamp": "2026-04-22T00:26:00.592464",
+        "temperature": 50,
+        "utilization": 41,
+        "power_draw": 55.87270693448376,
+        "memory_total": 16384,
+        "memory_used": 1270
+      },
+      {
+        "timestamp": "2026-04-22T00:26:05.615245",
+        "temperature": 44,
+        "utilization": 95,
+        "power_draw": 118.71546435917577,
+        "memory_total": 16384,
+        "memory_used": 1653
+      },
+      {
+        "timestamp": "2026-04-22T00:26:10.653960",
+        "temperature": 62,
+        "utilization": 31,
+        "power_draw": 145.36582306464373,
+        "memory_total": 16384,
+        "memory_used": 5808
+      },
+      {
+        "timestamp": "2026-04-22T00:26:15.670634",
+        "temperature": 63,
+        "utilization": 5,
+        "power_draw": 125.73537563778882,
+        "memory_total": 16384,
+        "memory_used": 7392
+      },
+      {
+        "timestamp": "2026-04-22T00:26:20.699235",
+        "temperature": 62,
+        "utilization": 59,
+        "power_draw": 64.1180914513977,
+        "memory_total": 16384,
+        "memory_used": 4606
+      },
+      {
+        "timestamp": "2026-04-22T00:26:25.733591",
+        "temperature": 56,
+        "utilization": 48,
+        "power_draw": 155.43024071124717,
+        "memory_total": 16384,
+        "memory_used": 2637
+      },
+      {
+        "timestamp": "2026-04-22T00:26:30.758224",
+        "temperature": 70,
+        "utilization": 26,
+        "power_draw": 68.83708843990865,
+        "memory_total": 16384,
+        "memory_used": 3518
+      },
+      {
+        "timestamp": "2026-04-22T00:26:35.801091",
+        "temperature": 67,
+        "utilization": 42,
+        "power_draw": 230.39873023252025,
+        "memory_total": 16384,
+        "memory_used": 6942
+      },
+      {
+        "timestamp": "2026-04-22T00:26:40.842880",
+        "temperature": 57,
+        "utilization": 61,
+        "power_draw": 168.63877363737288,
+        "memory_total": 16384,
+        "memory_used": 2543
+      },
+      {
+        "timestamp": "2026-04-22T00:26:45.878268",
+        "temperature": 48,
+        "utilization": 57,
+        "power_draw": 161.04493951188374,
+        "memory_total": 16384,
+        "memory_used": 5692
+      },
+      {
+        "timestamp": "2026-04-22T00:26:50.909618",
+        "temperature": 63,
+        "utilization": 12,
+        "power_draw": 170.98883972398534,
+        "memory_total": 16384,
+        "memory_used": 6492
+      },
+      {
+        "timestamp": "2026-04-22T00:26:55.943720",
+        "temperature": 70,
+        "utilization": 58,
+        "power_draw": 213.8867728396835,
+        "memory_total": 16384,
+        "memory_used": 2398
+      },
+      {
+        "timestamp": "2026-04-22T00:27:00.980114",
+        "temperature": 42,
+        "utilization": 26,
+        "power_draw": 173.16593416393874,
+        "memory_total": 16384,
+        "memory_used": 1033
+      },
+      {
+        "timestamp": "2026-04-22T00:27:06.014401",
+        "temperature": 58,
+        "utilization": 4,
+        "power_draw": 122.31572746142282,
+        "memory_total": 16384,
+        "memory_used": 5241
+      },
+      {
+        "timestamp": "2026-04-22T00:27:11.049969",
+        "temperature": 52,
+        "utilization": 30,
+        "power_draw": 144.53452467927855,
+        "memory_total": 16384,
+        "memory_used": 1443
+      },
+      {
+        "timestamp": "2026-04-22T00:27:16.090092",
+        "temperature": 59,
+        "utilization": 78,
+        "power_draw": 245.531778530275,
+        "memory_total": 16384,
+        "memory_used": 7571
+      },
+      {
+        "timestamp": "2026-04-22T00:27:21.112557",
+        "temperature": 58,
+        "utilization": 48,
+        "power_draw": 187.5748362791497,
+        "memory_total": 16384,
+        "memory_used": 3953
+      },
+      {
+        "timestamp": "2026-04-22T00:27:26.137635",
+        "temperature": 48,
+        "utilization": 2,
+        "power_draw": 151.37509488753756,
+        "memory_total": 16384,
+        "memory_used": 4059
+      },
+      {
+        "timestamp": "2026-04-22T00:27:31.162987",
+        "temperature": 46,
+        "utilization": 18,
+        "power_draw": 131.53132981761541,
+        "memory_total": 16384,
+        "memory_used": 7997
+      },
+      {
+        "timestamp": "2026-04-22T00:27:36.185537",
+        "temperature": 61,
+        "utilization": 42,
+        "power_draw": 244.1613227143386,
+        "memory_total": 16384,
+        "memory_used": 6668
+      },
+      {
+        "timestamp": "2026-04-22T00:27:41.212214",
+        "temperature": 54,
+        "utilization": 38,
+        "power_draw": 220.5304010856303,
+        "memory_total": 16384,
+        "memory_used": 7575
+      },
+      {
+        "timestamp": "2026-04-22T00:27:46.238654",
+        "temperature": 65,
+        "utilization": 49,
+        "power_draw": 118.31465920017503,
+        "memory_total": 16384,
+        "memory_used": 8080
+      },
+      {
+        "timestamp": "2026-04-22T00:27:51.258170",
+        "temperature": 58,
+        "utilization": 94,
+        "power_draw": 122.35565076960026,
+        "memory_total": 16384,
+        "memory_used": 4276
+      },
+      {
+        "timestamp": "2026-04-22T00:27:56.283834",
+        "temperature": 48,
+        "utilization": 69,
+        "power_draw": 118.71197075636604,
+        "memory_total": 16384,
+        "memory_used": 6781
+      },
+      {
+        "timestamp": "2026-04-22T00:28:01.306822",
+        "temperature": 69,
+        "utilization": 24,
+        "power_draw": 163.53509288888586,
+        "memory_total": 16384,
+        "memory_used": 4604
+      },
+      {
+        "timestamp": "2026-04-22T00:28:06.330099",
+        "temperature": 54,
+        "utilization": 100,
+        "power_draw": 68.86859723916908,
+        "memory_total": 16384,
+        "memory_used": 2316
+      },
+      {
+        "timestamp": "2026-04-22T00:28:11.356498",
+        "temperature": 67,
+        "utilization": 75,
+        "power_draw": 209.06854976590142,
+        "memory_total": 16384,
+        "memory_used": 4885
+      },
+      {
+        "timestamp": "2026-04-22T00:28:16.387018",
+        "temperature": 54,
+        "utilization": 68,
+        "power_draw": 230.4865258772251,
+        "memory_total": 16384,
+        "memory_used": 5628
+      },
+      {
+        "timestamp": "2026-04-22T00:28:21.406468",
+        "temperature": 57,
+        "utilization": 86,
+        "power_draw": 234.77215758989612,
+        "memory_total": 16384,
+        "memory_used": 6519
+      },
+      {
+        "timestamp": "2026-04-22T00:28:26.436034",
+        "temperature": 67,
+        "utilization": 14,
+        "power_draw": 222.83594494358806,
+        "memory_total": 16384,
+        "memory_used": 5579
+      }
+    ],
+    "node_localhost_4553": [
+      {
+        "timestamp": "2026-04-22T00:24:45.283219",
+        "temperature": 51,
+        "utilization": 23,
+        "power_draw": 213.13523431075467,
+        "memory_total": 16384,
+        "memory_used": 7645
+      },
+      {
+        "timestamp": "2026-04-22T00:24:50.295638",
+        "temperature": 73,
+        "utilization": 61,
+        "power_draw": 116.48699435038974,
+        "memory_total": 16384,
+        "memory_used": 5602
+      },
+      {
+        "timestamp": "2026-04-22T00:24:55.312157",
+        "temperature": 60,
+        "utilization": 11,
+        "power_draw": 233.98437815417446,
+        "memory_total": 16384,
+        "memory_used": 4178
+      },
+      {
+        "timestamp": "2026-04-22T00:25:00.340896",
+        "temperature": 51,
+        "utilization": 0,
+        "power_draw": 228.89147855076516,
+        "memory_total": 16384,
+        "memory_used": 3592
+      },
+      {
+        "timestamp": "2026-04-22T00:25:05.370208",
+        "temperature": 41,
+        "utilization": 55,
+        "power_draw": 198.6536270494683,
+        "memory_total": 16384,
+        "memory_used": 6404
+      },
+      {
+        "timestamp": "2026-04-22T00:25:10.390892",
+        "temperature": 59,
+        "utilization": 65,
+        "power_draw": 79.82644971696297,
+        "memory_total": 16384,
+        "memory_used": 7172
+      },
+      {
+        "timestamp": "2026-04-22T00:25:15.425381",
+        "temperature": 58,
+        "utilization": 87,
+        "power_draw": 146.80957367980966,
+        "memory_total": 16384,
+        "memory_used": 1177
+      },
+      {
+        "timestamp": "2026-04-22T00:25:20.465953",
+        "temperature": 49,
+        "utilization": 44,
+        "power_draw": 111.25668414041141,
+        "memory_total": 16384,
+        "memory_used": 7282
+      },
+      {
+        "timestamp": "2026-04-22T00:25:25.506374",
+        "temperature": 65,
+        "utilization": 73,
+        "power_draw": 206.9862891392498,
+        "memory_total": 16384,
+        "memory_used": 4326
+      },
+      {
+        "timestamp": "2026-04-22T00:25:30.536117",
+        "temperature": 48,
+        "utilization": 40,
+        "power_draw": 69.896764038675,
+        "memory_total": 16384,
+        "memory_used": 7590
+      },
+      {
+        "timestamp": "2026-04-22T00:25:35.577115",
+        "temperature": 72,
+        "utilization": 42,
+        "power_draw": 242.28482691691812,
+        "memory_total": 16384,
+        "memory_used": 1116
+      },
+      {
+        "timestamp": "2026-04-22T00:25:40.609702",
+        "temperature": 72,
+        "utilization": 0,
+        "power_draw": 220.7561054955614,
+        "memory_total": 16384,
+        "memory_used": 2915
+      },
+      {
+        "timestamp": "2026-04-22T00:25:45.629273",
+        "temperature": 72,
+        "utilization": 43,
+        "power_draw": 81.51333476289138,
+        "memory_total": 16384,
+        "memory_used": 3146
+      },
+      {
+        "timestamp": "2026-04-22T00:25:50.669256",
+        "temperature": 75,
+        "utilization": 5,
+        "power_draw": 181.69474527910302,
+        "memory_total": 16384,
+        "memory_used": 2300
+      },
+      {
+        "timestamp": "2026-04-22T00:25:55.705901",
+        "temperature": 53,
+        "utilization": 54,
+        "power_draw": 118.60855145828712,
+        "memory_total": 16384,
+        "memory_used": 1103
+      },
+      {
+        "timestamp": "2026-04-22T00:26:00.731562",
+        "temperature": 46,
+        "utilization": 80,
+        "power_draw": 105.04270749525435,
+        "memory_total": 16384,
+        "memory_used": 2489
+      },
+      {
+        "timestamp": "2026-04-22T00:26:05.749879",
+        "temperature": 61,
+        "utilization": 43,
+        "power_draw": 169.0775924189286,
+        "memory_total": 16384,
+        "memory_used": 1504
+      },
+      {
+        "timestamp": "2026-04-22T00:26:10.790178",
+        "temperature": 70,
+        "utilization": 83,
+        "power_draw": 68.3359622196416,
+        "memory_total": 16384,
+        "memory_used": 7455
+      },
+      {
+        "timestamp": "2026-04-22T00:26:15.815910",
+        "temperature": 73,
+        "utilization": 22,
+        "power_draw": 59.40306776092188,
+        "memory_total": 16384,
+        "memory_used": 6735
+      },
+      {
+        "timestamp": "2026-04-22T00:26:20.840237",
+        "temperature": 54,
+        "utilization": 44,
+        "power_draw": 134.73580476651017,
+        "memory_total": 16384,
+        "memory_used": 7402
+      },
+      {
+        "timestamp": "2026-04-22T00:26:25.864943",
+        "temperature": 51,
+        "utilization": 100,
+        "power_draw": 208.6248955079329,
+        "memory_total": 16384,
+        "memory_used": 7266
+      },
+      {
+        "timestamp": "2026-04-22T00:26:30.903586",
+        "temperature": 50,
+        "utilization": 80,
+        "power_draw": 59.97281614085928,
+        "memory_total": 16384,
+        "memory_used": 5055
+      },
+      {
+        "timestamp": "2026-04-22T00:26:35.931022",
+        "temperature": 59,
+        "utilization": 97,
+        "power_draw": 175.51309966244366,
+        "memory_total": 16384,
+        "memory_used": 2412
+      },
+      {
+        "timestamp": "2026-04-22T00:26:40.964040",
+        "temperature": 67,
+        "utilization": 85,
+        "power_draw": 195.85480860909868,
+        "memory_total": 16384,
+        "memory_used": 6106
+      },
+      {
+        "timestamp": "2026-04-22T00:26:45.990823",
+        "temperature": 51,
+        "utilization": 67,
+        "power_draw": 105.150704743458,
+        "memory_total": 16384,
+        "memory_used": 3581
+      },
+      {
+        "timestamp": "2026-04-22T00:26:51.019588",
+        "temperature": 63,
+        "utilization": 100,
+        "power_draw": 116.0780462158552,
+        "memory_total": 16384,
+        "memory_used": 4030
+      },
+      {
+        "timestamp": "2026-04-22T00:26:56.054018",
+        "temperature": 47,
+        "utilization": 20,
+        "power_draw": 98.3956350020623,
+        "memory_total": 16384,
+        "memory_used": 4819
+      },
+      {
+        "timestamp": "2026-04-22T00:27:01.085695",
+        "temperature": 42,
+        "utilization": 39,
+        "power_draw": 215.67056409350326,
+        "memory_total": 16384,
+        "memory_used": 4917
+      },
+      {
+        "timestamp": "2026-04-22T00:27:06.116681",
+        "temperature": 58,
+        "utilization": 0,
+        "power_draw": 140.76826766441167,
+        "memory_total": 16384,
+        "memory_used": 1854
+      },
+      {
+        "timestamp": "2026-04-22T00:27:11.139794",
+        "temperature": 66,
+        "utilization": 100,
+        "power_draw": 51.823842034481515,
+        "memory_total": 16384,
+        "memory_used": 3649
+      },
+      {
+        "timestamp": "2026-04-22T00:27:16.186351",
+        "temperature": 57,
+        "utilization": 43,
+        "power_draw": 204.420876137681,
+        "memory_total": 16384,
+        "memory_used": 5625
+      },
+      {
+        "timestamp": "2026-04-22T00:27:21.207765",
+        "temperature": 63,
+        "utilization": 24,
+        "power_draw": 151.7625871074879,
+        "memory_total": 16384,
+        "memory_used": 4983
+      },
+      {
+        "timestamp": "2026-04-22T00:27:26.233073",
+        "temperature": 68,
+        "utilization": 100,
+        "power_draw": 170.926834914415,
+        "memory_total": 16384,
+        "memory_used": 2062
+      },
+      {
+        "timestamp": "2026-04-22T00:27:31.247486",
+        "temperature": 61,
+        "utilization": 16,
+        "power_draw": 103.41657313952618,
+        "memory_total": 16384,
+        "memory_used": 1391
+      },
+      {
+        "timestamp": "2026-04-22T00:27:36.271909",
+        "temperature": 46,
+        "utilization": 5,
+        "power_draw": 99.73216491445916,
+        "memory_total": 16384,
+        "memory_used": 7225
+      },
+      {
+        "timestamp": "2026-04-22T00:27:41.309353",
+        "temperature": 71,
+        "utilization": 71,
+        "power_draw": 127.4150114752898,
+        "memory_total": 16384,
+        "memory_used": 8113
+      },
+      {
+        "timestamp": "2026-04-22T00:27:46.343853",
+        "temperature": 69,
+        "utilization": 13,
+        "power_draw": 216.59688795333616,
+        "memory_total": 16384,
+        "memory_used": 4905
+      },
+      {
+        "timestamp": "2026-04-22T00:27:51.366304",
+        "temperature": 48,
+        "utilization": 15,
+        "power_draw": 143.84495600793252,
+        "memory_total": 16384,
+        "memory_used": 2894
+      },
+      {
+        "timestamp": "2026-04-22T00:27:56.386560",
+        "temperature": 43,
+        "utilization": 22,
+        "power_draw": 185.50314138550982,
+        "memory_total": 16384,
+        "memory_used": 3918
+      },
+      {
+        "timestamp": "2026-04-22T00:28:01.407634",
+        "temperature": 57,
+        "utilization": 68,
+        "power_draw": 81.5494947939602,
+        "memory_total": 16384,
+        "memory_used": 2719
+      },
+      {
+        "timestamp": "2026-04-22T00:28:06.434404",
+        "temperature": 74,
+        "utilization": 26,
+        "power_draw": 184.706654428654,
+        "memory_total": 16384,
+        "memory_used": 7099
+      },
+      {
+        "timestamp": "2026-04-22T00:28:11.461879",
+        "temperature": 52,
+        "utilization": 36,
+        "power_draw": 220.27661457327997,
+        "memory_total": 16384,
+        "memory_used": 1719
+      },
+      {
+        "timestamp": "2026-04-22T00:28:16.495904",
+        "temperature": 48,
+        "utilization": 97,
+        "power_draw": 58.71801064744639,
+        "memory_total": 16384,
+        "memory_used": 1125
+      },
+      {
+        "timestamp": "2026-04-22T00:28:21.521929",
+        "temperature": 47,
+        "utilization": 39,
+        "power_draw": 154.14319612044744,
+        "memory_total": 16384,
+        "memory_used": 3756
+      },
+      {
+        "timestamp": "2026-04-22T00:28:26.545131",
+        "temperature": 51,
+        "utilization": 19,
+        "power_draw": 80.90163092078484,
+        "memory_total": 16384,
+        "memory_used": 5159
+      }
+    ],
+    "node_localhost_4099": [
+      {
+        "timestamp": "2026-04-22T00:24:45.626688",
+        "temperature": 55,
+        "utilization": 32,
+        "power_draw": 246.18488844243356,
+        "memory_total": 16384,
+        "memory_used": 4815
+      },
+      {
+        "timestamp": "2026-04-22T00:24:50.645904",
+        "temperature": 65,
+        "utilization": 38,
+        "power_draw": 206.59096000293428,
+        "memory_total": 16384,
+        "memory_used": 8158
+      },
+      {
+        "timestamp": "2026-04-22T00:24:55.673153",
+        "temperature": 73,
+        "utilization": 59,
+        "power_draw": 177.61564994127212,
+        "memory_total": 16384,
+        "memory_used": 1157
+      },
+      {
+        "timestamp": "2026-04-22T00:25:00.699752",
+        "temperature": 45,
+        "utilization": 94,
+        "power_draw": 230.39563821029105,
+        "memory_total": 16384,
+        "memory_used": 8033
+      },
+      {
+        "timestamp": "2026-04-22T00:25:05.729121",
+        "temperature": 58,
+        "utilization": 49,
+        "power_draw": 194.2778559694477,
+        "memory_total": 16384,
+        "memory_used": 4190
+      },
+      {
+        "timestamp": "2026-04-22T00:25:10.748842",
+        "temperature": 66,
+        "utilization": 55,
+        "power_draw": 217.8300030263294,
+        "memory_total": 16384,
+        "memory_used": 5440
+      },
+      {
+        "timestamp": "2026-04-22T00:25:15.786926",
+        "temperature": 60,
+        "utilization": 42,
+        "power_draw": 145.65543066059948,
+        "memory_total": 16384,
+        "memory_used": 1672
+      },
+      {
+        "timestamp": "2026-04-22T00:25:20.828808",
+        "temperature": 59,
+        "utilization": 31,
+        "power_draw": 128.78921852022225,
+        "memory_total": 16384,
+        "memory_used": 3256
+      },
+      {
+        "timestamp": "2026-04-22T00:25:25.865932",
+        "temperature": 74,
+        "utilization": 34,
+        "power_draw": 203.42600287240091,
+        "memory_total": 16384,
+        "memory_used": 7417
+      },
+      {
+        "timestamp": "2026-04-22T00:25:30.893295",
+        "temperature": 57,
+        "utilization": 30,
+        "power_draw": 76.64585637056868,
+        "memory_total": 16384,
+        "memory_used": 4255
+      },
+      {
+        "timestamp": "2026-04-22T00:25:35.925012",
+        "temperature": 60,
+        "utilization": 3,
+        "power_draw": 246.89856530075508,
+        "memory_total": 16384,
+        "memory_used": 4787
+      },
+      {
+        "timestamp": "2026-04-22T00:25:40.959264",
+        "temperature": 69,
+        "utilization": 43,
+        "power_draw": 172.49509338658513,
+        "memory_total": 16384,
+        "memory_used": 4442
+      },
+      {
+        "timestamp": "2026-04-22T00:25:45.994042",
+        "temperature": 47,
+        "utilization": 65,
+        "power_draw": 56.608095461400374,
+        "memory_total": 16384,
+        "memory_used": 3168
+      },
+      {
+        "timestamp": "2026-04-22T00:25:51.036210",
+        "temperature": 68,
+        "utilization": 3,
+        "power_draw": 228.46396473459532,
+        "memory_total": 16384,
+        "memory_used": 1029
+      },
+      {
+        "timestamp": "2026-04-22T00:25:56.075202",
+        "temperature": 57,
+        "utilization": 96,
+        "power_draw": 64.27164527678235,
+        "memory_total": 16384,
+        "memory_used": 5474
+      },
+      {
+        "timestamp": "2026-04-22T00:26:01.114218",
+        "temperature": 44,
+        "utilization": 69,
+        "power_draw": 157.44260834035882,
+        "memory_total": 16384,
+        "memory_used": 5967
+      },
+      {
+        "timestamp": "2026-04-22T00:26:06.135897",
+        "temperature": 52,
+        "utilization": 23,
+        "power_draw": 50.228255565842986,
+        "memory_total": 16384,
+        "memory_used": 4950
+      },
+      {
+        "timestamp": "2026-04-22T00:26:11.161786",
+        "temperature": 74,
+        "utilization": 36,
+        "power_draw": 77.04308671522095,
+        "memory_total": 16384,
+        "memory_used": 5330
+      },
+      {
+        "timestamp": "2026-04-22T00:26:16.178674",
+        "temperature": 73,
+        "utilization": 37,
+        "power_draw": 214.75677827429232,
+        "memory_total": 16384,
+        "memory_used": 4922
+      },
+      {
+        "timestamp": "2026-04-22T00:26:21.201255",
+        "temperature": 70,
+        "utilization": 62,
+        "power_draw": 126.37581553114583,
+        "memory_total": 16384,
+        "memory_used": 1245
+      },
+      {
+        "timestamp": "2026-04-22T00:26:26.228885",
+        "temperature": 71,
+        "utilization": 45,
+        "power_draw": 142.5232610210905,
+        "memory_total": 16384,
+        "memory_used": 7441
+      },
+      {
+        "timestamp": "2026-04-22T00:26:31.258557",
+        "temperature": 42,
+        "utilization": 9,
+        "power_draw": 68.24845701430569,
+        "memory_total": 16384,
+        "memory_used": 6251
+      },
+      {
+        "timestamp": "2026-04-22T00:26:36.283030",
+        "temperature": 56,
+        "utilization": 92,
+        "power_draw": 180.24597090322933,
+        "memory_total": 16384,
+        "memory_used": 7693
+      },
+      {
+        "timestamp": "2026-04-22T00:26:41.330814",
+        "temperature": 47,
+        "utilization": 7,
+        "power_draw": 123.24762426918086,
+        "memory_total": 16384,
+        "memory_used": 1954
+      },
+      {
+        "timestamp": "2026-04-22T00:26:46.353116",
+        "temperature": 45,
+        "utilization": 79,
+        "power_draw": 192.99647522575475,
+        "memory_total": 16384,
+        "memory_used": 7486
+      },
+      {
+        "timestamp": "2026-04-22T00:26:51.387118",
+        "temperature": 52,
+        "utilization": 80,
+        "power_draw": 214.65202940269552,
+        "memory_total": 16384,
+        "memory_used": 6327
+      },
+      {
+        "timestamp": "2026-04-22T00:26:56.426678",
+        "temperature": 72,
+        "utilization": 53,
+        "power_draw": 58.277407247164504,
+        "memory_total": 16384,
+        "memory_used": 3466
+      },
+      {
+        "timestamp": "2026-04-22T00:27:01.452671",
+        "temperature": 46,
+        "utilization": 6,
+        "power_draw": 232.69502663002808,
+        "memory_total": 16384,
+        "memory_used": 2825
+      },
+      {
+        "timestamp": "2026-04-22T00:27:06.481547",
+        "temperature": 59,
+        "utilization": 38,
+        "power_draw": 197.4551645047841,
+        "memory_total": 16384,
+        "memory_used": 7798
+      },
+      {
+        "timestamp": "2026-04-22T00:27:11.519151",
+        "temperature": 45,
+        "utilization": 89,
+        "power_draw": 220.49822113418605,
+        "memory_total": 16384,
+        "memory_used": 6249
+      },
+      {
+        "timestamp": "2026-04-22T00:27:16.556319",
+        "temperature": 55,
+        "utilization": 36,
+        "power_draw": 239.54955478315628,
+        "memory_total": 16384,
+        "memory_used": 3382
+      },
+      {
+        "timestamp": "2026-04-22T00:27:21.588198",
+        "temperature": 53,
+        "utilization": 5,
+        "power_draw": 152.80135198705142,
+        "memory_total": 16384,
+        "memory_used": 1858
+      },
+      {
+        "timestamp": "2026-04-22T00:27:26.622981",
+        "temperature": 41,
+        "utilization": 97,
+        "power_draw": 139.9764380121876,
+        "memory_total": 16384,
+        "memory_used": 4004
+      },
+      {
+        "timestamp": "2026-04-22T00:27:31.648280",
+        "temperature": 52,
+        "utilization": 69,
+        "power_draw": 238.97542665287625,
+        "memory_total": 16384,
+        "memory_used": 1213
+      },
+      {
+        "timestamp": "2026-04-22T00:27:36.663447",
+        "temperature": 70,
+        "utilization": 88,
+        "power_draw": 161.0188991974399,
+        "memory_total": 16384,
+        "memory_used": 5040
+      },
+      {
+        "timestamp": "2026-04-22T00:27:41.679825",
+        "temperature": 42,
+        "utilization": 13,
+        "power_draw": 98.55353109434276,
+        "memory_total": 16384,
+        "memory_used": 3775
+      },
+      {
+        "timestamp": "2026-04-22T00:27:46.702249",
+        "temperature": 56,
+        "utilization": 79,
+        "power_draw": 132.40440570390945,
+        "memory_total": 16384,
+        "memory_used": 3365
+      },
+      {
+        "timestamp": "2026-04-22T00:27:51.734375",
+        "temperature": 59,
+        "utilization": 73,
+        "power_draw": 180.27481378429357,
+        "memory_total": 16384,
+        "memory_used": 4998
+      },
+      {
+        "timestamp": "2026-04-22T00:27:56.765655",
+        "temperature": 60,
+        "utilization": 66,
+        "power_draw": 194.3204805205156,
+        "memory_total": 16384,
+        "memory_used": 7521
+      },
+      {
+        "timestamp": "2026-04-22T00:28:01.790026",
+        "temperature": 46,
+        "utilization": 88,
+        "power_draw": 221.01458044233485,
+        "memory_total": 16384,
+        "memory_used": 7340
+      },
+      {
+        "timestamp": "2026-04-22T00:28:06.816262",
+        "temperature": 46,
+        "utilization": 90,
+        "power_draw": 62.17124285097411,
+        "memory_total": 16384,
+        "memory_used": 5266
+      },
+      {
+        "timestamp": "2026-04-22T00:28:11.853671",
+        "temperature": 47,
+        "utilization": 100,
+        "power_draw": 100.36215761949063,
+        "memory_total": 16384,
+        "memory_used": 5233
+      },
+      {
+        "timestamp": "2026-04-22T00:28:16.885700",
+        "temperature": 74,
+        "utilization": 68,
+        "power_draw": 77.62608303028951,
+        "memory_total": 16384,
+        "memory_used": 3825
+      },
+      {
+        "timestamp": "2026-04-22T00:28:21.920249",
+        "temperature": 45,
+        "utilization": 0,
+        "power_draw": 50.6562052616357,
+        "memory_total": 16384,
+        "memory_used": 7884
+      },
+      {
+        "timestamp": "2026-04-22T00:28:26.950866",
+        "temperature": 54,
+        "utilization": 9,
+        "power_draw": 235.94233480495353,
+        "memory_total": 16384,
+        "memory_used": 3359
+      }
+    ],
+    "node_d350f9a7": [
+      {
+        "timestamp": "2026-04-22T00:24:50.578797",
+        "temperature": 42,
+        "utilization": 10,
+        "power_draw": 120.5,
+        "memory_used": 2048
+      }
+    ]
+  }
+}
