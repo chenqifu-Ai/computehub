@@ -5,6 +5,7 @@ Database Base Models and Session Management
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 from backend.core.config import settings
+import asyncio
 
 
 class Base(DeclarativeBase):
@@ -44,3 +45,14 @@ async def get_db() -> AsyncSession:
             raise
         finally:
             await session.close()
+
+
+async def get_db_dependency():
+    """Wrapper for FastAPI dependency injection"""
+    async with async_session_maker() as session:
+        try:
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise

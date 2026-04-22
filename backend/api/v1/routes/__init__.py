@@ -2,8 +2,6 @@
 API Routes
 """
 
-from backend.api.v1.routes.nodes import router as nodes
-from backend.api.v1.routes.tasks import router as tasks
-from backend.api.v1.routes.users import router as users
+from backend.api.v1.routes import nodes, tasks, users
 
 __all__ = ["nodes", "tasks", "users"]

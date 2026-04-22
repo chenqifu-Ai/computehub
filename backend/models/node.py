@@ -3,7 +3,7 @@ Node Model - Represents compute nodes in the network
 """
 
 from sqlalchemy import Column, String, Integer, Float, DateTime, Boolean, Index
-from sqlalchemy.dialects.postgresql import UUID, GEOGRAPHY
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from backend.models.base import Base
 import uuid
@@ -30,8 +30,8 @@ class Node(Base):
     # Location (for geo-based scheduling)
     country = Column(String(100))
     city = Column(String(100))
-    latitude = Column(Float)
-    longitude = Column(Float)
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)
     
     # Heartbeat tracking
     last_heartbeat = Column(DateTime(timezone=True), default=func.now())
@@ -49,7 +49,6 @@ class Node(Base):
     # Indexes for common queries
     __table_args__ = (
         Index('idx_nodes_status_active', 'status', 'is_active'),
-        Index('idx_nodes_location', 'latitude', 'longitude'),
     )
     
     def __repr__(self):
@@ -70,7 +69,7 @@ class Node(Base):
                 "city": self.city,
                 "latitude": self.latitude,
                 "longitude": self.longitude,
-            },
+            } if self.country or self.city else None,
             "metrics": {
                 "gpu_utilization": self.gpu_utilization,
                 "memory_utilization": self.memory_utilization,

@@ -2,10 +2,11 @@
 Node API Schemas (Pydantic models)
 """
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
+import uuid
 
 
 class NodeStatusEnum(str, Enum):
@@ -41,14 +42,14 @@ class NodeResponse(BaseModel):
     id: str
     name: str
     status: str
-    gpu_model: Optional[str]
+    gpu_model: str | None
     gpu_count: int
     cpu_cores: int
     memory_gb: int
-    location: Optional[Dict[str, Any]]
-    metrics: Optional[Dict[str, Any]]
-    last_heartbeat: Optional[datetime]
-    created_at: Optional[datetime]
+    location: dict | None = None
+    metrics: dict | None = None
+    last_heartbeat: datetime | None = None
+    created_at: datetime | None = None
     
     class Config:
         from_attributes = True

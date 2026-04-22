@@ -16,8 +16,8 @@ class Settings(BaseSettings):
     APP_VERSION: str = "2.0.0"
     DEBUG: bool = True
     
-    # Database
-    DATABASE_URL: str = "postgresql://computehub:computehub_secret@localhost:5432/computehub"
+    # Database (SQLite for development, PostgreSQL for production)
+    DATABASE_URL: str = "sqlite+aiosqlite:///./computehub.db"
     
     # Redis
     REDIS_URL: str = "redis://localhost:6379/0"
