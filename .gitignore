@@ -28,10 +28,10 @@ build/
 *.egg-info/
 .eggs/
 
-# Environment
-.env
-.env.local
-.env.*.local
+# Environment (keep example, ignore actual)
+.env.example
+# .env.local
+# .env.*.local
 
 # Logs
 *.log
@@ -44,5 +44,5 @@ Thumbs.db
 # Project specific
 backend/logs/
 node/logs/
-*.db
-*.sqlite3
+# *.db
+# *.sqlite3
