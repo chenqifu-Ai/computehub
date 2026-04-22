@@ -1,76 +1,102 @@
-from typing import Dict, List, Optional
-from datetime import datetime
+import hashlib
 import logging
-import json
-import os
+import time
+from dataclasses import dataclass
+from typing import Dict, List, Tuple, Optional, Any
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("ComputeHub-Settlement")
 
-STORAGE_FILE = "computehub_storage.json"
+@dataclass
+class BillingRecord:
+    task_id: str
+    node_id: str
+    total_energy_units: float
+    duration: float
+    settlement_amount: float
+    verified: bool
 
-class SettlementEngine:
+class PhysicalSettlementEngine:
     """
-    ComputeHub 算力结算引擎 (Lightweight Version):
-    基于物理利用率的真实计费，适配 JSON 存储。
+    Soul-Engine: Truth-Based Settlement
+    Implements billing based on actual physical GPU utilization rather than wall-clock time.
     """
-    def __init__(self, rate_per_gpu_hour: float = 0.03):
-        self.rate_per_gpu_hour = rate_per_gpu_hour
+    def __init__(self, token_price: float = 0.001):
+        self.token_price = token_price # 1 Unit = X Tokens
+        self.billing_history: Dict[str, BillingRecord] = {}
 
-    def _load_storage(self):
-        if os.path.exists(STORAGE_FILE):
-            try:
-                with open(STORAGE_FILE, "r") as f:
-                    return json.load(f)
-            except json.JSONDecodeError:
-                return {"nodes": {}, "heartbeats": {}}
-        return {"nodes": {}, "heartbeats": {}}
-
-    def calculate_cost(self, task_id: str, node_id: str, start_time: datetime, end_time: datetime) -> float:
+    def calculate_physical_cost(self, telemetry_logs: List[dict]) -> float:
         """
-        真实算力度量计费：
-        从 JSON 存储中提取该节点在任务执行期间的所有心跳，计算加权平均利用率。
-        Cost = (Duration in Hours) * (Avg Utilization / 100) * (Rate)
+        The Soul Logic: 
+        Cost = Integral of (GPU_Utilization * Time) dt
+        This eliminates 'Idling Fraud' where nodes claim to work but CPU/GPU is idle.
         """
-        storage = self._load_storage()
-        heartbeats = storage.get("heartbeats", {}).get(node_id, [])
-        
-        if not heartbeats:
-            logger.warning(f"No heartbeat records for task {task_id} on node {node_id}")
+        if not telemetry_logs:
             return 0.0
         
-        # 过滤出时间范围内的心跳记录
-        relevant_utils = []
-        for hb in heartbeats:
-            hb_time = datetime.fromisoformat(hb["timestamp"])
-            if start_time <= hb_time <= end_time:
-                # 获取 metrics 中的 utilization
-                # 处理两种可能的数据结构: 直接在 hb 里或在 hb['metrics'] 里
-                util = hb.get("utilization") or hb.get("metrics", {}).get("utilization")
-                if util is not None:
-                    relevant_utils.append(util)
+        total_weighted_util = 0.0
+        time_interval = 0.0
         
-        if not relevant_utils:
-            logger.warning(f"No heartbeat records within time range for task {task_id}")
-            return 0.0
+        for i in range(len(telemetry_logs) - 1):
+            curr = telemetry_logs[i]
+            nxt = telemetry_logs[i+1]
+            
+            # Use GPU utilization from the telemetry snapshot
+            gpu_util = curr.get("gpu", {}).get("utilization", 0) 
+            if isinstance(gpu_util, dict): # handle multi-gpu
+                gpu_util = sum(v.get("utilization", 0) for v in gpu_util.values()) / max(len(gpu_util), 1)
+            
+            delta_t = float(nxt["timestamp"]) - float(curr["timestamp"])
+            total_weighted_util += (gpu_util / 100.0) * delta_t
+            time_interval += delta_t
+            
+        return total_weighted_util * self.token_price
+
+    def settle_task(self, task_id: str, node_id: str, telemetry_logs: List[dict], is_verified: bool):
+        """
+        Settle the task based on physical evidence.
+        If not verified by TruthVerifier, settlement is blocked.
+        """
+        if not is_verified:
+            logger.error(f"SETTLEMENT BLOCKED: Task {task_id} failed verification. No tokens released.")
+            return None
+
+        cost = self.calculate_physical_cost(telemetry_logs)
+        duration = telemetry_logs[-1]["timestamp"] - telemetry_logs[0]["timestamp"] if telemetry_logs else 0
         
-        # 计算平均利用率
-        avg_util = sum(relevant_utils) / len(relevant_utils)
+        record = BillingRecord(
+            task_id=task_id,
+            node_id=node_id,
+            total_energy_units=cost / self.token_price if self.token_price > 0 else 0,
+            duration=duration,
+            settlement_amount=cost,
+            verified=True
+        )
         
-        # 计算时长 (小时)
-        duration_hours = (end_time - start_time).total_seconds() / 3600
-        
-        # 最终计费: 剔除空转，仅为实际贡献的算力付费
-        final_cost = duration_hours * (avg_util / 100) * self.rate_per_gpu_hour
-        
-        logger.info(f"Settlement for {task_id}: Avg Util {avg_util:.2f}%, Duration {duration_hours:.4f}h, Cost ${final_cost:.6f}")
-        return final_cost
+        self.billing_history[task_id] = record
+        logger.info(f"SETTLED: Task {task_id} on Node {node_id} | Amount: {cost:.4f} Tokens | Duration: {duration:.2f}s")
+        return record
 
 if __name__ == "__main__":
-    # 模拟计费
-    engine = SettlementEngine()
-    # 假设存储中已有数据，此处为简单演示逻辑
-    start = datetime.utcnow()
-    end = datetime.utcnow() # 实际使用时会有时间差
-    cost = engine.calculate_cost("task_test_01", "node_test_01", start, end)
-    print(f"Calculated Cost: ${cost:.6f}")
+    # Simulation of Physical Settlement
+    settler = PhysicalSettlementEngine()
+    
+    # Mock Telemetry Logs (Simulating a task that runs for 10s with varying util)
+    logs = [
+        {"timestamp": 1000, "gpu": {"utilization": 90}},
+        {"timestamp": 1002, "gpu": {"utilization": 95}},
+        {"timestamp": 1004, "gpu": {"utilization": 10}}, # Dropped util
+        {"timestamp": 1006, "gpu": {"utilization": 92}},
+        {"timestamp": 1008, "gpu": {"utilization": 98}},
+        {"timestamp": 1010, "gpu": {"utilization": 95}},
+    ]
+    
+    # Case 1: Verified execution
+    print("\n--- Test 1: Verified Settlement ---")
+    rec = settler.settle_task("task_soul_1", "node_alpha", logs, is_verified=True)
+    print(f"Settlement Result: {rec}")
+    
+    # Case 2: Unverified execution (Fraud)
+    print("\n--- Test 2: Unverified (Fraud) Settlement ---")
+    rec_fraud = settler.settle_task("task_soul_2", "node_beta", logs, is_verified=False)
+    print(f"Settlement Result: {rec_fraud}")

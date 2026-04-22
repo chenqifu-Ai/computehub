@@ -1,0 +1,67 @@
+import requests
+import time
+import json
+from node.telemetry import PhysicalIdentity, PhysicalTelemetry
+
+def run_admission_test():
+    # 使用当前活着的网关地址
+    gateway_url = "http://localhost:8000/api/dispatch"
+    
+    # 1. Collect Physical Truth
+    print("Collecting physical identity...")
+    identity = PhysicalIdentity.get_fingerprint()
+    node_id = "soul_node_01"
+    fingerprint = identity["hash"]
+    hardware_info = identity["details"]
+    
+    # 2. Attempt Registration (Via DISPATCH)
+    print(f"Attempting registration for {node_id}...")
+    reg_payload = {
+        "id": "req_reg_001",
+        "command": f"REGISTER {node_id} {fingerprint} {json.dumps(hardware_info)}"
+    }
+    try:
+        r = requests.post(gateway_url, json=reg_payload)
+        if r.status_code != 200:
+            print(f"❌ Registration failed (HTTP {r.status_code}): {r.text}")
+            return
+        
+        res_json = r.json()
+        if not res_json.get("success"):
+            print(f"❌ Registration rejected: {res_json.get('error')}")
+            return
+            
+        token = res_json["data"]["token"]
+        print(f"✅ Admitted! Session Token: {token}")
+    except Exception as e:
+        print(f"❌ Connection error: {e}")
+        return
+
+    # 3. Test Zero-Trust Heartbeat (Via DISPATCH)
+    print("\nSending verified heartbeat...")
+    telemetry = PhysicalTelemetry()
+    hb_payload = {
+        "id": "req_hb_001",
+        "command": f"HEARTBEAT {node_id} {fingerprint} {token} {json.dumps(telemetry.get_full_snapshot())}"
+    }
+    r = requests.post(gateway_url, json=hb_payload)
+    if r.status_code == 200 and r.json().get("success"):
+        print(f"✅ Heartbeat ACK! Trust Level: {r.json()['data'].get('trust_level', 'N/A')}")
+    else:
+        print(f"❌ Heartbeat rejected: {r.text}")
+
+    # 4. Test Anti-Spoofing (Same fingerprint, different Node ID)
+    print("\nTesting Anti-Spoofing (Same fingerprint, different Node ID)...")
+    spoof_node_id = "evil_node_666"
+    spoof_payload = {
+        "id": "req_spoof_001",
+        "command": f"REGISTER {spoof_node_id} {fingerprint} {json.dumps(hardware_info)}"
+    }
+    r = requests.post(gateway_url, json=spoof_payload)
+    if r.status_code == 200 and not r.json().get("success"):
+        print("✅ Anti-Spoofing worked: Gateway rejected identity theft.")
+    else:
+        print(f"❌ Security Breach: Gateway allowed fingerprint collision! {r.text}")
+
+if __name__ == "__main__":
+    run_admission_test()

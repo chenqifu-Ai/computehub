@@ -1,82 +1,129 @@
 import requests
 import time
-import json
-import platform
 import uuid
-from node.monitor import PhysicalMonitor
+import json
+import logging
+import platform
+import subprocess
+import threading
+from typing import Dict, Any
 
-class ComputeHubNodeClient:
-    """
-    ComputeHub 节点客户端：负责将本地物理指标同步至远程网关
-    """
-    def __init__(self, gateway_url="http://localhost:8000"):
-        self.gateway_url = gateway_url
-        self.monitor = PhysicalMonitor()
-        self.node_id = self.monitor.node_id
-        self.api_key = "alpha-test-key" # 预留 API Key 位置
+# --- 配置 ---
+GATEWAY_URL = "http://localhost:18080/api/dispatch"
+NODE_ID = f"node_{uuid.uuid4().hex[:8]}"
+# 模拟设备指纹：实际应使用硬件 ID (如 MAC 或 CPU ID)
+FINGERPRINT = f"fp_{platform.node()}_{platform.machine()}"
+HEARTBEAT_INTERVAL = 10  # 秒
 
-    def register(self):
-        """
-        执行节点注册，将物理指纹同步到网关
-        """
-        print(f"[*] Registering node {self.node_id} to gateway...")
-        payload = {
-            "node_id": self.node_id,
-            "hardware_fingerprint": self.node_id, # 这里简化使用 node_id 作为指纹
-            "os": platform.system(),
-            "gpu_model": "NVIDIA-Generic", # 实际可从 nvidia-smi 采集
-            "memory_total_mb": 24576 # 模拟 24GB 显存
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+logger = logging.getLogger("ComputeHub-Node")
+
+class HardwareCollector:
+    """硬件指标采集器"""
+    @staticmethod
+    def get_metrics() -> Dict[str, Any]:
+        metrics = {
+            "cpu_usage": 0,
+            "mem_used": 0,
+            "gpu_info": "N/A",
+            "gpu_util": 0,
+            "vram_used": 0,
+            "timestamp": time.time()
         }
         try:
-            resp = requests.post(f"{self.gateway_url}/api/v1/node/register", json=payload, timeout=5)
-            if resp.status_code == 200:
-                print("[+] Registration successful!")
+            # 简单的内存采集 (Linux)
+            with open('/proc/meminfo', 'r') as f:
+                lines = f.readlines()
+                for line in lines:
+                    if "MemTotal" in line: metrics["mem_total"] = int(line.split()[1])
+                    if "MemAvailable" in line: metrics["mem_avail"] = int(line.split()[1])
+            
+            # 尝试采集 NVIDIA GPU 指标
+            gpu_res = subprocess.run(
+                ["nvidia-smi", "--query-gpu=utilization.gpu,memory.used", "--format=csv,noheader,nounits"],
+                capture_output=True, text=True
+            )
+            if gpu_res.returncode == 0:
+                metrics["gpu_info"] = "NVIDIA"
+                parts = gpu_res.stdout.strip().split(',')
+                if len(parts) >= 2:
+                    metrics["gpu_util"] = int(parts[0])
+                    metrics["vram_used"] = int(parts[1])
+        except Exception as e:
+            logger.debug(f"Metrics collection partial failure: {e}")
+            
+        return metrics
+
+class ComputeNode:
+    def __init__(self):
+        self.node_id = NODE_ID
+        self.fingerprint = FINGERPRINT
+        self.token = None
+        self.hardware_info = json.dumps({
+            "os": platform.system(),
+            "node": platform.node(),
+            "arch": platform.machine()
+        })
+        self.is_running = False
+
+    def register(self):
+        """节点注册获取 Token"""
+        logger.info(f"Registering node {self.node_id}...")
+        payload = {
+            "command": "REGISTER",
+            "args": [self.node_id, self.fingerprint, self.hardware_info]
+        }
+        try:
+            response = requests.post(GATEWAY_URL, json=payload, timeout=5).json()
+            if response.get("success"):
+                self.token = response.get("token")
+                logger.info(f"Registration successful. Token: {self.token}")
                 return True
             else:
-                print(f"[-] Registration failed: {resp.text}")
+                logger.error(f"Registration failed: {response.get('error')}")
         except Exception as e:
-            print(f"[-] Connection error during registration: {e}")
+            logger.error(f"Connection error during registration: {e}")
         return False
 
     def send_heartbeat(self):
-        """
-        发送物理心跳包
-        """
-        packet = self.monitor.create_heartbeat_packet()
-        if not packet:
-            print("[-] No metrics available, skipping heartbeat.")
-            return False
+        """发送心跳和硬件指标"""
+        if not self.token:
+            return
             
+        metrics = HardwareCollector.get_metrics()
+        payload = {
+            "command": "HEARTBEAT",
+            "args": [self.node_id, self.fingerprint, self.token, json.dumps(metrics)]
+        }
         try:
-            resp = requests.post(f"{self.gateway_url}/api/v1/node/heartbeat", json=packet, timeout=5)
-            if resp.status_code == 200:
-                print(f"[+] Heartbeat sent: {packet['metrics']['temperature']}C | {packet['metrics']['utilization']}%")
-                return True
+            response = requests.post(GATEWAY_URL, json=payload, timeout=5).json()
+            if response.get("success"):
+                logger.info(f"Heartbeat sent. Trust Level: {response['data'].get('trust_level')}")
             else:
-                print(f"[-] Heartbeat rejected: {resp.text}")
+                logger.warning(f"Heartbeat rejected: {response.get('error')}")
+                # 如果 Token 失效，尝试重新注册
+                if "token" in response.get("error", "").lower():
+                    self.register()
         except Exception as e:
-            print(f"[-] Connection error during heartbeat: {e}")
-        return False
+            logger.error(f"Heartbeat connection error: {e}")
 
-    def run(self, interval=5):
-        """
-        启动节点运行循环
-        """
+    def run(self):
+        """启动节点主循环"""
         if not self.register():
-            print("[!] Critical: Could not register node. Exiting.")
+            logger.error("Could not register node. Exiting.")
             return
 
-        print(f"[*] Node {self.node_id} is now online. Sending heartbeats every {interval}s...")
+        self.is_running = True
+        logger.info("Node is now ONLINE. Starting heartbeat loop...")
+        
         try:
-            while True:
+            while self.is_running:
                 self.send_heartbeat()
-                time.sleep(interval)
+                time.sleep(HEARTBEAT_INTERVAL)
         except KeyboardInterrupt:
-            print("\n[*] Node shutting down.")
+            logger.info("Stopping node...")
+            self.is_running = False
 
 if __name__ == "__main__":
-    # 允许通过命令行修改网关地址
-    import sys
-    url = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:8000"
-    client = ComputeHubNodeClient(gateway_url=url)
-    client.run()
+    node = ComputeNode()
+    node.run()

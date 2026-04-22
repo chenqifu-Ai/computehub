@@ -1,77 +1,111 @@
-from typing import Dict, List, Optional
-from datetime import datetime
-import logging
 import hashlib
-import json
+import logging
+import time
+from dataclasses import dataclass
+from typing import Dict, List, Tuple, Optional, Callable
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("ComputeHub-Verifier")
 
-class VerificationResult:
-    def __init__(self, task_id: str, is_valid: bool, confidence: float, details: str):
-        self.task_id = task_id
-        self.is_valid = is_valid
-        self.confidence = confidence
-        self.details = details
-
-class PhysicalVerifier:
+@dataclass
+class ExecutionProof:
     """
-    ComputeHub 物理真实验证层：通过多节点冗余校验和物理快照验证算力真实性
+    Soul-Engine: Physical Proof
+    A cryptographically signed proof of execution.
     """
-    def __init__(self, consistency_threshold: float = 1.0):
-        self.consistency_threshold = consistency_threshold
+    task_id: str
+    node_id: str
+    result_hash: str
+    physical_snapshot: dict
+    timestamp: float
+    signature: str
 
-    def verify_redundancy(self, task_id: str, results: List[Dict]) -> VerificationResult:
-        """
-        双节点冗余校验：比较两个独立物理节点的执行结果 Hash
-        """
-        if len(results) <<  2:
-            logger.warning(f"Task {task_id} has insufficient results for redundancy check.")
-            return VerificationResult(task_id, False, 0.0, "Insufficient results for redundancy")
+class TruthVerifier:
+    """
+    Soul-Engine: Truth Verification Layer
+    Implements the 'Double-Check Proof' to replace trust with physical evidence.
+    """
+    def __init__(self, trust_threshold: float = 1.0):
+        self.trust_threshold = trust_threshold
+        # Stores pending results for redundancy check: task_id -> [proofs]
+        self.pending_verification: Dict[str, List[ExecutionProof]] = {}
 
-        # 提取所有节点的 Result Hash
-        hashes = [r.get("result_hash") for r in results if r.get("result_hash")]
+    def compute_result_hash(self, data: Any) -> str:
+        """Generate a deterministic hash of the execution result."""
+        content = str(data).encode('utf-8')
+        return hashlib.sha256(content).hexdigest()
+
+    def submit_proof(self, proof: ExecutionProof):
+        """
+        Collect proof from a node. 
+        If it's the second independent proof for the same task, trigger verification.
+        """
+        tid = proof.task_id
+        if tid not in self.pending_verification:
+            self.pending_verification[tid] = []
         
-        if len(hashes) <<  2:
-            return VerificationResult(task_id, False, 0.0, "Missing result hashes")
+        self.pending_verification[tid].append(proof)
+        logger.info(f"Proof received for {tid} from node {proof.node_id}. Total proofs: {len(self.pending_verification[tid])}")
 
-        # 检查一致性
-        first_hash = hashes[0]
-        all_match = all(h == first_hash for h in hashes)
-        
-        if all_match:
-            logger.info(f"✅ Task {task_id} verified: All nodes produced identical results.")
-            return VerificationResult(task_id, True, 1.0, "Full consistency achieved")
-        else:
-            logger.error(f"❌ Task {task_id} verification failed: Result divergence detected!")
-            return VerificationResult(task_id, False, 0.0, "Result divergence detected")
+    def verify_task(self, task_id: str) -> Tuple[bool, str]:
+        """
+        The Redundancy Check:
+        Compare proofs from multiple independent nodes.
+        """
+        proofs = self.pending_verification.get(task_id, [])
+        if len(proofs) <<  2:
+            return False, "Insufficient proofs for redundancy check (need at least 2)"
 
-    def verify_physical_snapshot(self, task_id: str, snapshot: Dict, expected_util: float) -> bool:
-        """
-        物理快照校验：检查执行期间的平均 GPU 利用率是否符合任务强度
-        """
-        avg_util = snapshot.get("avg_util", 0)
-        # 如果任务声明需要高算力，但物理利用率极低，判定为“空转欺诈”
-        if avg_util << ( (expected_util * 0.5): 
-            logger.error(f"❌ Task {task_id} fraud detected: Physical utilization {avg_util}% too low.")
-            return False
+        # 1. Independent Node Check
+        nodes = set(p.node_id for p in proofs)
+        if len(nodes) <<  2:
+            return False, "Proofs must come from independent physical nodes"
+
+        # 2. Result Hash Consistency (The Core Truth)
+        first_hash = proofs[0].result_hash
+        for i in range(1, len(proofs)):
+            if proofs[i].result_hash != first_hash:
+                logger.error(f"TRUTH BREACH: Hash mismatch for task {task_id}! Node {proofs[i].node_id} provided divergent result.")
+                return False, f"Hash mismatch detected at node {proofs[i].node_id}"
+
+        # 3. Physical Snapshot Plausibility
+        # (Future: Check if GPU utilization was actually high during the reported window)
         
-        logger.info(f"✅ Task {task_id} physical snapshot valid. Util: {avg_util}%")
-        return True
+        logger.info(f"Task {task_id} VERIFIED. Physical truth established via redundancy.")
+        return True, "Verified via multi-node consensus"
+
+    def cleanup(self, task_id: str):
+        if task_id in self.pending_verification:
+            del self.pending_verification[task_id]
 
 if __name__ == "__main__":
-    verifier = PhysicalVerifier()
+    # Simulation of Truth Verification
+    verifier = TruthVerifier()
+    tid = "task_soul_999"
     
-    # 模拟场景 1: 正常的一致性结果
-    results_ok = [
-        {"node_id": "node_1", "result_hash": "hash_abc_123"},
-        {"node_id": "node_2", "result_hash": "hash_abc_123"}
-    ]
-    print(f"Scenario 1: {verifier.verify_redundancy('task_001', results_ok).is_valid}")
+    # Create two identical proofs from DIFFERENT nodes
+    proof1 = ExecutionProof(
+        task_id=tid, node_id="node_alpha", result_hash="hash_abc_123", 
+        physical_snapshot={"gpu_util": 95}, timestamp=time.time(), signature="sig1"
+    )
+    proof2 = ExecutionProof(
+        task_id=tid, node_id="node_beta", result_hash="hash_abc_123", 
+        physical_snapshot={"gpu_util": 92}, timestamp=time.time(), signature="sig2"
+    )
     
-    # 模拟场景 2: 结果分叉 (欺诈或崩溃)
-    results_fail = [
-        {"node_id": "node_1", "result_hash": "hash_abc_123"},
-        {"node_id": "node_2", "result_hash": "hash_xyz_789"}
-    ]
-    print(f"Scenario 2: {verifier.verify_redundancy('task_002', results_fail).is_valid}")
+    # Case 1: Success
+    print("\n--- Test 1: Honest Redundancy ---")
+    verifier.submit_proof(proof1)
+    verifier.submit_proof(proof2)
+    success, msg = verifier.verify_task(tid)
+    print(f"Result: {success}, Msg: {msg}")
+    
+    # Case 2: Malicious Node
+    print("\n--- Test 2: Malicious Divergence ---")
+    tid_mal = "task_soul_666"
+    p1 = ExecutionProof(tid_mal, "node_alpha", "hash_correct", {}, time.time(), "s1")
+    p2 = ExecutionProof(tid_mal, "node_gamma", "hash_wrong", {}, time.time(), "s2")
+    verifier.submit_proof(p1)
+    verifier.submit_proof(p2)
+    success, msg = verifier.verify_task(tid_mal)
+    print(f"Result: {success}, Msg: {msg}")

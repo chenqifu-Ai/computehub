@@ -2,62 +2,74 @@ syntax = "proto3";
 
 package computehub;
 
-// 算力节点状态
-message NodeStatus {
-    enum State {
-        OFFLINE = 0;
-        ONLINE = 1;
-        BUSY = 2;
-        MAINTENANCE = 3;
-    }
-    string node_id = 1;
-    State state = 2;
-    float cpu_utilization = 3;
-    float gpu_utilization = 4;
-    float memory_free_mb = 5;
-    float temperature = 6;
-    string hardware_fingerprint = 7;
-}
+option go_package = "github.com/computehub/proto";
 
-// 心跳数据包 (流式推送)
-message HeartbeatRequest {
-    string node_id = 1;
-    float utilization = 2;
-    float temperature = 3;
-    float memory_used_mb = 4;
-    string status = 5;
-}
-
-message HeartbeatResponse {
-    bool acknowledged = 1;
-    string server_time = 2;
-}
-
-// 任务提交请求
-message TaskRequest {
-    string task_name = 1;
-    float memory_mb = 2;
-    int32 duration_sec = 3;
-    float expected_util = 4;
-    int32 priority = 5;
-}
-
-message TaskResponse {
-    string task_id = 1;
-    string matched_node = 2;
-    string status = 3;
-    string message = 4;
-}
-
-// ComputeHub 高速通信服务
+// The Soul-Engine Nerve Center: High-speed binary communication
 service ComputeHubService {
-    // 节点注册
-    rpc RegisterNode(NodeStatus) returns (HeartbeatResponse);
+    // Bi-directional stream for real-time telemetry and command dispatch
+    rpc NerveStream (stream NervePacket) returns (stream NervePacket);
     
-    // 物理心跳流 (Bidirectional Stream)
-    // 节点实时推送状态，网关实时下发指令
-    rpc StreamHeartbeat(stream HeartbeatRequest) returns (stream HeartbeatResponse);
+    // One-shot admission for new nodes
+    rpc AdmitNode (AdmitRequest) returns (AdmitResponse);
+}
+
+message NervePacket {
+    string packet_id = 1;
+    string node_id = 2;
+    string fingerprint = 3;
+    string token = 4;
     
-    // 任务提交 (Unary)
-    rpc SubmitTask(TaskRequest) returns (TaskResponse);
+    oneof payload {
+        TelemetrySnapshot telemetry = 5;
+        TaskCommand command = 6;
+        ExecutionProof proof = 7;
+        SystemEvent event = 8;
+    }
+}
+
+message TelemetrySnapshot {
+    float cpu_util = 1;
+    float ram_used = 2;
+    map<<stringstring, GpuMetric> gpus = 3;
+    float network_latency = 4;
+    int64 timestamp = 5;
+}
+
+message GpuMetric {
+    int32 temp = 1;
+    int32 utilization = 2;
+    int32 mem_used = 3;
+    float power_draw = 4;
+}
+
+message TaskCommand {
+    string task_id = 1;
+    string command_type = 2; // e.g., "START", "STOP", "PAUSE"
+    string payload = 3;      // JSON config or binary data
+    string expected_hash = 4;
+}
+
+message ExecutionProof {
+    string task_id = 1;
+    string result_hash = 2;
+    bytes signature = 3;
+    bytes physical_evidence = 4; // Binary snapshot of GPU state
+}
+
+message SystemEvent {
+    string event_type = 1; // e.g., "CIRCUIT_BREAK", "SINKING"
+    string message = 2;
+    int32 severity = 3;
+}
+
+message AdmitRequest {
+    string node_id = 1;
+    string fingerprint = 2;
+    string hardware_info_json = 3;
+}
+
+message AdmitResponse {
+    bool success = 1;
+    string token = 2;
+    string error_msg = 3;
 }

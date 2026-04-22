@@ -1,0 +1,97 @@
+from fastapi import FastAPI, Request, HTTPException
+from typing import Dict
+import uvicorn
+import uuid
+import time
+import logging
+import json
+import sys
+import os
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("ComputeHub-Final")
+
+app = FastAPI()
+
+class NodeProfile:
+    def __init__(self, node_id, fingerprint, hardware_info, token):
+        self.node_id = node_id
+        self.fingerprint = fingerprint
+        self.hardware_info = hardware_info
+        self.token = token
+        self.status = "ONLINE"
+        self.trust_level = "PROBATION"
+
+gene_store: Dict[str, NodeProfile] = {}
+id_map: Dict[str, str] = {}
+
+@app.get("/api/status")
+async def status():
+    return {"status": "ALIVE", "nodes_count": len(gene_store)}
+
+@app.post("/api/dispatch")
+async def dispatch(request: Request):
+    try:
+        body = await request.json()
+    except Exception:
+        return {"success": False, "error": "Invalid JSON body"}
+    
+    command_field = body.get("command")
+    args_field = body.get("args", [])
+    
+    if isinstance(command_field, str):
+        cmd = command_field.upper()
+        args = args_field if isinstance(args_field, list) else []
+    else:
+        return {"success": False, "error": "Invalid command format"}
+    
+    # REGISTER
+    if cmd == "REGISTER":
+        if len(args) < 3:
+            return {"success": False, "error": "Args: REGISTER <id> <fp> <hw_json>"}
+        
+        node_id = str(args[0])
+        fingerprint = str(args[1])
+        hw_json = str(args[2])
+        
+        if fingerprint in gene_store:
+            existing = gene_store[fingerprint]
+            if existing.node_id != node_id:
+                return {"success": False, "error": "Fingerprint collision"}
+        
+        token = str(uuid.uuid4())
+        gene_store[fingerprint] = NodeProfile(node_id, fingerprint, hw_json, token)
+        id_map[node_id] = fingerprint
+        return {"success": True, "token": token}
+    
+    # HEARTBEAT
+    elif cmd == "HEARTBEAT":
+        if len(args) < 4:
+            return {"success": False, "error": "Args: HEARTBEAT <id> <fp> <token> <metrics>"}
+        
+        node_id = str(args[0])
+        fingerprint = str(args[1])
+        token = str(args[2])
+        metrics = str(args[3])
+        
+        if id_map.get(node_id) != fingerprint:
+            return {"success": False, "error": "Identity mismatch"}
+        
+        profile = gene_store.get(fingerprint)
+        if not profile or profile.token != token:
+            return {"success": False, "error": "Invalid token"}
+        
+        return {"success": True, "data": {"trust_level": profile.trust_level}}
+    
+    # SUBMIT
+    elif cmd == "SUBMIT":
+        return {"success": True, "data": {"job_id": f"job_{int(time.time())}"}}
+    
+    return {"success": False, "error": f"Unknown command: {cmd}"}
+
+@app.get("/api/health")
+async def health():
+    return {"status": "Healthy"}
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=18080)
