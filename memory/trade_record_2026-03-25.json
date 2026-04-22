@@ -1,0 +1,12 @@
+{
+  "date": "2026-03-25",
+  "stock": "华联股份",
+  "code": "000882",
+  "action": "卖出",
+  "quantity": 4100,
+  "price": 1.67,
+  "cost_price": 1.779,
+  "profit_loss": -446.9,
+  "remaining_shares": 13500,
+  "timestamp": "2026-03-25T09:43:00"
+}

@@ -1,0 +1,42 @@
+{
+  "version": "1.0.0",
+  "memorySystem": {
+    "enabled": true,
+    "autoCommit": true,
+    "commitMessageTemplate": "记忆更新: {timestamp} - {summary}",
+    "searchEnabled": true,
+    "indexingEnabled": true,
+    "backupEnabled": true
+  },
+  "directories": {
+    "memory": "./memory",
+    "daily": "./memory/daily",
+    "topics": "./memory/topics",
+    "searchIndex": "./memory/search-index"
+  },
+  "git": {
+    "authorName": "小智AI助手",
+    "authorEmail": "ai-assistant@openclaw.ai",
+    "commitStrategy": "atomic",
+    "pushToRemote": false,
+    "remoteUrl": "",
+    "branch": "main"
+  },
+  "search": {
+    "maxResults": 50,
+    "timeRange": "all",
+    "fuzzyMatching": true,
+    "highlightMatches": true
+  },
+  "indexing": {
+    "autoIndex": true,
+    "indexInterval": 3600,
+    "fileTypes": [".md", ".txt", ".json", ".yaml", ".yml"]
+  },
+  "backup": {
+    "autoBackup": true,
+    "backupInterval": 86400,
+    "backupLocation": "./backups/memory",
+    "keepBackups": 30
+  }
+}
