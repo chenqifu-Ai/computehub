@@ -1,0 +1,14 @@
+{
+  "python_1gpu": {
+    "name": "python_1gpu",
+    "description": "Pattern for python",
+    "context": {
+      "framework": "python",
+      "gpu_required": 1
+    },
+    "success_rate": 0.0,
+    "usage_count": 1,
+    "created_at": 1776945111.4016554,
+    "last_used": 1776945111.4016554
+  }
+}
