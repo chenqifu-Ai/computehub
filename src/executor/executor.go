@@ -568,31 +568,88 @@ func (m *ResourceMonitor) GetGPUInfo() (int, uint64) {
 }
 
 // SystemInfo returns a full system resource snapshot.
+// Uses internal non-locking reads to avoid deadlock with caller-held lock.
 func (m *ResourceMonitor) SystemInfo() map[string]any {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	gpuCount, gpuMem := m.GetGPUInfo()
-	totalMem := uint64(0)
-	if data, err := os.ReadFile("/proc/meminfo"); err == nil {
-		for _, line := range strings.Split(string(data), "\n") {
-			if strings.HasPrefix(line, "MemTotal:") {
-				var kb uint64
-				fmt.Sscanf(line, "MemTotal: %d kB", &kb)
-				totalMem = kb / 1024
-			}
-		}
-	}
+	gpuCount, gpuMem := m.getGPUInfoLocked()
+	totalMem := m.getMemTotalLocked()
+	availableMem := m.getMemAvailableLocked()
+	cpuCount := m.getCPUCountLocked()
 
 	return map[string]any{
-		"cpu_cores":       m.GetCPUCount(),
-		"mem_total_mb":    totalMem,
-		"mem_available_mb": m.GetMemoryMB(),
-		"gpu_count":       gpuCount,
-		"gpu_mem_used_mb": gpuMem,
-		"os":              runtime.GOOS,
-		"arch":            runtime.GOARCH,
+		"cpu_cores":        cpuCount,
+		"mem_total_mb":     totalMem,
+		"mem_available_mb": availableMem,
+		"gpu_count":        gpuCount,
+		"gpu_mem_used_mb":  gpuMem,
+		"os":               runtime.GOOS,
+		"arch":             runtime.GOARCH,
 	}
+}
+
+// ─── 内部无锁方法（供 SystemInfo 调用避免死锁） ───
+
+func (m *ResourceMonitor) getMemTotalLocked() uint64 {
+	data, err := os.ReadFile("/proc/meminfo")
+	if err != nil {
+		return 0
+	}
+	for _, line := range strings.Split(string(data), "\n") {
+		if strings.HasPrefix(line, "MemTotal:") {
+			var kb uint64
+			fmt.Sscanf(line, "MemTotal: %d kB", &kb)
+			return kb / 1024
+		}
+	}
+	return 0
+}
+
+func (m *ResourceMonitor) getMemAvailableLocked() uint64 {
+	data, err := os.ReadFile("/proc/meminfo")
+	if err != nil {
+		return 0
+	}
+	for _, line := range strings.Split(string(data), "\n") {
+		if strings.HasPrefix(line, "MemAvailable:") {
+			var kb uint64
+			fmt.Sscanf(line, "MemAvailable: %d kB", &kb)
+			return kb / 1024
+		}
+	}
+	return 0
+}
+
+func (m *ResourceMonitor) getCPUCountLocked() int {
+	data, err := os.ReadFile("/proc/cpuinfo")
+	if err != nil {
+		return 1
+	}
+	count := 0
+	for _, line := range strings.Split(string(data), "\n") {
+		if strings.HasPrefix(line, "processor") {
+			count++
+		}
+	}
+	return count
+}
+
+func (m *ResourceMonitor) getGPUInfoLocked() (int, uint64) {
+	if data, err := exec.Command("nvidia-smi", "--query-gpu=index,memory.used", "--format=csv,noheader").Output(); err == nil {
+		lines := strings.Split(strings.TrimSpace(string(data)), "\n")
+		gpuCount := len(lines)
+		totalMem := uint64(0)
+		for _, line := range lines {
+			var idx, memUsed uint64
+			fmt.Sscanf(line, "%d, %d MiB", &idx, &memUsed)
+			totalMem += memUsed
+		}
+		if gpuCount > 0 {
+			return gpuCount, totalMem
+		}
+	}
+	return 0, 0
 }
 
 // ─── 生命周期管理 ───

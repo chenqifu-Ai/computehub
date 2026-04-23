@@ -43,7 +43,7 @@ run-tui:
 
 test:
 	@echo "🧪 Running unit tests..."
-	CGO_ENABLED=$(CGO_ENABLED) $(GO) test -v -count=1 ./src/kernel/... ./src/pure/... ./src/executor/... ./src/gene/... ./src/gateway/...
+	CGO_ENABLED=$(CGO_ENABLED) $(GO) test -v -count=1 ./src/kernel/... ./src/pure/... ./src/executor/... ./src/gene/... ./src/gateway/... ./src/node/... ./src/scheduler/...
 
 test-full: build test
 	@echo "🔗 Running full integration tests..."
