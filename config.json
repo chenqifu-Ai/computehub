@@ -27,6 +27,14 @@
     "path": "./genes.json",
     "evolution_threshold": 0.8
   },
+  "model": {
+    "provider": "qwen3.6-35b",
+    "base_url": "http://58.23.129.98:8000/v1",
+    "api_key": "sk-78sadn09bjawde123e",
+    "max_tokens": 2000,
+    "temperature": 0.7,
+    "note": "深度推理模型，需设置较大 max_tokens"
+  },
   "node": {
     "heartbeat_interval_seconds": 10,
     "failure_threshold_percent": 30,

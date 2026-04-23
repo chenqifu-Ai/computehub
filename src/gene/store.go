@@ -115,8 +115,8 @@ func (s *Store) Evolve(pattern, correctPath, failureReason, source string) {
 // Recall looks up a gene for the given pattern.
 // Returns the correct path and true if found with sufficient confidence.
 func (s *Store) Recall(pattern string) (string, bool) {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	gene, exists := s.Genes[pattern]
 	if !exists {
@@ -128,12 +128,9 @@ func (s *Store) Recall(pattern string) (string, bool) {
 	}
 
 	// Update usage stats
-	s.mu.RUnlock()
-	s.mu.Lock()
 	gene.UsageCount++
 	gene.LastUsed = time.Now()
 	s.Genes[pattern] = gene
-	s.mu.Unlock()
 
 	return gene.CorrectPath, true
 }
