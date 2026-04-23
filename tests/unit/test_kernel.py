@@ -2,6 +2,7 @@
 import sys
 sys.path.insert(0, '../')
 from src.kernel.kernel import DeterministicKernel, TaskUnit, TaskPriority
+from src.kernel.load_balancer import LoadBalancer, NodeStatus, NodeMetric
 
 def test_kernel_submit():
     kernel = DeterministicKernel()
@@ -14,7 +15,6 @@ def test_kernel_submit():
     print("✅ test_kernel_submit")
 
 def test_load_balancer():
-    from src.kernel.load_balancer import LoadBalancer, NodeStatus, NodeMetric
     lb = LoadBalancer()
     lb.register_node(NodeMetric(id="n1", name="gpu-1", status=NodeStatus.ONLINE, gpu_count=2))
     lb.register_node(NodeMetric(id="n2", name="gpu-2", status=NodeStatus.ONLINE, gpu_count=4))
