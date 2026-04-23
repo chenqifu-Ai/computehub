@@ -27,15 +27,12 @@ echo "1. 📦 开始系统备份..." | tee -a "$LOG_FILE"
 
 # 备份核心目录
 echo "2. 📁 备份核心配置文件..." | tee -a "$LOG_FILE"
-tar -czf "$BACKUP_FILE" \
-    /root/.openclaw/workspace/ \
-    /root/.openclaw/extensions/ \
-    /root/.openclaw/config/ \
-    /root/.openclaw/agents/ \
+cd /root/.openclaw && tar -czf "$BACKUP_FILE" \
     --exclude="*/node_modules" \
     --exclude="*/.git" \
     --exclude="*/tmp" \
-    --exclude="*/logs" 2>>"$LOG_FILE"
+    --exclude="*/logs" \
+    workspace/ extensions/ config/ agents/ 2>>"$LOG_FILE"
 
 # 检查备份结果
 if [ $? -eq 0 ]; then
