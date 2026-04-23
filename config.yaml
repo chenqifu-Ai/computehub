@@ -1,0 +1,39 @@
+# ComputeHub v2.0 - Configuration
+# Inherited from OpenPC System architecture pattern
+
+database:
+  url: "sqlite:///./computehub.db"
+  echo: false
+  pool_size: 10
+
+gateway:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 4
+  max_connections: 100
+  docs_url: "/docs"
+  redoc_url: "/redoc"
+
+auth:
+  secret_key: "change-me-in-production"
+  algorithm: "HS256"
+  access_token_expire_minutes: 10080
+
+kernel:
+  queue_size: 1000
+  max_states: 10000
+  max_retries: 3
+
+executor:
+  sandbox_path: "/tmp/computehub-sandbox"
+  default_framework: "pytorch"
+  default_image: "python:3.11-slim"
+
+learning:
+  store_path: "./genes.json"
+  recall_threshold: 0.8
+
+logging:
+  level: "INFO"
+  format: "[%Y-%m-%d %H:%M:%S] %(message)s"
+  file: "./computehub.log"
