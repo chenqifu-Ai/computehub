@@ -18,6 +18,7 @@ from src.models.user import User
 from src.models.node import Node
 from src.models.task import Task
 from src.api.v1.router import api_router
+from src.kernel.scheduler import TaskScheduler
 
 # Setup logging (OpenPC System pattern)
 logger = get_logger("computehub", config.data.get("logging", {}).get("level", "INFO"))
@@ -74,6 +75,31 @@ def root():
         "health": "/api/health",
         "status": "/api/status",
     }
+
+# Global scheduler instance
+scheduler: TaskScheduler = None
+
+
+@app.on_event("startup")
+async def startup_event():
+    """Start the scheduler on application startup."""
+    global scheduler
+    scheduler = TaskScheduler(
+        strategy=config.data.get("load_balancer", {}).get("strategy", "least_utilization"),
+        queue_size=config.data.get("kernel", {}).get("queue_size", 1000),
+    )
+    scheduler.start()
+    logger.info("✅ Scheduler initialized and started")
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Stop the scheduler on application shutdown."""
+    global scheduler
+    if scheduler:
+        scheduler.stop()
+        logger.info("⏹️  Scheduler stopped")
+
 
 if __name__ == "__main__":
     import uvicorn
