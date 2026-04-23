@@ -229,9 +229,9 @@ func (g *Gateway) handleDispatch(w http.ResponseWriter, r *http.Request) {
 
 		// Stage 5: Verify
 		validator := executor.DefaultValidator(g.Executor.SandboxPath)
-		allPassed := validator(res)
+		v := validator(res)
 
-		if !allPassed {
+		if !v.Passed {
 			// Evolution: learn from failure
 			g.GeneStore.Evolve(
 				fmt.Sprintf("exec_fail_%s", purifiedTask.ID),
