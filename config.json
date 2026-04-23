@@ -1,0 +1,48 @@
+{
+  "gateway": {
+    "port": 8282,
+    "max_connections": 200,
+    "cors_enabled": true,
+    "rate_limit": 1000,
+    "endpoints": {
+      "health": "/api/health",
+      "status": "/api/status",
+      "dispatch": "/api/dispatch",
+      "jobs": "/api/jobs",
+      "nodes": "/api/nodes"
+    }
+  },
+  "kernel": {
+    "buffer_size": 500,
+    "max_states": 5000,
+    "heartbeat_interval_ms": 50,
+    "max_task_timeout_seconds": 3600
+  },
+  "executor": {
+    "sandbox_path": "/tmp/computehub-sandbox",
+    "max_concurrent_tasks": 10,
+    "verify_on_complete": true
+  },
+  "gene_store": {
+    "path": "./genes.json",
+    "evolution_threshold": 0.8
+  },
+  "node": {
+    "heartbeat_interval_seconds": 10,
+    "failure_threshold_percent": 30,
+    "discovery_timeout_seconds": 5
+  },
+  "blockchain": {
+    "token_symbol": "CHB",
+    "pricing": {
+      "gpu_per_hour_usd": 0.05,
+      "cpu_per_hour_usd": 0.01,
+      "storage_per_gb_month_usd": 0.10
+    }
+  },
+  "logging": {
+    "level": "info",
+    "timestamp": true,
+    "file": "./computehub.log"
+  }
+}
