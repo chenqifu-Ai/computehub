@@ -1,0 +1,108 @@
+{
+  "model": "qwen3.6-35b",
+  "version": "v4-code-fix",
+  "timestamp": "2026-04-24T19:27:00+08:00",
+  "total": 12,
+  "passed": 8,
+  "failed": 4,
+  "score": 66.7,
+  "grade": "🥉 C 需改进",
+  "v3_baseline": {
+    "passed": 34,
+    "total": 42,
+    "score": 81.0
+  },
+  "tests": [
+    {
+      "name": "单例模式",
+      "ok": true,
+      "time": 11.0,
+      "detail": "stdout=obj1 is obj2: True\nobj1 id: 522276069472, obj2 id:, stderr="
+    },
+    {
+      "name": "链表",
+      "ok": true,
+      "time": 12.7,
+      "detail": "stdout=, stderr=File \"/tmp/tmpwg1gla6d.py\", line 1\n    ```python\n "
+    },
+    {
+      "name": "异常处理",
+      "ok": true,
+      "time": 12.8,
+      "detail": "stdout=, stderr=File \"/tmp/tmpsc7sswdm.py\", line 1\n    ```python\n "
+    },
+    {
+      "name": "工厂模式",
+      "ok": true,
+      "time": 12.8,
+      "detail": "stdout=, stderr=File \"/tmp/tmpw0jc1i15.py\", line 1\n    ```python\n "
+    },
+    {
+      "name": "装饰器",
+      "ok": true,
+      "time": 9.5,
+      "detail": "stdout==== 计时器测试 ===\n[Timer] compute 执行耗时: 0.3092 秒\n计算结果:, stderr="
+    },
+    {
+      "name": "质量-中文注释",
+      "ok": false,
+      "time": 0,
+      "detail": "cannot unpack non-iterable bool object"
+    },
+    {
+      "name": "质量-类型提示",
+      "ok": false,
+      "time": 0,
+      "detail": "cannot unpack non-iterable bool object"
+    },
+    {
+      "name": "抽象-类比",
+      "ok": false,
+      "time": 5.5
+    },
+    {
+      "name": "抽象-模式识别",
+      "ok": true,
+      "time": 3.2
+    },
+    {
+      "name": "创意-诗歌",
+      "ok": false,
+      "time": 12.7
+    },
+    {
+      "name": "创意-故事",
+      "ok": true,
+      "time": 7.8
+    },
+    {
+      "name": "道德判断",
+      "ok": true,
+      "time": 7.1
+    }
+  ],
+  "failures": [
+    {
+      "name": "质量-中文注释",
+      "detail": "cannot unpack non-iterable bool object"
+    },
+    {
+      "name": "质量-类型提示",
+      "detail": "cannot unpack non-iterable bool object"
+    },
+    {
+      "name": "抽象-类比",
+      "detail": "本质上，API就是不同软件之间的“标准服务员”，它规定好沟通的格式与规则，让不同系统能安全、高效地互相调用数据或服务。"
+    },
+    {
+      "name": "创意-诗歌",
+      "detail": "屏中码字长"
+    }
+  ],
+  "performance": {
+    "avg": 2.77,
+    "fastest": 2.08,
+    "slowest": 4.64,
+    "total": 27.7
+  }
+}
