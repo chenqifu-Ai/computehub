@@ -15,7 +15,7 @@ from pathlib import Path
 SMTP_SERVER = "smtp.qq.com"
 SMTP_PORT = 465
 EMAIL_ACCOUNT = "19525456@qq.com"
-AUTH_CODE = "ormxhluuafwnbgei"
+AUTH_CODE = "bzgwylbbrocdbiie"
 TO_ADDR = "19525456@qq.com"
 
 def check_system_health():

@@ -87,6 +87,7 @@ python scripts/git-memory-search.py history "MEMORY.md"
 - **Qwen 3.6 35B (推理模型)**: http://58.23.129.98:8000/v1 (Key: sk-78sadn09bjawde123e) ⭐ 默认
 - **Ollama 云端**: https://ollama.com (Key: 8e6253b418564cd4b4a3428f927ee6f0.3g95X2YSoELm9knHxHNci1ii)
 - **OpenClaw 本地**: ollama/qwen3.6-35b (备选)
+- **NewAPI (t.zhangtuokeji.top)**: https://ai.zhangtuokeji.top:9090 (Key: sk-eVmVrxyJYmKAv7YzvJnauPBCl457mqvbSzUENMo70lBRIxH3)
 
 ### 设备标识
 

@@ -22,6 +22,7 @@
 - **API Key**: sk-78sadn09bjawde123e
 - **状态**: ✅ 已配置
 - **注意**: 推理模型，max_tokens 需设 ≥2000
+- **⚠️ API 格式异常**: 输出在 reasoning 字段，content 为 null → 使用适配层 `ai_agent/config/qwen36_adapter.py`，详情见 `memory/topics/技术经验/qwen36-35b-api-format-fix.md`
 
 ## 服务器信息
 - **本机IP**: 192.168.1.17
@@ -56,6 +57,12 @@
 - **教训**: 安全第一原则，严格权限边界，删除操作双重确认
 
 **完整错误记录见**: `memory/topics/错误记录/常见错误.md`
+
+## qwen3.6-35b API 格式异常 (2026-04-24)
+- 该模型 API 所有输出在 `reasoning` 字段，`content` 始终为 null
+- 已创建统一适配层: `ai_agent/config/qwen36_adapter.py`
+- 调用方式: `from ai_agent.config.qwen36_adapter import ask, ask_detailed, ask_code`
+- 详情见: `memory/topics/技术经验/qwen36-35b-api-format-fix.md`
 
 ## 当前持仓 (2026-04-23 更新)
 | 股票 | 代码 | 数量 | 成本价 | 止损位 | 当前价 | 浮动盈亏 |

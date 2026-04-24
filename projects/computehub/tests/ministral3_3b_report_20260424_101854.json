@@ -1,0 +1,50 @@
+{
+  "model": "ministral-3:3B",
+  "server": "192.168.2.165:11434",
+  "timestamp": "2026-04-24T10:18:54.386575",
+  "tests": [
+    {
+      "name": "基础问候",
+      "response": "ERROR: timed out",
+      "elapsed": 0,
+      "timestamp": "2026-04-24T10:16:24.214193"
+    },
+    {
+      "name": "基础数学",
+      "response": "ERROR: timed out",
+      "elapsed": 0,
+      "timestamp": "2026-04-24T10:16:54.232380"
+    },
+    {
+      "name": "中文理解",
+      "response": "ERROR: timed out",
+      "elapsed": 0,
+      "timestamp": "2026-04-24T10:17:24.278644"
+    },
+    {
+      "name": "简单代码",
+      "response": "ERROR: timed out",
+      "elapsed": 0,
+      "timestamp": "2026-04-24T10:17:54.315811"
+    },
+    {
+      "name": "逻辑推理",
+      "response": "ERROR: timed out",
+      "elapsed": 0,
+      "timestamp": "2026-04-24T10:18:24.342411"
+    },
+    {
+      "name": "上下文理解",
+      "response": "ERROR: timed out",
+      "elapsed": 0,
+      "timestamp": "2026-04-24T10:18:54.386308"
+    }
+  ],
+  "summary": {
+    "total_tests": 6,
+    "total_time": 0,
+    "avg_time": 0.0,
+    "best_test": "基础问候",
+    "worst_test": "基础问候"
+  }
+}

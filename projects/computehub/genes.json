@@ -1,0 +1,11 @@
+{
+  "genes": {
+    "echo 'Error' \u003e /tmp/opc_fail.txt": {
+      "pattern": "echo 'Error' \u003e /tmp/opc_fail.txt",
+      "correct_path": "echo 'Success' \u003e /tmp/opc_fail.txt",
+      "failure_reason": "Content verification failed",
+      "last_verified": "2026-04-20T22:23:05.871671431Z",
+      "confidence": 1
+    }
+  }
+}

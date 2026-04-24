@@ -1,0 +1,16 @@
+{
+  "gateway": {
+    "port": 8282,
+    "max_connections": 100
+  },
+  "kernel": {
+    "buffer_size": 100,
+    "max_states": 1000
+  },
+  "executor": {
+    "sandbox_path": "/tmp/opc-sandbox"
+  },
+  "gene_store": {
+    "path": "./genes.json"
+  }
+}
