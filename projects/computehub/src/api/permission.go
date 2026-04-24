@@ -120,6 +120,7 @@ func (pc *PermissionChecker) initDefaultRoles() {
 		Level:       PermLevelWrite,
 		Description: "开发者，提交任务和读取结果",
 		Permissions: []Permission{
+			{Resource: "task", Action: "read"},
 			{Resource: "task", Action: "write"},
 			{Resource: "node", Action: "read"},
 			{Resource: "system", Action: "read"},

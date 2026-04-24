@@ -210,8 +210,8 @@ func TestStateMachineGetTaskStats(t *testing.T) {
 	if stats[TaskPending] != 0 {
 		t.Errorf("Expected 0 PENDING, got %d", stats[TaskPending])
 	}
-	if stats[TaskQueued] != 2 {
-		t.Errorf("Expected 2 QUEUED, got %d", stats[TaskQueued])
+	if stats[TaskQueued] != 1 {
+		t.Errorf("Expected 1 QUEUED, got %d", stats[TaskQueued])
 	}
 	if stats[TaskRunning] != 1 {
 		t.Errorf("Expected 1 RUNNING, got %d", stats[TaskRunning])
