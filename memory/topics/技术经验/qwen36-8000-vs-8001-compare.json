@@ -1,0 +1,30 @@
+{
+  "test_time": "2026-04-24T23:37:10+08:00",
+  "model": "qwen3.6-35b",
+  "urls": {
+    "8000": "http://58.23.129.98:8000/v1/chat/completions",
+    "8001": "http://58.23.129.98:8001/v1/chat/completions"
+  },
+  "latency_test": {
+    "8000": {
+      "port": "8000",
+      "count": 5,
+      "ok": 5,
+      "total_time": 0.7,
+      "avg_time": 0.68,
+      "min_time": 0.67,
+      "max_time": 0.69,
+      "qps": 7.2
+    },
+    "8001": {
+      "port": "8001",
+      "count": 5,
+      "ok": 5,
+      "total_time": 0.79,
+      "avg_time": 0.75,
+      "min_time": 0.73,
+      "max_time": 0.77,
+      "qps": 6.4
+    }
+  }
+}

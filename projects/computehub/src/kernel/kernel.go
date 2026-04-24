@@ -37,9 +37,10 @@ type Command struct {
 }
 
 type Response struct {
-	Success bool
-	Data    interface{}
-	Error   error
+	Success  bool
+	Data     interface{}
+	Error    error
+	Duration string
 }
 
 // NewKernel initializes a new deterministic kernel
