@@ -1,0 +1,44 @@
+# 备份文件
+*.bak
+*.backup_*
+
+# 临时文件
+*.tmp
+*.swp
+*~
+1
+EOF
+CONTENT
+CONFIG.md
+DEFAULT_RULES.md
+DEPLOY_NOW.txt
+
+# 环境配置
+.env
+.env.*
+
+# 系统文件
+.openclaw/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# 文档/日志
+*_test_report.md
+*_summary.md
+action_log.json
+
+# IDE
+.vscode/
+.idea/
+
+# 嵌套Git仓库（ai_agent/code有独立git）
+ai_agent/code/.git
+ai_agent/results/.git
+
+# 一次性/测试文件
+*TUI_*.md
+*OK*.md
+*OpenClaw-*.md
