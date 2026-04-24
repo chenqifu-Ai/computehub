@@ -110,10 +110,10 @@ class Qwen36Adapter:
         sys = (
             f"你是{language}专家。\n"
             "输出格式：\n"
-            "```{language}\n"
-            "代码\n"
+            "```python\n"
+            "代码（必须包含测试代码和print输出）\n"
             "```\n"
-            "之后可以有简要说明。\n"
+            "代码必须包含测试用例，在main中调用并print结果。\n"
             "不要输出推理过程。"
         )
         messages = [
@@ -121,22 +121,46 @@ class Qwen36Adapter:
             {"role": "user", "content": prompt},
         ]
         result = self._call(messages)
+        raw = result["raw"]
         
-        # 提取代码块
-        blocks = re.findall(
-            r'```' + re.escape(language) + r'\n(.*?)```',
-            result["raw"], re.DOTALL
-        )
+        # 提取代码块 - 模型输出格式多样
+        lang = language.lower()
+        
+        # 1. 标准markdown: ```python\n...\n```
+        blocks = re.findall(r'```' + re.escape(lang) + r'\s*\n(.*?)```', raw, re.DOTALL)
+        
+        # 2. 单行反引号代码块: `python\n...\n` (模型实际常用)
+        if not blocks:
+            # 先找所有 `python 的位置，然后匹配到下一个 ``` 或 `python 或文件结尾
+            parts = re.split(r'`python\s*\n', raw)
+            for part in parts[1:]:
+                # 找到对应的闭合 `
+                close = part.find('``')
+                if close > 0:
+                    code = part[:close]
+                else:
+                    close2 = part.find('```')
+                    if close2 > 0:
+                        code = part[:close2]
+                    else:
+                        code = part
+                blocks.append(code.strip())
+        
+        # 3. 通用markdown代码块: ```...\n...\n```
+        if not blocks:
+            blocks = re.findall(r'```\w*\s*\n(.*?)```', raw, re.DOTALL)
+        
+        # 4. 通用反引号: `...\n...\n` (过滤出代码)
+        if not blocks:
+            blocks = re.findall(r'`(.*?)`', raw, re.DOTALL)
+            blocks = [b for b in blocks if 'class ' in b or 'def ' in b]
+        
         if blocks:
-            return blocks[-1].strip()
+            best = max(blocks, key=len)
+            return best.strip()
         
-        # 通用代码块
-        blocks = re.findall(r'```\w*\n(.*?)```', result["raw"], re.DOTALL)
-        if blocks:
-            return blocks[-1].strip()
-        
-        # fallback
-        return result["raw"].strip()
+        # 最终 fallback
+        return self._clean_output(raw)
 
     def health_check(self) -> bool:
         try:
@@ -147,6 +171,9 @@ class Qwen36Adapter:
     def _clean_output(self, raw: str) -> str:
         """
         清理模型输出，去掉推理元信息。
+        
+        关键修复: 模型 reasoning 字段中可能包含代码块 ```...```
+        这些是实际答案，不是元信息，必须保留！
         
         典型 bad output:
           "Here's a thinking process:\n1. Analyze...\n2. Plan...\nFinal Output:** "2"
@@ -159,6 +186,12 @@ class Qwen36Adapter:
         # 如果很短，直接返回
         if len(text) <= 100:
             return text
+        
+        # 关键修复: 先提取代码块（这些是实际答案，不是元信息）
+        code_blocks = re.findall(r'```(?:\w*)\n(.*?)```', text, re.DOTALL)
+        if code_blocks:
+            # 返回最后一个代码块（通常是最终答案）
+            return code_blocks[-1].strip()
         
         # 方法1: 找引号包裹的内容（模型常常把答案放在引号里）
         quotes = re.findall(r'"([^"]+)"', text)
