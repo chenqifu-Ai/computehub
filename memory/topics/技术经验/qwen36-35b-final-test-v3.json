@@ -1,0 +1,83 @@
+{
+  "model": "qwen3.6-35b",
+  "version": "v3-final",
+  "timestamp": "2026-04-24T18:25:00+08:00",
+  "total": 42,
+  "passed": 34,
+  "failed": 8,
+  "score": 81.0,
+  "grade": "🥇 A 良好",
+  "batch1": {
+    "passed": 16,
+    "total": 18
+  },
+  "batch2": {
+    "passed": 14,
+    "total": 15
+  },
+  "batch3": {
+    "passed": 4,
+    "total": 9,
+    "tests": [
+      {
+        "name": "单例模式",
+        "ok": false,
+        "time": 12.9,
+        "detail": "执行失败: invalid syntax (<string>, line 1)"
+      },
+      {
+        "name": "链表",
+        "ok": false,
+        "time": 13.2,
+        "detail": "执行失败: unterminated string literal (detected at line 6) (<string>, line 6)"
+      },
+      {
+        "name": "异常处理",
+        "ok": false,
+        "time": 13.0,
+        "detail": "执行失败: invalid syntax (<string>, line 1)"
+      },
+      {
+        "name": "设计模式-工厂",
+        "ok": false,
+        "time": 12.2,
+        "detail": "执行失败: name 'abstractmethod' is not defined"
+      },
+      {
+        "name": "SQL JOIN",
+        "ok": true,
+        "time": 4.6,
+        "detail": "核心区别：INNER JOIN取两表交集，LEFT JOIN保留左表全部数据。"
+      },
+      {
+        "name": "正则表达式",
+        "ok": true,
+        "time": 10.1,
+        "detail": "推荐使用 `re.fullmatch(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9."
+      },
+      {
+        "name": "Python装饰器",
+        "ok": true,
+        "time": 5.9,
+        "detail": "Python装饰器是一种高阶函数，用于在不修改原函数代码的前提下，动态地为其添加额外功能。它通常以`"
+      },
+      {
+        "name": "操作系统",
+        "ok": true,
+        "time": 5.0,
+        "detail": "`ps aux` 用于显示系统中所有进程的详细信息。其中 `a` 显示所有用户的进程，`u` 以用户"
+      },
+      {
+        "name": "Git",
+        "ok": false,
+        "time": 7.0,
+        "detail": "- **核心区别**：历史形态（网状保留 vs 线性重写）、是否新增提交、对共享历史的影响（安全 v"
+      }
+    ]
+  },
+  "performance": {
+    "avg": 1.4,
+    "fastest": 0.9,
+    "slowest": 1.8
+  }
+}
