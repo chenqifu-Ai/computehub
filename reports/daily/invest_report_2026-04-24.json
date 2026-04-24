@@ -1,0 +1,38 @@
+{
+  "date": "2026-04-24",
+  "total_cost": 69569.4,
+  "total_value": 63302.0,
+  "total_profit": -6267.399999999994,
+  "total_profit_pct": -9.008845843143673,
+  "cash": 930430.6,
+  "positions": [
+    {
+      "code": "600460",
+      "name": "士兰微",
+      "cost": 29.364,
+      "volume": 1000,
+      "current": 27.82,
+      "change": 1.68,
+      "prev_close": 27.36,
+      "high": 28.08,
+      "low": 27.41,
+      "profit": -1544.0,
+      "profit_pct": -5.26
+    },
+    {
+      "code": "000882",
+      "name": "华联股份",
+      "cost": 1.779,
+      "volume": 22600,
+      "current": 1.57,
+      "change": -0.63,
+      "prev_close": 1.58,
+      "high": 1.58,
+      "low": 1.55,
+      "profit": -4723.4000000000015,
+      "profit_pct": -11.75
+    }
+  ],
+  "next_day": "2026-04-25",
+  "generated_at": "2026-04-24 20:13:35"
+}
