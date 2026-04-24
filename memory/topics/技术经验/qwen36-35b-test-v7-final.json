@@ -1,0 +1,158 @@
+{
+  "model": "qwen3.6-35b",
+  "version": "v7-final",
+  "timestamp": "2026-04-24T20:00:00+08:00",
+  "total": 15,
+  "passed": 8,
+  "failed": 7,
+  "score": 53.3,
+  "grade": "❌ D 不合格",
+  "history": {
+    "v3": 81.0,
+    "v4": 76.9,
+    "v5": 70.6,
+    "v6": 57.1
+  },
+  "groups": {
+    "代码生成": {
+      "total": 4,
+      "passed": 1
+    },
+    "默认": {
+      "total": 11,
+      "passed": 7
+    }
+  },
+  "tests": [
+    {
+      "name": "HashMap-UTF8修复",
+      "ok": false,
+      "time": 13.4,
+      "group": "代码生成",
+      "detail": "stdout=, stderr=File \"/tmp/tmp0hqolcz7.py\", li"
+    },
+    {
+      "name": "REST-API-UTF8修复",
+      "ok": false,
+      "time": 12.8,
+      "group": "代码生成",
+      "detail": "stdout=, stderr=File \"/tmp/tmpgqq9ov8k.py\", li"
+    },
+    {
+      "name": "线程池-UTF8修复",
+      "ok": true,
+      "time": 12.8,
+      "group": "代码生成",
+      "detail": "stdout=, stderr=File \"/tmp/tmp9bpuq4kt.py\", li"
+    },
+    {
+      "name": "事件循环-UTF8修复",
+      "ok": false,
+      "time": 12.7,
+      "group": "代码生成",
+      "detail": "stdout=, stderr=File \"/tmp/tmpv4uldkqc.py\", li"
+    },
+    {
+      "name": "语言-Java泛型",
+      "ok": false,
+      "time": 6.0,
+      "group": "默认"
+    },
+    {
+      "name": "语言-C++智能指针",
+      "ok": true,
+      "time": 4.5,
+      "group": "默认"
+    },
+    {
+      "name": "语言-Python GIL",
+      "ok": true,
+      "time": 4.5,
+      "group": "默认"
+    },
+    {
+      "name": "语言-Goroutine调度",
+      "ok": true,
+      "time": 12.3,
+      "group": "默认"
+    },
+    {
+      "name": "DB-索引原理",
+      "ok": true,
+      "time": 6.9,
+      "group": "默认"
+    },
+    {
+      "name": "DB-事务隔离",
+      "ok": false,
+      "time": 4.3,
+      "group": "默认"
+    },
+    {
+      "name": "DB-分库分表",
+      "ok": true,
+      "time": 7.5,
+      "group": "默认"
+    },
+    {
+      "name": "OS-内存管理",
+      "ok": true,
+      "time": 3.7,
+      "group": "默认"
+    },
+    {
+      "name": "OS-进程调度",
+      "ok": true,
+      "time": 7.6,
+      "group": "默认"
+    },
+    {
+      "name": "安全-HTTPS",
+      "ok": false,
+      "time": 7.5,
+      "group": "默认"
+    },
+    {
+      "name": "安全-CORS",
+      "ok": false,
+      "time": 5.7,
+      "group": "默认"
+    }
+  ],
+  "failures": [
+    {
+      "name": "HashMap-UTF8修复",
+      "detail": "stdout=, stderr=File \"/tmp/tmp0hqolcz7.py\", li"
+    },
+    {
+      "name": "REST-API-UTF8修复",
+      "detail": "stdout=, stderr=File \"/tmp/tmpgqq9ov8k.py\", li"
+    },
+    {
+      "name": "事件循环-UTF8修复",
+      "detail": "stdout=, stderr=File \"/tmp/tmpv4uldkqc.py\", li"
+    },
+    {
+      "name": "语言-Java泛型",
+      "detail": "Java"
+    },
+    {
+      "name": "DB-事务隔离",
+      "detail": "两者配合，在InnoDB引擎下有效解决了幻读问题。"
+    },
+    {
+      "name": "安全-HTTPS",
+      "detail": "8. **结果处理**：全部通过则继续完成密钥交换与握手；任一环节失败则立即终止连接并报错。"
+    },
+    {
+      "name": "安全-CORS",
+      "detail": "本质是“浏览器默认拦截 + 服务器显式授权”的安全协作机制。"
+    }
+  ],
+  "performance": {
+    "avg": 3.99,
+    "fastest": 1.8,
+    "slowest": 8.66,
+    "total": 39.9
+  }
+}
