@@ -2,7 +2,6 @@ package scheduler
 
 import (
 	"fmt"
-	"math"
 	"sync"
 	"time"
 )
@@ -443,27 +442,3 @@ func (s *Scheduler) GetStats() map[string]interface{} {
 }
 
 // ====== 工具函数 ======
-
-// scoreNode 对节点进行综合评分
-func scoreNode(node *NodeInfo, regionAffinity string, priority int) float64 {
-	var score float64
-
-	// 1. 区域亲和性 (40%)
-	if node.Region == regionAffinity {
-		score += 40.0
-	} else if regionAffinity == "" {
-		score += 20.0
-	}
-
-	// 2. 延迟分数 (30%)
-	score += 30.0 - math.Min(30.0, float64(node.NetworkLatency)/float64(200)*30.0)
-
-	// 3. 负载分数 (20%)
-	loadRatio := float64(node.ActiveTasks) / math.Max(1, float64(node.MaxTasks))
-	score += (1.0 - loadRatio) * 20.0
-
-	// 4. 成功率 (10%)
-	score += node.SuccessRate * 10.0
-
-	return score
-}

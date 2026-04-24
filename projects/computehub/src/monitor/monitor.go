@@ -348,7 +348,18 @@ func (m *HealthMonitor) generateAlerts(nodeID string, system *SystemMetrics) []A
 	}
 
 	// CPU 温度告警
-	if system.CPU.Temperature > m.config.TemperatureWarning {
+	if system.CPU.Temperature > m.config.TemperatureCritical {
+		alerts = append(alerts, Alert{
+			ID:        fmt.Sprintf("cpu-temp-critical-%s-%d", nodeID, time.Now().Unix()),
+			Timestamp: time.Now(),
+			Level:     AlertCritical,
+			Component: "cpu",
+			Message:   fmt.Sprintf("CPU 温度临界: %.1f°C", system.CPU.Temperature),
+			Value:     system.CPU.Temperature,
+			Threshold: m.config.TemperatureCritical,
+			NodeID:    nodeID,
+		})
+	} else if system.CPU.Temperature > m.config.TemperatureWarning {
 		alerts = append(alerts, Alert{
 			ID:        fmt.Sprintf("cpu-temp-warning-%s-%d", nodeID, time.Now().Unix()),
 			Timestamp: time.Now(),
