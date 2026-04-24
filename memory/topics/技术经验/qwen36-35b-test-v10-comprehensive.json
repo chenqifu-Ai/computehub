@@ -1,0 +1,389 @@
+{
+  "model": "qwen3.6-35b",
+  "version": "v10-comprehensive",
+  "timestamp": "2026-04-24T22:35:12+08:00",
+  "total": 46,
+  "passed": 38,
+  "failed": 8,
+  "score": 82.6,
+  "grade": "🥈 B 良好",
+  "performance": {
+    "avg_time": 4.41,
+    "fastest": 1.46,
+    "slowest": 9.28,
+    "total_time": 219.41
+  },
+  "categories": {
+    "语言": {
+      "total": 10,
+      "passed": 9
+    },
+    "数学": {
+      "total": 5,
+      "passed": 5
+    },
+    "科学": {
+      "total": 3,
+      "passed": 2
+    },
+    "编程": {
+      "total": 8,
+      "passed": 6
+    },
+    "网络": {
+      "total": 6,
+      "passed": 5
+    },
+    "数据库": {
+      "total": 4,
+      "passed": 3
+    },
+    "系统": {
+      "total": 4,
+      "passed": 3
+    },
+    "架构": {
+      "total": 4,
+      "passed": 3
+    },
+    "代码生成": {
+      "total": 2,
+      "passed": 2
+    }
+  },
+  "details": [
+    {
+      "name": "中文乘法",
+      "category": "语言",
+      "passed": true,
+      "detail": "正确回答20",
+      "time": 2.83
+    },
+    {
+      "name": "成语填空",
+      "category": "语言",
+      "passed": true,
+      "detail": "正确",
+      "time": 4.71
+    },
+    {
+      "name": "古诗词",
+      "category": "语言",
+      "passed": true,
+      "detail": "包含静夜思内容",
+      "time": 2.76
+    },
+    {
+      "name": "阅读理解",
+      "category": "语言",
+      "passed": false,
+      "detail": "回答: 日常说法是对的，但植物学上它属于水果。",
+      "time": 3.02
+    },
+    {
+      "name": "语言知识",
+      "category": "语言",
+      "passed": true,
+      "detail": "说明性别区分",
+      "time": 4.76
+    },
+    {
+      "name": "类比推理",
+      "category": "语言",
+      "passed": true,
+      "detail": "正确回答袜子",
+      "time": 5.46
+    },
+    {
+      "name": "常识",
+      "category": "语言",
+      "passed": true,
+      "detail": "皮肤",
+      "time": 1.81
+    },
+    {
+      "name": "逻辑推理",
+      "category": "语言",
+      "passed": true,
+      "detail": "正确回答2个",
+      "time": 2.92
+    },
+    {
+      "name": "翻译",
+      "category": "语言",
+      "passed": true,
+      "detail": "你好",
+      "time": 1.79
+    },
+    {
+      "name": "文字游戏",
+      "category": "语言",
+      "passed": true,
+      "detail": "gfedcba",
+      "time": 6.88
+    },
+    {
+      "name": "基础数学",
+      "category": "数学",
+      "passed": true,
+      "detail": "420",
+      "time": 4.7
+    },
+    {
+      "name": "代数",
+      "category": "数学",
+      "passed": true,
+      "detail": "3x",
+      "time": 1.64
+    },
+    {
+      "name": "百分比",
+      "category": "数学",
+      "passed": true,
+      "detail": "50",
+      "time": 1.99
+    },
+    {
+      "name": "几何",
+      "category": "数学",
+      "passed": true,
+      "detail": "给出面积",
+      "time": 4.0
+    },
+    {
+      "name": "物理计算",
+      "category": "科学",
+      "passed": true,
+      "detail": "20N",
+      "time": 4.8
+    },
+    {
+      "name": "化学",
+      "category": "科学",
+      "passed": false,
+      "detail": "回答: H₂O",
+      "time": 1.46
+    },
+    {
+      "name": "天文",
+      "category": "科学",
+      "passed": true,
+      "detail": "8分钟",
+      "time": 2.35
+    },
+    {
+      "name": "概率",
+      "category": "数学",
+      "passed": true,
+      "detail": "概率正确",
+      "time": 9.28
+    },
+    {
+      "name": "Python列表",
+      "category": "编程",
+      "passed": true,
+      "detail": "使用append/extend",
+      "time": 7.45
+    },
+    {
+      "name": "字典结构",
+      "category": "编程",
+      "passed": true,
+      "detail": "提到字典结构",
+      "time": 6.03
+    },
+    {
+      "name": "for循环",
+      "category": "编程",
+      "passed": true,
+      "detail": "range(10)",
+      "time": 2.39
+    },
+    {
+      "name": "异常处理",
+      "category": "编程",
+      "passed": true,
+      "detail": "try-except",
+      "time": 5.76
+    },
+    {
+      "name": "函数定义",
+      "category": "编程",
+      "passed": true,
+      "detail": "def",
+      "time": 2.57
+    },
+    {
+      "name": "类定义",
+      "category": "编程",
+      "passed": true,
+      "detail": "class+self",
+      "time": 6.42
+    },
+    {
+      "name": "字符串操作",
+      "category": "编程",
+      "passed": false,
+      "detail": "回答: ,",
+      "time": 2.86
+    },
+    {
+      "name": "列表推导式",
+      "category": "编程",
+      "passed": false,
+      "detail": "回答: `[x**2 for x in range(1, 6)]`",
+      "time": 5.41
+    },
+    {
+      "name": "OSI七层模型",
+      "category": "网络",
+      "passed": true,
+      "detail": "列出7/7层",
+      "time": 3.59
+    },
+    {
+      "name": "HTTP状态码",
+      "category": "网络",
+      "passed": true,
+      "detail": "包含200/404/500",
+      "time": 4.1
+    },
+    {
+      "name": "TCP vs UDP",
+      "category": "网络",
+      "passed": false,
+      "detail": "回答: 6. **适用场景**：TCP适用于网页浏览、邮件、文件传输等对可靠性要求高的场景；UDP适用于视频直播、在线游戏、语音通话、DNS查询等对实时性要求高的场景。",
+      "time": 7.0
+    },
+    {
+      "name": "DNS原理",
+      "category": "网络",
+      "passed": true,
+      "detail": "域名解析为IP",
+      "time": 4.39
+    },
+    {
+      "name": "SSL/TLS",
+      "category": "网络",
+      "passed": true,
+      "detail": "加密传输",
+      "time": 4.28
+    },
+    {
+      "name": "跨域问题",
+      "category": "网络",
+      "passed": true,
+      "detail": "提到跨域解决方案",
+      "time": 5.33
+    },
+    {
+      "name": "SELECT查询",
+      "category": "数据库",
+      "passed": true,
+      "detail": "SELECT语句",
+      "time": 2.16
+    },
+    {
+      "name": "JOIN",
+      "category": "数据库",
+      "passed": true,
+      "detail": "INNER内连接 LEFT左连接",
+      "time": 5.1
+    },
+    {
+      "name": "索引",
+      "category": "数据库",
+      "passed": true,
+      "detail": "索引加速查询",
+      "time": 5.74
+    },
+    {
+      "name": "ACID",
+      "category": "数据库",
+      "passed": false,
+      "detail": "回答: **持久性（Durability）**：事务一旦提交，其对数据库的修改就是永久性的，即使发生系统故障或断电也不会丢失。",
+      "time": 5.96
+    },
+    {
+      "name": "进程vs线程",
+      "category": "系统",
+      "passed": true,
+      "detail": "区分进程线程",
+      "time": 3.72
+    },
+    {
+      "name": "内存管理",
+      "category": "系统",
+      "passed": true,
+      "detail": "虚拟地址",
+      "time": 5.5
+    },
+    {
+      "name": "死锁",
+      "category": "系统",
+      "passed": false,
+      "detail": "回答: 4. 循环等待条件：存在一个进程等待资源的循环链，每个进程都在等待下一个进程所占用的资源。",
+      "time": 4.41
+    },
+    {
+      "name": "Linux命令",
+      "category": "系统",
+      "passed": true,
+      "detail": "df",
+      "time": 5.04
+    },
+    {
+      "name": "设计模式",
+      "category": "架构",
+      "passed": false,
+      "detail": "回答: 3. 观察者模式：定义对象间的一对多依赖，当目标对象状态改变时，自动通知并更新所有订阅者。",
+      "time": 3.28
+    },
+    {
+      "name": "微服务架构",
+      "category": "架构",
+      "passed": true,
+      "detail": "拆分为小服务",
+      "time": 5.06
+    },
+    {
+      "name": "RESTful",
+      "category": "架构",
+      "passed": true,
+      "detail": "提到REST",
+      "time": 5.2
+    },
+    {
+      "name": "Git分支",
+      "category": "架构",
+      "passed": true,
+      "detail": "合并历史",
+      "time": 8.06
+    },
+    {
+      "name": "代码-斐波那契",
+      "category": "代码生成",
+      "passed": true,
+      "detail": "yield✅ | def✅ | fib✅",
+      "time": 0
+    },
+    {
+      "name": "代码-装饰器",
+      "category": "代码生成",
+      "passed": true,
+      "detail": "@✅ | time✅ | def✅",
+      "time": 0
+    }
+  ],
+  "history": {
+    "v1": 43.0,
+    "v2": 43.0,
+    "v3": 81.0,
+    "v4": 86.0,
+    "v5": 70.6,
+    "v6": 57.1,
+    "v7": 53.3,
+    "v8": 68.2,
+    "v10": 82.6
+  }
+}

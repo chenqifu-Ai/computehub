@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-发送邮件脚本
-"""
+"""发送 Git Clone 文档到 QQ 邮箱"""
 
 import smtplib
 from email.mime.text import MIMEText
@@ -9,108 +7,120 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
 import os
+import sys
 
 # 配置
-SMTP_SERVER = "smtp.qq.com"
-SMTP_PORT = 465
-EMAIL_ACCOUNT = "19525456@qq.com"
-AUTH_CODE = "xunlwhjokescbgdd"
+SENDER_EMAIL = "19525456@qq.com"
+# 需要在环境变量或运行时设置授权码
+SMTP_PASS = os.environ.get("QQ_SMTP_PASSWORD", "")
+RECEIVER_EMAIL = "19525456@qq.com"  # 发送给老大
 
-def send_email(to_addr, subject, content, html_content=None, attachment_path=None):
-    """发送邮件"""
+def send_document():
+    doc_path = "/root/.openclaw/workspace/docs/remote-git-clone-guide.md"
+    
+    if not os.path.exists(doc_path):
+        print(f"❌ 文档不存在: {doc_path}")
+        sys.exit(1)
+    
+    with open(doc_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    
     # 创建邮件
-    msg = MIMEMultipart('alternative')
-    msg['From'] = EMAIL_ACCOUNT
-    msg['To'] = to_addr
-    msg['Subject'] = subject
+    msg = MIMEMultipart()
+    msg['From'] = SENDER_EMAIL
+    msg['To'] = RECEIVER_EMAIL
+    msg['Subject'] = "📄 [小智] OpenClaw Workspace 远程 Git Clone 使用文档 - 2026-04-24"
     
-    # 添加文本内容
-    msg.attach(MIMEText(content, 'plain', 'utf-8'))
-    
-    # 添加HTML内容
-    if html_content:
-        msg.attach(MIMEText(html_content, 'html', 'utf-8'))
+    # 邮件正文
+    body = """
+<html>
+<body>
+<h2>📄 OpenClaw Workspace 远程 Git Clone 使用文档</h2>
+<p>老大，你要的 Git Clone 文档已整理完成，请查收附件。</p>
+
+<h3>📌 文档内容概要</h3>
+<ul>
+    <li>✅ 仓库信息概览</li>
+    <li>✅ 前提条件（Git 安装、GitHub Token 获取）</li>
+    <li>✅ 三种克隆方法（HTTPS / SSH / 大文件）</li>
+    <li>✅ 克隆后配置步骤</li>
+    <li>✅ OpenClaw 专用配置</li>
+    <li>✅ 多设备同步流程</li>
+    <li>✅ 安全注意事项</li>
+    <li>✅ 常见问题排查</li>
+    <li>✅ 快速命令参考</li>
+</ul>
+
+<h3>🔑 关键信息</h3>
+<table border="1" cellpadding="8" cellspacing="0">
+    <tr><td><strong>仓库地址</strong></td><td>https://github.com/chenqifu-Ai/openclaw-workspace.git</td></tr>
+    <tr><td><strong>主分支</strong></td><td>computehub-qwen3.5-397b</td></tr>
+    <tr><td><strong>提交数</strong></td><td>41+ commits</td></tr>
+    <tr><td><strong>认证方式</strong></td><td>HTTPS (GitHub Personal Access Token)</td></tr>
+</table>
+
+<h3>⚡ 快速开始</h3>
+<pre style="background:#f5f5f5;padding:10px;border-radius:5px;">
+# 1. 克隆仓库
+git clone https://github.com/chenqifu-Ai/openclaw-workspace.git
+
+# 2. 进入目录
+cd openclaw-workspace
+
+# 3. 切换主分支
+git checkout computehub-qwen3.5-397b
+
+# 4. 安装 OpenClaw（如未安装）
+npm install -g openclaw
+
+# 5. 启动
+openclaw gateway start
+</pre>
+
+<p>详细步骤请查看附件文档。有问题随时找我 😊</p>
+<p style="color:#999;font-size:12px;">— 小智 AI 助手 | 2026-04-24</p>
+</body>
+</html>
+"""
+    msg.attach(MIMEText(body, 'html', 'utf-8'))
     
     # 添加附件
-    if attachment_path and os.path.exists(attachment_path):
-        with open(attachment_path, 'rb') as f:
-            attachment = MIMEBase('application', 'octet-stream')
-            attachment.set_payload(f.read())
-            encoders.encode_base64(attachment)
-            attachment.add_header('Content-Disposition', 'attachment', 
-                                 filename=os.path.basename(attachment_path))
-            msg.attach(attachment)
+    with open(doc_path, "rb") as f:
+        attach = MIMEBase('application', 'octet-stream')
+        attach.set_payload(f.read())
+    encoders.encode_base64(attach)
+    attach.add_header('Content-Disposition', 'attachment', 
+                      filename='OpenClaw-Git-Clone-使用文档-v1.0-20260424.md')
+    msg.attach(attach)
     
     # 发送邮件
     try:
-        with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
-            server.login(EMAIL_ACCOUNT, AUTH_CODE)
-            server.sendmail(EMAIL_ACCOUNT, to_addr, msg.as_string())
-        print(f"邮件发送成功！收件人：{to_addr}")
+        print(f"📧 连接到 SMTP 服务器: smtp.qq.com:465")
+        server = smtplib.SMTP_SSL('smtp.qq.com', 465, timeout=30)
+        server.login(SENDER_EMAIL, SMTP_PASS)
+        print(f"✅ 登录成功: {SENDER_EMAIL}")
+        
+        server.sendmail(SENDER_EMAIL, RECEIVER_EMAIL, msg.as_string())
+        print(f"✅ 邮件发送成功!")
+        print(f"   发件人: {SENDER_EMAIL}")
+        print(f"   收件人: {RECEIVER_EMAIL}")
+        print(f"   主题: [小智] OpenClaw Workspace 远程 Git Clone 使用文档")
+        print(f"   附件: OpenClaw-Git-Clone-使用文档-v1.0-20260424.md")
+        
+        server.quit()
         return True
+        
+    except smtplib.SMTPAuthenticationError:
+        print("❌ 认证失败 - 请检查 QQ 邮箱授权码")
+        print("   获取方法: QQ邮箱 → 设置 → 账户 → POP3/SMTP → 生成授权码")
+        return False
     except Exception as e:
-        print(f"邮件发送失败：{e}")
+        print(f"❌ 发送失败: {e}")
         return False
 
 if __name__ == "__main__":
-    # 收件人
-    to_addr = "19525456@qq.com"
-    
-    # 主题
-    subject = "【小智报告】企业战略执行与落地 - PPT演示文稿"
-    
-    # 文本内容
-    content = """
-老大，
-
-小智已完成《企业战略执行与落地》PPT演示文稿的制作。
-
-这份PPT包含以下内容：
-1. 战略执行概述
-2. 战略解码与分解
-3. 组织保障
-4. 执行机制建设
-5. 过程管理
-6. 评估与改进
-7. 成功要素
-
-请用浏览器打开附件查看精美的HTML演示文稿。
-
-此致
-小智
-CEO战略顾问智能体
-"""
-    
-    # HTML内容
-    html_content = """
-    <html>
-    <body style="font-family: 'Microsoft YaHei', sans-serif; padding: 20px;">
-        <h2 style="color: #e94560;">企业战略执行与落地 - PPT演示文稿</h2>
-        <p>老大，</p>
-        <p>小智已完成PPT演示文稿的制作，请查看附件。</p>
-        <h3 style="color: #a2d2ff;">内容概要：</h3>
-        <ul style="line-height: 2;">
-            <li>一、战略执行概述</li>
-            <li>二、战略解码与分解</li>
-            <li>三、组织保障</li>
-            <li>四、执行机制建设</li>
-            <li>五、过程管理</li>
-            <li>六、评估与改进</li>
-            <li>七、成功要素</li>
-        </ul>
-        <p style="color: #888;">请用浏览器打开附件查看精美的HTML演示文稿。</p>
-        <hr style="margin: 20px 0; border-color: #e94560;">
-        <p style="color: #666;">
-            小智<br>
-            CEO战略顾问智能体<br>
-            2026年3月21日
-        </p>
-    </body>
-    </html>
-    """
-    
-    # 附件路径
-    attachment_path = "/root/.openclaw/workspace/output/strategy-execution-ppt.html"
-    
-    # 发送邮件
-    send_email(to_addr, subject, content, html_content, attachment_path)
+    if not SMTP_PASS:
+        print("❌ 请设置 QQ_SMTP_PASSWORD 环境变量")
+        print("   export QQ_SMTP_PASSWORD='你的QQ邮箱授权码'")
+        sys.exit(1)
+    send_document()

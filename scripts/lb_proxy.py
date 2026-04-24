@@ -19,8 +19,46 @@ import urllib.error
 import json
 import sys
 import time
+import re
 import threading
 from http import HTTPStatus
+
+# ==================== vLLM 响应适配 ====================
+def _fix_vllm_response(response_json):
+    """适配 vLLM 非标准响应：content=null → 填充 reasoning 内容"""
+    if not response_json or 'choices' not in response_json:
+        return response_json
+    
+    for choice in response_json['choices']:
+        msg = choice.get('message', {})
+        content = msg.get('content')
+        reasoning = msg.get('reasoning') or ''
+        
+        if not content and reasoning:
+            # content 为 null，用 reasoning 填充（过滤元信息）
+            text = reasoning.strip()
+            
+            # 提取代码块
+            code_blocks = re.findall(r'```(?:\w*)\n(.*?)```', text, re.DOTALL)
+            if code_blocks:
+                clean = code_blocks[-1].strip()
+            else:
+                # 找引号
+                quotes = re.findall(r'"([^"]+)"', text)
+                if quotes and len(quotes[-1]) <= 500:
+                    clean = quotes[-1]
+                else:
+                    # 最后一行非空文字
+                    lines = [l.strip() for l in text.split("\n") if l.strip()]
+                    skip_kw = ["thinking process", "here's a thinking", "let me",
+                               "好的，", "final output", "final answer", "check:"]
+                    clean_lines = [l for l in lines if not any(k in l.lower() for k in skip_kw)]
+                    clean = clean_lines[-1] if clean_lines else text
+            
+            msg['content'] = clean
+            msg['reasoning'] = reasoning  # 保留原始推理
+    
+    return response_json
 
 # ==================== 配置区 ====================
 BACKENDS = [
@@ -219,6 +257,14 @@ class LoadBalancerHandler(http.server.BaseHTTPRequestHandler):
             # 发送请求
             response_body, status = request_with_fallback(target_url, body, req_headers)
             
+            # 适配 vLLM 响应格式（content=null 问题）
+            try:
+                response_json = json.loads(response_body)
+                response_json = _fix_vllm_response(response_json)
+                response_body = json.dumps(response_json).encode()
+            except:
+                pass  # 非 JSON 响应直接透传
+            
             # 回传响应
             self.send_response(status)
             self.send_header("Content-Type", "application/json")
@@ -273,6 +319,6 @@ if __name__ == "__main__":
     print(f"✅ Ready! Point OpenClaw baseUrl to: http://{LISTEN_HOST}:{LISTEN_PORT}/v1")
     print(f"💡 Health: http://{LISTEN_HOST}:{LISTEN_PORT}/health")
     print(f"💡 Status: http://{LISTEN_HOST}:{LISTEN_PORT}/status")
-    print(f"⚠️  Note: Both backends have content=null bug (reasoning-only mode)")
+    print(f"✅ vLLM content=null bug fixed (auto-adapted)")
     print(f"   Load balancing helps with: redundancy, load distribution, failover")
     server.serve_forever()

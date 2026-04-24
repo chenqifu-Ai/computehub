@@ -10,7 +10,52 @@ Qwen 3.6-35B 深度优化方案
 import requests
 import json
 import time
+import re
 from datetime import datetime
+
+def _extract_content_from_vllm_response(response_json):
+    """适配 vLLM 非标准响应格式（content=null, reasoning=全部输出）"""
+    if not response_json or 'choices' not in response_json or not response_json['choices']:
+        return ''
+    msg = response_json['choices'][0].get('message', {})
+    content = msg.get('content')
+    reasoning = msg.get('reasoning') or ''
+    
+    # 如果 content 有值，直接返回
+    if content:
+        return content.strip()
+    
+    # 否则从 reasoning 提取（过滤元信息）
+    text = reasoning.strip()
+    if not text:
+        return ''
+    
+    # 提取代码块（保留）
+    code_blocks = re.findall(r'```(?:\w*)\n(.*?)```', text, re.DOTALL)
+    if code_blocks:
+        return code_blocks[-1].strip()
+    
+    # 找引号包裹的内容
+    quotes = re.findall(r'"([^"]+)"', text)
+    if quotes:
+        last_quote = quotes[-1]
+        if len(last_quote) <= 500:
+            return last_quote
+    
+    # 找 "Final Output" 后面的内容
+    m = re.search(r'Final Output[^"]*["\']([^"\']+)["\']', text, re.IGNORECASE)
+    if m:
+        return m.group(1).strip()
+    
+    # 取最后一行非空文字（过滤元信息行）
+    lines = [l.strip() for l in text.split("\n") if l.strip()]
+    skip_keywords = ["thinking process", "here's a thinking", "here is a thinking",
+                     "final output", "final answer", "let me", "好的，", "check:", "verify:"]
+    clean_lines = []
+    for l in lines:
+        if not any(kw in l.lower() for kw in skip_keywords):
+            clean_lines.append(l)
+    return clean_lines[-1] if clean_lines else text
 
 MODEL_URL = "http://58.23.129.98:8000/v1/chat/completions"
 API_KEY = "sk-78sadn09bjawde123e"
@@ -46,7 +91,8 @@ def ask_model(prompt, system_prompt=None, temperature=0.1, max_tokens=2000, mess
         if response.status_code == 200:
             result = response.json()
             if 'choices' in result and len(result['choices']) > 0:
-                content = result['choices'][0]['message']['content']
+                # 适配 vLLM 非标准响应格式
+                content = _extract_content_from_vllm_response(result)
                 return {
                     'content': content or '',
                     'elapsed': elapsed,
