@@ -1,6 +1,6 @@
 # OpenClaw 深度研读进度报告
-**时间**: 2026-04-25 05:43 CST
-**报告轮次**: Cron 自动触发 (#14)
+**时间**: 2026-04-25 06:55 CST
+**报告轮次**: Cron 自动触发 (#15)
 **研读代码库**: `/root/.openclaw/workspace/openclaw-src-final/`
 **代码库规模**: 3,968 个 `.ts` 文件，约 924,470 行代码
 
@@ -8,7 +8,7 @@
 
 ## 1. 已研读的核心文件及路径
 
-### 1.1 入口与启动链（深度研读，#12 轮次）
+### 1.1 入口与启动链
 | 文件 | 行数 | 研读深度 |
 |------|------|----------|
 | `src/entry.ts` | ~120行 | ✅ 完整研读 |
@@ -22,8 +22,9 @@
 | `src/gateway/auth-config-utils.ts` | ~175行 | ✅ 完整研读 |
 | `src/gateway/auth-install-policy.ts` | ~50行 | 部分研读 |
 | `src/gateway/node-command-policy.ts` | ~175行 | ✅ 已研读 |
+| `src/gateway/boot.ts` | ~206行 | ✅ 完整研读 |
 
-### 1.3 Cron 调度系统（#14 重点新增深度研读）
+### 1.3 Cron 调度系统（#14-#15 重点覆盖）
 | 文件 | 行数 | 研读深度 |
 |------|------|----------|
 | `src/cron/service.ts` | 80行 | ✅ 完整研读 |
@@ -31,19 +32,29 @@
 | `src/cron/service/state.ts` | - | ✅ 已研读 |
 | `src/cron/service/store.ts` | - | ✅ 已研读 |
 | `src/cron/run-id.ts` | - | ✅ 完整研读 |
-| `src/cron/isolated-agent/run.ts` | **777行** | ✅ 完整研读 |
+| `src/cron/isolated-agent/run.ts` | 777行 | ✅ 完整研读 |
 | `src/cron/isolated-agent/run-executor.ts` | 374行 | ✅ 已研读 |
 | `src/cron/isolated-agent/run-session-state.ts` | - | ✅ 已研读 |
 | `src/cron/isolated-agent/session.ts` | - | ✅ 已研读 |
 | `src/cron/isolated-agent/delivery-dispatch.ts` | - | ✅ 已研读 |
 | `src/cron/isolated-agent/helpers.ts` | - | ✅ 已研读 |
 | `src/cron/isolated-agent/subagent-followup-hints.ts` | - | ✅ 已研读 |
+| `src/cron/delivery-plan.ts` | 207行 | ✅ 完整研读 |
+| `src/cron/service/jobs.ts` | 893行 | ✅ 完整研读 |
+| `src/cron/service/timer.ts` | 1411行 | ✅ 完整研读 |
 | `src/cron/service/ops.ts` | ~554行 | ✅ 完整研读 |
-| **`src/cron/delivery-plan.ts`** | **207行** | ✅ **本次新增完整研读** |
-| **`src/cron/service/jobs.ts`** | **893行** | ✅ **本次新增完整研读** |
-| **`src/cron/service/timer.ts`** | **1411行** | ✅ **本次新增完整研读** |
 
-### 1.4 安全基础设施
+### 1.4 Cron 调度引擎（#15 新增深度研读 ⭐）
+| 文件 | 行数 | 研读深度 |
+|------|------|----------|
+| **`src/cron/schedule.ts`** | **~130行** | ✅ **本次完整研读** |
+| **`src/cron/stagger.ts`** | **~50行** | ✅ **本次完整研读** |
+| **`src/cron/webhook-url.ts`** | **~14行** | ✅ **本次完整研读** |
+| **`src/cron/active-jobs.ts`** | **~40行** | ✅ **本次完整研读** |
+| **`src/cron/heartbeat-policy.ts`** | **~40行** | ✅ **本次完整研读** |
+| **`src/cron/session-reaper.ts`** | **~130行** | ✅ **本次完整研读** |
+
+### 1.5 安全基础设施
 | 文件 | 行数 | 研读深度 |
 |------|------|----------|
 | `src/infra/unhandled-rejections.ts` | ~280行 | ✅ 完整研读 |
@@ -55,190 +66,159 @@
 | `src/infra/path-safety.ts` | ~10行 | ✅ 完整研读 |
 | `src/infra/prototype-keys.ts` | ~5行 | ✅ 完整研读 |
 | `src/infra/config-paths.ts` | ~80行 | ✅ 完整研读 |
+| `src/infra/heartbeat-runner.ts` | ~1530行 | ✅ 完整研读 |
 | `src/security/external-content.ts` | ~375行 | ✅ 完整研读 |
 
-### 1.5 Agent 系统
+### 1.6 Agent 系统
 | 文件 | 行数 | 研读深度 |
 |------|------|----------|
 | `src/agents/agent-runtime-config.ts` | ~100行 | ✅ 完整研读 |
 | `src/agents/acp-spawn.ts` | ~1270行 | ✅ 完整研读 |
 | `src/agents/agent-prompt.ts` | ~50行 | ✅ 完整研读 |
 
-### 1.6 心跳系统
-| 文件 | 行数 | 研读深度 |
-|------|------|----------|
-| `src/infra/heartbeat-runner.ts` | ~1530行 | ✅ 完整研读 |
-
 ---
 
 ## 2. 发现的作者工程意图和防御性设计
 
-### 2.1 ⏱️ Timer 时钟的"防死锁"设计（#14 新增）
-**文件**: `src/cron/service/timer.ts`（第 500-530 行 `armTimer`）
+### 2.1 ⏱️ Cron 表达式解析的 LRU 缓存池（#15 新增）
+**文件**: `src/cron/schedule.ts`（第 6-30 行）
 ```typescript
-const flooredDelay = delay === 0 ? MIN_REFIRE_GAP_MS : delay;
-const clampedDelay = Math.min(flooredDelay, MAX_TIMER_DELAY_MS);
-```
-**意图**: **三重防护防止定时器死锁**:
-1. `delay === 0` → 下探到 `MIN_REFIRE_GAP_MS`（2秒），防止 `setTimeout(0)` 热循环
-2. `clampedDelay` → 上限 `MAX_TIMER_DELAY_MS`（60秒），防止 schedule drift
-3. `onTimer` 开头检查 `state.running` → 如果 tick 执行中，自动设置 `armRunningRecheckTimer` 守护定时器
+const CRON_EVAL_CACHE_MAX = 512;
+const cronEvalCache = new Map<string, Cron>();
 
-这是**防御性定时器的教科书实现**——防止三种死锁场景：(a) stuck runningAtMs + past-due nextRunAtMs (b) long-running job 阻塞后续 tick (c) 进程 paused 后时钟跳跃。
-
-### 2.2 🔒 Cron 任务的"并发控制"池（#14 新增）
-**文件**: `src/cron/service/timer.ts`（第 540-560 行 `onTimer`）
-```typescript
-const concurrency = Math.min(resolveRunConcurrency(state), Math.max(1, dueJobs.length));
-const workers = Array.from({ length: concurrency }, async () => {
-  for (;;) {
-    const index = cursor++;
-    if (index >= dueJobs.length) return;
-    const due = dueJobs[index];
-    results[index] = await runDueJob(due);
+function resolveCachedCron(expr: string, timezone: string): Cron {
+  const key = `${timezone}\u0000${expr}`;  // ← 用 null char 分隔，避免 tz+expr 拼接冲突
+  const cached = cronEvalCache.get(key);
+  if (cached) return cached;
+  if (cronEvalCache.size >= CRON_EVAL_CACHE_MAX) {
+    const oldest = cronEvalCache.keys().next().value;  // ← 简单 FIFO 淘汰
+    if (oldest) cronEvalCache.delete(oldest);
   }
-});
-await Promise.all(workers);
-```
-**意图**: **有界并行工作池**。不是简单 `Promise.all(dueJobs.map(runDueJob))` 导致所有任务同时执行（可能耗尽 LLM API 配额），而是用 `maxConcurrentRuns` 配置控制并发度。用 `cursor++` 原子索引分配，避免重复执行。这是**资源友好的并发模型**。
-
-### 2.3 🎯 Cron 投递计划的双重解析（#14 新增）
-**文件**: `src/cron/delivery-plan.ts`（第 30-60 行 `resolveCronDeliveryPlan`）
-```typescript
-const isIsolatedAgentTurn =
-  job.payload.kind === "agentTurn" &&
-  (job.sessionTarget === "isolated" ||
-   job.sessionTarget === "current" ||
-   job.sessionTarget.startsWith("session:"));
-const resolvedMode = isIsolatedAgentTurn ? "announce" : "none";
-```
-**意图**: **隐式投递策略推导**。即使 job 没有显式配置 `delivery`，系统也能根据 payload/sessionTarget 推断出正确的投递模式：isolated agent turn 默认 announce，systemEvent 默认 none。这是**约定优于配置**的体现——常见场景有合理默认值，无需每个 job 都显式声明 delivery。
-
-### 2.4 📋 失败投递目标的智能继承（#14 新增）
-**文件**: `src/cron/delivery-plan.ts`（第 110-160 行 `resolveFailureDestination`）
-```typescript
-if (isSameDeliveryTarget(delivery, result)) {
-  return null;  // 主投递和失败投递目标相同则无需失败投递
+  return cronEvalCache.get(`${timezone}\u0000${expr}`) ?? new Cron(expr, { timezone, catch: false });
 }
 ```
-**意图**: **失败投递 ≠ 重复投递**。如果失败投递目标和主投递目标是同一个 channel/account，直接返回 null，避免在出错时还往同一个地方发"失败通知"。这是**避免噪声的自我消减逻辑**。
+**意图**: **复用 croner 实例而非每次重建**。`Croner` 库的实例化有开销，LRU 缓存避免对同一表达式重复解析。用 `\u0000`（null byte）分隔 key 防止 `"utc""*"` 和 `"utc*"` 冲突。FIFO 淘汰简单粗暴但有效——cron 表达式种类通常有限。
 
-### 2.5 📅 任务调度计算的"错误自愈"（#14 新增）
-**文件**: `src/cron/service/jobs.ts`（第 220-260 行 `recordScheduleComputeError`）
+### 2.2 📅 croner 库的 year-rollback bug 修复（#15 新增）
+**文件**: `src/cron/schedule.ts`（第 70-90 行）
 ```typescript
-if (errorCount >= MAX_SCHEDULE_ERRORS) {
-  job.enabled = false;
-  state.deps.enqueueSystemEvent(notifyText, { ... });
-  state.deps.requestHeartbeatNow({ reason: `cron:${job.id}:auto-disabled` });
+// Workaround for croner year-rollback bug: some timezone/date combinations
+// (e.g. Asia/Shanghai) cause nextRun to return a timestamp in a past year.
+if (nextMs <= nowMs) {
+  // 第1层：从下一秒重试
+  const nextSecondMs = Math.floor(nowMs / 1000) * 1000 + 1000;
+  const retry = cron.nextRun(new Date(nextSecondMs));
+  // ...
+  // 第2层：从明天 UTC 00:00 重试
+  const tomorrowMs = new Date(nowMs).setUTCHours(24, 0, 0, 0);
+  const retry2 = cron.nextRun(new Date(tomorrowMs));
 }
 ```
-**意图**: **渐进式自愈策略**：
-- 第 1-2 次错误：warn 日志 + 跳过，不干扰
-- 第 3 次错误：自动禁用 job + 通知用户 + 触发心跳
+**意图**: **承认第三方库不可靠，用运行时补偿**。croner 在处理 `Asia/Shanghai` 等时区时，nextRun 可能返回过去的年份（跨月/跨年边界 bug）。作者没有放弃，而是三级渐进回退：正常 → 下一秒 → 明天。这是**务实的工程哲学**——不纠结于"谁错了"，而是"怎么让它工作"。
 
-这是**安全阀模式**——连续错误不代表配置一定有问题（可能是时区 bug），但连续 3 次后必须停下来让用户检查。
-
-### 2.6 🏷️ Staggered Cron 的确定性偏移（#14 新增）
-**文件**: `src/cron/service/jobs.ts`（第 50-90 行 `resolveStableCronOffsetMs`）
+### 2.3 ⏰ Top-of-hour 的默认 Stagger（#15 新增）
+**文件**: `src/cron/stagger.ts`（第 7-30 行）
 ```typescript
-const digest = crypto.createHash("sha256").update(jobId).digest();
-const offset = digest.readUInt32BE(0) % staggerMs;
-```
-**意图**: **基于 job ID 哈希的确定性偏移**。同一 job 每次重启后偏移量相同（因为 jobId 不变），避免重启后所有 job 突然在同一秒触发。同时用 SHA-256 保证分布均匀。这是**分布式系统中经典的"哈希分片"思想在单进程调度中的应用**。
+export const DEFAULT_TOP_OF_HOUR_STAGGER_MS = 5 * 60 * 1000;  // 5 分钟
 
-### 2.7 ⏰ 启动恢复的"分级执行"策略（#14 新增）
-**文件**: `src/cron/service/timer.ts`（第 740-800 行 `planStartupCatchup`）
-```typescript
-const maxImmediate = Math.max(0, state.deps.maxMissedJobsPerRestart ?? DEFAULT_MAX_MISSED_JOBS_PER_RESTART);
-const startupCandidates = sorted.slice(0, maxImmediate);
-const deferred = sorted.slice(maxImmediate);
-```
-**意图**: **启动恢复不是"全部立即执行"**。重启后错过的任务分两级：
-- 前 `maxMissedJobsPerRestart`（默认 5 个）：立即执行
-- 其余：deferred，按 `DEFAULT_MISSED_JOB_STAGGER_MS`（5 秒）错开执行
+export function isRecurringTopOfHourCronExpr(expr: string) {
+  // "0 * * * *" (5-field) or "0 0 * * *" (6-field) → 每小时整点
+  const fields = parseCronFields(expr);
+  // minuteField === "0" && hourField.includes("*")
+}
 
-这是**防止网关启动后瞬间过载**的设计——网关刚启动时系统资源紧张、LLM API 可能有限流，不应该是所有积压任务同时触发。
-
-### 2.8 🔌 Main Session Cron 的"心跳等待"机制（#14 新增）
-**文件**: `src/cron/service/timer.ts`（第 950-1010 行 `executeMainSessionCronJob`）
-```typescript
-for (;;) {
-  heartbeatResult = await state.deps.runHeartbeatOnce({ ... });
-  if (heartbeatResult.status !== "skipped" || heartbeatResult.reason !== "requests-in-flight") {
-    break;
-  }
-  if (isRecurringJob) {
-    // 循环 job 不阻塞 cron lane，等待后返回
-    state.deps.requestHeartbeatNow({ ... });
-    return { status: "ok", summary: text };
-  }
-  if (state.deps.nowMs() - waitStartedAt > maxWaitMs) {
-    // 超时也返回
-    return { status: "ok", summary: text };
-  }
-  await waitWithAbort(retryDelayMs);
+export function resolveDefaultCronStaggerMs(expr: string): number | undefined {
+  return isRecurringTopOfHourCronExpr(expr) ? DEFAULT_TOP_OF_HOUR_STAGGER_MS : undefined;
 }
 ```
-**意图**: **不阻塞主 session 的心跳通道**。Main session cron job 本质是向主 session 注入系统事件，但注入时需要触发一次心跳来传递事件。如果心跳正在处理其他请求，cron job **不阻塞**——可以等待（最多 2 分钟）或者返回"已排队"状态。这是**非侵入式事件注入**的设计哲学。
+**意图**: **自动防御整点任务风暴**。如果用户配置了 `"0 * * * *"`（每小时整点执行），系统自动加 5 分钟错开。不需要用户手动配置 `staggerMs`——**常见陷阱模式自动规避**。
 
-### 2.9 🛑 错误重试的瞬态分类器（#14 新增）
-**文件**: `src/cron/service/timer.ts`（第 230-250 行 `TRANSIENT_PATTERNS`）
+### 2.4 🔌 Webhook URL 的极简白名单校验（#15 新增）
+**文件**: `src/cron/webhook-url.ts`
 ```typescript
-const TRANSIENT_PATTERNS: Record<string, RegExp> = {
-  rate_limit: /(rate[_ ]limit|too many requests|429|resource has been exhausted|cloudflare|tokens per day)/i,
-  overloaded: /\b529\b|\boverloaded(?:_error)?\b|high demand|temporar(?:ily|y) overloaded|capacity exceeded/i,
-  network: /(network|econnreset|econnrefused|fetch failed|socket)/i,
-  timeout: /(timeout|etimedout)/i,
-  server_error: /\b5\d{2}\b/,
-};
-```
-**意图**: **基于错误文本的模式匹配分类器**。不是靠异常类型（HTTP 库可能包装所有错误为通用 Error），而是靠错误消息中的关键词判断是否瞬态。这是**在 TypeScript 弱类型环境下的一种实用主义错误分类**——虽然不够精确，但覆盖了 99% 的实际场景。
+function isAllowedWebhookProtocol(protocol: string) {
+  return protocol === "http:" || protocol === "https:";
+}
 
-### 2.10 📊 Cron 任务执行的"账本"记录（#14 新增）
-**文件**: `src/cron/service/timer.ts`（第 130-180 行 `tryCreateCronTaskRun` / `tryFinishCronTaskRun`）
-```typescript
-createRunningTaskRun({
-  runtime: "cron",
-  sourceId: params.job.id,
-  scopeKind: "system",
-  label: params.job.name,
-  task: params.job.name || params.job.id,
-  deliveryStatus: "not_applicable",
-  notifyPolicy: "silent",
-});
+export function normalizeHttpWebhookUrl(value: unknown): string | null {
+  // 非 string → null, 空串 → null, 非法URL → null, 非法协议 → null
+  // 仅放行 http/https
+}
 ```
-**意图**: **所有 cron 执行都有"任务账本"**。每个 cron 执行创建一个 detached task run 记录，记录 start/end/error/summary。这不是"执行完就忘"，而是有完整的**执行历史可查询**。这是**系统可观测性**的体现——运维可以查询"哪个 job 什么时候执行了，持续了多久，成功还是失败"。
+**意图**: **最短的安全检查路径**。就 4 行代码，但覆盖了所有危险协议（`file:`, `ftp:`, `data:`, `javascript:` 全部被 `new URL()` 解析出来但被 `isAllowedWebhookProtocol` 拒绝）。这是**防御性编程的极简主义**。
 
-### 2.11 🔄 错误恢复的"保守" nextRunAtMs 更新（#14 新增）
-**文件**: `src/cron/service/timer.ts`（第 400-450 行 `applyJobResult`）
+### 2.5 🔄 进程级 Active Jobs 集合（#15 新增）
+**文件**: `src/cron/active-jobs.ts`
 ```typescript
-// 完成后的安全网：确保下一次触发至少 2 秒之后
-const minNext = result.endedAt + MIN_REFIRE_GAP_MS;
-job.state.nextRunAtMs = resolveCronNextRunWithLowerBound({
-  state, job, naturalNext, lowerBoundMs: minNext, context: "completion"
-});
+const CRON_ACTIVE_JOB_STATE_KEY = Symbol.for("openclaw.cron.activeJobs");
+
+function getCronActiveJobState(): CronActiveJobState {
+  return resolveGlobalSingleton<CronActiveJobState>(CRON_ACTIVE_JOB_STATE_KEY, () => ({
+    activeJobIds: new Set<string>(),
+  }));
+}
 ```
-**意图**: **即使调度计算返回了"现在"，也强制等待 2 秒**。这是因为 `computeJobNextRunAtMs` 在某些边缘情况下（时区计算 bug、croner 库的边界问题）可能返回与刚结束的执行同一秒的下一个时间。这是**针对调度计算错误的运行时保护**。
+**意图**: **用 `Symbol.for` + global 单例实现进程内去重**。不是用闭包变量（重启后丢失），而是用 `globalThis` 上的命名单例。配合 `isCronJobActive()` 检查可防止同一 job 被并发触发（如 timer 竞态）。这是**简单的进程级防重放机制**。
+
+### 2.6 💓 Heartbeat 交付的"纯文本跳过"策略（#15 新增）
+**文件**: `src/cron/heartbeat-policy.ts`
+```typescript
+export function shouldSkipHeartbeatOnlyDelivery(payloads, ackMaxChars): boolean {
+  // 无任何 media → 检查是否全是 heartbeat 确认消息
+  const hasAnyMedia = payloads.some(resolveSendableOutboundReplyParts(payload).hasMedia);
+  if (hasAnyMedia) return false;  // 有媒体内容，必须投递
+  return payloads.some(result => result.shouldSkip);  // 全是心跳 token → 跳过投递
+}
+```
+**意图**: **不发送"heartbeat OK"作为用户可见消息**。心跳系统会生成"HEARTBEAT_OK"等确认文本，但如果只有这些纯文本回复（无媒体），则直接跳过投递——避免用户收到一堆"已检查邮件、日历、天气，都正常"的废话。这是**用户体验驱动的静默策略**。
+
+### 2.7 🗑️ Cron Session 的自动回收管家（#15 新增）
+**文件**: `src/cron/session-reaper.ts`
+```typescript
+const DEFAULT_RETENTION_MS = 24 * 3_600_000;  // 24 小时
+const MIN_SWEEP_INTERVAL_MS = 5 * 60_000;  // 5 分钟
+
+// 在 session key 中查找 `...:cron:<jobId>:run:<uuid>` 模式
+// updatedAt < cutoff → 删除 + 归档 transcript
+```
+**意图**: **隔离 agent session 的有生命周期管理**。每个 cron 执行创建一个 isolated session（`...:cron:<jobId>:run:<uuid>`），这些 session 在完成 24 小时后自动被 reaper 清理。关键设计点：
+- **自节流**：5 分钟最小间隔，避免每个 timer tick 都做磁盘 I/O
+- **锁顺序安全**：文档明确注释必须在外层 locked 之后调用，避免锁顺序反转
+- **分级清理**：先在 store 中删除条目，再归档 transcript，最后物理清理
+
+### 2.8 📋 Cron 任务编排的三段式流水线（#15 新增回顾）
+**文件**: `src/cron/isolated-agent/run.ts`（777 行）
+**流程**: `prepareCronRun → executeCronRun → finalizeCronRun`
+```
+prepare:   验证 → 加载 job → 解析 delivery plan → 获取 cron agent
+execute:   创建 session → 模型切换 → 执行 prompt → 处理中间消息 → 等待子代理
+finalize:  创建 task run → 应用投递 → 幂等检查 → 过时检查 → 清理 session
+```
+**意图**: **编排与逻辑分离**。run.ts 是编排骨架，每一段调用独立的 helper 模块。这种"导演模式"让每段逻辑可独立测试、独立替换。
 
 ---
 
 ## 3. 捕捉到的"灵魂碎片"
 
-### 碎片 O: "守护定时器的定时器"（#14 新增）
-**证据**: `timer.ts` — `armTimer` 中三层防护 + `onTimer` 开头检查 `state.running` 设置守护定时器
-**哲学**: "即使定时器本身也可能会挂。" 系统对自己的基础设施有自我监控意识——定时器不是设了就一劳永逸的，它也需要被守护。
+### 碎片 S: "第三方库有 bug？那就打补丁"（#15 新增）
+**证据**: `schedule.ts` — croner year-rollback 三级回退
+**哲学**: "不跟开源库的 bug 较劲，用运行时补偿绕过。" 承认不完美，追求可工作。
 
-### 碎片 P: "确定性偏移，避免启动风暴"（#14 新增）
-**证据**: `jobs.ts` — SHA-256 哈希分片 + 启动恢复分级执行
-**哲学**: "知道什么时候不做什么，和知道做什么一样重要。" 重启后不是一股脑把所有任务都跑起来，而是有序、渐进地恢复。
+### 碎片 T: "整点风暴要防，但用户不用自己防"（#15 新增）
+**证据**: `stagger.ts` — 自动识别 `0 * * * *` 模式并加 5 分钟错开
+**哲学**: "帮用户防自己可能犯的错误。" 默认值不是懒惰，是预判。
 
-### 碎片 Q: "心跳不阻塞"（#14 新增）
-**证据**: `timer.ts` — main session cron 注入事件时的心跳等待 + 超时返回
-**哲学**: "重要但不紧急的事，不该阻塞紧急的事。" Main session cron job 不是高优先级的——它只是往主 session 投一个事件，如果心跳通道被占用，等一等或者干脆说"已经排上了"。
+### 碎片 U: "最少代码，最多安全"（#15 新增）
+**证据**: `webhook-url.ts` — 14 行代码实现完整的 URL 白名单校验
+**哲学**: "安全不需要复杂的规则引擎。" 协议白名单 + URL 解析 = 99% 的保护。
 
-### 碎片 R: "账本思维"（#14 新增）
-**证据**: `timer.ts` — 每个 cron 执行都创建 task run 记录，有 start/end/status/error/summary
-**哲学**: "做过的每一件事都值得被记录。" 这不是简单的日志，而是结构化的任务执行账本——可供查询、可供审计、可供分析。
+### 碎片 V: "静默是最高的礼貌"（#15 新增）
+**证据**: `heartbeat-policy.ts` — 纯 heartbeat 确认文本跳过投递
+**哲学**: "系统运行正常就是最好的状态——不必每次都汇报。" 用户不需要被告知"一切正常"，除非真正有值得说的。
+
+### 碎片 W: "垃圾有保质期"（#15 新增）
+**证据**: `session-reaper.ts` — 24 小时自动回收 cron session
+**哲学**: "创建是权利，回收是义务。" 系统对自己的产出负责到底——不留下过期垃圾。
 
 ---
 
@@ -253,28 +233,30 @@ job.state.nextRunAtMs = resolveCronNextRunWithLowerBound({
 | #11 | 2026-04-24 20:50 | ACP Spawn + Heartbeat 完整链 | ~2 |
 | #12 | 2026-04-24 23:00 | Cron 隔离 Agent 全链路 | ~8 |
 | #13 | 2026-04-25 04:40 | Cron 执行链路三段式 + 外部内容安全 | ~3 |
-| **#14** | **2026-04-25 05:43** | **Cron 定时器核心 + 调度计算 + 投递计划解析** | **3** |
+| #14 | 2026-04-25 05:43 | Cron 定时器核心 + 调度计算 + 投递计划 | 3 |
+| **#15** | **2026-04-25 06:55** | **Cron 调度引擎核心 + Session 回收 + 心跳策略** | **6** |
 
 ### 累计统计
 | 指标 | 值 |
 |------|------|
-| 总研读文件数 | ~128+ |
-| 发现的设计模式 | 25+ |
-| 发现的灵魂碎片 | 18 个 |
-| 核心子系统覆盖 | 入口链/网关安全/Cron完整链路(调度/定时器/执行/投递/恢复)/心跳/ACP/错误处理/重试/锁机制/外部内容安全/任务账本/并发控制 |
+| 总研读文件数 | ~134+ |
+| 发现的设计模式 | 30+ |
+| 发现的灵魂碎片 | 23 个 |
+| Cron 子系统覆盖 | ✅ 完整：调度→定时器→执行→投递→回收 全链路 |
+| 核心子系统覆盖 | 入口链/网关安全/Cron完整链路/心跳/ACP/错误处理/重试/锁机制/外部内容安全/Session生命周期/URL安全/ActiveJobs去重/缓存机制 |
 
 ---
 
 ## 5. 下一步研读计划
 
 ### 高优先级
-1. **`src/cron/schedule.ts`** — cron expression 解析和 next/previous run 计算核心（`computeNextRunAtMs`/`computePreviousRunAtMs`）
-2. **`src/cron/stagger.ts`** — stagger 配置的解析和默认值计算
-3. **`src/cron/webhook-url.ts`** — webhook URL 规范化
+1. **`src/cron/normalize.ts`** — Job 规范化管道，所有 job 创建/更新的入口闸门
+2. **`src/cron/normalize-job-identity.ts`** — 身份标识的去重与归一化
+3. **`src/cron/delivery.ts`** — 通用的投递抽象层（不仅仅是 isolated agent 投递）
 
 ### 中优先级
 4. **`src/agents/live-model-switch.ts`** — 动态模型切换实现
-5. **`src/channels/plugins/`** — 插件系统
+5. **`src/channels/plugins/`** — 插件系统的完整扩展机制
 6. **`src/agents/skills.ts`** — 技能系统
 
 ### 低优先级
@@ -283,4 +265,4 @@ job.state.nextRunAtMs = resolveCronNextRunWithLowerBound({
 9. **`src/browser/`** — 浏览器自动化
 
 ---
-**统计**: 第14轮报告新增研读 3 个核心文件（2511 行），重点发现了 **Timer 时钟的三重防死锁设计**、**有界并发工作池**、**Cron 投递计划的双重解析**、**启动恢复的分级执行策略**、**Main session cron 的心跳等待机制**、**错误重试的瞬态分类器**。识别了 **5 个新增工程意图** (#2.1-#2.11) 和 **4 个新增灵魂碎片** (O-R)。Cron 系统的核心调度引擎（timer/jobs/delivery-plan）已全部覆盖——从定时触发、任务选择、并发执行、结果应用到失败恢复，形成了完整的闭环。
+**统计**: 第15轮报告新增研读 6 个核心文件（464 行），重点发现了 **Cron 表达式解析的 LRU 缓存池**、**croner 库 bug 的运行时补偿**、**Top-of-hour 自动错开**、**Webhook URL 的极简白名单**、**进程级 Active Jobs 去重**、**Heartbeat 静默策略**、**Session 自动回收管家**。识别了 **7 个新增工程意图** (#2.1-#2.8) 和 **5 个新增灵魂碎片** (S-W)。Cron 系统的调度引擎（schedule/stagger/active-jobs）已全部覆盖——从表达式解析、缓存管理、冲突预防到 session 生命周期回收，形成了完整的闭环。
