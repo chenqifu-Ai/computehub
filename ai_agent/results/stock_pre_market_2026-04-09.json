@@ -1,0 +1,148 @@
+{
+  "status": "completed",
+  "datetime_info": {
+    "datetime": "2026-04-09T08:21:01.091849+08:00",
+    "date": "2026-04-09",
+    "time": "08:21:01",
+    "weekday": 3,
+    "is_trading_day": true
+  },
+  "pre_market_data": {
+    "AAPL": {
+      "symbol": "AAPL",
+      "previous_close": 175.5,
+      "pre_market_price": 174.42,
+      "pre_market_change": -1.08,
+      "pre_market_change_pct": -0.61,
+      "volume_estimate": 426726,
+      "news_sentiment": "negative",
+      "analyst_rating": "hold"
+    },
+    "MSFT": {
+      "symbol": "MSFT",
+      "previous_close": 405.2,
+      "pre_market_price": 404.96,
+      "pre_market_change": -0.24,
+      "pre_market_change_pct": -0.06,
+      "volume_estimate": 365768,
+      "news_sentiment": "positive",
+      "analyst_rating": "buy"
+    },
+    "GOOGL": {
+      "symbol": "GOOGL",
+      "previous_close": 150.8,
+      "pre_market_price": 148.72,
+      "pre_market_change": -2.08,
+      "pre_market_change_pct": -1.38,
+      "volume_estimate": 49809,
+      "news_sentiment": "positive",
+      "analyst_rating": "sell"
+    },
+    "TSLA": {
+      "symbol": "TSLA",
+      "previous_close": 175.3,
+      "pre_market_price": 178.16,
+      "pre_market_change": 2.86,
+      "pre_market_change_pct": 1.63,
+      "volume_estimate": 243295,
+      "news_sentiment": "neutral",
+      "analyst_rating": "sell"
+    },
+    "BABA": {
+      "symbol": "BABA",
+      "previous_close": 75.4,
+      "pre_market_price": 74.05,
+      "pre_market_change": -1.35,
+      "pre_market_change_pct": -1.78,
+      "volume_estimate": 576214,
+      "news_sentiment": "negative",
+      "analyst_rating": "sell"
+    },
+    "000001.SS": {
+      "symbol": "000001.SS",
+      "previous_close": 3200.5,
+      "pre_market_price": 3156.94,
+      "pre_market_change": -43.56,
+      "pre_market_change_pct": -1.36,
+      "volume_estimate": 315932,
+      "news_sentiment": "negative",
+      "analyst_rating": "buy"
+    },
+    "600036.SS": {
+      "symbol": "600036.SS",
+      "previous_close": 35.2,
+      "pre_market_price": 35.05,
+      "pre_market_change": -0.15,
+      "pre_market_change_pct": -0.43,
+      "volume_estimate": 220914,
+      "news_sentiment": "negative",
+      "analyst_rating": "buy"
+    }
+  },
+  "market_sentiment": {
+    "overall_sentiment": "bearish",
+    "positive_stocks": 1,
+    "negative_stocks": 6,
+    "neutral_stocks": 0,
+    "market_breadth": 14.3
+  },
+  "trading_signals": [
+    {
+      "symbol": "AAPL",
+      "action": "watch",
+      "confidence": "medium",
+      "reason": "Moderate pre-market movement",
+      "target_price": null,
+      "stop_loss": null
+    },
+    {
+      "symbol": "MSFT",
+      "action": "hold",
+      "confidence": "low",
+      "reason": "",
+      "target_price": null,
+      "stop_loss": null
+    },
+    {
+      "symbol": "GOOGL",
+      "action": "watch",
+      "confidence": "medium",
+      "reason": "Moderate pre-market movement",
+      "target_price": null,
+      "stop_loss": null
+    },
+    {
+      "symbol": "TSLA",
+      "action": "watch",
+      "confidence": "medium",
+      "reason": "Moderate pre-market movement",
+      "target_price": null,
+      "stop_loss": null
+    },
+    {
+      "symbol": "BABA",
+      "action": "sell",
+      "confidence": "high",
+      "reason": "Weak pre-market performance with negative news",
+      "target_price": 71.83,
+      "stop_loss": 76.27
+    },
+    {
+      "symbol": "000001.SS",
+      "action": "watch",
+      "confidence": "medium",
+      "reason": "Moderate pre-market movement",
+      "target_price": null,
+      "stop_loss": null
+    },
+    {
+      "symbol": "600036.SS",
+      "action": "hold",
+      "confidence": "low",
+      "reason": "",
+      "target_price": null,
+      "stop_loss": null
+    }
+  ],
+  "execution_time": "2026-04-09T08:21:01.092046"
+}

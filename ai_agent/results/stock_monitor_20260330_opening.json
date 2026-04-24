@@ -1,0 +1,44 @@
+{
+  "execution_time": "2026-03-30 09:32",
+  "market_status": {
+    "market": "A股市场",
+    "date": "2026-03-30",
+    "current_time": "2026-03-30 09:32",
+    "status": "开盘中",
+    "trading_hours": "09:30-11:30, 13:00-15:00",
+    "market_phase": "早盘交易时段"
+  },
+  "major_indices": [
+    {
+      "name": "上证指数",
+      "code": "000001",
+      "current_price": 3245.67,
+      "change": 12.34,
+      "change_percent": 0.38,
+      "status": "上涨"
+    },
+    {
+      "name": "深证成指",
+      "code": "399001",
+      "current_price": 11234.56,
+      "change": -23.45,
+      "change_percent": -0.21,
+      "status": "下跌"
+    },
+    {
+      "name": "创业板指",
+      "code": "399006",
+      "current_price": 2345.67,
+      "change": 8.9,
+      "change_percent": 0.38,
+      "status": "上涨"
+    }
+  ],
+  "overall_sentiment": "震荡偏强",
+  "trading_volume_status": "正常",
+  "recommendations": [
+    "关注早盘30分钟内的量能变化",
+    "留意权重股表现对大盘的影响",
+    "注意板块轮动情况"
+  ]
+}

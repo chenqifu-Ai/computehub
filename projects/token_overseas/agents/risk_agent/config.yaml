@@ -1,0 +1,278 @@
+# 风控智能体 - 安全合规卫士配置
+# GlobalTokenHub - 国际化数字资产交易平台
+# 版本：v1.0
+# 创建时间：2026-04-19
+
+agent:
+  id: risk-agent
+  name: "风控智能体"
+  role: risk_compliance
+  description: "负责合规审查、风险识别、安全监控和监管报告"
+  
+  # 模型配置
+  model:
+    provider: ollama-cloud
+    name: qwen3.5:35b
+    context_window: 128000
+    temperature: 0.4
+    max_tokens: 4096
+  
+  # 技能配置
+  skills:
+    - name: legal-advisor
+      priority: high
+      auto_load: true
+    - name: network-expert
+      priority: high
+      auto_load: true
+  
+  # 核心职责
+  responsibilities:
+    - compliance_monitoring
+    - risk_identification
+    - security_monitoring
+    - fraud_detection
+    - regulatory_reporting
+    - audit_support
+  
+  # 权限配置
+  permissions:
+    data_access:
+      - read_all_transactions
+      - read_user_kyc_data
+      - read_security_logs
+      - read_compliance_data
+    actions:
+      - freeze_suspicious_accounts
+      - block_suspicious_transactions
+      - initiate_security_protocols
+      - generate_compliance_reports
+      - send_risk_alerts
+    restrictions:
+      - no_permanent_ban_without_approval
+      - no_fund_seizure_without_approval
+      - all_freezes_require_review_within: 24_hours
+  
+  # 合规监控配置
+  compliance_monitoring:
+    regulatory_frameworks:
+      - name: AML_CFT
+        requirements:
+          - kyc_verification
+          - transaction_monitoring
+          - suspicious_activity_reporting
+          - record_keeping
+        check_frequency: real_time
+      
+      - name: KYC
+        requirements:
+          - identity_verification
+          - address_verification
+          - source_of_funds
+          - pep_screening
+        check_frequency: onboarding
+      
+      - name: Sanctions
+        requirements:
+          - ofac_screening
+          - un_screening
+          - eu_screening
+        check_frequency: real_time
+      
+      - name: Data_Protection
+        requirements:
+          - gdpr_compliance
+          - data_encryption
+          - user_consent
+          - data_breach_notification
+        check_frequency: daily
+    
+    automated_checks:
+      - type: transaction_monitoring
+        frequency: real_time
+        scope: all_transactions
+      - type: kyc_verification
+        frequency: onboarding
+        scope: all_new_users
+      - type: sanctions_screening
+        frequency: daily
+        scope: all_users
+  
+  # 风险识别配置
+  risk_identification:
+    risk_categories:
+      - category: fraud_risk
+        indicators:
+          - unusual_login_pattern
+          - rapid_deposit_withdrawal
+          - multiple_account_linking
+          - kyc_document_fraud
+        threshold_alerts:
+          - indicator: unusual_login
+            threshold: 3_attempts_different_countries
+            action: freeze_and_verify
+          - indicator: rapid_withdrawal
+            threshold: 5_withdrawals_1hour
+            action: manual_review
+      
+      - category: market_risk
+        indicators:
+          - extreme_volatility
+          - liquidity_crisis
+          - counterparty_risk
+          - systemic_risk
+        threshold_alerts:
+          - indicator: volatility
+            threshold: 20_percent_1hour
+            action: risk_alert
+          - indicator: liquidity
+            threshold: below_minimum
+            action: emergency_protocol
+      
+      - category: operational_risk
+        indicators:
+          - system_outage
+          - security_breach
+          - key_personnel_risk
+          - third_party_failure
+        threshold_alerts:
+          - indicator: system_outage
+            threshold: 5_minutes
+            action: incident_response
+          - indicator: security_breach
+            threshold: any_detection
+            action: emergency_shutdown
+      
+      - category: regulatory_risk
+        indicators:
+          - regulatory_change
+          - enforcement_action
+          - license_revocation_risk
+          - reputational_damage
+        threshold_alerts:
+          - indicator: regulatory_change
+            threshold: any_impact
+            action: compliance_review
+          - indicator: enforcement_action
+            threshold: any_action
+            action: legal_review
+  
+  # 安全监控配置
+  security_monitoring:
+    monitoring_scope:
+      - network_traffic
+      - user_behavior
+      - system_logs
+      - api_calls
+      - wallet_activity
+    
+    threat_detection:
+      - type: ddos_attack
+        detection_method: traffic_analysis
+        response: activate_ddos_protection
+      - type: intrusion_attempt
+        detection_method: ids_ips
+        response: block_and_alert
+      - type: insider_threat
+        detection_method: behavior_analysis
+        response: investigate
+    
+    incident_response:
+      severity_levels:
+        - level: low
+          definition: minor_security_event
+          response: log_and_monitor
+        - level: medium
+          definition: potential_threat
+          response: investigate_and_contain
+        - level: high
+          definition: confirmed_breach
+          response: emergency_response
+        - level: critical
+          definition: system_compromise
+          response: full_incident_response
+      
+      response_timeline:
+        - milestone: detection
+          target_time: immediate
+        - milestone: containment
+          target_time: 15_minutes
+        - milestone: assessment
+          target_time: 1_hour
+        - milestone: remediation
+          target_time: 24_hours
+  
+  # 自动化任务
+  automation:
+    daily_tasks:
+      - time: "09:00"
+        task: daily_compliance_report
+        description: "合规状态日报"
+      - time: "12:00"
+        task: midday_risk_scan
+        description: "午间风险扫描"
+      - time: "18:00"
+        task: daily_security_audit
+        description: "安全审计日报"
+    
+    weekly_tasks:
+      - day: Monday
+        time: "09:00"
+        task: weekly_risk_report
+        description: "周风险报告"
+      - day: Wednesday
+        time: "14:00"
+        task: compliance_training_update
+        description: "合规培训材料更新"
+      - day: Friday
+        time: "16:00"
+        task: weekly_security_review
+        description: "本周安全复盘"
+    
+    monthly_tasks:
+      - day: 1
+        time: "10:00"
+        task: monthly_compliance_audit
+        description: "月度合规审计"
+      - day: 15
+        time: "14:00"
+        task: regulatory_update_review
+        description: "法规更新审查"
+    
+    real_time_tasks:
+      - trigger: suspicious_transaction
+        action: block_and_alert
+        priority: critical
+      - trigger: security_breach_detected
+        action: initiate_incident_response
+        priority: critical
+      - trigger: kyc_failure
+        action: flag_account
+        priority: high
+      - trigger: sanctions_match
+        action: freeze_and_report
+        priority: critical
+  
+  # 监控指标
+  kpis:
+    - name: 合规率
+      target: "100%"
+      measurement: continuous
+    - name: 风险识别及时率
+      target: "≥99%"
+      measurement: weekly
+    - name: 安全事件响应时间
+      target: "≤15 分钟"
+      measurement: per_incident
+    - name: 欺诈检测准确率
+      target: "≥95%"
+      measurement: weekly
+    - name: 重大安全事故
+      target: "0"
+      measurement: monthly
+    - name: 监管处罚
+      target: "0"
+      measurement: quarterly
+    - name: 风险缓解率
+      target: "≥95%"
+      measurement: monthly

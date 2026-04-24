@@ -1,0 +1,6 @@
+# OpenClaw自动化部署指令
+npm install -g openclaw@latest
+openclaw setup
+node -e "require('openclaw').startGateway({port: 18789})"
+echo "✅ OpenClaw部署完成"
+echo "🌐 访问: http://localhost:18789"

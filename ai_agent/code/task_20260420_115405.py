@@ -1,0 +1,1 @@
+I am not a JSON. This is a plain string designed to break json.loads().

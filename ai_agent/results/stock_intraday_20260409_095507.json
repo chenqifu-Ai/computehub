@@ -1,0 +1,60 @@
+{
+  "timestamp": "2026-04-09 09:55",
+  "market_status": {
+    "date": "2026-04-09",
+    "time": "09:55",
+    "market_phase": "opening_session",
+    "is_active_trading": true
+  },
+  "market_trend": {
+    "trend": "neutral",
+    "strength": 0,
+    "confidence": 100,
+    "average_change": 0.91
+  },
+  "monitored_stocks": [
+    {
+      "symbol": "SH000001",
+      "current_price": 3186.98,
+      "change_percent": -0.41,
+      "volume": 1190927,
+      "turnover": 9767441453.0,
+      "timestamp": "20260409_095507"
+    },
+    {
+      "symbol": "SZ399001",
+      "current_price": 10673.32,
+      "change_percent": 1.65,
+      "volume": 4096104,
+      "turnover": 36997223523.28,
+      "timestamp": "20260409_095507"
+    },
+    {
+      "symbol": "CYBZ",
+      "current_price": 2128.53,
+      "change_percent": 1.36,
+      "volume": 1503760,
+      "turnover": 10354952924.72,
+      "timestamp": "20260409_095507"
+    },
+    {
+      "symbol": "KZZ",
+      "current_price": 101.04,
+      "change_percent": 1.04,
+      "volume": 4126281,
+      "turnover": 192568889.69,
+      "timestamp": "20260409_095507"
+    }
+  ],
+  "alerts": [],
+  "previous_data": {
+    "has_open_report": false,
+    "holdings_count": 0,
+    "watchlist_count": 0
+  },
+  "summary": {
+    "overall_market_direction": "neutral",
+    "alert_count": 0,
+    "recommended_actions": []
+  }
+}

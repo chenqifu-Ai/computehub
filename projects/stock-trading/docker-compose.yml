@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  stock-trading:
+    build: .
+    container_name: stock-trading
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/backend/data
+    environment:
+      - TZ=Asia/Shanghai
+    restart: unless-stopped

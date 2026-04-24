@@ -1,0 +1,56 @@
+{
+  "timestamp": "2026-03-23T14:53:51.916718",
+  "strategy": "士兰微 + 华联股份为主",
+  "total_capital": 1000000,
+  "phase": "first",
+  "orders": [
+    {
+      "priority": 1,
+      "code": "600460",
+      "name": "士兰微",
+      "volume": 12000,
+      "price": 29.0,
+      "amount": 348000.0,
+      "stop_loss": 26,
+      "target": 35,
+      "risk_percent": 10.344827586206897,
+      "target_percent": 20.689655172413794
+    },
+    {
+      "priority": 2,
+      "code": "600361",
+      "name": "华联股份",
+      "volume": 86200,
+      "price": 2.9,
+      "amount": 249980.0,
+      "stop_loss": 2.5,
+      "target": 3.5,
+      "risk_percent": 13.79310344827586,
+      "target_percent": 20.689655172413797
+    },
+    {
+      "priority": 3,
+      "code": "002594",
+      "name": "比亚迪",
+      "volume": 900,
+      "price": 106.5,
+      "amount": 95850.0,
+      "stop_loss": 95,
+      "target": 120,
+      "risk_percent": 10.7981220657277,
+      "target_percent": 12.676056338028168
+    },
+    {
+      "priority": 4,
+      "code": "600519",
+      "name": "贵州茅台",
+      "volume": 0,
+      "price": 1390.0,
+      "amount": 0.0,
+      "stop_loss": 1300,
+      "target": 1600,
+      "risk_percent": 6.474820143884892,
+      "target_percent": 15.107913669064748
+    }
+  ]
+}

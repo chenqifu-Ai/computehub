@@ -1,0 +1,260 @@
+{
+  "test_time": "2026-04-18T18:02:37.333372",
+  "total_models": 36,
+  "available_count": 33,
+  "unavailable_count": 3,
+  "results": [
+    {
+      "model": "glm-4.7",
+      "status": "✅ 可用",
+      "response_time": 3.05,
+      "error": null,
+      "response": "我是Z.ai开发的GLM大语言模型，旨在通过智能对话为您提供信息查询、问题解答和创意支持等服务。"
+    },
+    {
+      "model": "qwen3-next:80b",
+      "status": "✅ 可用",
+      "response_time": 3.25,
+      "error": null,
+      "response": "\n\n我是通义千问，阿里巴巴集团旗下的超大规模语言模型，能够回答问题、创作文字、编程，并支持多语言交流。"
+    },
+    {
+      "model": "gpt-oss:120b",
+      "status": "✅ 可用",
+      "response_time": 3.15,
+      "error": null,
+      "response": "我是ChatGPT，一个由OpenAI开发、可以进行自然语言对话并提供信息与创意帮助的人工智能。"
+    },
+    {
+      "model": "ministral-3:3b",
+      "status": "✅ 可用",
+      "response_time": 4.93,
+      "error": null,
+      "response": "我是一名AI助手，专为你提供智能、快速且个性化的解答与支持，助你解决问题、学习知识或探索创意！"
+    },
+    {
+      "model": "gemma3:27b",
+      "status": "✅ 可用",
+      "response_time": 1.89,
+      "error": null,
+      "response": "你好！我是一个由 Google DeepMind 训练的大型语言模型，名为 Gemma，是一个开放权重的 AI 助手。\n"
+    },
+    {
+      "model": "nemotron-3-super",
+      "status": "✅ 可用",
+      "response_time": 2.86,
+      "error": null,
+      "response": "我是Nemotron 3 Super，一个由NVIDIA创造的大型语言模型，能够理解和生成自然语言，以协助各种任务。"
+    },
+    {
+      "model": "nemotron-3-nano:30b",
+      "status": "✅ 可用",
+      "response_time": 1.65,
+      "error": null,
+      "response": "我是通义千问，一个由阿里云研发的超大规模语言模型，能够理解与生成多语言文本。"
+    },
+    {
+      "model": "qwen3-vl:235b-instruct",
+      "status": "✅ 可用",
+      "response_time": 2.38,
+      "error": null,
+      "response": "我是通义千问，阿里巴巴集团旗下的通义实验室研发的超大规模语言模型，能够回答问题、创作文字、进行逻辑推理、编程等，致力于为用户提供高效、智能的服务。"
+    },
+    {
+      "model": "minimax-m2.5",
+      "status": "✅ 可用",
+      "response_time": 6.84,
+      "error": null,
+      "response": "我是一个由OpenAI训练的大型语言模型，专注于提供信息、解答问题和进行自然语言对话。"
+    },
+    {
+      "model": "cogito-2.1:671b",
+      "status": "✅ 可用",
+      "response_time": 2.07,
+      "error": null,
+      "response": "我是Cogito，由旧金山AI研究实验室Deep Cogito创造的AI助手。"
+    },
+    {
+      "model": "glm-4.6",
+      "status": "✅ 可用",
+      "response_time": 27.35,
+      "error": null,
+      "response": "我是智谱AI开发的GLM大语言模型，可以与你对话并回答问题。"
+    },
+    {
+      "model": "devstral-2:123b",
+      "status": "✅ 可用",
+      "response_time": 3.31,
+      "error": null,
+      "response": "你好！我是一个由AI技术驱动的助手，随时准备帮助你解答问题、提供信息或分享有趣的内容。😊"
+    },
+    {
+      "model": "gemma3:12b",
+      "status": "✅ 可用",
+      "response_time": 1.65,
+      "error": null,
+      "response": "我是一个大型语言模型，由 Google 训练，可以进行文本生成、翻译、问答等多种任务。\n"
+    },
+    {
+      "model": "glm-5",
+      "status": "✅ 可用",
+      "response_time": 6.5,
+      "error": null,
+      "response": "我是GLM，由Z.ai训练的大语言模型，致力于为用户提供信息查询、问题解答和各类任务协助。"
+    },
+    {
+      "model": "glm-5.1",
+      "status": "✅ 可用",
+      "response_time": 9.58,
+      "error": null,
+      "response": "我是一个由Z.ai开发的GLM大语言模型，旨在帮助用户获取信息、解决问题和激发创意。"
+    },
+    {
+      "model": "kimi-k2.5",
+      "status": "✅ 可用",
+      "response_time": 7.33,
+      "error": null,
+      "response": "我是Kimi，由月之暗面科技有限公司（Moonshot AI）开发的人工智能助手。"
+    },
+    {
+      "model": "qwen3-coder:480b",
+      "status": "✅ 可用",
+      "response_time": 1.89,
+      "error": null,
+      "response": "你好！我是一个大型语言模型，能够理解和生成自然语言，帮助用户解答问题、提供信息和完成各种任务。"
+    },
+    {
+      "model": "minimax-m2.1",
+      "status": "✅ 可用",
+      "response_time": 2.86,
+      "error": null,
+      "response": "你好！我是MiniMax-M2.1，由MiniMax公司开发的AI助手，很高兴为你服务！"
+    },
+    {
+      "model": "minimax-m2.7",
+      "status": "✅ 可用",
+      "response_time": 11.3,
+      "error": null,
+      "response": "你好！我是MiniMax-M2.1，由MiniMax公司打造的AI助手，很高兴为你服务！"
+    },
+    {
+      "model": "ministral-3:14b",
+      "status": "✅ 可用",
+      "response_time": 2.05,
+      "error": null,
+      "response": "我是一款由人工智能驱动的智能助手，致力于为你提供快速、准确且多样化的信息支持与创意协助！"
+    },
+    {
+      "model": "mistral-large-3:675b",
+      "status": "❌ 错误 (500)",
+      "response_time": 2.1,
+      "error": "{\"error\":\"Internal Server Error (ref: 8b189d04-11ce-4967-921b-f3bd4c9318f2)\"}\n",
+      "response": null
+    },
+    {
+      "model": "minimax-m2",
+      "status": "✅ 可用",
+      "response_time": 8.61,
+      "error": null,
+      "response": "你好！我是MiniMax-M2，一个由MiniMax公司开发的AI助手，很高兴为你服务！"
+    },
+    {
+      "model": "gemma4:31b",
+      "status": "✅ 可用",
+      "response_time": 2.47,
+      "error": null,
+      "response": "你好！我是一个由 Google 训练的大型语言模型，旨在成为你的智能助手，为你提供信息、创意和高效的帮助。"
+    },
+    {
+      "model": "rnj-1:8b",
+      "status": "✅ 可用",
+      "response_time": 1.75,
+      "error": null,
+      "response": "你好！我是一个人工智能助手，旨在帮助您解决各种问题，提供信息和支持。请问您需要什么帮助吗？"
+    },
+    {
+      "model": "qwen3.5:397b",
+      "status": "⏱️ 超时",
+      "response_time": 30.0,
+      "error": "请求超时（30秒）",
+      "response": null
+    },
+    {
+      "model": "kimi-k2-thinking",
+      "status": "✅ 可用",
+      "response_time": 13.45,
+      "error": null,
+      "response": "我是Kimi，一个月之暗面科技有限公司开发的AI助手，擅长回答问题、提供信息和完成任务。"
+    },
+    {
+      "model": "qwen3-coder-next",
+      "status": "✅ 可用",
+      "response_time": 2.48,
+      "error": null,
+      "response": "我是一个通晓多国语言、能辅助用户完成写作、翻译、逻辑推理、编程等任务的AI助手。"
+    },
+    {
+      "model": "qwen3-vl:235b",
+      "status": "✅ 可用",
+      "response_time": 8.88,
+      "error": null,
+      "response": "我是通义千问，阿里巴巴集团旗下的超大规模语言模型，能回答问题、创作文字，支持多语言交流。"
+    },
+    {
+      "model": "devstral-small-2:24b",
+      "status": "✅ 可用",
+      "response_time": 2.12,
+      "error": null,
+      "response": "你好！我是一个由AI技术驱动的智能助手，随时准备为你提供信息、解答问题或帮助你完成各种任务。"
+    },
+    {
+      "model": "gemini-3-flash-preview",
+      "status": "✅ 可用",
+      "response_time": 3.89,
+      "error": null,
+      "response": "你好！我是由 Google 训练的大型语言模型。"
+    },
+    {
+      "model": "gemma3:4b",
+      "status": "✅ 可用",
+      "response_time": 1.96,
+      "error": null,
+      "response": "我是一个大型语言模型，由 Google 训练，可以帮助你完成各种任务，比如回答问题、生成文本等等。\n"
+    },
+    {
+      "model": "kimi-k2:1t",
+      "status": "❌ 错误 (500)",
+      "response_time": 1.09,
+      "error": "{\"error\":\"Internal Server Error (ref: 81b74574-b4dd-4dd6-a29f-91738a8cd9aa)\"}\n",
+      "response": null
+    },
+    {
+      "model": "deepseek-v3.2",
+      "status": "✅ 可用",
+      "response_time": 4.32,
+      "error": null,
+      "response": "你好，我是DeepSeek，一个由深度求索公司创造的AI助手，乐于用我的知识和热情为你提供帮助！😊"
+    },
+    {
+      "model": "ministral-3:8b",
+      "status": "✅ 可用",
+      "response_time": 1.68,
+      "error": null,
+      "response": "我是一个基于人工智能的助手，致力于为你提供准确、多样化的信息和帮助！😊"
+    },
+    {
+      "model": "deepseek-v3.1:671b",
+      "status": "✅ 可用",
+      "response_time": 4.11,
+      "error": null,
+      "response": "你好，我是DeepSeek-V3，由深度求索公司创造的智能助手，致力于用快速、准确的信息和友好的对话为你提供帮助！😊"
+    },
+    {
+      "model": "gpt-oss:20b",
+      "status": "✅ 可用",
+      "response_time": 3.28,
+      "error": null,
+      "response": "我是由OpenAI训练的ChatGPT语言模型，能够用多种语言回答问题、生成文本并提供多种辅助功能。"
+    }
+  ]
+}

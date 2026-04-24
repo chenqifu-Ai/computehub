@@ -1,0 +1,13 @@
+{
+  "test_timestamp": "2026-03-28T08:28:20.442489",
+  "test_message": "重启恢复测试数据",
+  "current_conversation": "状态快照系统部署完成",
+  "important_data": {
+    "user_preferences": "fast响应，简洁模式",
+    "active_skills": [
+      "习惯智能助手",
+      "状态快照系统"
+    ],
+    "project_status": "重启恢复测试中"
+  }
+}

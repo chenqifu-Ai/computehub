@@ -1,0 +1,9 @@
+{
+  "timestamp": "2026-03-26T09:32:30.731330",
+  "execution_time": "09:32",
+  "alerts_found": true,
+  "alerts": [
+    "🟡 华联股份(000882) 跌幅超过5% (-7.25%), 当前价格: 1.65"
+  ],
+  "status": "completed"
+}

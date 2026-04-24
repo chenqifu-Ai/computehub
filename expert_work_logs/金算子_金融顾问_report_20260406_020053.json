@@ -1,0 +1,10 @@
+{
+  "expert": "金算子（金融顾问）",
+  "task": "金融知识学习",
+  "topic": "银行业务",
+  "knowledge_point": "银行卡业务",
+  "start_time": "2026-04-06T02:00:53.928805",
+  "end_time": "2026-04-06T02:00:53.928810",
+  "status": "已完成",
+  "output_file": "/root/.openclaw/workspace/finance-advisor/references/20260406_020053_银行业务_银行卡业务.md"
+}

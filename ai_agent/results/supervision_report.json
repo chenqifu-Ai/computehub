@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-03-29T08:54:24.611419",
+  "conclusion": "正常",
+  "experts": {
+    "营销专家": {
+      "status": "🟡 待执行",
+      "tasks_pending": 3,
+      "tasks_done": 0,
+      "action": "⏰ 跟进进度"
+    },
+    "HR专家": {
+      "status": "🟡 待执行",
+      "tasks_pending": 3,
+      "tasks_done": 0,
+      "action": "⏰ 跟进进度"
+    },
+    "财务专家": {
+      "status": "🟡 待执行",
+      "tasks_pending": 3,
+      "tasks_done": 0,
+      "action": "⏰ 跟进进度"
+    },
+    "网络专家": {
+      "status": "🟡 待执行",
+      "tasks_pending": 3,
+      "tasks_done": 0,
+      "action": "⏰ 跟进进度"
+    },
+    "法务专家": {
+      "status": "🟡 待执行",
+      "tasks_pending": 3,
+      "tasks_done": 0,
+      "action": "⏰ 跟进进度"
+    }
+  }
+}

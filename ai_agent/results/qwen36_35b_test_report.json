@@ -1,0 +1,78 @@
+{
+  "model": "qwen3.6-35b",
+  "api_url": "http://58.23.129.98:8001/v1/chat/completions",
+  "test_time": "2026-04-23T13:04:14.936648",
+  "summary": {
+    "total_tests": 8,
+    "success_count": 8,
+    "success_rate": "100.0%",
+    "avg_response_time": "9.04s",
+    "total_time": "72.33s"
+  },
+  "results": [
+    {
+      "test_name": "基础对话",
+      "status": "✅ 通过",
+      "evaluation": "响应长度：65 字符",
+      "response_time": 6.613142728805542,
+      "success": true,
+      "content_preview": "\n\n我是通义千问，具备强大的语言理解、逻辑推理与多模态处理能力，以精准可靠、高效透明且始终致力于为用户提供清晰有价值的帮助为特点。"
+    },
+    {
+      "test_name": "代码生成-Python",
+      "status": "✅ 通过",
+      "evaluation": "生成了代码结构",
+      "response_time": 12.838752746582031,
+      "success": true,
+      "content_preview": "\n\n以下是同时包含**递归**和**迭代**两种实现的 Python 代码，附带类型提示、注释及复杂度说明：\n\n```python\ndef fibonacci_recursive(n: int) -> int:\n    \"\"\"\n    使用递归计算斐波那契数列的第 n 项\n    定义: F(0)=0, F(1)=1, F(n)=F(n-1)+F(n-2) (n>=2)\n    \"\"\"\n    i"
+    },
+    {
+      "test_name": "数学计算",
+      "status": "✅ 通过",
+      "evaluation": "包含计算结果",
+      "response_time": 12.947181463241577,
+      "success": true,
+      "content_preview": "\n\n根据数学运算的优先级（**先乘除，后加减**），本题需分三步计算：\n\n### 🔹 第一步：计算乘法 `12345 × 67890`\n为便于手算，可将其拆分为：\n`12345 × 67890 = 12345 × 6789 × 10`\n\n先算 `12345 × 6789`：\n```\n   12345\n×   6789\n────────\n   111105   （12345 × 9）\n   9876"
+    },
+    {
+      "test_name": "逻辑推理",
+      "status": "✅ 通过",
+      "evaluation": "响应长度：394 字符",
+      "response_time": 6.867034912109375,
+      "success": true,
+      "content_preview": "\n\n是的，根据题目给出的前提，**Tom 怕水**。\n\n### 🔍 推理过程（典型的演绎推理 / 三段论）：\n1. **大前提**：所有的猫都怕水。  \n   （逻辑形式：∀x (猫(x) → 怕水(x))）\n2. **小前提**：Tom 是一只猫。  \n   （逻辑形式：猫(Tom)）\n3. **结论**：因此，Tom 怕水。  \n   （逻辑形式：怕水(Tom)）\n\n这是形式逻辑中的**必然性"
+    },
+    {
+      "test_name": "文本理解",
+      "status": "✅ 通过",
+      "evaluation": "响应长度：86 字符",
+      "response_time": 7.606139183044434,
+      "success": true,
+      "content_preview": "\n\n这句话的核心意思可精炼为：\n**尽管人工智能发展迅猛，但人类的创造力与情感理解仍是机器无法取代的核心优势。**（即：技术再先进，也替代不了人类独有的创造性与情感价值。）"
+    },
+    {
+      "test_name": "多轮对话-上下文",
+      "status": "✅ 通过",
+      "evaluation": "响应长度：53 字符",
+      "response_time": 2.713946580886841,
+      "success": true,
+      "content_preview": "\n\n小明的弟弟今年 **7 岁**。5 年后小明依然比弟弟大 **3 岁**（两人的年龄差永远不会改变）。"
+    },
+    {
+      "test_name": "创意写作",
+      "status": "✅ 通过",
+      "evaluation": "响应长度：50 字符",
+      "response_time": 9.87295937538147,
+      "success": true,
+      "content_preview": "\n\n晨光微露，薄雾轻笼。新绿缀枝，露珠莹莹。微风携花香拂面，清脆鸟鸣唤醒大地，万物在暖意中悄然苏醒。"
+    },
+    {
+      "test_name": "知识问答",
+      "status": "✅ 通过",
+      "evaluation": "响应长度：1245 字符",
+      "response_time": 12.871722221374512,
+      "success": true,
+      "content_preview": "\n\n量子纠缠是量子力学中最反直觉、也最迷人的现象之一。为了让你轻松理解，我们分几步来说：\n\n### 🔑 一句话概括\n当两个（或多个）微观粒子“纠缠”在一起后，它们就不再是独立的个体，而是**共享同一个量子状态**。无论相隔多远，只要你测量其中一个粒子的某个属性（比如自旋或光子的偏振方向），另一个粒子的对应属性会**立刻呈现出严格相关的结果**。\n\n---\n\n### 🪙 一个通俗比喻\n想象你有两枚“"
+    }
+  ]
+}

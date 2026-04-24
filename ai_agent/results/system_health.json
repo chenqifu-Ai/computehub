@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-29T00:57:37.110127",
+  "status": "critical",
+  "alerts": [
+    "CPU\u8d1f\u8f7d\u8fc7\u9ad8: 20.9",
+    "\u5173\u952e\u8fdb\u7a0b\u672a\u8fd0\u884c: node"
+  ]
+}

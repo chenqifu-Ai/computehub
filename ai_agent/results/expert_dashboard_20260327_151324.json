@@ -1,0 +1,58 @@
+[
+  {
+    "name": "💰 金算子",
+    "role": "金融顾问",
+    "responsibility": "股票分析交易",
+    "status": "⚫ 离线",
+    "detail": "无工作报告",
+    "last_work": "-"
+  },
+  {
+    "name": "📊 财神爷",
+    "role": "财务专家",
+    "responsibility": "财务分析盈亏",
+    "status": "⚫ 离线",
+    "detail": "无工作报告",
+    "last_work": "-"
+  },
+  {
+    "name": "⚖️ 法海",
+    "role": "法律顾问",
+    "responsibility": "风险评估合规",
+    "status": "⚫ 离线",
+    "detail": "无工作报告",
+    "last_work": "-"
+  },
+  {
+    "name": "💻 码神",
+    "role": "网络专家",
+    "responsibility": "系统技术优化",
+    "status": "⚫ 离线",
+    "detail": "无工作报告",
+    "last_work": "-"
+  },
+  {
+    "name": "🚀 销冠王",
+    "role": "营销专家",
+    "responsibility": "客户市场开发",
+    "status": "⚫ 离线",
+    "detail": "无工作报告",
+    "last_work": "-"
+  },
+  {
+    "name": "🎯 智多星",
+    "role": "CEO顾问",
+    "responsibility": "战略规划并购",
+    "status": "⚫ 离线",
+    "detail": "无工作报告",
+    "last_work": "-"
+  },
+  {
+    "name": "👥 人精",
+    "role": "HR专家",
+    "responsibility": "绩效考核管理",
+    "status": "⚫ 离线",
+    "detail": "无工作报告",
+    "last_work": "-"
+  }
+]

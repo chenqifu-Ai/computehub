@@ -1,0 +1,52 @@
+{
+  "timestamp": "2026-04-09 09:52:53",
+  "market_status": "opening",
+  "stocks_monitored": [
+    {
+      "symbol": "sh000001",
+      "name": "上证指数",
+      "current_price": 3972.77,
+      "yesterday_close": 3995.0,
+      "open_price": 3967.63,
+      "high_price": 3973.01,
+      "low_price": 3961.77,
+      "volume": 167860799,
+      "change_percent": -0.5564455569461833
+    },
+    {
+      "symbol": "sz399001",
+      "name": "深证成指",
+      "current_price": 13975.64,
+      "yesterday_close": 14042.5,
+      "open_price": 13928.43,
+      "high_price": 13975.64,
+      "low_price": 13891.48,
+      "volume": 212958337,
+      "change_percent": -0.4761260459319963
+    },
+    {
+      "symbol": "sz399006",
+      "name": "创业板指",
+      "current_price": 3320.94,
+      "yesterday_close": 3347.61,
+      "open_price": 3316.29,
+      "high_price": 3320.94,
+      "low_price": 3301.65,
+      "volume": 61066481,
+      "change_percent": -0.7966877862116577
+    },
+    {
+      "symbol": "sh000832",
+      "name": "中证转债",
+      "current_price": 507.26,
+      "yesterday_close": 507.4,
+      "open_price": 506.47,
+      "high_price": 507.26,
+      "low_price": 505.18,
+      "volume": 880693,
+      "change_percent": -0.027591643673627587
+    }
+  ],
+  "alerts": [],
+  "summary": "📊 股票开盘监控报告 (2026-04-09 09:52:53)\n📈 监控股票数量: 4 (4 成功)\n⚠️ 警报数量: 0\n\n📋 监控详情:\n   • 上证指数: 3972.77 (开盘:3967.63, 涨跌:-0.56%)\n   • 深证成指: 13975.64 (开盘:13928.43, 涨跌:-0.48%)\n   • 创业板指: 3320.94 (开盘:3316.29, 涨跌:-0.80%)\n   • 中证转债: 507.26 (开盘:506.47, 涨跌:-0.03%)"
+}

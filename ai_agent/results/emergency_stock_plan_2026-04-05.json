@@ -1,0 +1,37 @@
+{
+  "timestamp": "2026-04-05T17:47:23.273125",
+  "stock_info": {
+    "code": "000882",
+    "name": "华联股份",
+    "current_price": 1.57,
+    "stop_loss": 1.6,
+    "cost_price": 1.873,
+    "shares": 13500,
+    "profit_loss": -0.303,
+    "total_loss": -4090.5,
+    "loss_percentage": -16.18
+  },
+  "emergency_plan": {
+    "emergency_level": "CRITICAL",
+    "reason": "股价已跌破止损位¥1.60，当前¥1.57",
+    "action": "立即减仓70%",
+    "reduce_shares": 9450,
+    "remaining_shares": 4050,
+    "expected_cash": 14836.5,
+    "execution_time": "明日开盘立即执行",
+    "risk_after": "持仓风险降低70%",
+    "new_cost_basis": "剩余持仓成本需要重新计算",
+    "monitoring": "减仓后继续监控，如继续下跌考虑清仓"
+  },
+  "trading_instructions": {
+    "stock_code": "000882",
+    "stock_name": "华联股份",
+    "action": "SELL",
+    "quantity": 9450,
+    "price_type": "MARKET",
+    "time_in_force": "OPEN",
+    "reason": "紧急止损：跌破止损位¥1.6，当前¥1.57",
+    "risk_control": "严格执行止损纪律",
+    "follow_up": "执行后立即汇报结果"
+  }
+}

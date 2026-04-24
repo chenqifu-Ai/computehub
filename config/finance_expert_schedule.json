@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "schedules": [
+    {
+      "name": "财务专家每日分析",
+      "description": "财神爷（财务专家）每日执行财务分析报告",
+      "cron": "0 9 * * *",
+      "command": "python3 /root/.openclaw/workspace/ai_agent/code/expert_scripts/finance_expert_analysis.py",
+      "enabled": true,
+      "channel": "cron-event"
+    }
+  ],
+  "metadata": {
+    "updated_at": "2026-04-08T05:46:23.043145",
+    "updated_by": "系统管理员",
+    "change_reason": "用户要求从每2小时改为每天执行一次"
+  }
+}

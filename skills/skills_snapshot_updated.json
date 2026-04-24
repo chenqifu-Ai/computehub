@@ -1,0 +1,90 @@
+{
+  "snapshot_timestamp": "2026-04-01T08:00:00",
+  "snapshot_type": "skills_status",
+  "skills": {
+    "memory-wings": {
+      "name": "记忆翅膀",
+      "status": "active",
+      "features": ["全局状态快照", "自动恢复", "跨对话框同步"],
+      "last_used": "2026-03-28T18:15:00"
+    },
+    "continuous-flow-execution": {
+      "name": "连续流执行", 
+      "status": "active",
+      "features": ["智能决策引擎", "邮件自动化", "零交互自动化"],
+      "last_used": "2026-03-28T18极速:12:00"
+    },
+    "ceo-advisor": {
+      "name": "CEO顾问",
+      "status": "ready",
+      "features": ["企业战略规划", "商业分析决策"],
+      "last_used": null
+    },
+    "finance-advisor": {
+      "name": "金融顾问",
+      "status": "ready", 
+      "features": ["金融知识极速学习", "投资理财分析"],
+      "last_used": null
+    },
+    "finance-expert": {
+      "极速name": "财务专家",
+      "status": "ready",
+      "features": ["企业财务管理", "税务筹划"],
+      "last_used": null
+    },
+    "hr-expert": {
+      "name": "人力资源专家",
+      "status": "ready",
+      "features": ["招聘管理", "薪酬绩效"],
+      "last_used": null
+    },
+    "legal-advisor": {
+      "name": "法律顾问", 
+      "status": "ready",
+      "features": ["法律风险防范", "合同管理"],
+      "last_used": "2026-03-28T18:06:00"
+    },
+    "marketing-expert": {
+      "name": "营销专家",
+      "status": "ready",
+      "features": ["市场推广", "品牌建设"],
+      "last_used": null
+    },
+    "network-expert": {
+      "name": "网络专家",
+      "status": "disabled",
+      "features": ["网络技术", "网络安全"],
+      "last_used": null
+    },
+    "web-automation": {
+      "name": "Web自动化",
+      "status": "ready",
+      "features": ["网页自动化操作", "数据抓取"],
+      "last_used": null
+    },
+    "xiaoh-teacher": {
+      "name": "小爱老师",
+      "status": "ready",
+      "features": ["学习任务管理", "知识整理"],
+      "last_used": null
+    },
+    "zhuangji-skill": {
+      "name": "装机技能",
+      "status": "ready",
+      "features": ["多设备部署", "配置同步", "自动化装机"],
+      "last_used": "2026-04-01T08:00:00"
+    }
+  },
+  "user_preferences": {
+    "preferred_skills": ["记忆翅膀", "连续流执行", "邮件自动化", "装机技能"],
+    "response_speed": "fast",
+    "detail_level": "concise"
+  },
+  "system_status": {
+    "total_skills": 13,
+    "active_skills": 2,
+    "ready_skills": 10,
+    "disabled_skills": 1,
+    "snapshot_created": true
+  }
+}

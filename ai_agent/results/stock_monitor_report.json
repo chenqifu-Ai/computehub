@@ -1,0 +1,53 @@
+{
+  "indices": {
+    "上证指数": {
+      "code": "000001.SH",
+      "current": 3050.25,
+      "change": 15.32,
+      "change_percent": 0.51,
+      "time": "2026-04-03 11:05:51"
+    },
+    "深证成指": {
+      "code": "399001.SZ",
+      "current": 11200.78,
+      "change": -23.45,
+      "change_percent": -0.21,
+      "time": "2026-04-03 11:05:51"
+    },
+    "创业板指": {
+      "code": "399006.SZ",
+      "current": 2280.15,
+      "change": 8.76,
+      "change_percent": 0.39,
+      "time": "2026-04-03 11:05:51"
+    }
+  },
+  "watchlist": [
+    {
+      "name": "贵州茅台",
+      "code": "600519.SH",
+      "current": 1850.5,
+      "change": 25.3,
+      "change_percent": 1.39,
+      "volume": 1250000
+    },
+    {
+      "name": "宁德时代",
+      "code": "300750.SZ",
+      "current": 195.8,
+      "change": -3.2,
+      "change_percent": -1.61,
+      "volume": 3500000
+    },
+    {
+      "name": "中国平安",
+      "code": "601318.SH",
+      "current": 48.75,
+      "change": 0.85,
+      "change_percent": 1.77,
+      "volume": 2800000
+    }
+  ],
+  "market_status": "📊 市场分化明显",
+  "timestamp": "2026-04-03T11:05:51.921593"
+}

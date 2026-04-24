@@ -1,0 +1,352 @@
+{
+  "timestamp": "2026-03-27T06:33:47.452759",
+  "files_analyzed": [
+    "2026-03-16.md",
+    "2026-03-18.md",
+    "2026-03-19.md",
+    "2026-03-21.md",
+    "2026-03-21-learning-report.md",
+    "2026-03-22.md",
+    "2026-03-24.md",
+    "daily-ideas-2026-03-24.md",
+    "2026-03-25.md",
+    "daily-ideas-2026-03-25.md",
+    "daily-ideas-2026-03-26.md",
+    "2026-03-26.md",
+    "2026-03-11-rules.md",
+    "daily-ideas-2026-03-27.md"
+  ],
+  "architecture": {
+    "departments": [],
+    "projects": [
+      {
+        "name": "股票监控系统",
+        "found_in": "2026-03-24.md",
+        "date": "2026-03-24"
+      },
+      {
+        "name": "股票监控系统",
+        "found_in": "daily-ideas-2026-03-25.md",
+        "date": "2026-03-25"
+      },
+      {
+        "name": "邮件命令系统",
+        "found_in": "daily-ideas-2026-03-25.md",
+        "date": "2026-03-25"
+      },
+      {
+        "name": "股票监控系统",
+        "found_in": "daily-ideas-2026-03-26.md",
+        "date": "2026-03-26"
+      },
+      {
+        "name": "邮件命令系统",
+        "found_in": "daily-ideas-2026-03-26.md",
+        "date": "2026-03-26"
+      },
+      {
+        "name": "股票监控系统",
+        "found_in": "daily-ideas-2026-03-27.md",
+        "date": "2026-03-27"
+      },
+      {
+        "name": "邮件命令系统",
+        "found_in": "daily-ideas-2026-03-27.md",
+        "date": "2026-03-27"
+      }
+    ],
+    "systems": [
+      {
+        "name": "学习任务",
+        "found_in": "2026-03-19.md",
+        "date": "2026-03-19"
+      },
+      {
+        "name": "学习任务",
+        "found_in": "2026-03-21.md",
+        "date": "2026-03-21"
+      },
+      {
+        "name": "监控系统",
+        "found_in": "2026-03-24.md",
+        "date": "2026-03-24"
+      },
+      {
+        "name": "定时任务",
+        "found_in": "2026-03-25.md",
+        "date": "2026-03-25"
+      },
+      {
+        "name": "学习任务",
+        "found_in": "2026-03-25.md",
+        "date": "2026-03-25"
+      },
+      {
+        "name": "定时任务",
+        "found_in": "daily-ideas-2026-03-25.md",
+        "date": "2026-03-25"
+      },
+      {
+        "name": "监控系统",
+        "found_in": "daily-ideas-2026-03-25.md",
+        "date": "2026-03-25"
+      },
+      {
+        "name": "学习任务",
+        "found_in": "daily-ideas-2026-03-25.md",
+        "date": "2026-03-25"
+      },
+      {
+        "name": "定时任务",
+        "found_in": "daily-ideas-2026-03-26.md",
+        "date": "2026-03-26"
+      },
+      {
+        "name": "监控系统",
+        "found_in": "daily-ideas-2026-03-26.md",
+        "date": "2026-03-26"
+      },
+      {
+        "name": "学习任务",
+        "found_in": "daily-ideas-2026-03-26.md",
+        "date": "2026-03-26"
+      },
+      {
+        "name": "学习任务",
+        "found_in": "2026-03-26.md",
+        "date": "2026-03-26"
+      },
+      {
+        "name": "定时任务",
+        "found_in": "daily-ideas-2026-03-27.md",
+        "date": "2026-03-27"
+      },
+      {
+        "name": "监控系统",
+        "found_in": "daily-ideas-2026-03-27.md",
+        "date": "2026-03-27"
+      },
+      {
+        "name": "学习任务",
+        "found_in": "daily-ideas-2026-03-27.md",
+        "date": "2026-03-27"
+      }
+    ],
+    "employees": [],
+    "timeline": [
+      {
+        "time": "10:13)",
+        "event": "10:13) - 已完成",
+        "file": "2026-03-22.md",
+        "date": "2026-03-22"
+      },
+      {
+        "time": "14:00开始",
+        "event": "14:00开始",
+        "file": "2026-03-25.md",
+        "date": "2026-03-25"
+      },
+      {
+        "time": "06:04检查完成",
+        "event": "06:04检查完成",
+        "file": "daily-ideas-2026-03-27.md",
+        "date": "2026-03-27"
+      }
+    ]
+  },
+  "analysis": {
+    "department_growth": 0,
+    "project_complexity": 7,
+    "system_maturity": 15,
+    "timeline_density": 3,
+    "evolution_stages": [
+      {
+        "date": "2026-03-19",
+        "departments": [],
+        "projects": [],
+        "systems": [
+          {
+            "name": "学习任务",
+            "found_in": "2026-03-19.md",
+            "date": "2026-03-19"
+          }
+        ]
+      },
+      {
+        "date": "2026-03-21",
+        "departments": [],
+        "projects": [],
+        "systems": [
+          {
+            "name": "学习任务",
+            "found_in": "2026-03-21.md",
+            "date": "2026-03-21"
+          }
+        ]
+      },
+      {
+        "date": "2026-03-24",
+        "departments": [],
+        "projects": [
+          {
+            "name": "股票监控系统",
+            "found_in": "2026-03-24.md",
+            "date": "2026-03-24"
+          }
+        ],
+        "systems": [
+          {
+            "name": "监控系统",
+            "found_in": "2026-03-24.md",
+            "date": "2026-03-24"
+          }
+        ]
+      },
+      {
+        "date": "2026-03-25",
+        "departments": [],
+        "projects": [
+          {
+            "name": "股票监控系统",
+            "found_in": "daily-ideas-2026-03-25.md",
+            "date": "2026-03-25"
+          },
+          {
+            "name": "邮件命令系统",
+            "found_in": "daily-ideas-2026-03-25.md",
+            "date": "2026-03-25"
+          }
+        ],
+        "systems": [
+          {
+            "name": "定时任务",
+            "found_in": "2026-03-25.md",
+            "date": "2026-03-25"
+          },
+          {
+            "name": "学习任务",
+            "found_in": "2026-03-25.md",
+            "date": "2026-03-25"
+          },
+          {
+            "name": "定时任务",
+            "found_in": "daily-ideas-2026-03-25.md",
+            "date": "2026-03-25"
+          },
+          {
+            "name": "监控系统",
+            "found_in": "daily-ideas-2026-03-25.md",
+            "date": "2026-03-25"
+          },
+          {
+            "name": "学习任务",
+            "found_in": "daily-ideas-2026-03-25.md",
+            "date": "2026-03-25"
+          }
+        ]
+      },
+      {
+        "date": "2026-03-26",
+        "departments": [],
+        "projects": [
+          {
+            "name": "股票监控系统",
+            "found_in": "daily-ideas-2026-03-26.md",
+            "date": "2026-03-26"
+          },
+          {
+            "name": "邮件命令系统",
+            "found_in": "daily-ideas-2026-03-26.md",
+            "date": "2026-03-26"
+          }
+        ],
+        "systems": [
+          {
+            "name": "定时任务",
+            "found_in": "daily-ideas-2026-03-26.md",
+            "date": "2026-03-26"
+          },
+          {
+            "name": "监控系统",
+            "found_in": "daily-ideas-2026-03-26.md",
+            "date": "2026-03-26"
+          },
+          {
+            "name": "学习任务",
+            "found_in": "daily-ideas-2026-03-26.md",
+            "date": "2026-03-26"
+          },
+          {
+            "name": "学习任务",
+            "found_in": "2026-03-26.md",
+            "date": "2026-03-26"
+          }
+        ]
+      },
+      {
+        "date": "2026-03-27",
+        "departments": [],
+        "projects": [
+          {
+            "name": "股票监控系统",
+            "found_in": "daily-ideas-2026-03-27.md",
+            "date": "2026-03-27"
+          },
+          {
+            "name": "邮件命令系统",
+            "found_in": "daily-ideas-2026-03-27.md",
+            "date": "2026-03-27"
+          }
+        ],
+        "systems": [
+          {
+            "name": "定时任务",
+            "found_in": "daily-ideas-2026-03-27.md",
+            "date": "2026-03-27"
+          },
+          {
+            "name": "监控系统",
+            "found_in": "daily-ideas-2026-03-27.md",
+            "date": "2026-03-27"
+          },
+          {
+            "name": "学习任务",
+            "found_in": "daily-ideas-2026-03-27.md",
+            "date": "2026-03-27"
+          }
+        ]
+      }
+    ]
+  },
+  "reconstruction_plan": {
+    "immediate_actions": [
+      {
+        "action": "整理项目清单",
+        "priority": "high",
+        "reason": "发现7个项目需要重新规划"
+      }
+    ],
+    "short_term_goals": [
+      {
+        "goal": "建立完整的公司架构文档",
+        "timeline": "3天",
+        "deliverables": [
+          "组织架构图",
+          "部门职责说明",
+          "项目路线图"
+        ]
+      }
+    ],
+    "long_term_vision": [
+      {
+        "vision": "构建自动化智能公司",
+        "description": "所有业务流程实现AI驱动自动化",
+        "key_metrics": [
+          "自动化率≥90%",
+          "错误率≤1%",
+          "响应时间≤5分钟"
+        ]
+      }
+    ]
+  }
+}

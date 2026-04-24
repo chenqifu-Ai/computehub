@@ -1,0 +1,36 @@
+{
+  "backup_time": "2026-03-23 18:54",
+  "backup_by": "小智",
+  "description": "阿里百炼配置备份",
+  
+  "api_config": {
+    "provider": "modelstudio",
+    "baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "apiKey": "sk-65ca99f6fd55437fba47dc7ba7973242",
+    "api": "openai-completions"
+  },
+  
+  "models": [
+    {
+      "id": "qwen3.5-plus",
+      "name": "qwen3.5-plus",
+      "reasoning": false,
+      "input": ["text", "image"],
+      "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
+      "contextWindow": 1000000,
+      "maxTokens": 65536
+    },
+    {
+      "id": "qwen3-max-2026-01-23",
+      "name": "qwen3-max-2026-01-23"
+    }
+  ],
+  
+  "backup_files": [
+    "~/.openclaw/openclaw.json",
+    "~/.openclaw/openclaw.json-b",
+    "~/.openclaw/openclaw.json.bak"
+  ],
+  
+  "notes": "备份到 /root/.openclaw/workspace/config/bailian_config_backup_2026-03-23.json"
+}

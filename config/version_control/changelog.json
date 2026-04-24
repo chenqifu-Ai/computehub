@@ -1,0 +1,28 @@
+[
+  {
+    "snapshot_id": "snapshot_2026-03-26T18-27-11-320545",
+    "timestamp": "2026-03-26T18:27:11.320545",
+    "description": "Initial snapshot after email test",
+    "files_count": 5,
+    "files": {
+      "email.conf": "2821c0b11af7fce2eb46738ab573a5af",
+      "bailian_config_backup_2026-03-23.json": "4e7e8b89de08ca867a490b533c10afb2",
+      "company_account.json": "a2d459e060c9dee13d12cdc84b76cb9a",
+      "163_email.conf": "1c25ed7e8564eec0199cb5bde6969a7c",
+      "model.conf": "a7dab0edb41320eacd61763b035723fc"
+    }
+  },
+  {
+    "snapshot_id": "snapshot_2026-03-26T18-50-35-203021",
+    "timestamp": "2026-03-26T18:50:35.203021",
+    "description": "Default rules established - permanent memory update",
+    "files_count": 5,
+    "files": {
+      "bailian_config_backup_2026-03-23.json": "4e7e8b89de08ca867a490b533c10afb2",
+      "company_account.json": "a2d459e060c9dee13d12cdc84b76cb9a",
+      "model.conf": "a7dab0edb41320eacd61763b035723fc",
+      "163_email.conf": "1c25ed7e8564eec0199cb5bde6969a7c",
+      "email.conf": "2821c0b11af7fce2eb46738ab573a5af"
+    }
+  }
+]

@@ -1,0 +1,46 @@
+{
+  "test_time": "2026-04-19T07:07:38.975411",
+  "project": "GlobalTokenHub",
+  "total_agents": 6,
+  "success_count": 6,
+  "fail_count": 0,
+  "success_rate": "100.0%",
+  "results": [
+    {
+      "agent_id": "ceo_agent",
+      "agent_name": "CEO 智能体",
+      "role": "战略决策",
+      "success": true
+    },
+    {
+      "agent_id": "marketing_agent",
+      "agent_name": "营销智能体",
+      "role": "全球市场增长",
+      "success": true
+    },
+    {
+      "agent_id": "operations_agent",
+      "agent_name": "运营智能体",
+      "role": "平台运营",
+      "success": true
+    },
+    {
+      "agent_id": "finance_agent",
+      "agent_name": "财务智能体",
+      "role": "资金管控",
+      "success": true
+    },
+    {
+      "agent_id": "data_agent",
+      "agent_name": "数据智能体",
+      "role": "数据分析",
+      "success": true
+    },
+    {
+      "agent_id": "risk_agent",
+      "agent_name": "风控智能体",
+      "role": "安全合规",
+      "success": true
+    }
+  ]
+}

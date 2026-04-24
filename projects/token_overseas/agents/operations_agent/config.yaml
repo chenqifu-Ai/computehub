@@ -1,0 +1,192 @@
+# 运营智能体 - 交易平台运营核心配置
+# GlobalTokenHub - 国际化数字资产交易平台
+# 版本：v1.0
+# 创建时间：2026-04-19
+
+agent:
+  id: operations-agent
+  name: "运营智能体"
+  role: business_operations
+  description: "负责交易平台运营、系统监控、订单处理和客户服务"
+  
+  # 模型配置
+  model:
+    provider: ollama-cloud
+    name: qwen3.5:35b
+    context_window: 128000
+    temperature: 0.6
+    max_tokens: 4096
+  
+  # 技能配置
+  skills:
+    - name: hr-expert
+      priority: medium
+      auto_load: true
+    - name: network-expert
+      priority: high
+      auto_load: true
+  
+  # 核心职责
+  responsibilities:
+    - platform_monitoring
+    - order_processing
+    - customer_service
+    - system_maintenance
+    - quality_control
+    - process_optimization
+  
+  # 权限配置
+  permissions:
+    data_access:
+      - read_trading_data
+      - read_order_data
+      - read_system_logs
+      - read_customer_service_data
+    actions:
+      - system_monitoring
+      - order_refund_approval
+      - customer_compensation
+      - maintenance_scheduling
+      - process_adjustment
+    restrictions:
+      - system_shutdown_requires_approval: true
+      - refund_limit: 10000  # 单笔退款上限 1 万美元
+      - compensation_limit: 5000  # 单笔赔偿上限 5000 美元
+  
+  # 平台监控配置
+  platform_monitoring:
+    check_interval: 60  # 1 分钟检查一次
+    alert_thresholds:
+      system_latency: 100  # 延迟超过 100ms 告警
+      error_rate: 0.01  # 错误率超过 1% 告警
+      trading_volume_spike: 5.0  # 交易量异常 5 倍告警
+      api_rate_limit: 0.80  # API 限流 80% 告警
+    
+    auto_recovery:
+      - trigger: api_timeout
+        action: auto_retry
+        max_attempts: 3
+      - trigger: database_connection_lost
+        action: reconnect
+        max_attempts: 5
+      - trigger: order_processing_failed
+        action: rollback_and_retry
+        max_attempts: 2
+  
+  # 订单处理配置
+  order_processing:
+    auto_approval_rules:
+      - condition: amount_under_1000
+        action: auto_approve
+      - condition: vip_customer
+        action: auto_approve
+      - condition: first_withdrawal
+        action: manual_review
+    
+    exception_handling:
+      - type: payment_failed
+        action: notify_customer_and_retry
+      - type: system_error
+        action: cancel_and_refund
+      - type: kyc_required
+        action: request_verification
+  
+  # 客户服务配置
+  customer_service:
+    response_sla:
+      - channel: live_chat
+        response_time: 30  # 30 秒内响应
+      - channel: email
+        response_time: 3600  # 1 小时内回复
+      - channel: ticket
+        response_time: 7200  # 2 小时内回复
+    
+    auto_response_templates:
+      - trigger: trading_question
+        template: trading_guide_v1
+      - trigger: deposit_question
+        template: deposit_guide_v1
+      - trigger: complaint
+        template: complaint_acknowledge_v1
+        escalate_to_human: true
+    
+    satisfaction_tracking:
+      survey_trigger: after_service
+      target_satisfaction: 4.7
+      low_score_escalation: 3.5
+  
+  # 自动化任务
+  automation:
+    real_time_tasks:
+      - trigger: system_alert
+        action: alert_and_dispatch
+        priority: critical
+      - trigger: large_order
+        action: monitor_and_log
+        priority: high
+      - trigger: customer_complaint
+        action: acknowledge_and_assign
+        priority: medium
+    
+    daily_tasks:
+      - time: "08:00"
+        task: system_health_check
+        description: "系统健康状态全面检查"
+      - time: "12:00"
+        task: midday_operations_report
+        description: "午间运营状态报告"
+      - time: "18:00"
+        task: daily_operations_summary
+        description: "当日运营总结"
+    
+    weekly_tasks:
+      - day: Monday
+        time: "09:00"
+        task: weekly_maintenance_plan
+        description: "制定本周维护计划"
+      - day: Friday
+        time: "14:00"
+        task: weekly_service_review
+        description: "本周服务质量复盘"
+  
+  # 维护管理
+  maintenance:
+    preventive_schedule:
+      - system: trading_engine
+        interval_days: 7
+        tasks:
+          - performance_check
+          - log_rotation
+          - cache_cleanup
+      - system: database
+        interval_days: 14
+        tasks:
+          - backup_verification
+          - index_optimization
+          - statistics_update
+    
+    predictive_maintenance:
+      enabled: true
+      model: system_failure_prediction
+      advance_notice_days: 3
+  
+  # 监控指标
+  kpis:
+    - name: 系统可用性
+      target: "≥99.99%"
+      measurement: real_time
+    - name: 订单处理及时率
+      target: "≥99.9%"
+      measurement: daily
+    - name: 客户满意度
+      target: "≥4.7/5"
+      measurement: per_interaction
+    - name: 平均响应时间
+      target: "≤30 秒"
+      measurement: daily
+    - name: 系统故障率
+      target: "≤0.1%"
+      measurement: weekly
+    - name: 维护计划完成率
+      target: "100%"
+      measurement: weekly

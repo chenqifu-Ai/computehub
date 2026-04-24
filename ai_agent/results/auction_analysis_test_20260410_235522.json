@@ -1,0 +1,42 @@
+[
+  {
+    "symbol": "sh000001",
+    "timestamp": "2026-04-10 23:55:21",
+    "current_price": 3986.22,
+    "price_change_percent": 0.5055254817619952,
+    "volume_ratio": 10,
+    "sentiment": "neutral",
+    "recommendations": []
+  },
+  {
+    "symbol": "sh600036",
+    "timestamp": "2026-04-10 23:55:21",
+    "current_price": 39.21,
+    "price_change_percent": -0.12735608762098105,
+    "volume_ratio": 5.43202,
+    "sentiment": "neutral",
+    "recommendations": [
+      "价格稳定但量能充足，关注后续走势"
+    ]
+  },
+  {
+    "symbol": "sh000001",
+    "timestamp": "2026-04-10 23:55:21",
+    "current_price": 3986.22,
+    "price_change_percent": 0.5055254817619952,
+    "volume_ratio": 10,
+    "sentiment": "neutral",
+    "recommendations": []
+  },
+  {
+    "symbol": "sz399001",
+    "timestamp": "2026-04-10 23:55:22",
+    "current_price": 14309.47,
+    "price_change_percent": 2.2377390547624394,
+    "volume_ratio": 10,
+    "sentiment": "bullish",
+    "recommendations": [
+      "高开高量，可考虑关注"
+    ]
+  }
+]

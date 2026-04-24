@@ -1,0 +1,87 @@
+{
+  "总结": {
+    "状态类别数": 6,
+    "具体状态数": 34,
+    "TUI安装路径": [],
+    "界面模式数": 5
+  },
+  "状态类别": {
+    "连接状态": [
+      "connected",
+      "connecting",
+      "disconnected",
+      "reconnecting",
+      "auth_failed"
+    ],
+    "运行状态": [
+      "running",
+      "starting",
+      "stopped",
+      "error",
+      "idle",
+      "streaming"
+    ],
+    "时间显示": [
+      "• 18s",
+      "• 2m 30s",
+      "• 1h 5m",
+      "uptime"
+    ],
+    "动画指示": [
+      "⠹",
+      "⠋",
+      "⠙",
+      "⠸",
+      "⣾",
+      "✓",
+      "✗",
+      "⏳",
+      "⚠️"
+    ],
+    "资源状态": [
+      "memory: 45%",
+      "cpu: 12%",
+      "network: 2.3M/s",
+      "sessions: 3",
+      "queue: 2"
+    ],
+    "操作状态": [
+      "processing",
+      "waiting",
+      "completed",
+      "failed",
+      "cancelled"
+    ]
+  },
+  "界面模式": {
+    "状态行格式": "[动画] [状态文本] [时间] | [连接状态]",
+    "动画序列": [
+      "⠋",
+      "⠙",
+      "⠹",
+      "⠸",
+      "⢰",
+      "⣠",
+      "⣄",
+      "⡆",
+      "⠇",
+      "⠏"
+    ],
+    "时间格式": {
+      "秒级": "• 18s",
+      "分级": "• 2m 30s",
+      "时级": "• 1h 5m"
+    },
+    "连接状态": [
+      "connected",
+      "connecting",
+      "disconnected"
+    ],
+    "运行状态": [
+      "running",
+      "streaming",
+      "starting",
+      "stopped"
+    ]
+  }
+}

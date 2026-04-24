@@ -1,0 +1,13 @@
+{
+  "expert": "人精",
+  "heart_installed": "2026-03-29T09:29:36.463471",
+  "heartbeat": "strong",
+  "motivation": "high",
+  "kpi": {
+    "daily_output": 0,
+    "quality_score": 0,
+    "deadline_met": false
+  },
+  "last_heartbeat": "2026-03-29T09:29:36.463479",
+  "status": "active"
+}

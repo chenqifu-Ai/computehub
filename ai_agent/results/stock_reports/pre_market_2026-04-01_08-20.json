@@ -1,0 +1,46 @@
+{
+  "report_type": "pre_market",
+  "generated_at": "2026-04-01 08:20",
+  "market_status": "pre_market",
+  "watchlist_summary": {
+    "total_stocks": 8,
+    "us_stocks": 4,
+    "china_stocks": 4
+  },
+  "market_data": {
+    "market_summary": {
+      "us_markets": {
+        "futures_up": true,
+        "sp500_futures": "+0.3%",
+        "nasdaq_futures": "+0.5%",
+        "dow_futures": "+0.2%"
+      },
+      "asia_markets": {
+        "nikkei": "+0.8%",
+        "hang_seng": "-0.2%",
+        "kospi": "+0.1%"
+      }
+    },
+    "economic_events": [
+      {
+        "time": "09:45",
+        "event": "中国3月官方制造业PMI",
+        "impact": "high",
+        "forecast": "50.5",
+        "previous": "50.2"
+      },
+      {
+        "time": "20:00",
+        "event": "美国ADP就业人数",
+        "impact": "medium",
+        "forecast": "175K",
+        "previous": "155K"
+      }
+    ]
+  },
+  "recommendations": [
+    "关注今日中国3月官方制造业PMI数据发布",
+    "美股期货表现积极，可能对A股开盘有正面影响",
+    "建议开盘后重点关注科技股表现"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "report": "📊 股票监控状态报告 - 下午盘中\n📅 时间: 2026-04-09 14:34:00\n\n华联股份(000882): ¥1.61 [CRITICAL]\n中远海发(601866): ¥2.98 [等待回调 ⏳]\n\n💡 下午盘注意事项:\n• 关注尾盘资金流向和成交量变化\n• 注意主力资金是否护盘或出货\n• 如有持仓，考虑是否需要调整止盈止损位\n\n⚠️ 特别提醒:\n• 华联股份价格已接近止损位¥1.60，请立即关注！\n• 中远海发当前价格高于目标买入区间(¥2.50-2.70)，建议等待回调",
+  "timestamp": "2026-04-09 14:34:00",
+  "task": "stock_intraday_afternoon_monitor",
+  "stocks": {
+    "000882": {
+      "name": "华联股份",
+      "price": 1.61,
+      "alert_level": "CRITICAL",
+      "stop_loss": 1.6,
+      "distance_to_stop_loss_percent": 0.62
+    },
+    "601866": {
+      "name": "中远海发",
+      "price": 2.98,
+      "target_range": [2.5, 2.7],
+      "in_buy_range": false,
+      "above_target": 0.28
+    }
+  }
+}

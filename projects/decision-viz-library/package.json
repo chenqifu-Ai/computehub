@@ -1,0 +1,55 @@
+{
+  "name": "decision-viz-library",
+  "version": "0.1.0",
+  "description": "通用决策可视化组件库 - 支持多框架的可复用决策可视化组件",
+  "main": "dist/decision-viz.umd.js",
+  "module": "dist/decision-viz.esm.js",
+  "unpkg": "dist/decision-viz.min.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && npm run build:types",
+    "build:types": "tsc --emitDeclarationOnly --outDir dist",
+    "test": "vitest",
+    "preview": "vite preview",
+    "docs": "vitepress dev docs",
+    "docs:build": "vitepress build docs"
+  },
+  "keywords": [
+    "decision",
+    "visualization",
+    "chart",
+    "analytics",
+    "dashboard",
+    "react",
+    "vue",
+    "svelte"
+  ],
+  "author": "小智 AI助手",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/decision-viz-library"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@vitejs/plugin-vue": "^4.0.0",
+    "@vue/tsconfig": "^0.4.0",
+    "typescript": "^5.0.0",
+    "vite": "^4.0.0",
+    "vitest": "^0.34.0",
+    "vitepress": "^1.0.0"
+  },
+  "dependencies": {
+    "plotly.js": "^2.24.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.0",
+    "react": "^18.0.0",
+    "svelte": "^4.0.0"
+  }
+}

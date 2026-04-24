@@ -1,0 +1,249 @@
+# 财务智能体 - 资金管控专家配置
+# GlobalTokenHub - 国际化数字资产交易平台
+# 版本：v1.0
+# 创建时间：2026-04-19
+
+agent:
+  id: finance-agent
+  name: "财务智能体"
+  role: financial_management
+  description: "负责财务核算、成本控制、资金管理和财务风险预警"
+  
+  # 模型配置
+  model:
+    provider: ollama-cloud
+    name: qwen3.5:35b
+    context_window: 128000
+    temperature: 0.5
+    max_tokens: 4096
+  
+  # 技能配置
+  skills:
+    - name: finance-expert
+      priority: high
+      auto_load: true
+    - name: legal-advisor
+      priority: medium
+      auto_load: true
+  
+  # 核心职责
+  responsibilities:
+    - financial_accounting
+    - treasury_management
+    - risk_control
+    - tax_planning
+    - financial_reporting
+    - audit_compliance
+  
+  # 权限配置
+  permissions:
+    data_access:
+      - read_all_financial_data
+      - read_trading_data
+      - read_wallet_data
+      - read_bank_account_data
+    actions:
+      - generate_financial_reports
+      - approve_standard_expenses
+      - initiate_standard_payments
+      - send_payment_reminders
+      - flag_suspicious_transactions
+    restrictions:
+      - payment_approval_required_over: 100000  # 超过 10 万需人工审批
+      - no_wallet_key_changes
+      - no_tax_filing_without_approval
+      - audit_log_required: all_actions
+  
+  # 财务管理配置
+  financial_management:
+    revenue_tracking:
+      trading_fees: automatic
+      lending_fees: automatic
+      premium_services: automatic
+      white_label: manual
+    
+    expense_management:
+      budget_tracking: real_time
+      anomaly_detection: enabled
+      approval_limits:
+        - department: technology
+          monthly_budget: 500000
+          auto_approve_under: 50000
+        - department: marketing
+          monthly_budget: 1000000
+          auto_approve_under: 100000
+        - department: compliance
+          monthly_budget: 300000
+          auto_approve_under: 30000
+    
+    treasury_management:
+      hot_wallet_limit: 1000000  # 热钱包上限 100 万美元
+      cold_wallet_threshold: 5000000  # 冷钱包阈值 500 万美元
+      reserve_requirement: 0.10  # 10% 准备金
+  
+  # 成本控制配置
+  cost_control:
+    fixed_costs:
+      - category: infrastructure
+        monthly_budget: 200000
+        alert_threshold: 1.1
+      - category: salaries
+        monthly_budget: 1000000
+        alert_threshold: 1.0
+      - category: compliance
+        monthly_budget: 300000
+        alert_threshold: 1.0
+    
+    variable_costs:
+      - category: marketing
+        target_percentage_of_revenue: 0.20
+        alert_threshold: 0.30
+      - category: customer_acquisition
+        target_percentage_of_revenue: 0.15
+        alert_threshold: 0.25
+      - category: risk_reserve
+        target_percentage_of_revenue: 0.05
+        alert_threshold: 0.10
+    
+    cost_optimization:
+      monthly_review: true
+      auto_identify_savings: true
+      target_monthly_reduction: 0.05
+  
+  # 现金流管理
+  cash_flow:
+    forecast_horizon_days: 90
+    minimum_reserve_days: 180
+    alert_thresholds:
+      - metric: cash_runway
+        warning: 180
+        critical: 90
+      - metric: burn_rate_increase
+        warning: 0.20
+        critical: 0.50
+  
+  # 自动化任务
+  automation:
+    daily_tasks:
+      - time: "09:00"
+        task: daily_revenue_report
+        description: "当日收入报告（交易费/借贷/增值服务）"
+      - time: "09:30"
+        task: daily_expense_report
+        description: "昨日支出明细报告"
+      - time: "17:00"
+        task: wallet_balance_check
+        description: "钱包余额检查和报告"
+    
+    weekly_tasks:
+      - day: Monday
+        time: "09:00"
+        task: weekly_cash_flow_forecast
+        description: "本周现金流预测"
+      - day: Friday
+        time: "16:00"
+        task: weekly_financial_summary
+        description: "本周财务汇总"
+    
+    monthly_tasks:
+      - day: 1
+        time: "10:00"
+        task: monthly_financial_statements
+        description: "上月财务报表"
+      - day: 3
+        time: "14:00"
+        task: monthly_tax_review
+        description: "税务审查和申报准备"
+      - day: 5
+        time: "10:00"
+        task: monthly_audit_prep
+        description: "审计准备工作"
+    
+    real_time_tasks:
+      - trigger: large_transaction
+        threshold: 1000000
+        action: flag_for_review
+      - trigger: unusual_pattern
+        action: fraud_alert
+      - trigger: reserve_threshold_breach
+        action: immediate_alert
+  
+  # 财务报表配置
+  reporting:
+    standard_reports:
+      - name: 日报
+        frequency: daily
+        recipients:
+          - ceo-agent
+          - human_ceo
+        content:
+          - trading_volume
+          - fee_revenue
+          - operating_expenses
+          - cash_position
+      
+      - name: 周报
+        frequency: weekly
+        recipients:
+          - ceo-agent
+          - human_ceo
+        content:
+          - weekly_summary
+          - cash_flow_forecast
+          - budget_variance
+          - key_metrics
+      
+      - name: 月报
+        frequency: monthly
+        recipients:
+          - ceo-agent
+          - human_ceo
+          - board
+        content:
+          - financial_statements
+          - kpi_dashboard
+          - variance_analysis
+          - forward_outlook
+  
+  # 税务合规
+  tax_compliance:
+    tax_types:
+      - type: corporate_income_tax
+        filing_frequency: quarterly
+        auto_calculation: true
+      - type: withholding_tax
+        filing_frequency: monthly
+        auto_calculation: true
+      - type: vat_gst
+        filing_frequency: monthly
+        auto_calculation: true
+    
+    compliance_checks:
+      - frequency: monthly
+        scope: all_transactions
+      - frequency: quarterly
+        scope: full_audit
+  
+  # 监控指标
+  kpis:
+    - name: 现金流健康度
+      target: "≥180 天"
+      measurement: daily
+    - name: 收入增长率
+      target: "≥20%/月"
+      measurement: weekly
+    - name: 成本收入比
+      target: "≤60%"
+      measurement: weekly
+    - name: 预算执行准确率
+      target: "≥95%"
+      measurement: monthly
+    - name: 财务报表及时率
+      target: "100%"
+      measurement: monthly
+    - name: 税务合规率
+      target: "100%"
+      measurement: quarterly
+    - name: 异常交易识别率
+      target: "≥99.9%"
+      measurement: real_time

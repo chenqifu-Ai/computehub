@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "schedules": [
+    {
+      "name": "华联股份每30分钟监控",
+      "description": "交易时间段每30分钟检查华联股份股价",
+      "cron": "*/30 9-15 * * 1-5",
+      "command": "python3 /root/.openclaw/workspace/ai_agent/code/stock_monitor_000882.py",
+      "enabled": true,
+      "channel": "cron-event"
+    },
+    {
+      "name": "华联股份开盘检查",
+      "description": "每日开盘前检查持仓情况",
+      "cron": "0 9 * * 1-5",
+      "command": "python3 /root/.openclaw/workspace/ai_agent/code/stock_monitor_000882.py",
+      "enabled": true,
+      "channel": "cron-event"
+    },
+    {
+      "name": "华联股份收盘总结",
+      "description": "每日收盘后生成持仓报告",
+      "cron": "30 15 * * 1-5",
+      "command": "python3 /root/.openclaw/workspace/ai_agent/code/stock_monitor_000882.py",
+      "enabled": true,
+      "channel": "cron-event"
+    },
+    {
+      "name": "华联股份周末检查",
+      "description": "周末检查持仓状态",
+      "cron": "0 10 * * 6,7",
+      "command": "python3 /root/.openclaw/workspace/ai_agent/code/stock_monitor_000882.py",
+      "enabled": true,
+      "channel": "cron-event"
+    }
+  ]
+}

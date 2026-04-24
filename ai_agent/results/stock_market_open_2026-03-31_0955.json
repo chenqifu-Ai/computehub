@@ -1,0 +1,47 @@
+{
+  "timestamp": "2026-03-31 09:55",
+  "market_status": {
+    "date": "2026-03-31",
+    "time": "09:55",
+    "market_phase": "opening_session",
+    "is_active_trading": true
+  },
+  "holding_analysis": [
+    {
+      "symbol": "000882",
+      "name": "华联股份",
+      "current_price": 1.65,
+      "previous_close": 1.68,
+      "change_percent": "-1.79%",
+      "position_size": 13500,
+      "cost_basis": 1.873,
+      "current_value": 22275.0,
+      "unrealized_pnl": -3010.5000000000014,
+      "pnl_percent": -11.906033101975446,
+      "stop_loss": 1.6,
+      "distance_to_stop_loss": 3.124999999999989,
+      "risk_level": "HIGH",
+      "action_required": false
+    }
+  ],
+  "watchlist_opportunities": [
+    {
+      "symbol": "601866",
+      "name": "中远海发",
+      "current_price": 2.71,
+      "target_range": [
+        2.5,
+        2.7
+      ],
+      "opportunity_type": "WAITING",
+      "distance_to_entry": 0.009999999999999787,
+      "status": "价格2.71尚未进入目标区间，还需下跌0.00"
+    }
+  ],
+  "critical_alerts": [],
+  "summary": {
+    "overall_market_direction": "slightly_down",
+    "portfolio_status": "at_risk",
+    "immediate_actions": []
+  }
+}

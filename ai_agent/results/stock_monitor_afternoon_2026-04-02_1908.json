@@ -1,0 +1,40 @@
+{
+  "report_time": "2026-04-02T19:08:00+08:00",
+  "report_type": "盘中下午监控",
+  "stocks_monitored": [
+    {
+      "symbol": "000882",
+      "name": "华联股份",
+      "current_price": 1.61,
+      "cost_price": 1.873,
+      "shares": 13500,
+      "market_value": 21735.00,
+      "cost_value": 25285.50,
+      "unrealized_loss": -3550.50,
+      "loss_percentage": -14.04,
+      "stop_loss": 1.60,
+      "distance_to_stop": 0.01,
+      "distance_percentage": 0.6,
+      "alert_level": "WARNING",
+      "recommendation": "⚠️ 高度警惕: 非常接近止损位，设置止损单"
+    },
+    {
+      "symbol": "000001",
+      "name": "平安银行",
+      "current_price": 11.27,
+      "status": "retrieved"
+    },
+    {
+      "symbol": "600519",
+      "name": "贵州茅台",
+      "current_price": 1459.88,
+      "status": "retrieved"
+    }
+  ],
+  "summary": {
+    "critical_alerts": 0,
+    "warning_alerts": 1,
+    "normal_stocks": 2,
+    "primary_concern": "华联股份非常接近止损位，需要密切关注"
+  }
+}

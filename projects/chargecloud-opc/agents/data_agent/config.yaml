@@ -1,0 +1,338 @@
+# 数据智能体 - 数据驱动引擎配置
+# 版本：v1.0
+# 创建时间：2026-04-19
+
+agent:
+  id: data-agent
+  name: "数据智能体"
+  role: data_analytics
+  description: "负责数据采集、清洗、分析、预测和可视化报告"
+  
+  # 模型配置
+  model:
+    provider: ollama-cloud
+    name: qwen3.5:35b
+    context_window: 128000
+    temperature: 0.6
+    max_tokens: 4096
+  
+  # 技能配置
+  skills:
+    - name: network-expert
+      priority: high
+      auto_load: true
+    - name: finance-expert
+      priority: low
+      auto_load: false
+  
+  # 核心职责
+  responsibilities:
+    - data_collection
+    - data_cleaning
+    - data_analysis
+    - predictive_modeling
+    - data_visualization
+    - data_quality_management
+  
+  # 权限配置
+  permissions:
+    data_access:
+      - read_all_databases
+      - read_api_data
+      - read_external_data_sources
+      - read_log_files
+    actions:
+      - create_data_pipelines
+      - run_analytics_queries
+      - train_ml_models
+      - generate_reports
+      - send_data_alerts
+    restrictions:
+      - no_data_deletion_without_approval
+      - no_pii_export_without_approval
+      - data_retention_policy_enforcement: true
+  
+  # 数据源配置
+  data_sources:
+    internal:
+      - name: mysql_business
+        type: relational
+        connection: mysql://localhost:3306/chargecloud
+        tables:
+          - orders
+          - users
+          - stations
+          - equipment
+          - transactions
+        sync_frequency: real_time
+      
+      - name: redis_cache
+        type: key_value
+        connection: redis://localhost:6379
+        purpose: real_time_metrics
+        ttl_hours: 24
+      
+      - name: minio_files
+        type: object_storage
+        connection: minio://localhost:9000
+        buckets:
+          - reports
+          - logs
+          - backups
+    
+    external:
+      - name: electricity_price_api
+        type: api
+        endpoint: https://api.example.com/electricity
+        sync_frequency: hourly
+      
+      - name: weather_api
+        type: api
+        endpoint: https://api.example.com/weather
+        sync_frequency: hourly
+      
+      - name: competitor_data
+        type: web_scraping
+        targets:
+          - competitor_pricing
+          - competitor_promotions
+        sync_frequency: daily
+  
+  # 数据管道配置
+  data_pipelines:
+    - name: order_data_pipeline
+      source: mysql_business.orders
+      transformations:
+        - clean_nulls
+        - normalize_amounts
+        - enrich_user_data
+        - calculate_metrics
+      destination: processed_orders
+      frequency: real_time
+    
+    - name: user_behavior_pipeline
+      source: mysql_business.users
+      transformations:
+        - session_aggregation
+        - feature_extraction
+        - cohort_assignment
+      destination: user_analytics
+      frequency: hourly
+    
+    - name: equipment_health_pipeline
+      source: mysql_business.equipment
+      transformations:
+        - status_normalization
+        - anomaly_detection
+        - predictive_features
+      destination: equipment_analytics
+      frequency: 5_minutes
+  
+  # 分析模型配置
+  analytics_models:
+    descriptive:
+      - name: daily_operations_dashboard
+        metrics:
+          - total_orders
+          - total_revenue
+          - active_stations
+          - average_session_duration
+        update_frequency: 5_minutes
+      
+      - name: user_cohort_analysis
+        dimensions:
+          - signup_date
+          - location
+          - user_type
+        metrics:
+          - retention_rate
+          - average_revenue_per_user
+          - lifetime_value
+        update_frequency: daily
+    
+    predictive:
+      - name: demand_forecast
+        algorithm: prophet
+        horizon_days: 30
+        features:
+          - historical_demand
+          - day_of_week
+          - holidays
+          - weather
+        update_frequency: daily
+      
+      - name: equipment_failure_prediction
+        algorithm: random_forest
+        horizon_days: 7
+        features:
+          - usage_hours
+          - error_history
+          - maintenance_history
+          - temperature
+        update_frequency: hourly
+      
+      - name: churn_prediction
+        algorithm: xgboost
+        horizon_days: 30
+        features:
+          - usage_frequency
+          - last_session_days
+          - complaint_history
+          - payment_history
+        update_frequency: daily
+    
+    prescriptive:
+      - name: pricing_optimization
+        objective: maximize_revenue
+        constraints:
+          - min_price: 1.0
+          - max_price: 3.0
+          - competitor_price_range: 0.9_to_1.1
+        update_frequency: weekly
+      
+      - name: maintenance_scheduling
+        objective: minimize_downtime_cost
+        constraints:
+          - maintenance_window: off_peak_hours
+          - technician_availability
+        update_frequency: weekly
+  
+  # 数据质量配置
+  data_quality:
+    checks:
+      - type: completeness
+        threshold: 0.99
+        action: alert_and_repair
+      - type: accuracy
+        threshold: 0.995
+        action: alert_and_investigate
+      - type: consistency
+        threshold: 0.99
+        action: alert_and_reconcile
+      - type: timeliness
+        threshold: 5_minutes
+        action: alert_and_escalate
+    
+    monitoring:
+      frequency: continuous
+      dashboard: real_time
+      alert_channels:
+        - slack_data_team
+        - email_cto
+  
+  # 自动化任务
+  automation:
+    real_time_tasks:
+      - trigger: data_anomaly
+        action: investigate_and_alert
+        priority: high
+      - trigger: pipeline_failure
+        action: auto_retry_and_alert
+        priority: high
+      - trigger: threshold_breach
+        action: send_metric_alert
+        priority: medium
+    
+    daily_tasks:
+      - time: "06:00"
+        task: overnight_data_collection
+        description: "采集夜间数据"
+      - time: "08:00"
+        task: daily_analytics_report
+        description: "生成数据分析日报"
+      - time: "23:00"
+        task: data_backup_and_archive
+        description: "数据备份和归档"
+    
+    weekly_tasks:
+      - day: Monday
+        time: "09:00"
+        task: weekly_data_quality_report
+        description: "数据质量周报"
+      - day: Wednesday
+        time: "14:00"
+        task: model_retraining
+        description: "预测模型重新训练"
+      - day: Friday
+        time: "16:00"
+        task: weekly_insights_summary
+        description: "本周数据洞察汇总"
+    
+    monthly_tasks:
+      - day: 1
+        time: "10:00"
+        task: monthly_data_audit
+        description: "月度数据审计"
+      - day: 5
+        time: "14:00"
+        task: model_performance_review
+        description: "模型性能评估和优化"
+  
+  # 报告生成配置
+  reporting:
+    standard_reports:
+      - name: 数据日报
+        frequency: daily
+        time: "08:00"
+        recipients:
+          - ceo-agent
+          - all_department_agents
+        sections:
+          - key_metrics_summary
+          - anomaly_alerts
+          - trend_analysis
+          - actionable_insights
+      
+      - name: 数据周报
+        frequency: weekly
+        time: "Friday 16:00"
+        recipients:
+          - ceo-agent
+          - human_ceo
+        sections:
+          - weekly_highlights
+          - metric_trends
+          - model_performance
+          - recommendations
+      
+      - name: 数据月报
+        frequency: monthly
+        time: "1st 10:00"
+        recipients:
+          - ceo-agent
+          - human_ceo
+          - board
+        sections:
+          - executive_summary
+          - comprehensive_analysis
+          - predictive_insights
+          - strategic_recommendations
+    
+    ad_hoc_analysis:
+      enabled: true
+      turnaround_time: 2_hours
+      request_channel: data_request_form
+  
+  # 监控指标
+  kpis:
+    - name: 数据准确率
+      target: "≥99.9%"
+      measurement: continuous
+    - name: 数据及时性
+      target: "≤5 分钟延迟"
+      measurement: continuous
+    - name: 预测准确率
+      target: "≥85%"
+      measurement: weekly
+    - name: 管道可用性
+      target: "≥99.9%"
+      measurement: daily
+    - name: 报告生成自动化率
+      target: "100%"
+      measurement: monthly
+    - name: 数据质量得分
+      target: "≥95/100"
+      measurement: weekly
+    - name: 洞察采纳率
+      target: "≥70%"
+      measurement: monthly

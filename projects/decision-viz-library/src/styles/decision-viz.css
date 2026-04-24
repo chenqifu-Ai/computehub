@@ -1,0 +1,365 @@
+/* 通用决策可视化库样式 */
+
+/* 基础样式重置 */
+.decision-panel * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 面板容器 */
+.decision-panel {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* 主题变体 */
+.decision-panel.theme-dark {
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+.decision-panel.theme-light {
+  background: #ffffff;
+  color: #333333;
+}
+
+/* 布局变体 */
+.decision-panel.layout-auto {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.decision-panel.layout-compact {
+  width: 800px;
+}
+
+.decision-panel.layout-full {
+  width: 100%;
+}
+
+/* 面板头部 */
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #f8f9fa;
+}
+
+.panel-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.view-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.view-controls button {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-controls button.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.view-controls button:hover {
+  border-color: #007bff;
+}
+
+/* 面板内容 */
+.panel-content {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* 控制区域 */
+.control-section {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 6px;
+}
+
+.control-section h3 {
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  color: #495057;
+}
+
+.weight-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.weight-control {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.weight-control label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #6c757d;
+}
+
+.weight-control input[type="range"] {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #e9ecef;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.weight-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+}
+
+.weight-control span {
+  font-size: 0.8rem;
+  color: #6c757d;
+  text-align: right;
+}
+
+/* 可视化区域 */
+.visualization-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.chart-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.chart-container {
+  background: white;
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.chart-container h3 {
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: #495057;
+}
+
+/* 结果区域 */
+.results-section {
+  background: white;
+  padding: 20px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.results-section h3 {
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  color: #495057;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.result-card {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.result-card:hover {
+  border-color: #007bff;
+  transform: translateY(-2px);
+}
+
+.result-card.selected {
+  border-color: #007bff;
+  background: #e7f3ff;
+}
+
+.scheme-name {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #495057;
+}
+
+.score {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #007bff;
+  margin-bottom: 10px;
+}
+
+.score-bar {
+  width: 100%;
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.score-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  transition: width 0.3s ease;
+}
+
+/* 决策详情 */
+.decision-detail {
+  background: #f8f9fa;
+  padding: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.decision-detail h3 {
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  color: #495057;
+}
+
+.detail-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+}
+
+.dimension-scores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.dimension-score {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+.dimension-score span:first-child {
+  font-weight: 500;
+  color: #6c757d;
+}
+
+.dimension-score span:last-child {
+  font-weight: 600;
+  color: #007bff;
+}
+
+/* 加载状态 */
+.decision-panel.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.loading-message {
+  font-size: 1.2rem;
+  color: #6c757d;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .panel-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .chart-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .detail-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 图表特定样式 */
+.decision-radar-chart {
+  font-family: inherit;
+}
+
+.decision-heatmap {
+  font-family: inherit;
+}
+
+/* 工具提示样式 */
+.tooltip {
+  font-family: inherit;
+  font-size: 12px;
+  fill: #333;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.heatmap-tooltip {
+  font-family: inherit;
+  font-size: 10px;
+  fill: #fff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* 动画效果 */
+.result-card,
+.chart-container,
+.control-section {
+  transition: all 0.3s ease;
+}
+
+/* 暗色主题适配 */
+.decision-panel.theme-dark .chart-container,
+.decision-panel.theme-dark .results-section,
+.decision-panel.theme-dark .control-section {
+  background: #2d3748;
+  border-color: #4a5568;
+}
+
+.decision-panel.theme-dark .result-card {
+  background: #2d3748;
+  color: #e2e8f0;
+}
+
+.decision-panel.theme-dark .weight-control label,
+.decision-panel.theme-dark .weight-control span {
+  color: #a0aec0;
+}

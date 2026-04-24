@@ -1,0 +1,99 @@
+{
+  "timestamp": "2026-03-24T08:22:13.539795",
+  "report_time": "2026-03-24 08:22:13",
+  "data": {
+    "a50": {
+      "success": false,
+      "data": {},
+      "source": "",
+      "error": null
+    },
+    "north_money": {
+      "success": true,
+      "data": {
+        "date": "2026-03-24",
+        "north_net_inflow": 0,
+        "note": "接口异常: Expecting value: line 1 column 1 (char 0)"
+      },
+      "source": "",
+      "error": "Expecting value: line 1 column 1 (char 0)"
+    },
+    "longhubang": {
+      "success": false,
+      "data": [],
+      "source": "",
+      "error": "slice(None, 10, None)"
+    },
+    "holdings": [
+      {
+        "code": "600460",
+        "name": "士兰微",
+        "success": true,
+        "data": {
+          "name": "士兰微",
+          "open": 26.39,
+          "prev_close": 27.14,
+          "price": 25.85,
+          "high": 26.84,
+          "low": 25.66,
+          "bid": 25.85,
+          "ask": 25.86,
+          "volume": 34988829,
+          "amount": 917100220.0,
+          "date": "2026-03-23",
+          "time": "15:00:01",
+          "change": -1.29,
+          "change_pct": -4.75
+        },
+        "error": null
+      },
+      {
+        "code": "000882",
+        "name": "华联股份",
+        "success": true,
+        "data": {
+          "name": "华联股份",
+          "open": 1.67,
+          "prev_close": 1.69,
+          "price": 1.58,
+          "high": 1.67,
+          "low": 1.56,
+          "bid": 1.57,
+          "ask": 1.58,
+          "volume": 87467932,
+          "amount": 140926351.72,
+          "date": "2026-03-23",
+          "time": "15:00:00",
+          "change": -0.11,
+          "change_pct": -6.51
+        },
+        "error": null
+      }
+    ],
+    "analysis": {
+      "market_signal": "⚠️ A50数据暂不可用，参考其他指标；⚠️ 北向资金：接口异常: Expecting value: line 1 column 1 (char 0)",
+      "holdings_impact": [
+        {
+          "code": "600460",
+          "name": "士兰微",
+          "price": 25.85,
+          "change_pct": -4.75,
+          "signal": "🟠 士兰微下跌-4.75%",
+          "action": "关注支撑位，跌破考虑止损"
+        },
+        {
+          "code": "000882",
+          "name": "华联股份",
+          "price": 1.58,
+          "change_pct": -6.51,
+          "signal": "🔴 华联股份大跌-6.51%",
+          "action": "注意风险，严格执行止损"
+        }
+      ],
+      "suggestions": [
+        "📉 士兰微(600460)跌幅-4.75%，半导体板块调整，关注20日线支撑",
+        "📉 华联股份(000882)跌幅-6.51%，零售板块走弱，注意止损"
+      ]
+    }
+  }
+}

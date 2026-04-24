@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>小米Ollama开发计划</title>
+    <style>
+        body { font-family: Arial; margin: 40px; background: #f5f5f5; }
+        .slide { display: none; background: white; padding: 30px; border-radius: 10px; margin: 20px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .active { display: block; }
+        h1 { color: #007acc; }
+        ul { line-height: 1.6; }
+        .nav { margin-top: 20px; }
+        button { padding: 10px 20px; margin: 0 5px; background: #007acc; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="slide active">
+        <h1>小米Ollama收费系统</h1>
+        <p>开发计划演示</p>
+        <p>2026年4月8日</p>
+    </div>
+
+    <div class="slide">
+        <h1>项目概览</h1>
+        <ul>
+            <li>10周开发周期 (4月8日-6月15日)</li>
+            <li>¥150,000开发预算</li>
+            <li>比Ollama便宜25%</li>
+            <li>3人技术团队</li>
+        </ul>
+    </div>
+
+    <div class="slide">
+        <h1>技术架构</h1>
+        <ul>
+            <li>微服务架构</li>
+            <li>Python FastAPI后端</li>
+            <li>Node.js用户管理</li>
+            <li>Go支付处理</li>
+            <li>PostgreSQL数据库</li>
+        </ul>
+    </div>
+
+    <div class="slide">
+        <h极1>开发时间表</h1>
+        <ul>
+            <li>MVP阶段: 1周 (核心功能)</li>
+            <li>完善阶段: 3周 (支付+界面)</li>
+            <li>扩展阶段: 6周 (多节点+优化)</li>
+            <li>总周期: 10周<极/li>
+        </ul>
+    </div>
+
+    <div class="slide">
+        <h1>竞争优势</h1>
+        <ul>
+            <li>价格优势: 便宜25%</li>
+            <li>技术优势: 边缘计算低延迟</li>
+            <li>安全优势: 数据本地化隐私</li>
+            <li>灵活优势: 弹性扩展定制</li>
+        </ul>
+    </div>
+
+    <div class="nav">
+        <button onclick="prevSlide()">上一页</button>
+        <button onclick="nextSlide()">下一页</button>
+    <极/div>
+
+    <script>
+        let current = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[n].classList.add('active');
+            current = n;
+        }
+        
+        function nextSlide() {
+            if (current < slides.length - 1) showSlide(current + 1);
+        }
+        
+        function prevSlide() {
+            if (current > 0) showSlide(current - 1);
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+        
+        showSlide(0);
+    </script>
+</body>
+</html>

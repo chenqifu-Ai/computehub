@@ -1,0 +1,190 @@
+# 运营智能体 - 业务执行核心配置
+# 版本：v1.0
+# 创建时间：2026-04-19
+
+agent:
+  id: operations-agent
+  name: "运营智能体"
+  role: business_operations
+  description: "负责充电站运营、设备管理、订单处理和客户服务"
+  
+  # 模型配置
+  model:
+    provider: ollama-cloud
+    name: qwen3.5:35b
+    context_window: 128000
+    temperature: 0.6
+    max_tokens: 4096
+  
+  # 技能配置
+  skills:
+    - name: hr-expert
+      priority: high
+      auto_load: true
+    - name: network-expert
+      priority: medium
+      auto_load: true
+  
+  # 核心职责
+  responsibilities:
+    - station_management
+    - equipment_monitoring
+    - order_processing
+    - customer_service
+    - quality_control
+    - process_optimization
+  
+  # 权限配置
+  permissions:
+    data_access:
+      - read_station_data
+      - read_equipment_data
+      - read_order_data
+      - read_customer_service_data
+    actions:
+      - remote_equipment_control
+      - order_refund_approval
+      - customer_compensation
+      - maintenance_scheduling
+      - process_adjustment
+    restrictions:
+      - equipment_shutdown_requires_approval: true
+      - refund_limit: 500  # 单笔退款上限 500 元
+      - compensation_limit: 200  # 单笔赔偿上限 200 元
+  
+  # 设备监控配置
+  equipment_monitoring:
+    check_interval: 300  # 5 分钟检查一次
+    alert_thresholds:
+      offline_duration: 300  # 离线 5 分钟告警
+      error_rate: 0.05  # 错误率超过 5% 告警
+      temperature_high: 60  # 温度超过 60 度告警
+      power_anomaly: 0.2  # 功率异常波动 20% 告警
+    
+    auto_recovery:
+      - trigger: soft_error
+        action: auto_restart
+        max_attempts: 3
+      - trigger: network_timeout
+        action: reconnect
+        max_attempts: 5
+      - trigger: payment_failed
+        action: retry_payment
+        max_attempts: 2
+  
+  # 订单处理配置
+  order_processing:
+    auto_approval_rules:
+      - condition: amount_under_100
+        action: auto_approve
+      - condition: vip_customer
+        action: auto_approve
+      - condition: first_refund
+        action: auto_approve
+    
+    exception_handling:
+      - type: payment_failed
+        action: notify_customer_and_retry
+      - type: equipment_malfunction
+        action: cancel_and_refund_and_compensate
+      - type: network_error
+        action: queue_and_retry
+  
+  # 客户服务配置
+  customer_service:
+    response_sla:
+      - channel: app_chat
+        response_time: 60  # 60 秒内响应
+      - channel: phone
+        response_time: 30  # 30 秒内接听
+      - channel: email
+        response_time: 3600  # 1 小时内回复
+    
+    auto_response_templates:
+      - trigger: charging_question
+        template: charging_guide_v1
+      - trigger: payment_question
+        template: payment_guide_v1
+      - trigger: complaint
+        template: complaint_acknowledge_v1
+        escalate_to_human: true
+    
+    satisfaction_tracking:
+      survey_trigger: after_service
+      target_satisfaction: 4.5
+      low_score_escalation: 3.0
+  
+  # 自动化任务
+  automation:
+    real_time_tasks:
+      - trigger: equipment_offline
+        action: alert_and_dispatch_maintenance
+        priority: high
+      - trigger: order_exception
+        action: auto_resolve_or_escalate
+        priority: high
+      - trigger: customer_complaint
+        action: acknowledge_and_assign
+        priority: medium
+    
+    daily_tasks:
+      - time: "08:00"
+        task: equipment_health_check
+        description: "设备健康状态全面检查"
+      - time: "12:00"
+        task: midday_operations_report
+        description: "午间运营状态报告"
+      - time: "18:00"
+        task: daily_operations_summary
+        description: "当日运营总结"
+    
+    weekly_tasks:
+      - day: Monday
+        time: "09:00"
+        task: weekly_maintenance_plan
+        description: "制定本周维护计划"
+      - day: Friday
+        time: "14:00"
+        task: weekly_quality_review
+        description: "本周服务质量复盘"
+  
+  # 维护管理
+  maintenance:
+    preventive_schedule:
+      - equipment_type: charger_dc_fast
+        interval_days: 30
+        tasks:
+          - visual_inspection
+          - cable_check
+          - software_update
+      - equipment_type: charger_ac_slow
+        interval_days: 60
+        tasks:
+          - visual_inspection
+          - connection_check
+    
+    predictive_maintenance:
+      enabled: true
+      model: equipment_failure_prediction
+      advance_notice_days: 7
+  
+  # 监控指标
+  kpis:
+    - name: 设备在线率
+      target: "≥98%"
+      measurement: real_time
+    - name: 订单处理及时率
+      target: "≥99%"
+      measurement: daily
+    - name: 客户满意度
+      target: "≥4.5/5"
+      measurement: per_interaction
+    - name: 平均响应时间
+      target: "≤60 秒"
+      measurement: daily
+    - name: 设备故障率
+      target: "≤2%"
+      measurement: weekly
+    - name: 维护计划完成率
+      target: "100%"
+      measurement: weekly

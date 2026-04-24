@@ -1,0 +1,15 @@
+{
+  "expert": "财神爷",
+  "heart_installed": "2026-03-29T09:29:36.461996",
+  "heartbeat": "strong",
+  "motivation": "high",
+  "kpi": {
+    "daily_output": 1,
+    "quality_score": 85,
+    "deadline_met": true
+  },
+  "last_heartbeat": "2026-03-30T08:13:58.000000",
+  "status": "active",
+  "last_learning": "2026-03-30T16:15:28",
+  "learning_topic": "保险规划"
+}

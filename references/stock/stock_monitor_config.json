@@ -1,0 +1,32 @@
+{
+  "monitoring_stocks": [
+    "SH000001",
+    "SZ399001",
+    "CYBZ",
+    "KZZ"
+  ],
+  "alert_thresholds": {
+    "price_change_percent": 3.0,
+    "volume_ratio": 2.0,
+    "volatility_index": 25.0
+  },
+  "monitoring_indicators": [
+    "opening_price",
+    "current_price",
+    "price_change",
+    "price_change_percent",
+    "volume",
+    "turnover",
+    "market_sentiment"
+  ],
+  "news_keywords": [
+    "政策",
+    "经济数据",
+    "央行",
+    "美联储",
+    "贸易",
+    "通胀",
+    "利率",
+    "GDP"
+  ]
+}

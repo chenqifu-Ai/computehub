@@ -1,0 +1,30 @@
+[
+  {
+    "code": "601866",
+    "name": "中远海发",
+    "current_price": 2.77,
+    "open_price": 0.0,
+    "yesterday_close": 2.77,
+    "volume": 0,
+    "price_change_pct": 0.0,
+    "gap_up": false,
+    "gap_down": false,
+    "volume_significance": "low",
+    "recommendation": "💰 股价高于目标区间(2.77)，等待回调",
+    "risk_level": "high"
+  },
+  {
+    "code": "000882",
+    "name": "华联股份",
+    "current_price": 1.68,
+    "open_price": 0.0,
+    "yesterday_close": 1.67,
+    "volume": 0,
+    "price_change_pct": 0.5988023952095813,
+    "gap_up": false,
+    "gap_down": false,
+    "volume_significance": "low",
+    "recommendation": "📈 股价虽低于成本但上涨，继续持有观察",
+    "risk_level": "medium"
+  }
+]

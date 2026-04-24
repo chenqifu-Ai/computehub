@@ -1,0 +1,26 @@
+{
+  "watchlist": [
+    "AAPL",
+    "MSFT",
+    "GOOGL",
+    "TSLA",
+    "BABA",
+    "000001.SS",
+    "600036.SS"
+  ],
+  "market_hours": {
+    "shanghai": {
+      "open": "09:30",
+      "close": "15:00"
+    },
+    "nasdaq": {
+      "open": "21:30",
+      "close": "04:00"
+    }
+  },
+  "data_sources": {
+    "alpha_vantage": "",
+    "yfinance": true,
+    "local_simulation": true
+  }
+}

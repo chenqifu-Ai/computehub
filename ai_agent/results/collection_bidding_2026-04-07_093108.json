@@ -1,0 +1,103 @@
+{
+  "timestamp": "2026-04-07 09:31:08",
+  "bidding_status": {
+    "date": "2026-04-07",
+    "time": "09:31:08",
+    "bidding_phase": "unknown",
+    "is_collection_bidding_active": false,
+    "minutes_to_opening": 0
+  },
+  "bidding_data": {
+    "SH000001": {
+      "symbol": "SH000001",
+      "name": "上证指数",
+      "previous_close": 3050,
+      "collection_bidding_price": 3042,
+      "price_change": -8,
+      "price_change_percent": -0.26,
+      "sentiment": "bearish"
+    },
+    "SZ399001": {
+      "symbol": "SZ399001",
+      "name": "深证成指",
+      "previous_close": 9850,
+      "collection_bidding_price": 9820,
+      "price_change": -30,
+      "price_change_percent": -0.3,
+      "sentiment": "bearish"
+    },
+    "000882": {
+      "symbol": "000882",
+      "name": "华联股份",
+      "previous_close": 1.68,
+      "collection_bidding_price": 1.65,
+      "price_change": -0.03,
+      "price_change_percent": -1.79,
+      "volume_ratio": 1.8,
+      "bid_volume": 15000000,
+      "ask_volume": 12000000,
+      "net_flow": 3000000,
+      "sentiment": "bearish"
+    },
+    "601866": {
+      "symbol": "601866",
+      "name": "中远海发",
+      "previous_close": 2.72,
+      "collection_bidding_price": 2.71,
+      "price_change": -0.01,
+      "price_change_percent": -0.37,
+      "volume_ratio": 1.3,
+      "bid_volume": 8000000,
+      "ask_volume": 7500000,
+      "net_flow": 500000,
+      "sentiment": "bearish"
+    }
+  },
+  "analysis_results": {
+    "market_overview": {
+      "sentiment": "neutral",
+      "shanghai_index": {
+        "symbol": "SH000001",
+        "name": "上证指数",
+        "previous_close": 3050,
+        "collection_bidding_price": 3042,
+        "price_change": -8,
+        "price_change_percent": -0.26,
+        "sentiment": "bearish"
+      },
+      "shenzhen_index": {
+        "symbol": "SZ399001",
+        "name": "深证成指",
+        "previous_close": 9850,
+        "collection_bidding_price": 9820,
+        "price_change": -30,
+        "price_change_percent": -0.3,
+        "sentiment": "bearish"
+      }
+    },
+    "individual_analysis": {
+      "000882": {
+        "symbol": "000882",
+        "name": "华联股份",
+        "risk_level": "normal",
+        "action_required": false,
+        "key_observations": []
+      },
+      "601866": {
+        "symbol": "601866",
+        "name": "中远海发",
+        "risk_level": "normal",
+        "action_required": false,
+        "key_observations": []
+      }
+    },
+    "alerts": [],
+    "recommendations": []
+  },
+  "summary": {
+    "overall_market_direction": "neutral",
+    "portfolio_risk_level": "normal",
+    "immediate_actions_needed": 0,
+    "key_recommendations": 0
+  }
+}

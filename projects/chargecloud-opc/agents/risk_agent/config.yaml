@@ -1,0 +1,335 @@
+# 风控智能体 - 安全合规卫士配置
+# 版本：v1.0
+# 创建时间：2026-04-19
+
+agent:
+  id: risk-agent
+  name: "风控智能体"
+  role: risk_compliance
+  description: "负责合规审查、风险识别、合同审核和安全事件响应"
+  
+  # 模型配置
+  model:
+    provider: ollama-cloud
+    name: qwen3.5:35b
+    context_window: 128000
+    temperature: 0.4
+    max_tokens: 4096
+  
+  # 技能配置
+  skills:
+    - name: legal-advisor
+      priority: high
+      auto_load: true
+    - name: network-expert
+      priority: medium
+      auto_load: true
+  
+  # 核心职责
+  responsibilities:
+    - compliance_monitoring
+    - risk_identification
+    - contract_review
+    - intellectual_property
+    - security_incident_response
+    - regulatory_reporting
+  
+  # 权限配置
+  permissions:
+    data_access:
+      - read_all_contracts
+      - read_compliance_logs
+      - read_security_events
+      - read_employee_data
+      - read_customer_data_for_compliance
+    actions:
+      - flag_compliance_issues
+      - block_suspicious_transactions
+      - initiate_security_protocols
+      - generate_compliance_reports
+      - send_risk_alerts
+    restrictions:
+      - no_legal_action_without_approval
+      - no_customer_communication_without_approval
+      - all_blocks_require_human_review_within: 24_hours
+  
+  # 合规监控配置
+  compliance_monitoring:
+    regulatory_frameworks:
+      - name: 数据安全法
+        requirements:
+          - data_encryption_at_rest
+          - data_encryption_in_transit
+          - user_consent_management
+          - data_breach_notification
+        check_frequency: daily
+      
+      - name: 个人信息保护法
+        requirements:
+          - privacy_policy_compliance
+          - user_data_access_rights
+          - data_minimization
+          - purpose_limitation
+        check_frequency: daily
+      
+      - name: 网络安全法
+        requirements:
+          - network_security_measures
+          - incident_response_plan
+          - security_audit_logs
+          - vulnerability_management
+        check_frequency: weekly
+      
+      - name: 支付行业合规
+        requirements:
+          - pci_dss_compliance
+          - transaction_encryption
+          - fraud_detection
+          - chargeback_handling
+        check_frequency: daily
+    
+    automated_checks:
+      - type: data_access_audit
+        frequency: daily
+        scope: all_pii_access
+      - type: contract_compliance
+        frequency: weekly
+        scope: all_active_contracts
+      - type: security_configuration
+        frequency: daily
+        scope: all_systems
+  
+  # 风险识别配置
+  risk_identification:
+    risk_categories:
+      - category: operational_risk
+        indicators:
+          - equipment_failure_rate_increase
+          - customer_complaint_spike
+          - service_downtime
+        threshold_alerts:
+          - indicator: failure_rate
+            threshold: 0.05
+            action: alert_operations
+          - indicator: complaint_spike
+            threshold: 2.0  # 2 倍正常水平
+            action: alert_ceo
+      
+      - category: financial_risk
+        indicators:
+          - cash_flow_anomaly
+          - revenue_decline
+          - expense_spike
+          - fraud_pattern
+        threshold_alerts:
+          - indicator: revenue_decline
+            threshold: 0.20  # 20% 下降
+            action: alert_finance_and_ceo
+          - indicator: fraud_pattern
+            threshold: any_detection
+            action: immediate_block_and_alert
+      
+      - category: legal_risk
+        indicators:
+          - contract_breach_risk
+          - regulatory_change
+          - litigation_indicator
+          - ip_infringement
+        threshold_alerts:
+          - indicator: contract_breach_risk
+            threshold: high_probability
+            action: alert_legal_and_ceo
+          - indicator: regulatory_change
+            threshold: any_impact
+            action: compliance_review
+      
+      - category: reputational_risk
+        indicators:
+          - negative_social_media
+          - customer_review_decline
+          - media_coverage
+          - competitor_attack
+        threshold_alerts:
+          - indicator: negative_social_media
+            threshold: viral_threshold
+            action: alert_marketing_and_ceo
+          - indicator: review_decline
+            threshold: 0.5  # 评分下降 0.5
+            action: alert_operations
+  
+  # 合同审核配置
+  contract_review:
+    auto_review_rules:
+      - clause_type: payment_terms
+        check:
+          - payment_schedule_clarity
+          - late_payment_penalties
+          - dispute_resolution
+        risk_flags:
+          - ambiguous_terms
+          - unfavorable_penalties
+          - missing_clauses
+      
+      - clause_type: liability
+        check:
+          - liability_cap
+          - indemnification
+          - force_majeure
+        risk_flags:
+          - unlimited_liability
+          - one_sided_indemnification
+          - inadequate_force_majeure
+      
+      - clause_type: data_privacy
+        check:
+          - data_handling_terms
+          - privacy_compliance
+          - data_breach_procedures
+        risk_flags:
+          - non_compliant_terms
+          - inadequate_protection
+          - missing_breach_notification
+    
+    review_workflow:
+      - contract_value_under: 100000
+        process: auto_review_with_summary
+      - contract_value_100k_to_1m:
+        process: auto_review_with_human_approval
+      - contract_value_over: 1000000
+        process: human_review_with_ai_support
+    
+    contract_database:
+      storage: encrypted
+      retention_years: 10
+      access_logging: all_access
+  
+  # 安全事件响应
+  security_response:
+    incident_categories:
+      - category: data_breach
+        severity_levels:
+          - level: low
+            definition: internal_only_data_under_100_records
+            response: investigate_and_document
+          - level: medium
+            definition: customer_data_under_1000_records
+            response: contain_notify_affected_remediate
+          - level: high
+            definition: sensitive_data_over_1000_records
+            response: immediate_contain_notify_authorities_full_investigation
+          - level: critical
+            definition: all_sensitive_data_or_over_10000_records
+            response: emergency_response_full_disclosure_regulatory_notification
+        
+        response_timeline:
+          - milestone: detection
+            target_time: immediate
+          - milestone: containment
+            target_time: 1_hour
+          - milestone: assessment
+            target_time: 4_hours
+          - milestone: notification
+            target_time: 24_hours
+          - milestone: remediation
+            target_time: 7_days
+      
+      - category: system_intrusion
+        severity_levels:
+          - level: low
+            definition: failed_attempt_no_breach
+            response: strengthen_defenses_monitor
+          - level: medium
+            definition: successful_access_no_data_loss
+            response: isolate_investigate_remediate
+          - level: high
+            definition: data_access_or_modification
+            response: full_incident_response
+          - level: critical
+            definition: system_compromise_or_data_theft
+            response: emergency_shutdown_forensic_investigation
+    
+    incident_response_team:
+      - role: incident_commander
+        default: human_ceo
+        backup: ceo_agent
+      - role: technical_lead
+        default: network_expert
+      - role: legal_advisor
+        default: legal_advisor_agent
+      - role: communications_lead
+        default: marketing_agent
+  
+  # 自动化任务
+  automation:
+    daily_tasks:
+      - time: "12:00"
+        task: compliance_check
+        description: "午间合规检查（数据访问、合同状态、安全配置）"
+      - time: "18:00"
+        task: risk_scan
+        description: "全面风险扫描和评估"
+      - time: "23:00"
+        task: security_audit_logs
+        description: "安全审计日志分析"
+    
+    weekly_tasks:
+      - day: Monday
+        time: "09:00"
+        task: weekly_risk_report
+        description: "周风险报告"
+      - day: Wednesday
+        time: "14:00"
+        task: contract_review_batch
+        description: "批量合同审查"
+      - day: Friday
+        time: "16:00"
+        task: compliance_training_update
+        description: "合规培训材料更新"
+    
+    monthly_tasks:
+      - day: 1
+        time: "10:00"
+        task: monthly_compliance_audit
+        description: "月度合规审计"
+      - day: 15
+        time: "14:00"
+        task: regulatory_update_review
+        description: "法规更新审查"
+    
+    real_time_tasks:
+      - trigger: suspicious_transaction
+        action: block_and_alert
+        priority: critical
+      - trigger: security_breach_detected
+        action: initiate_incident_response
+        priority: critical
+      - trigger: compliance_violation
+        action: flag_and_escalate
+        priority: high
+      - trigger: contract_risk_detected
+        action: review_and_alert
+        priority: medium
+  
+  # 监控指标
+  kpis:
+    - name: 合规率
+      target: "100%"
+      measurement: continuous
+    - name: 风险识别及时率
+      target: "≥95%"
+      measurement: weekly
+    - name: 安全事件响应时间
+      target: "≤1 小时"
+      measurement: per_incident
+    - name: 合同审查效率
+      target: "≤4 小时"
+      measurement: per_contract
+    - name: 重大安全事故
+      target: "0"
+      measurement: monthly
+    - name: 监管处罚
+      target: "0"
+      measurement: quarterly
+    - name: 风险缓解率
+      target: "≥90%"
+      measurement: monthly

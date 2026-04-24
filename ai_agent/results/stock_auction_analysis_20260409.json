@@ -1,0 +1,109 @@
+{
+  "timestamp": "2026-04-09 09:48",
+  "title": "股票集合竞价分析报告",
+  "summary": {
+    "market_overview": "今日集合竞价共有8只股票参与分析",
+    "sentiment": "市场情绪: 乐观",
+    "statistics": {
+      "上涨股票": 6,
+      "下跌股票": 2,
+      "平盘股票": 0,
+      "波动较大股票": 4,
+      "平均涨跌幅": "0.85%"
+    }
+  },
+  "top_performers": {
+    "最大涨幅": {
+      "code": "600000",
+      "name": "浦发银行",
+      "prev_close": 9.85,
+      "auction_price": 10.13,
+      "change_rate": 2.86,
+      "volume": 3027235,
+      "status": "volatile"
+    },
+    "最大跌幅": {
+      "code": "000858",
+      "name": "五粮液",
+      "prev_close": 158.6,
+      "auction_price": 154.02,
+      "change_rate": -2.89,
+      "volume": 3662138,
+      "status": "volatile"
+    }
+  },
+  "detailed_data": [
+    {
+      "code": "600000",
+      "name": "浦发银行",
+      "prev_close": 9.85,
+      "auction_price": 10.13,
+      "change_rate": 2.86,
+      "volume": 3027235,
+      "status": "volatile"
+    },
+    {
+      "code": "600036",
+      "name": "招商银行",
+      "prev_close": 35.2,
+      "auction_price": 35.79,
+      "change_rate": 1.67,
+      "volume": 1571113,
+      "status": "success"
+    },
+    {
+      "code": "601318",
+      "name": "中国平安",
+      "prev_close": 48.5,
+      "auction_price": 48.53,
+      "change_rate": 0.06,
+      "volume": 4940449,
+      "status": "success"
+    },
+    {
+      "code": "000001",
+      "name": "平安银行",
+      "prev_close": 12.3,
+      "auction_price": 12.33,
+      "change_rate": 0.22,
+      "volume": 4852141,
+      "status": "success"
+    },
+    {
+      "code": "000858",
+      "name": "五粮液",
+      "prev_close": 158.6,
+      "auction_price": 154.02,
+      "change_rate": -2.89,
+      "volume": 3662138,
+      "status": "volatile"
+    },
+    {
+      "code": "600519",
+      "name": "贵州茅台",
+      "prev_close": 1780.0,
+      "auction_price": 1829.86,
+      "change_rate": 2.8,
+      "volume": 3974335,
+      "status": "volatile"
+    },
+    {
+      "code": "300750",
+      "name": "宁德时代",
+      "prev_close": 185.4,
+      "auction_price": 184.03,
+      "change_rate": -0.74,
+      "volume": 2442102,
+      "status": "success"
+    },
+    {
+      "code": "688981",
+      "name": "中芯国际",
+      "prev_close": 45.2,
+      "auction_price": 46.49,
+      "change_rate": 2.86,
+      "volume": 1874976,
+      "status": "volatile"
+    }
+  ]
+}

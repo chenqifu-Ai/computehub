@@ -1,0 +1,31 @@
+{
+  "last_updated": "2026-04-01T09:10:00+08:00",
+  "marketing": {
+    "daily_posts": 3,
+    "total_views": 12500,
+    "follower_growth": 45,
+    "hot_content": ["科技趋势分析视频", "AI工具评测", "创业经验分享"]
+  },
+  "production": {
+    "daily_output": 2,
+    "production_cycle": "4小时/条",
+    "quality_rate": 95,
+    "optimization_suggestions": ["优化剪辑流程", "增加批量处理"]
+  },
+  "finance": {
+    "daily_cost": 0,
+    "daily_revenue": 0,
+    "roi": 0,
+    "risk_warnings": []
+  },
+  "data_analytics": {
+    "competitor_updates": [],
+    "hot_topics": [],
+    "market_trends": []
+  },
+  "compliance": {
+    "content_checks": [],
+    "copyright_scans": [],
+    "policy_updates": []
+  }
+}

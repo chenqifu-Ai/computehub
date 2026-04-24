@@ -1,0 +1,18 @@
+{
+  "name": "小智影业-公司脉搏检查-已修复",
+  "sessionTarget": "isolated",
+  "payload": {
+    "kind": "agentTurn",
+    "message": "💓 CEO命令：执行公司脉搏检查！请检查各部门状态并生成报告。",
+    "model": "deepseek-v3.1:671b",
+    "thinking": "off",
+    "timeoutSeconds": 120
+  },
+  "delivery": {
+    "mode": "announce"
+  },
+  "schedule": {
+    "kind": "every",
+    "everyMs": 600000
+  }
+}

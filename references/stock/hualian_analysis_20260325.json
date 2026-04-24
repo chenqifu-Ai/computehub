@@ -1,0 +1,28 @@
+{
+  "stock_info": {
+    "name": "华联股份",
+    "code": "000882",
+    "current_price": 1.63,
+    "open_price": 1.65,
+    "close_price": 1.64,
+    "volume": 218270,
+    "turnover": 88915.0,
+    "high": 129355.0,
+    "low": 1.62,
+    "timestamp": "2026-04-09T09:53:10.898425"
+  },
+  "position_analysis": {
+    "current_price": 1.63,
+    "cost_price": 1.779,
+    "quantity": 22600,
+    "market_value": 36838.0,
+    "profit_loss": -3367.4000000000005,
+    "profit_loss_rate": -8.37549184935357,
+    "stop_loss_price": 1.6,
+    "stop_loss_distance": 1.8404907975460003,
+    "target_price": 2.0,
+    "target_distance": 22.699386503067494,
+    "recommendation": "密切关注，接近止损位"
+  },
+  "timestamp": "2026-04-09T09:53:10.899196"
+}

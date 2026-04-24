@@ -1,0 +1,30 @@
+{
+  "report_id": "legal_risk_20260403_2025",
+  "time": "2026-04-03T20:25:36.433255",
+  "expert": "\u6cd5\u5f8b\u987e\u95ee",
+  "risks": [
+    {
+      "type": "\u6295\u8d44\u5408\u89c4",
+      "level": "\u9ad8",
+      "desc": "\u534e\u8054\u80a1\u4efd\u4e8f\u635f16.18%\uff0c\u5df2\u8dcc\u7834\u6b62\u635f\u4f4d",
+      "action": "\u7acb\u5373\u51cf\u4ed370%"
+    },
+    {
+      "type": "\u5185\u5bb9\u5408\u89c4",
+      "level": "\u9ad8",
+      "desc": "986\u9ad8\u5371\u95ee\u9898\uff0c206\u4e2d\u5371\u95ee\u9898",
+      "action": "\u52a0\u901f\u5904\u7406\u9ad8\u5371\u95ee\u9898"
+    }
+  ],
+  "status": {
+    "high_risk": 986,
+    "medium_risk": 206,
+    "resolved": 246,
+    "rate": "25%"
+  },
+  "actions": [
+    "\u80a1\u7968\u51cf\u4ed370% - \u7acb\u5373",
+    "\u9ad8\u5371\u95ee\u9898\u5904\u7406 - 24\u5c0f\u65f6",
+    "\u4e2d\u5371\u95ee\u9898\u5904\u7406 - 72\u5c0f\u65f6"
+  ]
+}

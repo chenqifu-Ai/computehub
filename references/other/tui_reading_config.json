@@ -1,0 +1,45 @@
+{
+  "version": "1.0",
+  "created_at": "2026-04-02T14:31:00",
+  "purpose": "修复 TUI 客户端文件读取偏移量问题",
+  "file_reading_strategy": "dynamic",
+  "max_lines_per_read": 100,
+  "files": {
+    "SOUL.md": {
+      "total_lines": 90,
+      "safe_offset": 90,
+      "last_modified": 1775083084.1042004,
+      "read_strategy": "full"
+    },
+    "AGENTS.md": {
+      "total_lines": 243,
+      "safe_offset": 100,
+      "last_modified": 1775083075.2082005,
+      "read_strategy": "paginated"
+    },
+    "HEARTBEAT.md": {
+      "total_lines": 97,
+      "safe_offset": 97,
+      "last_modified": 1775112043.6936097,
+      "read_strategy": "full"
+    },
+    "MEMORY.md": {
+      "total_lines": 525,
+      "safe_offset": 100,
+      "last_modified": 1775086652.7636807,
+      "read_strategy": "paginated"
+    },
+    "memory/2026-04-02.md": {
+      "total_lines": 118,
+      "safe_offset": 100,
+      "last_modified": 1775112054.0736098,
+      "read_strategy": "paginated"
+    },
+    "memory/2026-04-01.md": {
+      "total_lines": 390,
+      "safe_offset": 100,
+      "last_modified": 1775050665.612845,
+      "read_strategy": "paginated"
+    }
+  }
+}

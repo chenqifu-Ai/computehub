@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-03-27 09:38:46",
+  "overall_status": "需关注",
+  "systems": {
+    "openclaw": false,
+    "stock_monitoring": true,
+    "expert_learning": true,
+    "email_commands": true
+  }
+}

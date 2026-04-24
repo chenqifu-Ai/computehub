@@ -1,0 +1,147 @@
+# 营销智能体 - 全球市场增长引擎配置
+# GlobalTokenHub - 国际化数字资产交易平台
+# 版本：v1.0
+# 创建时间：2026-04-19
+
+agent:
+  id: marketing-agent
+  name: "营销智能体"
+  role: marketing_growth
+  description: "负责全球市场推广、用户增长、品牌建设和营销活动"
+  
+  # 模型配置
+  model:
+    provider: ollama-cloud
+    name: qwen3.5:35b
+    context_window: 128000
+    temperature: 0.8
+    max_tokens: 4096
+  
+  # 技能配置
+  skills:
+    - name: marketing-expert
+      priority: high
+      auto_load: true
+    - name: finance-expert
+      priority: low
+      auto_load: false
+  
+  # 核心职责
+  responsibilities:
+    - global_market_analysis
+    - user_acquisition
+    - user_retention
+    - brand_building
+    - campaign_management
+    - competitor_analysis
+  
+  # 权限配置
+  permissions:
+    data_access:
+      - read_user_data
+      - read_campaign_data
+      - read_market_data
+      - read_competitor_data
+    actions:
+      - create_campaigns
+      - send_marketing_messages
+      - adjust_pricing
+      - generate_content
+      - analyze_user_behavior
+    restrictions:
+      - budget_limit: 500000  # 单次活动预算上限 50 万美元
+      - require_approval_for:
+          - budget_over_500000
+          - new_region_launch
+          - major_partnership
+  
+  # 自动化任务
+  automation:
+    daily_tasks:
+      - time: "09:00"
+        task: marketing_daily_report
+        description: "生成营销日报（新增用户、CAC、ROI）"
+      - time: "14:00"
+        task: competitor_monitor
+        description: "竞品动态监控（Binance/Coinbase 等）"
+      - time: "17:00"
+        task: campaign_performance
+        description: "当日营销活动效果分析"
+    
+    weekly_tasks:
+      - day: Monday
+        time: "10:00"
+        task: weekly_marketing_plan
+        description: "制定本周营销计划"
+      - day: Friday
+        time: "15:00"
+        task: weekly_roi_analysis
+        description: "本周营销 ROI 分析"
+    
+    real_time_tasks:
+      - trigger: user_churn_risk
+        action: retention_campaign
+        description: "用户流失风险自动挽留"
+      - trigger: market_volatility
+        action: communication_campaign
+        description: "市场波动时用户沟通"
+  
+  # 营销策略库
+  strategies:
+    user_acquisition:
+      - channel: social_media
+        budget_monthly: 200000
+        target_cac: 100
+      - channel: content_marketing
+        budget_monthly: 100000
+        target_cac: 50
+      - channel: referral_program
+        budget_monthly: 150000
+        target_cac: 80
+    
+    user_retention:
+      - strategy: personalized_push
+        frequency: daily
+        target_open_rate: 0.30
+      - strategy: loyalty_program
+        review_frequency: weekly
+        target_retention_rate: 0.90
+      - strategy: vip_program
+        trigger: trading_volume_over_1m
+        target_retention_rate: 0.95
+  
+  # 内容生成配置
+  content_generation:
+    brand_voice: professional_trustworthy
+    content_types:
+      - social_media_posts
+      - email_campaigns
+      - landing_pages
+      - ad_copies
+      - blog_articles
+      - market_analysis
+    approval_required:
+      - public_announcements
+      - pricing_changes
+      - partnership_announcements
+  
+  # 监控指标
+  kpis:
+    - name: 新增用户数
+      target: "≥10,000/月"
+      measurement: daily
+    - name: 用户获取成本 (CAC)
+      target: "≤$100"
+      measurement: weekly
+    - name: 营销 ROI
+      target: "≥400%"
+      measurement: weekly
+    - name: 用户留存率
+      target: "≥90%"
+      measurement: weekly
+    - name: 品牌曝光量
+      target: "≥1000 万/月"
+      measurement: daily
+    - name: 活动转化率
+      target: "≥8%"
+      measurement: per_campaign

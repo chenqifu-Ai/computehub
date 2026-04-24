@@ -1,0 +1,137 @@
+{
+  "competitor_analysis": [
+    {
+      "name": "百度AI",
+      "trend": "上升",
+      "recent_news": "发布新一代文心大模型4.0",
+      "impact": "高",
+      "market_share": "35%"
+    },
+    {
+      "name": "阿里云AI",
+      "trend": "稳定",
+      "recent_news": "推出企业级AI解决方案",
+      "impact": "中",
+      "market_share": "28%"
+    },
+    {
+      "name": "腾讯AI",
+      "trend": "上升",
+      "recent_news": "开源多模态大模型",
+      "impact": "高",
+      "market_share": "22%"
+    },
+    {
+      "name": "华为AI",
+      "trend": "快速上升",
+      "recent_news": "发布昇腾AI芯片新品",
+      "impact": "很高",
+      "market_share": "15%"
+    }
+  ],
+  "hot_topics": [
+    {
+      "topic": "AI大模型价格战",
+      "platform": "微博/知乎",
+      "heat_level": "爆",
+      "trend": "上升",
+      "related_companies": [
+        "百度",
+        "阿里",
+        "腾讯",
+        "字节"
+      ]
+    },
+    {
+      "topic": "多模态AI应用",
+      "platform": "技术社区",
+      "heat_level": "高",
+      "trend": "稳定",
+      "related_companies": [
+        "OpenAI",
+        "Google",
+        "Meta"
+      ]
+    },
+    {
+      "topic": "AI芯片国产化",
+      "platform": "财经媒体",
+      "heat_level": "中高",
+      "trend": "快速上升",
+      "related_companies": [
+        "华为",
+        "寒武纪",
+        "地平线"
+      ]
+    },
+    {
+      "topic": "生成式AI商业化",
+      "platform": "商业媒体",
+      "heat_level": "高",
+      "trend": "上升",
+      "related_companies": [
+        "所有AI公司"
+      ]
+    }
+  ],
+  "market_trends": [
+    {
+      "trend_name": "AI大模型平民化",
+      "direction": "下降成本，提高普及率",
+      "timeframe": "2026年全年",
+      "impact_level": "高",
+      "opportunities": [
+        "中小企业AI应用",
+        "开发者生态"
+      ]
+    },
+    {
+      "trend_name": "多模态融合",
+      "direction": "文本+图像+语音融合",
+      "timeframe": "2026-2027",
+      "impact_level": "很高",
+      "opportunities": [
+        "内容创作",
+        "智能助手"
+      ]
+    },
+    {
+      "trend_name": "边缘AI计算",
+      "direction": "AI推理本地化",
+      "timeframe": "正在发生",
+      "impact_level": "中高",
+      "opportunities": [
+        "IoT设备",
+        "隐私保护"
+      ]
+    },
+    {
+      "trend_name": "AI监管规范化",
+      "direction": "政策法规完善",
+      "timeframe": "2026年",
+      "impact_level": "中",
+      "opportunities": [
+        "合规服务",
+        "审计工具"
+      ]
+    }
+  ],
+  "summary_report": {
+    "report_time": "2026-04-01 12:10:47",
+    "total_competitors": 4,
+    "total_hot_topics": 4,
+    "total_market_trends": 4,
+    "key_findings": [
+      "3 个竞品呈现上升趋势",
+      "3 个高热话题值得关注",
+      "AI大模型价格战成为当前最热话题",
+      "多模态AI和边缘计算是重要发展趋势"
+    ],
+    "recommendations": [
+      "密切关注百度、华为等上升竞品的动态",
+      "优先布局多模态AI和边缘计算领域",
+      "关注AI监管政策变化，提前做好合规准备",
+      "加强在生成式AI商业化方面的投入"
+    ]
+  }
+}

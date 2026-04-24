@@ -1,0 +1,15 @@
+{
+  "target": "192.168.2.134",
+  "timestamp": "2026-03-25T15:38:24.717710",
+  "results": {
+    "port_scan": [
+      139,
+      135,
+      445,
+      11434
+    ],
+    "ollama_advanced": false,
+    "smb_probe": false,
+    "http_probe": false
+  }
+}
