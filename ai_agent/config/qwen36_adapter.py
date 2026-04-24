@@ -48,9 +48,16 @@ class Qwen36Adapter:
         resp.raise_for_status()
         data = resp.json()
         msg = data["choices"][0]["message"]
-        # 核心适配：output 在 reasoning 字段
+        # 核心修复：content 字段才是正确答案，reasoning 只是推理过程
+        # 旧逻辑：reasoning or content → 永远取 reasoning（因为总不为空）
+        # 新逻辑：优先 content（干净答案），fallback reasoning
+        content = msg.get("content") or ""
+        reasoning = msg.get("reasoning") or ""
+        raw = content.strip() if content.strip() else reasoning.strip()
         return {
-            "raw": msg.get("reasoning") or msg.get("content") or "",
+            "raw": raw,
+            "reasoning": reasoning,
+            "content": content,
             "finish_reason": data["choices"][0].get("finish_reason"),
             "usage": data.get("usage"),
         }
