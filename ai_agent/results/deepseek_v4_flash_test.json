@@ -1,0 +1,129 @@
+{
+  "test_time": "2026-04-25 08:11:25",
+  "provider": "ollama-cloud",
+  "model": "deepseek-v4-flash",
+  "base_url": "https://ollama.com/v1/chat/completions",
+  "categories": {
+    "连通性": [
+      {
+        "test": "基础连通",
+        "status": "✅ PASS",
+        "details": "耗时 2.0s"
+      }
+    ],
+    "基础功能": [
+      {
+        "test": "自我介绍",
+        "status": "❌ FAIL",
+        "details": "长度:55, 回复: 我们要求回答不超过15个字。用户问“你是谁？”，回答要简洁。我是DeepSeek，由深度求索公司创造的AI助手"
+      },
+      {
+        "test": "中文理解",
+        "status": "✅ PASS",
+        "details": "用户询问中国的首都是哪里，这是一个基础的地理知识问题。中国的首都是北京，这是众所周知的事实。可以直接给出明确答案，不需要额外解释"
+      },
+      {
+        "test": "英文理解",
+        "status": "❌ FAIL",
+        "details": "The user is asking for the capital of France. This is a straightforward factual question. I recall t"
+      }
+    ],
+    "响应速度": [
+      {
+        "test": "5次平均",
+        "status": "✅ PASS",
+        "details": "平均2.1s, 最快1.5s, 最慢2.7s"
+      }
+    ],
+    "推理": [
+      {
+        "test": "数学计算",
+        "status": "❌ FAIL",
+        "details": "期望391, 得到: 我们被问到：\"17×23=? 只回答数字\"。所以只需要"
+      },
+      {
+        "test": "逻辑推理",
+        "status": "✅ PASS",
+        "details": "我们被问到：\"小明比小红高，小红比小刚高。谁最矮？\" 显然，小明高于小红，小红高于小"
+      },
+      {
+        "test": "常识推理",
+        "status": "❌ FAIL",
+        "details": "嗯，用户问了一个非常基础的问题：“太阳从哪个方向升起？”这看起来像是一个常识"
+      }
+    ],
+    "代码": [
+      {
+        "test": "Python递归",
+        "status": "✅ PASS",
+        "details": "长度:466, 前80字:我们要求写一个Python函数计算斐波那契数列第n项，用递归，只给代码，不要解释。\n\n注意斐波那契数列通常定义为：F(0)=0, F(1)=1, F(n)=F("
+      },
+      {
+        "test": "HTML页面",
+        "status": "❌ FAIL",
+        "details": "长度:119"
+      }
+    ],
+    "多语言": [
+      {
+        "test": "中译英",
+        "status": "✅ PASS",
+        "details": "用户需要将中文句子\"今天天气真好\"翻译成英文。这是一个简单的翻译任务，没有复杂的语境或文化背景需要处理。\n\n考虑几种常见的英文表达方式：\"The weather is really nice"
+      },
+      {
+        "test": "英译中",
+        "status": "✅ PASS",
+        "details": "We need to translate 'Hello World' to Chinese. The standard translation is \"你好，世界\""
+      }
+    ],
+    "创作": [
+      {
+        "test": "古诗创作",
+        "status": "✅ PASS",
+        "details": "前80字:嗯，用户想要一首关于春天的五言绝句。五言绝句需要符合格律，每句五个字，共四句，押韵。春天主题可以选常见意象，比如春风、花开、柳树、燕子。\n\n想到用“东君”代指春"
+      },
+      {
+        "test": "文本摘要",
+        "status": "❌ FAIL",
+        "details": "我们要求用一句话总结给定的内容。给定的内容是：\"AI是计算机科学分支，研究智能本质并制造智能机器。\" 这句话本身已经是一句简洁的总结。但用户可能希望我们"
+      }
+    ],
+    "响应格式": [
+      {
+        "test": "content字段",
+        "status": "❌ FAIL",
+        "details": "content为空=是"
+      },
+      {
+        "test": "reasoning字段",
+        "status": "✅ PASS",
+        "details": "有推理内容=是"
+      },
+      {
+        "test": "finish_reason",
+        "status": "✅ PASS",
+        "details": "finish_reason: length"
+      },
+      {
+        "test": "token统计",
+        "status": "✅ PASS",
+        "details": "total:15"
+      }
+    ],
+    "上下文": [
+      {
+        "test": "多轮记忆",
+        "status": "✅ PASS",
+        "details": "好的，小明刚才告诉我他叫小明，现在他问我他刚才说了叫什么。这个问题很简单，"
+      }
+    ],
+    "边界": [
+      {
+        "test": "特殊字符",
+        "status": "✅ PASS",
+        "details": "回复: 我们被问到：\"测试特殊字符!@#$%^&*()_+\"。这看起来"
+      }
+    ]
+  },
+  "global_findings": []
+}
