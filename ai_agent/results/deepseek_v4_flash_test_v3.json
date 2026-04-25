@@ -1,0 +1,133 @@
+{
+  "test_time": "2026-04-25 08:23:18",
+  "provider": "ollama-cloud",
+  "model": "deepseek-v4-flash",
+  "base_url": "https://ollama.com/v1/chat/completions",
+  "categories": {
+    "连通性": [
+      {
+        "test": "基础连通",
+        "status": "✅ PASS",
+        "details": "耗时12.0s, tokens:55"
+      }
+    ],
+    "基础功能": [
+      {
+        "test": "自我介绍",
+        "status": "✅ PASS",
+        "details": "含DeepSeek:True, 答案:我们要求回答不超过10个字。回答：我是DeepSeek。"
+      },
+      {
+        "test": "中文理解",
+        "status": "❌ FAIL",
+        "details": "<urlopen error [Errno 104] Connection reset by peer>"
+      },
+      {
+        "test": "英文理解",
+        "status": "✅ PASS",
+        "details": "We need to answer: \"Capital of Japan? One word.\" The capital"
+      }
+    ],
+    "响应速度": [
+      {
+        "test": "5次平均",
+        "status": "✅ PASS",
+        "details": "平均2.0s, 最快1.6s, 最慢2.6s"
+      }
+    ],
+    "推理": [
+      {
+        "test": "数学计算",
+        "status": "✅ PASS",
+        "details": "期望391, 含391:True, 提取:我们被问到：\"17×23=? 只回答数字\"。所以答案就是乘积。计算：17×23 "
+      },
+      {
+        "test": "逻辑推理",
+        "status": "✅ PASS",
+        "details": "含刚:True, 含矮:True, 我们被问到：\"小明比小红高，小红比小刚高。谁最矮？\" 这是一个关于比较身高的问题。从小明比小红高，小红比小刚高，我们可以"
+      },
+      {
+        "test": "常识推理",
+        "status": "✅ PASS",
+        "details": "含H2O:False, 嗯，用户问的是水的化学式，这是一个非常基础的科学问题。水的化学式是H₂O，这个答案应该很明确。用户可能是在学习化学基础知"
+      }
+    ],
+    "代码": [
+      {
+        "test": "Python递归",
+        "status": "❌ FAIL",
+        "details": "含def:False, 含return:False, 代码块:False"
+      },
+      {
+        "test": "HTML页面",
+        "status": "❌ FAIL",
+        "details": "含html:True, Hello World:True"
+      }
+    ],
+    "多语言": [
+      {
+        "test": "中译英",
+        "status": "✅ PASS",
+        "details": "用户需要把中文句子\"今天天气真好\"翻译成英文。这是一个简单的日常用语翻译，不需要复杂处理。\n\n考虑到英文表达习惯，用\"T"
+      },
+      {
+        "test": "英译中",
+        "status": "✅ PASS",
+        "details": "The user is asking for a translation from English to Chinese"
+      }
+    ],
+    "创作": [
+      {
+        "test": "古诗创作",
+        "status": "✅ PASS",
+        "details": "诗行:0, 月意象:True, 字数:256"
+      },
+      {
+        "test": "文本摘要",
+        "status": "✅ PASS",
+        "details": "提取摘要长度:50, 摘要:AI是计算机科学分支研究智能本质。这句话本身似乎是一个定义。用户可能要求将这句话总结得更简洁或更精炼"
+      }
+    ],
+    "响应格式": [
+      {
+        "test": "content字段",
+        "status": "❌ FAIL",
+        "details": "content空=是"
+      },
+      {
+        "test": "reasoning字段",
+        "status": "✅ PASS",
+        "details": "reasoning空=否"
+      },
+      {
+        "test": "finish_reason",
+        "status": "✅ PASS",
+        "details": "length"
+      },
+      {
+        "test": "token统计",
+        "status": "✅ PASS",
+        "details": "total:25"
+      }
+    ],
+    "上下文": [
+      {
+        "test": "多轮记忆",
+        "status": "✅ PASS",
+        "details": "含小王:True, 好的，用户问“我名字是什么？”。这个问题看起来很简单，但需要结合之前的对话历史来看。\n\n嗯，回顾一下，用户之前说“我叫小"
+      }
+    ],
+    "边界": [
+      {
+        "test": "特殊字符",
+        "status": "✅ PASS",
+        "details": "回复长度:279"
+      },
+      {
+        "test": "纯中文输出",
+        "status": "✅ PASS",
+        "details": "长度:100, 含数字:False"
+      }
+    ]
+  }
+}
