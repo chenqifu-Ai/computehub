@@ -3788,3 +3788,917 @@
    总耗时: 0.099s
 ======================================================================
 
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 02:55:11.749
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '235117'}
+   请求体 (235117B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a personal assistant running inside OpenClaw.\n## Tooling\nTool availability (filtered by policy):\nTool names are case-sensitive. Call tools exactly as listed.\n- read: Read file contents\n- write: Create or overwrite files\n- edit: Make precise edits to files\n- exec: Run shell commands (pty available for TTY-required CLIs)\n- process: Manage background exec sessions\n- web_search: Search the web (Brave API)\n- web_fetch: Fetch and extract readable content from a URL\n- cron: Manage cron jobs and wake events (use for reminders; when scheduling a reminder, write the systemEvent text as something that will read like a reminder when it fires, and mention that it is a reminder depending on the time gap between setting and firing; include recent context in reminder text if appropriate)\n- sessions_list: List other sessions (incl. sub-agents) with filters/last\n- sessions_history: Fetch history for another session/sub-agent\n- sessions_send: Send a message to another session/sub-agent\n- subagents: List, steer, or kill sub-agent runs for this requester session\n- session_status: Show a /status-equivalent status card (usage + time + Reasoning/Verbose/Elevated); use for model-use questions (📊 session_status); optional per-session model override\n- sessions_spawn: Spawn an isolated sub-agent or ACP coding session (runtime=\"acp\" requires `agentId` unless `acp.defaultAgent` is configured; ACP harness ids follow acp.allowedAgents, not agents_list)\n- sessions_yield: End your current turn. Use after spawning subagents to receive their results as the next message.\nTOOLS.md does not control tool availability; it is user guidance for how to use external tools.\nFor long waits, avoid rapid poll loops: use exec with enough yieldMs or process(action=poll, timeout=<ms>).\nIf a task is more complex or takes longer, spawn a sub-agent. Completion is push-based: it will auto-announce when done.\nFor requests like \
+     ... [truncated, total 227440 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 02:55:11.763
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 235117 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 02:55:12.014
+   状态: 401 Unauthorized
+   耗时: 0.218s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:01:42.693
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '226384'}
+   请求体 (226384B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[User]: Sender (untrusted metadata):\n```json\n{\n  \"label\": \"openclaw-tui (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"openclaw-tui\",\n  \"username\": \"openclaw-tui\"\n}\n```\n\n[Sat 2026-04-25 05:47 GMT+8] :这份报告发我邮件\n\n[Assistant thinking]: The user is asking me to send a report via email. But I need more context - which report? Let me check if there's any recent context about a report. Let me look at memory files and recent context.\n\n\n[Assistant]: \n\n哪份报告？能具体说一下是哪个报告吗？比如文件名或内容。\n\n[User]: Sender (untrusted metadata):\n```json\n{\n  \"label\": \"openclaw-tui (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"openclaw-tui\",\n  \"username\": \"openclaw-tui\"\n}\n```\n\n[Sat 2026-04-25 05:58 GMT+8] 📊 qwen36-1.log 分析报告\n\n[Assistant thinking]: The user wants me to send the analysis report of \"qwen36-1.log\" via email. Let me first find this file and understand what report we're talking about.\n\n\n[Assistant]: \n\n让我先找到这份报告的内容。\n\n\n\n[Assistant tool calls]: exec(command=\"find /root -name \\\"*qwen36*\\\" -type f 2>/dev/null | head -20\", timeout=10); exec(command=\"find /root -name \\\"*qwen36-1*\\\" -type f 2>/dev/null | head -20\", timeout=10)\n\n[Tool result]: Command still running (session amber-valley, pid 13784). Use process (list/poll/log/write/kill/clear/remove) for follow-up.\n\n[Tool result]: Command still running (session oceanic-claw, pid 13787). Use process (list/poll/log/write/kill/clear/remove) for follow-up.\n\n[Assistant thinking]: Let me wait for the results an
+     ... [truncated, total 205386 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:01:42.705
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 226384 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:01:42.861
+   状态: 401 Unauthorized
+   耗时: 0.118s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:01:43.774
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '226384'}
+   请求体 (226384B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[User]: Sender (untrusted metadata):\n```json\n{\n  \"label\": \"openclaw-tui (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"openclaw-tui\",\n  \"username\": \"openclaw-tui\"\n}\n```\n\n[Sat 2026-04-25 05:47 GMT+8] :这份报告发我邮件\n\n[Assistant thinking]: The user is asking me to send a report via email. But I need more context - which report? Let me check if there's any recent context about a report. Let me look at memory files and recent context.\n\n\n[Assistant]: \n\n哪份报告？能具体说一下是哪个报告吗？比如文件名或内容。\n\n[User]: Sender (untrusted metadata):\n```json\n{\n  \"label\": \"openclaw-tui (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"openclaw-tui\",\n  \"username\": \"openclaw-tui\"\n}\n```\n\n[Sat 2026-04-25 05:58 GMT+8] 📊 qwen36-1.log 分析报告\n\n[Assistant thinking]: The user wants me to send the analysis report of \"qwen36-1.log\" via email. Let me first find this file and understand what report we're talking about.\n\n\n[Assistant]: \n\n让我先找到这份报告的内容。\n\n\n\n[Assistant tool calls]: exec(command=\"find /root -name \\\"*qwen36*\\\" -type f 2>/dev/null | head -20\", timeout=10); exec(command=\"find /root -name \\\"*qwen36-1*\\\" -type f 2>/dev/null | head -20\", timeout=10)\n\n[Tool result]: Command still running (session amber-valley, pid 13784). Use process (list/poll/log/write/kill/clear/remove) for follow-up.\n\n[Tool result]: Command still running (session oceanic-claw, pid 13787). Use process (list/poll/log/write/kill/clear/remove) for follow-up.\n\n[Assistant thinking]: Let me wait for the results an
+     ... [truncated, total 205386 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:01:43.776
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 226384 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:01:43.862
+   状态: 401 Unauthorized
+   耗时: 0.068s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:01:45.441
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '226384'}
+   请求体 (226384B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[User]: Sender (untrusted metadata):\n```json\n{\n  \"label\": \"openclaw-tui (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"openclaw-tui\",\n  \"username\": \"openclaw-tui\"\n}\n```\n\n[Sat 2026-04-25 05:47 GMT+8] :这份报告发我邮件\n\n[Assistant thinking]: The user is asking me to send a report via email. But I need more context - which report? Let me check if there's any recent context about a report. Let me look at memory files and recent context.\n\n\n[Assistant]: \n\n哪份报告？能具体说一下是哪个报告吗？比如文件名或内容。\n\n[User]: Sender (untrusted metadata):\n```json\n{\n  \"label\": \"openclaw-tui (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"openclaw-tui\",\n  \"username\": \"openclaw-tui\"\n}\n```\n\n[Sat 2026-04-25 05:58 GMT+8] 📊 qwen36-1.log 分析报告\n\n[Assistant thinking]: The user wants me to send the analysis report of \"qwen36-1.log\" via email. Let me first find this file and understand what report we're talking about.\n\n\n[Assistant]: \n\n让我先找到这份报告的内容。\n\n\n\n[Assistant tool calls]: exec(command=\"find /root -name \\\"*qwen36*\\\" -type f 2>/dev/null | head -20\", timeout=10); exec(command=\"find /root -name \\\"*qwen36-1*\\\" -type f 2>/dev/null | head -20\", timeout=10)\n\n[Tool result]: Command still running (session amber-valley, pid 13784). Use process (list/poll/log/write/kill/clear/remove) for follow-up.\n\n[Tool result]: Command still running (session oceanic-claw, pid 13787). Use process (list/poll/log/write/kill/clear/remove) for follow-up.\n\n[Assistant thinking]: Let me wait for the results an
+     ... [truncated, total 205386 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:01:45.448
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 226384 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:01:45.560
+   状态: 401 Unauthorized
+   耗时: 0.089s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:01:46.133
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '226384'}
+   请求体 (226384B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[User]: Sender (untrusted metadata):\n```json\n{\n  \"label\": \"openclaw-tui (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"openclaw-tui\",\n  \"username\": \"openclaw-tui\"\n}\n```\n\n[Sat 2026-04-25 05:47 GMT+8] :这份报告发我邮件\n\n[Assistant thinking]: The user is asking me to send a report via email. But I need more context - which report? Let me check if there's any recent context about a report. Let me look at memory files and recent context.\n\n\n[Assistant]: \n\n哪份报告？能具体说一下是哪个报告吗？比如文件名或内容。\n\n[User]: Sender (untrusted metadata):\n```json\n{\n  \"label\": \"openclaw-tui (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"openclaw-tui\",\n  \"username\": \"openclaw-tui\"\n}\n```\n\n[Sat 2026-04-25 05:58 GMT+8] 📊 qwen36-1.log 分析报告\n\n[Assistant thinking]: The user wants me to send the analysis report of \"qwen36-1.log\" via email. Let me first find this file and understand what report we're talking about.\n\n\n[Assistant]: \n\n让我先找到这份报告的内容。\n\n\n\n[Assistant tool calls]: exec(command=\"find /root -name \\\"*qwen36*\\\" -type f 2>/dev/null | head -20\", timeout=10); exec(command=\"find /root -name \\\"*qwen36-1*\\\" -type f 2>/dev/null | head -20\", timeout=10)\n\n[Tool result]: Command still running (session amber-valley, pid 13784). Use process (list/poll/log/write/kill/clear/remove) for follow-up.\n\n[Tool result]: Command still running (session oceanic-claw, pid 13787). Use process (list/poll/log/write/kill/clear/remove) for follow-up.\n\n[Assistant thinking]: Let me wait for the results an
+     ... [truncated, total 205386 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:01:46.135
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 226384 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:01:46.195
+   状态: 401 Unauthorized
+   耗时: 0.045s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:01:48.031
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '226384'}
+   请求体 (226384B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[User]: Sender (untrusted metadata):\n```json\n{\n  \"label\": \"openclaw-tui (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"openclaw-tui\",\n  \"username\": \"openclaw-tui\"\n}\n```\n\n[Sat 2026-04-25 05:47 GMT+8] :这份报告发我邮件\n\n[Assistant thinking]: The user is asking me to send a report via email. But I need more context - which report? Let me check if there's any recent context about a report. Let me look at memory files and recent context.\n\n\n[Assistant]: \n\n哪份报告？能具体说一下是哪个报告吗？比如文件名或内容。\n\n[User]: Sender (untrusted metadata):\n```json\n{\n  \"label\": \"openclaw-tui (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"openclaw-tui\",\n  \"username\": \"openclaw-tui\"\n}\n```\n\n[Sat 2026-04-25 05:58 GMT+8] 📊 qwen36-1.log 分析报告\n\n[Assistant thinking]: The user wants me to send the analysis report of \"qwen36-1.log\" via email. Let me first find this file and understand what report we're talking about.\n\n\n[Assistant]: \n\n让我先找到这份报告的内容。\n\n\n\n[Assistant tool calls]: exec(command=\"find /root -name \\\"*qwen36*\\\" -type f 2>/dev/null | head -20\", timeout=10); exec(command=\"find /root -name \\\"*qwen36-1*\\\" -type f 2>/dev/null | head -20\", timeout=10)\n\n[Tool result]: Command still running (session amber-valley, pid 13784). Use process (list/poll/log/write/kill/clear/remove) for follow-up.\n\n[Tool result]: Command still running (session oceanic-claw, pid 13787). Use process (list/poll/log/write/kill/clear/remove) for follow-up.\n\n[Assistant thinking]: Let me wait for the results an
+     ... [truncated, total 205386 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:01:48.039
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 226384 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:01:48.253
+   状态: 401 Unauthorized
+   耗时: 0.195s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:01:50.210
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '226384'}
+   请求体 (226384B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[User]: Sender (untrusted metadata):\n```json\n{\n  \"label\": \"openclaw-tui (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"openclaw-tui\",\n  \"username\": \"openclaw-tui\"\n}\n```\n\n[Sat 2026-04-25 05:47 GMT+8] :这份报告发我邮件\n\n[Assistant thinking]: The user is asking me to send a report via email. But I need more context - which report? Let me check if there's any recent context about a report. Let me look at memory files and recent context.\n\n\n[Assistant]: \n\n哪份报告？能具体说一下是哪个报告吗？比如文件名或内容。\n\n[User]: Sender (untrusted metadata):\n```json\n{\n  \"label\": \"openclaw-tui (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"openclaw-tui\",\n  \"username\": \"openclaw-tui\"\n}\n```\n\n[Sat 2026-04-25 05:58 GMT+8] 📊 qwen36-1.log 分析报告\n\n[Assistant thinking]: The user wants me to send the analysis report of \"qwen36-1.log\" via email. Let me first find this file and understand what report we're talking about.\n\n\n[Assistant]: \n\n让我先找到这份报告的内容。\n\n\n\n[Assistant tool calls]: exec(command=\"find /root -name \\\"*qwen36*\\\" -type f 2>/dev/null | head -20\", timeout=10); exec(command=\"find /root -name \\\"*qwen36-1*\\\" -type f 2>/dev/null | head -20\", timeout=10)\n\n[Tool result]: Command still running (session amber-valley, pid 13784). Use process (list/poll/log/write/kill/clear/remove) for follow-up.\n\n[Tool result]: Command still running (session oceanic-claw, pid 13787). Use process (list/poll/log/write/kill/clear/remove) for follow-up.\n\n[Assistant thinking]: Let me wait for the results an
+     ... [truncated, total 205386 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:01:50.247
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 226384 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:01:50.338
+   状态: 401 Unauthorized
+   耗时: 0.074s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:01:50.555
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '156874'}
+   请求体 (156874B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[Tool result]: L12:     LOAD_CONST              14 (None)\n                STORE_FAST               5 (e)\n                DELETE_FAST              5 (e)\n                RERAISE                  1\n\n 144   L13:     RERAISE                  0\n\n  --   L14:     COPY                     3\n                POP_EXCEPT\n                RERAISE                  1\nExceptionTable:\n  L2 to L4 -> L7 [0]\n  L7 to L8 -> L14 [1] lasti\n  L9 to L10 -> L14 [1] lasti\n  L10 to L11 -> L12 [1] lasti\n  L12 to L14 -> L14 [1] lasti\n\nDisassembly of <code object _handle_action at 0x7d6a762d80, file \"/root/GitHub/computehub/src/kernel/kernel.py\", line 148>:\n148           RESUME                   0\n\n150           LOAD_FAST                1 (task)\n              LOAD_ATTR                0 (action)\n              LOAD_ATTR                3 (upper + NULL|self)\n              CALL                     0\n              STORE_FAST               2 (action)\n\n151           LOAD_FAST                1 (task)\n              LOAD_ATTR                4 (payload)\n              STORE_FAST               3 (payload)\n\n153           LOAD_FAST                2 (action)\n              LOAD_CONST               1 ('SUBMIT')\n              COMPARE_OP              88 (bool(==))\n              POP_JUMP_IF_FALSE       37 (to L2)\n\n155           LOAD_FAST                0 (self)\n              LOAD_ATTR                7 (_select_node + NULL|self)\n              LOAD_FAST                3 (payload)\n              CALL                     1\n              STORE_F
+     ... [truncated, total 140276 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:01:50.559
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 156874 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:01:50.827
+   状态: 401 Unauthorized
+   耗时: 0.252s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:01:51.721
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '156874'}
+   请求体 (156874B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[Tool result]: L12:     LOAD_CONST              14 (None)\n                STORE_FAST               5 (e)\n                DELETE_FAST              5 (e)\n                RERAISE                  1\n\n 144   L13:     RERAISE                  0\n\n  --   L14:     COPY                     3\n                POP_EXCEPT\n                RERAISE                  1\nExceptionTable:\n  L2 to L4 -> L7 [0]\n  L7 to L8 -> L14 [1] lasti\n  L9 to L10 -> L14 [1] lasti\n  L10 to L11 -> L12 [1] lasti\n  L12 to L14 -> L14 [1] lasti\n\nDisassembly of <code object _handle_action at 0x7d6a762d80, file \"/root/GitHub/computehub/src/kernel/kernel.py\", line 148>:\n148           RESUME                   0\n\n150           LOAD_FAST                1 (task)\n              LOAD_ATTR                0 (action)\n              LOAD_ATTR                3 (upper + NULL|self)\n              CALL                     0\n              STORE_FAST               2 (action)\n\n151           LOAD_FAST                1 (task)\n              LOAD_ATTR                4 (payload)\n              STORE_FAST               3 (payload)\n\n153           LOAD_FAST                2 (action)\n              LOAD_CONST               1 ('SUBMIT')\n              COMPARE_OP              88 (bool(==))\n              POP_JUMP_IF_FALSE       37 (to L2)\n\n155           LOAD_FAST                0 (self)\n              LOAD_ATTR                7 (_select_node + NULL|self)\n              LOAD_FAST                3 (payload)\n              CALL                     1\n              STORE_F
+     ... [truncated, total 140276 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:01:51.724
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 156874 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:01:51.850
+   状态: 401 Unauthorized
+   耗时: 0.110s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:01:53.302
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '156874'}
+   请求体 (156874B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[Tool result]: L12:     LOAD_CONST              14 (None)\n                STORE_FAST               5 (e)\n                DELETE_FAST              5 (e)\n                RERAISE                  1\n\n 144   L13:     RERAISE                  0\n\n  --   L14:     COPY                     3\n                POP_EXCEPT\n                RERAISE                  1\nExceptionTable:\n  L2 to L4 -> L7 [0]\n  L7 to L8 -> L14 [1] lasti\n  L9 to L10 -> L14 [1] lasti\n  L10 to L11 -> L12 [1] lasti\n  L12 to L14 -> L14 [1] lasti\n\nDisassembly of <code object _handle_action at 0x7d6a762d80, file \"/root/GitHub/computehub/src/kernel/kernel.py\", line 148>:\n148           RESUME                   0\n\n150           LOAD_FAST                1 (task)\n              LOAD_ATTR                0 (action)\n              LOAD_ATTR                3 (upper + NULL|self)\n              CALL                     0\n              STORE_FAST               2 (action)\n\n151           LOAD_FAST                1 (task)\n              LOAD_ATTR                4 (payload)\n              STORE_FAST               3 (payload)\n\n153           LOAD_FAST                2 (action)\n              LOAD_CONST               1 ('SUBMIT')\n              COMPARE_OP              88 (bool(==))\n              POP_JUMP_IF_FALSE       37 (to L2)\n\n155           LOAD_FAST                0 (self)\n              LOAD_ATTR                7 (_select_node + NULL|self)\n              LOAD_FAST                3 (payload)\n              CALL                     1\n              STORE_F
+     ... [truncated, total 140276 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:01:53.309
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 156874 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:01:53.465
+   状态: 401 Unauthorized
+   耗时: 0.133s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:01:53.961
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '156874'}
+   请求体 (156874B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[Tool result]: L12:     LOAD_CONST              14 (None)\n                STORE_FAST               5 (e)\n                DELETE_FAST              5 (e)\n                RERAISE                  1\n\n 144   L13:     RERAISE                  0\n\n  --   L14:     COPY                     3\n                POP_EXCEPT\n                RERAISE                  1\nExceptionTable:\n  L2 to L4 -> L7 [0]\n  L7 to L8 -> L14 [1] lasti\n  L9 to L10 -> L14 [1] lasti\n  L10 to L11 -> L12 [1] lasti\n  L12 to L14 -> L14 [1] lasti\n\nDisassembly of <code object _handle_action at 0x7d6a762d80, file \"/root/GitHub/computehub/src/kernel/kernel.py\", line 148>:\n148           RESUME                   0\n\n150           LOAD_FAST                1 (task)\n              LOAD_ATTR                0 (action)\n              LOAD_ATTR                3 (upper + NULL|self)\n              CALL                     0\n              STORE_FAST               2 (action)\n\n151           LOAD_FAST                1 (task)\n              LOAD_ATTR                4 (payload)\n              STORE_FAST               3 (payload)\n\n153           LOAD_FAST                2 (action)\n              LOAD_CONST               1 ('SUBMIT')\n              COMPARE_OP              88 (bool(==))\n              POP_JUMP_IF_FALSE       37 (to L2)\n\n155           LOAD_FAST                0 (self)\n              LOAD_ATTR                7 (_select_node + NULL|self)\n              LOAD_FAST                3 (payload)\n              CALL                     1\n              STORE_F
+     ... [truncated, total 140276 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:01:53.963
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 156874 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:01:54.153
+   状态: 401 Unauthorized
+   耗时: 0.173s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:01:56.047
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '156874'}
+   请求体 (156874B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[Tool result]: L12:     LOAD_CONST              14 (None)\n                STORE_FAST               5 (e)\n                DELETE_FAST              5 (e)\n                RERAISE                  1\n\n 144   L13:     RERAISE                  0\n\n  --   L14:     COPY                     3\n                POP_EXCEPT\n                RERAISE                  1\nExceptionTable:\n  L2 to L4 -> L7 [0]\n  L7 to L8 -> L14 [1] lasti\n  L9 to L10 -> L14 [1] lasti\n  L10 to L11 -> L12 [1] lasti\n  L12 to L14 -> L14 [1] lasti\n\nDisassembly of <code object _handle_action at 0x7d6a762d80, file \"/root/GitHub/computehub/src/kernel/kernel.py\", line 148>:\n148           RESUME                   0\n\n150           LOAD_FAST                1 (task)\n              LOAD_ATTR                0 (action)\n              LOAD_ATTR                3 (upper + NULL|self)\n              CALL                     0\n              STORE_FAST               2 (action)\n\n151           LOAD_FAST                1 (task)\n              LOAD_ATTR                4 (payload)\n              STORE_FAST               3 (payload)\n\n153           LOAD_FAST                2 (action)\n              LOAD_CONST               1 ('SUBMIT')\n              COMPARE_OP              88 (bool(==))\n              POP_JUMP_IF_FALSE       37 (to L2)\n\n155           LOAD_FAST                0 (self)\n              LOAD_ATTR                7 (_select_node + NULL|self)\n              LOAD_FAST                3 (payload)\n              CALL                     1\n              STORE_F
+     ... [truncated, total 140276 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:01:56.051
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 156874 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:01:56.208
+   状态: 401 Unauthorized
+   耗时: 0.140s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:01:58.404
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '156874'}
+   请求体 (156874B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[Tool result]: L12:     LOAD_CONST              14 (None)\n                STORE_FAST               5 (e)\n                DELETE_FAST              5 (e)\n                RERAISE                  1\n\n 144   L13:     RERAISE                  0\n\n  --   L14:     COPY                     3\n                POP_EXCEPT\n                RERAISE                  1\nExceptionTable:\n  L2 to L4 -> L7 [0]\n  L7 to L8 -> L14 [1] lasti\n  L9 to L10 -> L14 [1] lasti\n  L10 to L11 -> L12 [1] lasti\n  L12 to L14 -> L14 [1] lasti\n\nDisassembly of <code object _handle_action at 0x7d6a762d80, file \"/root/GitHub/computehub/src/kernel/kernel.py\", line 148>:\n148           RESUME                   0\n\n150           LOAD_FAST                1 (task)\n              LOAD_ATTR                0 (action)\n              LOAD_ATTR                3 (upper + NULL|self)\n              CALL                     0\n              STORE_FAST               2 (action)\n\n151           LOAD_FAST                1 (task)\n              LOAD_ATTR                4 (payload)\n              STORE_FAST               3 (payload)\n\n153           LOAD_FAST                2 (action)\n              LOAD_CONST               1 ('SUBMIT')\n              COMPARE_OP              88 (bool(==))\n              POP_JUMP_IF_FALSE       37 (to L2)\n\n155           LOAD_FAST                0 (self)\n              LOAD_ATTR                7 (_select_node + NULL|self)\n              LOAD_FAST                3 (payload)\n              CALL                     1\n              STORE_F
+     ... [truncated, total 140276 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:01:58.407
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 156874 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:01:58.573
+   状态: 401 Unauthorized
+   耗时: 0.142s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:01:58.663
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '3178'}
+   请求体 (3178B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[User]: Context contained 341 messages (0 oversized). Summary unavailable due to size limits.\n\n[User]: Context contained 352 messages (0 oversized). Summary unavailable due to size limits.\n</conversation>\n\nThe messages above are a conversation to summarize. Create a structured context checkpoint summary that another LLM will use to continue the work.\n\nUse this EXACT format:\n\n## Goal\n[What is the user trying to accomplish? Can be multiple items if the session covers different tasks.]\n\n## Constraints & Preferences\n- [Any constraints, preferences, or requirements mentioned by user]\n- [Or \"(none)\" if none were mentioned]\n\n## Progress\n### Done\n- [x] [Completed tasks/changes]\n\n### In Progress\n- [ ] [Current work]\n\n### Blocked\n- [Issues preventing progress, if any]\n\n## Key Decisions\n- **[Decision]**: [Brief rationale]\n\n## Next Steps\n1. [Ordered list of what should happen next]\n\n## Critical Context\n- [Any data, examples, or references needed to continue]\n- [Or \"(none)\" if not applicable]\n\nKeep each section concise. Preserve exact file paths, function names, and error messages.\n\nAdditional focus: Preserve all opaque identifiers exactly as written (no shortening or reconstruction), including UUIDs, hashes, IDs, tokens, API keys, hostnames, IPs, ports, URLs, and file names.\n\nAdditional focus:\nMerge these partial summaries into a single cohesive summary.\n\nMUST PRESERVE:\n- Active tasks and their current status (in-progress, blocked, pending)\n- Batch operation progress (e.g., '5/17 items co
+     ... [truncated, total 3178 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:01:58.665
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 3178 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:01:58.746
+   状态: 401 Unauthorized
+   耗时: 0.068s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:01:59.546
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '3178'}
+   请求体 (3178B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[User]: Context contained 341 messages (0 oversized). Summary unavailable due to size limits.\n\n[User]: Context contained 352 messages (0 oversized). Summary unavailable due to size limits.\n</conversation>\n\nThe messages above are a conversation to summarize. Create a structured context checkpoint summary that another LLM will use to continue the work.\n\nUse this EXACT format:\n\n## Goal\n[What is the user trying to accomplish? Can be multiple items if the session covers different tasks.]\n\n## Constraints & Preferences\n- [Any constraints, preferences, or requirements mentioned by user]\n- [Or \"(none)\" if none were mentioned]\n\n## Progress\n### Done\n- [x] [Completed tasks/changes]\n\n### In Progress\n- [ ] [Current work]\n\n### Blocked\n- [Issues preventing progress, if any]\n\n## Key Decisions\n- **[Decision]**: [Brief rationale]\n\n## Next Steps\n1. [Ordered list of what should happen next]\n\n## Critical Context\n- [Any data, examples, or references needed to continue]\n- [Or \"(none)\" if not applicable]\n\nKeep each section concise. Preserve exact file paths, function names, and error messages.\n\nAdditional focus: Preserve all opaque identifiers exactly as written (no shortening or reconstruction), including UUIDs, hashes, IDs, tokens, API keys, hostnames, IPs, ports, URLs, and file names.\n\nAdditional focus:\nMerge these partial summaries into a single cohesive summary.\n\nMUST PRESERVE:\n- Active tasks and their current status (in-progress, blocked, pending)\n- Batch operation progress (e.g., '5/17 items co
+     ... [truncated, total 3178 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:01:59.547
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 3178 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:01:59.674
+   状态: 401 Unauthorized
+   耗时: 0.114s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:02:01.157
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '3178'}
+   请求体 (3178B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[User]: Context contained 341 messages (0 oversized). Summary unavailable due to size limits.\n\n[User]: Context contained 352 messages (0 oversized). Summary unavailable due to size limits.\n</conversation>\n\nThe messages above are a conversation to summarize. Create a structured context checkpoint summary that another LLM will use to continue the work.\n\nUse this EXACT format:\n\n## Goal\n[What is the user trying to accomplish? Can be multiple items if the session covers different tasks.]\n\n## Constraints & Preferences\n- [Any constraints, preferences, or requirements mentioned by user]\n- [Or \"(none)\" if none were mentioned]\n\n## Progress\n### Done\n- [x] [Completed tasks/changes]\n\n### In Progress\n- [ ] [Current work]\n\n### Blocked\n- [Issues preventing progress, if any]\n\n## Key Decisions\n- **[Decision]**: [Brief rationale]\n\n## Next Steps\n1. [Ordered list of what should happen next]\n\n## Critical Context\n- [Any data, examples, or references needed to continue]\n- [Or \"(none)\" if not applicable]\n\nKeep each section concise. Preserve exact file paths, function names, and error messages.\n\nAdditional focus: Preserve all opaque identifiers exactly as written (no shortening or reconstruction), including UUIDs, hashes, IDs, tokens, API keys, hostnames, IPs, ports, URLs, and file names.\n\nAdditional focus:\nMerge these partial summaries into a single cohesive summary.\n\nMUST PRESERVE:\n- Active tasks and their current status (in-progress, blocked, pending)\n- Batch operation progress (e.g., '5/17 items co
+     ... [truncated, total 3178 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:02:01.170
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 3178 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:02:01.295
+   状态: 401 Unauthorized
+   耗时: 0.112s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:02:01.481
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '3178'}
+   请求体 (3178B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[User]: Context contained 341 messages (0 oversized). Summary unavailable due to size limits.\n\n[User]: Context contained 352 messages (0 oversized). Summary unavailable due to size limits.\n</conversation>\n\nThe messages above are a conversation to summarize. Create a structured context checkpoint summary that another LLM will use to continue the work.\n\nUse this EXACT format:\n\n## Goal\n[What is the user trying to accomplish? Can be multiple items if the session covers different tasks.]\n\n## Constraints & Preferences\n- [Any constraints, preferences, or requirements mentioned by user]\n- [Or \"(none)\" if none were mentioned]\n\n## Progress\n### Done\n- [x] [Completed tasks/changes]\n\n### In Progress\n- [ ] [Current work]\n\n### Blocked\n- [Issues preventing progress, if any]\n\n## Key Decisions\n- **[Decision]**: [Brief rationale]\n\n## Next Steps\n1. [Ordered list of what should happen next]\n\n## Critical Context\n- [Any data, examples, or references needed to continue]\n- [Or \"(none)\" if not applicable]\n\nKeep each section concise. Preserve exact file paths, function names, and error messages.\n\nAdditional focus: Preserve all opaque identifiers exactly as written (no shortening or reconstruction), including UUIDs, hashes, IDs, tokens, API keys, hostnames, IPs, ports, URLs, and file names.\n\nAdditional focus:\nMerge these partial summaries into a single cohesive summary.\n\nMUST PRESERVE:\n- Active tasks and their current status (in-progress, blocked, pending)\n- Batch operation progress (e.g., '5/17 items co
+     ... [truncated, total 3178 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:02:01.482
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 3178 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:02:01.636
+   状态: 401 Unauthorized
+   耗时: 0.126s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:02:03.547
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '3178'}
+   请求体 (3178B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[User]: Context contained 341 messages (0 oversized). Summary unavailable due to size limits.\n\n[User]: Context contained 352 messages (0 oversized). Summary unavailable due to size limits.\n</conversation>\n\nThe messages above are a conversation to summarize. Create a structured context checkpoint summary that another LLM will use to continue the work.\n\nUse this EXACT format:\n\n## Goal\n[What is the user trying to accomplish? Can be multiple items if the session covers different tasks.]\n\n## Constraints & Preferences\n- [Any constraints, preferences, or requirements mentioned by user]\n- [Or \"(none)\" if none were mentioned]\n\n## Progress\n### Done\n- [x] [Completed tasks/changes]\n\n### In Progress\n- [ ] [Current work]\n\n### Blocked\n- [Issues preventing progress, if any]\n\n## Key Decisions\n- **[Decision]**: [Brief rationale]\n\n## Next Steps\n1. [Ordered list of what should happen next]\n\n## Critical Context\n- [Any data, examples, or references needed to continue]\n- [Or \"(none)\" if not applicable]\n\nKeep each section concise. Preserve exact file paths, function names, and error messages.\n\nAdditional focus: Preserve all opaque identifiers exactly as written (no shortening or reconstruction), including UUIDs, hashes, IDs, tokens, API keys, hostnames, IPs, ports, URLs, and file names.\n\nAdditional focus:\nMerge these partial summaries into a single cohesive summary.\n\nMUST PRESERVE:\n- Active tasks and their current status (in-progress, blocked, pending)\n- Batch operation progress (e.g., '5/17 items co
+     ... [truncated, total 3178 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:02:03.548
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 3178 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:02:03.711
+   状态: 401 Unauthorized
+   耗时: 0.144s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:02:05.769
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '3178'}
+   请求体 (3178B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[User]: Context contained 341 messages (0 oversized). Summary unavailable due to size limits.\n\n[User]: Context contained 352 messages (0 oversized). Summary unavailable due to size limits.\n</conversation>\n\nThe messages above are a conversation to summarize. Create a structured context checkpoint summary that another LLM will use to continue the work.\n\nUse this EXACT format:\n\n## Goal\n[What is the user trying to accomplish? Can be multiple items if the session covers different tasks.]\n\n## Constraints & Preferences\n- [Any constraints, preferences, or requirements mentioned by user]\n- [Or \"(none)\" if none were mentioned]\n\n## Progress\n### Done\n- [x] [Completed tasks/changes]\n\n### In Progress\n- [ ] [Current work]\n\n### Blocked\n- [Issues preventing progress, if any]\n\n## Key Decisions\n- **[Decision]**: [Brief rationale]\n\n## Next Steps\n1. [Ordered list of what should happen next]\n\n## Critical Context\n- [Any data, examples, or references needed to continue]\n- [Or \"(none)\" if not applicable]\n\nKeep each section concise. Preserve exact file paths, function names, and error messages.\n\nAdditional focus: Preserve all opaque identifiers exactly as written (no shortening or reconstruction), including UUIDs, hashes, IDs, tokens, API keys, hostnames, IPs, ports, URLs, and file names.\n\nAdditional focus:\nMerge these partial summaries into a single cohesive summary.\n\nMUST PRESERVE:\n- Active tasks and their current status (in-progress, blocked, pending)\n- Batch operation progress (e.g., '5/17 items co
+     ... [truncated, total 3178 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:02:05.776
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 3178 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:02:06.170
+   状态: 401 Unauthorized
+   耗时: 0.382s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:02:06.306
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '5158'}
+   请求体 (5158B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[User]: System: [2026-04-25 13:47:23 GMT+8] Exec completed (kind-bas, code 0) :: 47:20] [INFO] ✅ ComputeHub MVP started [2026-04-25 13:47:20] [INFO] ✅ Database tables created INFO: Application startup complete. ERROR: [Errno 98] error while attempting to bind …\nSystem: [2026-04-25 13:47:49 GMT+8] Exec completed (crisp-ne, code 0) :: Database tables created INFO: Application startup complete. ERROR: [Errno 98] error while attempting to bind on address ('0.0.0.0', 8100): [errno 98] address already in use INFO: …\nSystem: [2026-04-25 13:48:38 GMT+8] Exec failed (mellow-m, code 0) :: tables created INFO: Application startup complete. INFO: Uvicorn running on http://0.0.0.0:8101 (Press CTRL+C to quit) --- INFO: 127.0.0.1:35442 - \"GET / HTTP/1.1\" 200 OK {\"servic…\nSystem: [2026-04-25 13:49:00 GMT+8] Exec failed (dawn-sho, code 0) :: base tables created INFO: Application startup complete. INFO: Uvicorn running on http://0.0.0.0:8101 (Press CTRL+C to quit) INFO: 127.0.0.1:42428 - \"GET / HTTP/1.1\" 200 OK {\"servi…\nSystem: [2026-04-25 13:49:11 GMT+8] Exec completed (marine-t, code 0) :: sh: 3: disown: Permission denied {\"service\":\"ComputeHub\",\"version\":\"2.0.0-mvp\",\"status\":\"running\"}\nSystem: [2026-04-25 13:49:23 GMT+8] Exec completed (tide-ree, code 0) :: STARTED PID=16772\n\nSender (untrusted metadata):\n```json\n{\n  \"label\": \"openclaw-tui (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"openclaw-tui\",\n  \"username\": \"openclaw-tui\"\n}\n```\n\n[Sat 2026-04-25 21:14 GMT+8] u0_a355@192.168.1
+     ... [truncated, total 5128 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:02:06.308
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 5158 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:02:06.709
+   状态: 401 Unauthorized
+   耗时: 0.389s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:02:07.919
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '5158'}
+   请求体 (5158B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[User]: System: [2026-04-25 13:47:23 GMT+8] Exec completed (kind-bas, code 0) :: 47:20] [INFO] ✅ ComputeHub MVP started [2026-04-25 13:47:20] [INFO] ✅ Database tables created INFO: Application startup complete. ERROR: [Errno 98] error while attempting to bind …\nSystem: [2026-04-25 13:47:49 GMT+8] Exec completed (crisp-ne, code 0) :: Database tables created INFO: Application startup complete. ERROR: [Errno 98] error while attempting to bind on address ('0.0.0.0', 8100): [errno 98] address already in use INFO: …\nSystem: [2026-04-25 13:48:38 GMT+8] Exec failed (mellow-m, code 0) :: tables created INFO: Application startup complete. INFO: Uvicorn running on http://0.0.0.0:8101 (Press CTRL+C to quit) --- INFO: 127.0.0.1:35442 - \"GET / HTTP/1.1\" 200 OK {\"servic…\nSystem: [2026-04-25 13:49:00 GMT+8] Exec failed (dawn-sho, code 0) :: base tables created INFO: Application startup complete. INFO: Uvicorn running on http://0.0.0.0:8101 (Press CTRL+C to quit) INFO: 127.0.0.1:42428 - \"GET / HTTP/1.1\" 200 OK {\"servi…\nSystem: [2026-04-25 13:49:11 GMT+8] Exec completed (marine-t, code 0) :: sh: 3: disown: Permission denied {\"service\":\"ComputeHub\",\"version\":\"2.0.0-mvp\",\"status\":\"running\"}\nSystem: [2026-04-25 13:49:23 GMT+8] Exec completed (tide-ree, code 0) :: STARTED PID=16772\n\nSender (untrusted metadata):\n```json\n{\n  \"label\": \"openclaw-tui (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"openclaw-tui\",\n  \"username\": \"openclaw-tui\"\n}\n```\n\n[Sat 2026-04-25 21:14 GMT+8] u0_a355@192.168.1
+     ... [truncated, total 5128 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:02:07.921
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 5158 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:02:10.162
+   状态: 401 Unauthorized
+   耗时: 2.209s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:02:11.248
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '5158'}
+   请求体 (5158B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[User]: System: [2026-04-25 13:47:23 GMT+8] Exec completed (kind-bas, code 0) :: 47:20] [INFO] ✅ ComputeHub MVP started [2026-04-25 13:47:20] [INFO] ✅ Database tables created INFO: Application startup complete. ERROR: [Errno 98] error while attempting to bind …\nSystem: [2026-04-25 13:47:49 GMT+8] Exec completed (crisp-ne, code 0) :: Database tables created INFO: Application startup complete. ERROR: [Errno 98] error while attempting to bind on address ('0.0.0.0', 8100): [errno 98] address already in use INFO: …\nSystem: [2026-04-25 13:48:38 GMT+8] Exec failed (mellow-m, code 0) :: tables created INFO: Application startup complete. INFO: Uvicorn running on http://0.0.0.0:8101 (Press CTRL+C to quit) --- INFO: 127.0.0.1:35442 - \"GET / HTTP/1.1\" 200 OK {\"servic…\nSystem: [2026-04-25 13:49:00 GMT+8] Exec failed (dawn-sho, code 0) :: base tables created INFO: Application startup complete. INFO: Uvicorn running on http://0.0.0.0:8101 (Press CTRL+C to quit) INFO: 127.0.0.1:42428 - \"GET / HTTP/1.1\" 200 OK {\"servi…\nSystem: [2026-04-25 13:49:11 GMT+8] Exec completed (marine-t, code 0) :: sh: 3: disown: Permission denied {\"service\":\"ComputeHub\",\"version\":\"2.0.0-mvp\",\"status\":\"running\"}\nSystem: [2026-04-25 13:49:23 GMT+8] Exec completed (tide-ree, code 0) :: STARTED PID=16772\n\nSender (untrusted metadata):\n```json\n{\n  \"label\": \"openclaw-tui (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"openclaw-tui\",\n  \"username\": \"openclaw-tui\"\n}\n```\n\n[Sat 2026-04-25 21:14 GMT+8] u0_a355@192.168.1
+     ... [truncated, total 5128 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:02:11.249
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 5158 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:02:11.307
+   状态: 401 Unauthorized
+   耗时: 0.044s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:02:11.357
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '5158'}
+   请求体 (5158B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[User]: System: [2026-04-25 13:47:23 GMT+8] Exec completed (kind-bas, code 0) :: 47:20] [INFO] ✅ ComputeHub MVP started [2026-04-25 13:47:20] [INFO] ✅ Database tables created INFO: Application startup complete. ERROR: [Errno 98] error while attempting to bind …\nSystem: [2026-04-25 13:47:49 GMT+8] Exec completed (crisp-ne, code 0) :: Database tables created INFO: Application startup complete. ERROR: [Errno 98] error while attempting to bind on address ('0.0.0.0', 8100): [errno 98] address already in use INFO: …\nSystem: [2026-04-25 13:48:38 GMT+8] Exec failed (mellow-m, code 0) :: tables created INFO: Application startup complete. INFO: Uvicorn running on http://0.0.0.0:8101 (Press CTRL+C to quit) --- INFO: 127.0.0.1:35442 - \"GET / HTTP/1.1\" 200 OK {\"servic…\nSystem: [2026-04-25 13:49:00 GMT+8] Exec failed (dawn-sho, code 0) :: base tables created INFO: Application startup complete. INFO: Uvicorn running on http://0.0.0.0:8101 (Press CTRL+C to quit) INFO: 127.0.0.1:42428 - \"GET / HTTP/1.1\" 200 OK {\"servi…\nSystem: [2026-04-25 13:49:11 GMT+8] Exec completed (marine-t, code 0) :: sh: 3: disown: Permission denied {\"service\":\"ComputeHub\",\"version\":\"2.0.0-mvp\",\"status\":\"running\"}\nSystem: [2026-04-25 13:49:23 GMT+8] Exec completed (tide-ree, code 0) :: STARTED PID=16772\n\nSender (untrusted metadata):\n```json\n{\n  \"label\": \"openclaw-tui (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"openclaw-tui\",\n  \"username\": \"openclaw-tui\"\n}\n```\n\n[Sat 2026-04-25 21:14 GMT+8] u0_a355@192.168.1
+     ... [truncated, total 5128 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:02:11.358
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 5158 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:02:11.477
+   状态: 401 Unauthorized
+   耗时: 0.102s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:02:12.129
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '5158'}
+   请求体 (5158B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[User]: System: [2026-04-25 13:47:23 GMT+8] Exec completed (kind-bas, code 0) :: 47:20] [INFO] ✅ ComputeHub MVP started [2026-04-25 13:47:20] [INFO] ✅ Database tables created INFO: Application startup complete. ERROR: [Errno 98] error while attempting to bind …\nSystem: [2026-04-25 13:47:49 GMT+8] Exec completed (crisp-ne, code 0) :: Database tables created INFO: Application startup complete. ERROR: [Errno 98] error while attempting to bind on address ('0.0.0.0', 8100): [errno 98] address already in use INFO: …\nSystem: [2026-04-25 13:48:38 GMT+8] Exec failed (mellow-m, code 0) :: tables created INFO: Application startup complete. INFO: Uvicorn running on http://0.0.0.0:8101 (Press CTRL+C to quit) --- INFO: 127.0.0.1:35442 - \"GET / HTTP/1.1\" 200 OK {\"servic…\nSystem: [2026-04-25 13:49:00 GMT+8] Exec failed (dawn-sho, code 0) :: base tables created INFO: Application startup complete. INFO: Uvicorn running on http://0.0.0.0:8101 (Press CTRL+C to quit) INFO: 127.0.0.1:42428 - \"GET / HTTP/1.1\" 200 OK {\"servi…\nSystem: [2026-04-25 13:49:11 GMT+8] Exec completed (marine-t, code 0) :: sh: 3: disown: Permission denied {\"service\":\"ComputeHub\",\"version\":\"2.0.0-mvp\",\"status\":\"running\"}\nSystem: [2026-04-25 13:49:23 GMT+8] Exec completed (tide-ree, code 0) :: STARTED PID=16772\n\nSender (untrusted metadata):\n```json\n{\n  \"label\": \"openclaw-tui (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"openclaw-tui\",\n  \"username\": \"openclaw-tui\"\n}\n```\n\n[Sat 2026-04-25 21:14 GMT+8] u0_a355@192.168.1
+     ... [truncated, total 5128 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:02:12.130
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 5158 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:02:12.248
+   状态: 401 Unauthorized
+   耗时: 0.106s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:02:14.233
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '5158'}
+   请求体 (5158B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a context summarization assistant. Your task is to read a conversation between a user and an AI coding assistant, then produce a structured summary following the exact format specified.\n\nDo NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the structured summary."},{"role":"user","content":[{"type":"text","text":"<conversation>\n[User]: System: [2026-04-25 13:47:23 GMT+8] Exec completed (kind-bas, code 0) :: 47:20] [INFO] ✅ ComputeHub MVP started [2026-04-25 13:47:20] [INFO] ✅ Database tables created INFO: Application startup complete. ERROR: [Errno 98] error while attempting to bind …\nSystem: [2026-04-25 13:47:49 GMT+8] Exec completed (crisp-ne, code 0) :: Database tables created INFO: Application startup complete. ERROR: [Errno 98] error while attempting to bind on address ('0.0.0.0', 8100): [errno 98] address already in use INFO: …\nSystem: [2026-04-25 13:48:38 GMT+8] Exec failed (mellow-m, code 0) :: tables created INFO: Application startup complete. INFO: Uvicorn running on http://0.0.0.0:8101 (Press CTRL+C to quit) --- INFO: 127.0.0.1:35442 - \"GET / HTTP/1.1\" 200 OK {\"servic…\nSystem: [2026-04-25 13:49:00 GMT+8] Exec failed (dawn-sho, code 0) :: base tables created INFO: Application startup complete. INFO: Uvicorn running on http://0.0.0.0:8101 (Press CTRL+C to quit) INFO: 127.0.0.1:42428 - \"GET / HTTP/1.1\" 200 OK {\"servi…\nSystem: [2026-04-25 13:49:11 GMT+8] Exec completed (marine-t, code 0) :: sh: 3: disown: Permission denied {\"service\":\"ComputeHub\",\"version\":\"2.0.0-mvp\",\"status\":\"running\"}\nSystem: [2026-04-25 13:49:23 GMT+8] Exec completed (tide-ree, code 0) :: STARTED PID=16772\n\nSender (untrusted metadata):\n```json\n{\n  \"label\": \"openclaw-tui (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"openclaw-tui\",\n  \"username\": \"openclaw-tui\"\n}\n```\n\n[Sat 2026-04-25 21:14 GMT+8] u0_a355@192.168.1
+     ... [truncated, total 5128 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:02:14.244
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 5158 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:02:14.319
+   状态: 401 Unauthorized
+   耗时: 0.057s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:02:14.881
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'host': '192.168.1.17:8765', 'connection': 'keep-alive', 'Accept': 'application/json', 'User-Agent': 'OpenAI/JS 6.26.0', 'X-Stainless-Retry-Count': '0', 'X-Stainless-Lang': 'js', 'X-Stainless-Package-Version': '6.26.0', 'X-Stainless-OS': 'Linux', 'X-Stainless-Arch': 'arm64', 'X-Stainless-Runtime': 'node', 'X-Stainless-Runtime-Version': 'v22.22.2', 'authorization': 'Bearer sk-local', 'content-type': 'application/json', 'accept-language': '*', 'sec-fetch-mode': 'cors', 'accept-encoding': 'gzip, deflate', 'content-length': '177167'}
+   请求体 (177167B):
+     {"model":"qwen3.6-35b","messages":[{"role":"system","content":"You are a personal assistant running inside OpenClaw.\n## Tooling\nTool availability (filtered by policy):\nTool names are case-sensitive. Call tools exactly as listed.\n- read: Read file contents\n- write: Create or overwrite files\n- edit: Make precise edits to files\n- exec: Run shell commands (pty available for TTY-required CLIs)\n- process: Manage background exec sessions\n- web_search: Search the web (Brave API)\n- web_fetch: Fetch and extract readable content from a URL\n- sessions_list: List other sessions (incl. sub-agents) with filters/last\n- sessions_history: Fetch history for another session/sub-agent\n- sessions_send: Send a message to another session/sub-agent\n- subagents: List, steer, or kill sub-agent runs for this requester session\n- session_status: Show a /status-equivalent status card (usage + time + Reasoning/Verbose/Elevated); use for model-use questions (📊 session_status); optional per-session model override\n- sessions_spawn: Spawn an isolated sub-agent or ACP coding session (runtime=\"acp\" requires `agentId` unless `acp.defaultAgent` is configured; ACP harness ids follow acp.allowedAgents, not agents_list)\n- sessions_yield: End your current turn. Use after spawning subagents to receive their results as the next message.\nTOOLS.md does not control tool availability; it is user guidance for how to use external tools.\nFor long waits, avoid rapid poll loops: use exec with enough yieldMs or process(action=poll, timeout=<ms>).\nIf a task is more complex or takes longer, spawn a sub-agent. Completion is push-based: it will auto-announce when done.\nFor requests like \"do this in codex/claude code/gemini\", treat it as ACP harness intent and call `sessions_spawn` with `runtime: \"acp\"`.\nOn Discord, default ACP harness requests to thread-bound persistent sessions (`thread: true`, `mode: \"session\"`) unless the user asks otherwise.\nSet `agentId` explicitly unless `acp.defaultAgent
+     ... [truncated, total 168160 bytes]
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:02:14.886
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept: application/json
+   头: User-Agent: OpenAI/JS 6.26.0
+   头: X-Stainless-Retry-Count: 0
+   头: X-Stainless-Lang: js
+   头: X-Stainless-Package-Version: 6.26.0
+   头: X-Stainless-OS: Linux
+   头: X-Stainless-Arch: arm64
+   头: X-Stainless-Runtime: node
+   头: X-Stainless-Runtime-Version: v22.22.2
+   头: authorization: Bearer sk-local
+   头: content-type: application/json
+   头: accept-language: *
+   头: sec-fetch-mode: cors
+   头: accept-encoding: gzip, deflate
+   请求体: 177167 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:02:16.159
+   状态: 401 Unauthorized
+   耗时: 1.255s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 03:05:51.185
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*', 'Content-Type': 'application/json', 'Authorization': 'Bearer sk-local', 'Content-Length': '82'}
+   请求体 (82B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "hi"
+         }
+       ],
+       "max_tokens": 5
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 03:05:51.186
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-local
+   头: Content-Type: application/json
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+   请求体: 82 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-26 03:05:51.306
+   状态: 401 Unauthorized
+   耗时: 0.152s
+   响应体: b'{"error":"Unauthorized"}'
+======================================================================
