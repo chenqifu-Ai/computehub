@@ -16,11 +16,11 @@
 - **账号**: 19525456@qq.com
 - **当前使用**: deepseek-v3.1:671b ✅
 
-## 🆕 Qwen 3.6 本地API (2026-04-23 新增)
+## 🆕 Qwen 3.6 本地API (2026-04-23 新增) - ❌ 已停用
 - **地址**: http://58.23.129.98:8000/v1
 - **模型**: qwen3.6-35b (深度推理模型)
 - **API Key**: sk-78sadn09bjawde123e
-- **状态**: ✅ 已配置
+- **状态**: ❌ 2026-04-25 审计确认不可用，已从配置中移除
 - **注意**: 推理模型，max_tokens 需设 ≥2000
 - **⚠️ API 格式异常**: 输出在 reasoning 字段，content 为 null → 使用适配层 `ai_agent/config/qwen36_adapter.py`，详情见 `memory/topics/技术经验/qwen36-35b-api-format-fix.md`
 
@@ -58,10 +58,11 @@
 
 **完整错误记录见**: `memory/topics/错误记录/常见错误.md`
 
-## qwen3.6-35b API 格式异常 (2026-04-24)
+## qwen3.6-35b API 格式异常 (2026-04-24) - ❌ 已停用
 - 该模型 API 所有输出在 `reasoning` 字段，`content` 始终为 null
 - 已创建统一适配层: `ai_agent/config/qwen36_adapter.py`
 - 调用方式: `from ai_agent.config.qwen36_adapter import ask, ask_detailed, ask_code`
+- **状态**: ❌ 2026-04-25 审计确认模型端点不可用，相关配置已移除
 - 详情见: `memory/topics/技术经验/qwen36-35b-api-format-fix.md`
 
 ## 当前持仓 (2026-04-23 更新)

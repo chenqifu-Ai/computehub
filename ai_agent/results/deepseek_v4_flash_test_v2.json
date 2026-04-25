@@ -1,0 +1,121 @@
+{
+  "test_time": "2026-04-25 08:17:27",
+  "provider": "ollama-cloud",
+  "model": "deepseek-v4-flash",
+  "base_url": "https://ollama.com/v1/chat/completions",
+  "categories": {
+    "连通性": [
+      {
+        "test": "基础连通",
+        "status": "✅ PASS",
+        "details": "耗时6.0s, tokens:55"
+      }
+    ],
+    "基础功能": [
+      {
+        "test": "自我介绍",
+        "status": "❌ FAIL",
+        "details": "长度:306, 内容:我们需回答“你是谁？”且不超过10个字。答案是“我是DeepSeek，AI助手。”但检查字数：中文“我是DeepSeek，AI助手。”共9个字（包括逗号？中文标"
+      },
+      {
+        "test": "中文理解",
+        "status": "✅ PASS",
+        "details": "用户询问中国首都，这是一个基础地理知识问题。根据公开信息，中国的首都是北京。回答需要简洁准确，不需要额外解释或延伸。直接给出答案即可。"
+      },
+      {
+        "test": "英文理解",
+        "status": "✅ PASS",
+        "details": "We need to answer: \"Capital of Japan? One word.\" The capital of Japan is Tokyo. "
+      }
+    ],
+    "响应速度": [
+      {
+        "test": "5次平均",
+        "status": "✅ PASS",
+        "details": "平均2.3s, 最快1.7s, 最慢3.2s"
+      }
+    ],
+    "推理": [
+      {
+        "test": "数学计算",
+        "status": "❌ FAIL",
+        "details": "期望391, 得到: 我们被问到：\"17×23=? 只回答数字\"。这是一个简单的乘法问题。17乘以23"
+      },
+      {
+        "test": "逻辑推理",
+        "status": "✅ PASS",
+        "details": "我们被问到：\"小明比小红高，小红比小刚高。谁最矮？\" 这是一个简单的逻辑推理问题。前提：小明比小红高，所以小明>小红。小红比小刚高，所以小红>小刚。因此小刚最矮"
+      },
+      {
+        "test": "常识推理",
+        "status": "✅ PASS",
+        "details": "嗯，用户问的是水的化学式，这是一个非常基础的科学常识问题。水的化学式是H₂O，由两个氢原子和一个氧原子组成。这个答案简单直接，不需要额外解释。用户可能是在学习化"
+      }
+    ],
+    "代码": [
+      {
+        "test": "Python递归",
+        "status": "❌ FAIL",
+        "details": "长度:186, 含def:False, 含return:False"
+      },
+      {
+        "test": "HTML页面",
+        "status": "❌ FAIL",
+        "details": "长度:87, 含html:True"
+      }
+    ],
+    "多语言": [
+      {
+        "test": "中译英",
+        "status": "✅ PASS",
+        "details": "用户想要把中文句子\"今天天气真好\"翻译成英文。这是一个简单的日常用语翻译，需要准确表达原句的意思和语气。原句表达的是对今天天气的感叹和赞美，英文中常用的对应表达"
+      },
+      {
+        "test": "英译中",
+        "status": "✅ PASS",
+        "details": "The user wants a translation of the English phrase \"Good morning\" into Chinese. "
+      }
+    ],
+    "创作": [
+      {
+        "test": "古诗创作",
+        "status": "✅ PASS",
+        "details": "字数:240, 前60字:嗯，用户要求写一首关于月亮的七言绝句。七言绝句需要符合格律要求，每句七字，共四句，押平声韵。可以围绕月亮的常见意象展开，"
+      },
+      {
+        "test": "文本摘要",
+        "status": "❌ FAIL",
+        "details": "字数:155, 我们要求用一句话总结“AI是计算机科学分支研究智能本质”。这句话本身已经是一个定义，但需要更简洁的一句话总结。可以精简为：“AI是计算机科学中研究智能本质的分支"
+      }
+    ],
+    "响应格式": [
+      {
+        "test": "content字段",
+        "status": "❌ FAIL",
+        "details": "content空=是"
+      },
+      {
+        "test": "reasoning字段",
+        "status": "✅ PASS",
+        "details": "reasoning空=否"
+      },
+      {
+        "test": "finish_reason",
+        "status": "✅ PASS",
+        "details": "length"
+      },
+      {
+        "test": "token统计",
+        "status": "✅ PASS",
+        "details": "total:25"
+      }
+    ],
+    "上下文": [
+      {
+        "test": "多轮记忆",
+        "status": "✅ PASS",
+        "details": "好的，用户问“我名字是什么？”。刚才用户第一次打招呼时说了“我叫小王”，我回应了“好的小王”。现在用户问这个问题，可能是想确认我是否记住了他的名字，或者是在测试"
+      }
+    ]
+  }
+}

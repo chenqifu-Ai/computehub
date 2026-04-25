@@ -1,0 +1,3790 @@
+
+============================================================
+代理重启: 2026-04-25 22:52:34.046
+============================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 22:52:44.617
+   来源: 127.0.0.1
+   请求: POST /v1/chat/completions
+   头部: 
+  Host: 127.0.0.1:8765
+  User-Agent: curl/8.18.0
+  Accept: */*
+  Content-Type: application/json
+  Content-Length: 96
+   请求体 (96B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "你好，测试"
+         }
+       ],
+       "max_tokens": 30
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 22:52:44.629
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头部: 
+  Authorization: Bearer ********123e
+  Content-Type: application/json
+  User-Agent: curl/8.18.0
+  Accept: */*
+   请求体: 96 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 22:52:44.683
+   状态: 401 Unauthorized
+   耗时: 0.054s
+   大小: 24 bytes
+   头部: 
+     date: Sat, 25 Apr 2026 14:52:44 GMT
+     server: uvicorn
+     content-length: 24
+     content-type: application/json
+   响应体 (24B):
+     {
+       "error": "Unauthorized"
+     }
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 22:52:44.684
+   发送给: 127.0.0.1
+   状态: 401
+   大小: 25 bytes
+   总耗时: 0.056s
+======================================================================
+
+
+============================================================
+代理重启: 2026-04-25 22:54:01.491
+============================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 22:54:30.709
+   来源: 127.0.0.1
+   请求: POST /v1/chat/completions
+   头部: {'Host': '127.0.0.1:8765', 'User-Agent': 'curl/8.18.0', 'Accept': '*/*', 'Content-Type': 'application/json', 'Content-Length': '105'}
+   请求体 (105B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "你好，测试时间戳"
+         }
+       ],
+       "max_tokens": 30
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 22:54:30.711
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: User-Agent: curl/8.18.0
+   头: Accept: */*
+   请求体: 105 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 22:54:31.338
+   状态: 200 OK
+   耗时: 0.604s
+   大小: 673 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 14:54:30 GMT', 'server': 'uvicorn', 'content-length': '673', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (673B):
+     {
+       "id": "chatcmpl-ae0886da4adbb0a4",
+       "object": "chat.completion",
+       "created": 1777128870,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User says: \"你好，测试时间戳\" (",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User says: \"你好，测试时间戳\" ("
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 15,
+         "total_tokens": 45,
+         "completion_tokens": 30,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=15 → completion=30 → total=45
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 22:54:31.341
+   发送给: 127.0.0.1
+   状态: 200
+   大小: 830 bytes
+   总耗时: 0.607s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 22:55:36.079
+   来源: 127.0.0.1
+   请求: GET /v1/models
+   头部: {'Host': '127.0.0.1:8765', 'User-Agent': 'curl/8.18.0', 'Accept': '*/*'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 22:55:36.079
+   目标: http://58.23.129.98:8000/v1/models
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: User-Agent: curl/8.18.0
+   头: Accept: */*
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 22:55:36.147
+   状态: 200 OK
+   耗时: 0.053s
+   大小: 479 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 14:55:35 GMT', 'server': 'uvicorn', 'content-length': '479', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (479B):
+     {
+       "object": "list",
+       "data": [
+         {
+           "id": "qwen3.6-35b",
+           "object": "model",
+           "created": 1777128936,
+           "owned_by": "vllm",
+           "root": "/data/models/Qwen3.6-35B-A3B-FP8",
+           "parent": null,
+           "max_model_len": 262144,
+           "permission": [
+             {
+               "id": "modelperm-97a98266804cabaf",
+               "object": "model_permission",
+               "created": 1777128936,
+               "allow_create_engine": false,
+               "allow_sampling": true,
+               "allow_logprobs": true,
+               "allow_search_indices": false,
+               "allow_view": true,
+               "allow_fine_tuning": false,
+               "organization": "*",
+               "group": null,
+               "is_blocking": false
+             }
+           ]
+         }
+       ]
+     }
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 22:55:36.150
+   发送给: 127.0.0.1
+   状态: 200
+   大小: 520 bytes
+   总耗时: 0.056s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 22:56:38.636
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '1370', 'Host': '192.168.1.17:8765', 'Content-Type': 'application/json', 'User-Agent': 'ComputeHub/2.0-ai-scheduling', 'Connection': 'close'}
+   请求体 (1370B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "system",
+           "content": "你是一个AI调度专家，负责为分布式计算任务选择最优调度策略。\n\n可选策略：\n1. least_connections: 选择当前活跃任务最少的节点（适合短任务、I/O密集型）\n2. round_robin: 轮询分配（适合任务负载均衡、长任务）\n\n基于任务特征和历史数据，选择最优策略。只返回JSON格式：\n{\"strategy\": \"least_connections\", \"confidence\": 0.8, \"reasoning\": \"简要说明\"}\n"
+         },
+         {
+           "role": "user",
+           "content": "任务特征：\n- action: training\n- framework: python\n- gpu_required: 2\n- memory_required_gb: 8\n\n历史数据（相似任务）：\n{\n  \"total_similar_tasks\": 0,\n  \"status\": \"no_historical_data\",\n  \"note\": \"等待积累执行数据后再启用 AI 历史分析\"\n}\n\n请选择调度策略，只输出JSON。"
+         }
+       ],
+       "max_tokens": 200,
+       "temperature": 0.3
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 22:56:38.638
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: ComputeHub/2.0-ai-scheduling
+   请求体: 1370 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 22:56:40.255
+   状态: 200 OK
+   耗时: 1.602s
+   大小: 1358 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 14:56:37 GMT', 'server': 'uvicorn', 'content-length': '1358', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (1358B):
+     {
+       "id": "chatcmpl-9f3a877b59c1311d",
+       "object": "chat.completion",
+       "created": 1777128998,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - **Role:** AI Scheduling Expert for distributed computing tasks.\n   - **Available Strategies:**\n     1. `least_connections`: Best for short tasks, I/O intensive.\n     2. `round_robin`: Best for load balancing, long tasks.\n   - **Task Features:**\n     - `action`: training (implies long-running, compute-intensive, likely GPU-bound)\n     - `framework`: python\n     - `gpu_required`: 2\n     - `memory_required_gb`: 8\n   - **Historical Data:** No historical data (`total_similar_tasks: 0`, `status: no_historical_data`).\n   - **Output Requirement:** Only JSON format: `{\"strategy\": \"...\", \"confidence\": ..., \"reasoning\": \"...\"}`\n\n2.  **Evaluate Task Characteristics against Strategies:**\n   - The task is",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - **Role:** AI Scheduling Expert for distributed computing tasks.\n   - **Available Strategies:**\n     1. `least_connections`: Best for short tasks, I/O intensive.\n     2. `round_robin`: Best for load balancing, long tasks.\n   - **Task Features:**\n     - `action`: training (implies long-running, compute-intensive, likely GPU-bound)\n     - `framework`: python\n     - `gpu_required`: 2\n     - `memory_required_gb`: 8\n   - **Historical Data:** No historical data (`total_similar_tasks: 0`, `status: no_historical_data`).\n   - **Output Requirement:** Only JSON format: `{\"strategy\": \"...\", \"confidence\": ..., \"reasoning\": \"...\"}`\n\n2.  **Evaluate Task Characteristics against Strategies:**\n   - The task is"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 204,
+         "total_tokens": 404,
+         "completion_tokens": 200,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=204 → completion=200 → total=404
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 22:56:40.262
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 2197 bytes
+   总耗时: 1.609s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 22:57:01.907
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '423', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (423B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "system",
+           "content": "你是一个AI调度专家。只返回JSON格式：{\"strategy\": \"least_connections\", \"confidence\": 0.8, \"reasoning\": \"简要说明\"}"
+         },
+         {
+           "role": "user",
+           "content": "任务特征：action=training, framework=python, gpu_required=2"
+         }
+       ],
+       "max_tokens": 200,
+       "temperature": 0.3
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 22:57:01.909
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 423 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 22:57:03.311
+   状态: 200 OK
+   耗时: 1.386s
+   大小: 1661 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 14:57:01 GMT', 'server': 'uvicorn', 'content-length': '1661', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (1661B):
+     {
+       "id": "chatcmpl-825e862e285d7473",
+       "object": "chat.completion",
+       "created": 1777129021,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "嗯，用户给了一个任务，需要我作为AI调度专家来选择合适的策略。首先，我得仔细看看用户提供的任务特征。action是training，框架是python，需要2个GPU。那我的任务就是根据这些信息决定使用哪种调度策略，并给出置信度和理由。\n\n首先，调度策略通常有几种，比如least_connections、round_robin、resource_based等等。用户需要的是处理需要两个GPU的Python训练任务。这时候，我需要考虑哪种策略最适合这种情况。\n\nleast_connections策略通常用于负载均衡，根据当前连接数分配任务，但这里可能更关注资源分配，尤其是GPU。不过，如果系统中有多个节点，每个节点可能有不同数量的可用GPU，那么least_connections可能不是最合适的。但用户可能希望将任务分配到当前负载较低的节点，避免某个节点过载。\n\n不过，另一个考虑是资源需求。任务需要两个GPU，所以可能需要一个资源感知的策略，比如resource_based，确保分配足够的GPU资源。但",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "嗯，用户给了一个任务，需要我作为AI调度专家来选择合适的策略。首先，我得仔细看看用户提供的任务特征。action是training，框架是python，需要2个GPU。那我的任务就是根据这些信息决定使用哪种调度策略，并给出置信度和理由。\n\n首先，调度策略通常有几种，比如least_connections、round_robin、resource_based等等。用户需要的是处理需要两个GPU的Python训练任务。这时候，我需要考虑哪种策略最适合这种情况。\n\nleast_connections策略通常用于负载均衡，根据当前连接数分配任务，但这里可能更关注资源分配，尤其是GPU。不过，如果系统中有多个节点，每个节点可能有不同数量的可用GPU，那么least_connections可能不是最合适的。但用户可能希望将任务分配到当前负载较低的节点，避免某个节点过载。\n\n不过，另一个考虑是资源需求。任务需要两个GPU，所以可能需要一个资源感知的策略，比如resource_based，确保分配足够的GPU资源。但"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 63,
+         "total_tokens": 263,
+         "completion_tokens": 200,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=63 → completion=200 → total=263
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 22:57:03.314
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 2804 bytes
+   总耗时: 1.389s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 22:57:25.383
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '423', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (423B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "system",
+           "content": "你是一个AI调度专家。只返回JSON格式：{\"strategy\": \"least_connections\", \"confidence\": 0.8, \"reasoning\": \"简要说明\"}"
+         },
+         {
+           "role": "user",
+           "content": "任务特征：action=training, framework=python, gpu_required=2"
+         }
+       ],
+       "max_tokens": 200,
+       "temperature": 0.3
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 22:57:25.385
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 423 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 22:57:27.736
+   状态: 200 OK
+   耗时: 2.340s
+   大小: 1630 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 14:57:24 GMT', 'server': 'uvicorn', 'content-length': '1630', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (1630B):
+     {
+       "id": "chatcmpl-88e966031b569e0e",
+       "object": "chat.completion",
+       "created": 1777129045,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "嗯，用户给了一个任务，需要我作为AI调度专家来生成一个JSON响应。首先，我得仔细看看用户的输入。任务特征是action=training，framework=python，gpu_required=2。用户要求只返回JSON格式，包含strategy、confidence和reasoning三个字段。\n\n首先，我需要确定合适的调度策略。常见的调度策略有least_connections、round_robin、resource_based等。这里用户提到需要2个GPU，而training任务通常对GPU资源需求较高，可能需要分配多个GPU节点。least_connections策略通常用于负载均衡，根据当前连接数分配任务，但在这个场景下，可能更关注资源分配而不是连接数。不过，如果系统中有多个节点，每个节点有2个GPU，那么least_connections可能适合，因为可以平衡各节点的负载，避免某个节点过载。\n\n接下来是confidence的值。用户没有提供具体数据，所以需要根据经验判断。假设系统中有足够的GPU资源，并且节点分布均匀，那么confidence可以",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "嗯，用户给了一个任务，需要我作为AI调度专家来生成一个JSON响应。首先，我得仔细看看用户的输入。任务特征是action=training，framework=python，gpu_required=2。用户要求只返回JSON格式，包含strategy、confidence和reasoning三个字段。\n\n首先，我需要确定合适的调度策略。常见的调度策略有least_connections、round_robin、resource_based等。这里用户提到需要2个GPU，而training任务通常对GPU资源需求较高，可能需要分配多个GPU节点。least_connections策略通常用于负载均衡，根据当前连接数分配任务，但在这个场景下，可能更关注资源分配而不是连接数。不过，如果系统中有多个节点，每个节点有2个GPU，那么least_connections可能适合，因为可以平衡各节点的负载，避免某个节点过载。\n\n接下来是confidence的值。用户没有提供具体数据，所以需要根据经验判断。假设系统中有足够的GPU资源，并且节点分布均匀，那么confidence可以"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 63,
+         "total_tokens": 263,
+         "completion_tokens": 200,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=63 → completion=200 → total=263
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 22:57:27.739
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 2742 bytes
+   总耗时: 2.343s
+======================================================================
+
+
+============================================================
+代理重启: 2026-04-25 22:58:23.376
+============================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 22:59:04.331
+   来源: 127.0.0.1
+   请求: POST /v1/chat/completions
+   头部: {'Host': '127.0.0.1:8765', 'User-Agent': 'curl/8.18.0', 'Accept': '*/*', 'Content-Type': 'application/json', 'Content-Length': '102'}
+   请求体 (102B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "你好，我是测试"
+         }
+       ],
+       "max_tokens": 30
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 22:59:04.332
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: User-Agent: curl/8.18.0
+   头: Accept: */*
+   请求体: 102 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 22:59:04.687
+   状态: 200 OK
+   耗时: 0.339s
+   大小: 675 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 14:59:04 GMT', 'server': 'uvicorn', 'content-length': '675', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (675B):
+     {
+       "id": "chatcmpl-bc01002b099375aa",
+       "object": "chat.completion",
+       "created": 1777129144,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User says: \"你好，我是测试\" (Hello",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User says: \"你好，我是测试\" (Hello"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 14,
+         "total_tokens": 44,
+         "completion_tokens": 30,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=14 → completion=30 → total=44
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 22:59:04.691
+   发送给: 127.0.0.1
+   状态: 200
+   大小: 834 bytes
+   总耗时: 0.343s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 22:59:55.672
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '1414', 'Host': '192.168.1.17:8765', 'Content-Type': 'application/json', 'User-Agent': 'ComputeHub/2.0-ai-scheduling', 'Connection': 'close'}
+   请求体 (1414B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "system",
+           "content": "你是一个AI调度专家，负责为分布式计算任务选择最优调度策略。\n\n可选策略：\n1. least_connections: 选择当前活跃任务最少的节点（适合短任务、I/O密集型）\n2. round_robin: 轮询分配（适合任务负载均衡、长任务）\n\n基于任务特征和历史数据，选择最优策略。只返回JSON格式：\n{\"strategy\": \"least_connections\", \"confidence\": 0.8, \"reasoning\": \"简要说明\"}\n"
+         },
+         {
+           "role": "user",
+           "content": "任务特征：\n- action: training\n- framework: python\n- gpu_required: 2\n- memory_required_gb: 8\n\n历史数据（相似任务）：\n{\n  \"total_similar_tasks\": 0,\n  \"status\": \"no_historical_data\",\n  \"note\": \"等待积累执行数据后再启用 AI 历史分析\"\n}\n\n请选择调度策略，只输出JSON。"
+         }
+       ],
+       "max_tokens": 256,
+       "temperature": 0.1,
+       "response_format": {
+         "type": "json_object"
+       }
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 22:59:55.675
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: ComputeHub/2.0-ai-scheduling
+   请求体: 1414 bytes
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 22:59:57.339
+   来源: 127.0.0.1
+   请求: POST /v1/chat/completions
+   头部: {'Host': '127.0.0.1:8765', 'User-Agent': 'curl/8.18.0', 'Accept': '*/*', 'Content-Type': 'application/json', 'Content-Length': '93'}
+   请求体 (93B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "监控测试"
+         }
+       ],
+       "max_tokens": 20
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 22:59:57.340
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: User-Agent: curl/8.18.0
+   头: Accept: */*
+   请求体: 93 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 22:59:58.070
+   状态: 200 OK
+   耗时: 0.715s
+   大小: 634 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 14:59:57 GMT', 'server': 'uvicorn', 'content-length': '634', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (634B):
+     {
+       "id": "chatcmpl-a8dd1cddf07adae5",
+       "object": "chat.completion",
+       "created": 1777129197,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - **",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - **"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 12,
+         "total_tokens": 32,
+         "completion_tokens": 20,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=12 → completion=20 → total=32
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 22:59:58.074
+   发送给: 127.0.0.1
+   状态: 200
+   大小: 752 bytes
+   总耗时: 0.719s
+======================================================================
+
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 22:59:59.069
+   状态: 200 OK
+   耗时: 3.376s
+   大小: 1628 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 14:59:55 GMT', 'server': 'uvicorn', 'content-length': '1628', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (1628B):
+     {
+       "id": "chatcmpl-9b2a0c704ee5f715",
+       "object": "chat.completion",
+       "created": 1777129195,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - **Role:** AI Scheduling Expert for distributed computing tasks.\n   - **Available Strategies:**\n     - `least_connections`: Best for short tasks, I/O intensive.\n     - `round_robin`: Best for load balancing, long tasks.\n   - **Task Features:**\n     - `action`: training (implies long-running, compute-intensive, likely GPU-bound)\n     - `framework`: python\n     - `gpu_required`: 2\n     - `memory_required_gb`: 8\n   - **Historical Data:** No historical data (`total_similar_tasks: 0`, `status: no_historical_data`).\n   - **Output Requirement:** Only JSON format: `{\"strategy\": \"...\", \"confidence\": ..., \"reasoning\": \"...\"}`\n\n2.  **Evaluate Task Characteristics vs. Strategies:**\n   - The task is a \"training\" job, which typically implies long-running, compute-intensive (GPU), and memory-bound operations.\n   - `least_connections` is explicitly noted as suitable for short tasks and I/O-intensive workloads.\n   - `round_robin` is explicitly noted as suitable for load",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - **Role:** AI Scheduling Expert for distributed computing tasks.\n   - **Available Strategies:**\n     - `least_connections`: Best for short tasks, I/O intensive.\n     - `round_robin`: Best for load balancing, long tasks.\n   - **Task Features:**\n     - `action`: training (implies long-running, compute-intensive, likely GPU-bound)\n     - `framework`: python\n     - `gpu_required`: 2\n     - `memory_required_gb`: 8\n   - **Historical Data:** No historical data (`total_similar_tasks: 0`, `status: no_historical_data`).\n   - **Output Requirement:** Only JSON format: `{\"strategy\": \"...\", \"confidence\": ..., \"reasoning\": \"...\"}`\n\n2.  **Evaluate Task Characteristics vs. Strategies:**\n   - The task is a \"training\" job, which typically implies long-running, compute-intensive (GPU), and memory-bound operations.\n   - `least_connections` is explicitly noted as suitable for short tasks and I/O-intensive workloads.\n   - `round_robin` is explicitly noted as suitable for load"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 204,
+         "total_tokens": 460,
+         "completion_tokens": 256,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=204 → completion=256 → total=460
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 22:59:59.071
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 2737 bytes
+   总耗时: 3.378s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:00:39.643
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '340', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (340B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "system",
+           "content": "Return only JSON: {\"strategy\": \"least_connections\", \"confidence\": 0.8, \"reasoning\": \"brief\"}"
+         },
+         {
+           "role": "user",
+           "content": "action=training, framework=python, gpu_required=2"
+         }
+       ],
+       "max_tokens": 256,
+       "temperature": 0.1,
+       "response_format": {
+         "type": "json_object"
+       }
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:00:39.645
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 340 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:00:41.858
+   状态: 200 OK
+   耗时: 2.197s
+   大小: 1927 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:00:39 GMT', 'server': 'uvicorn', 'content-length': '1927', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (1927B):
+     {
+       "id": "chatcmpl-9e379a105d9f0707",
+       "object": "chat.completion",
+       "created": 1777129239,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "嗯，用户给了一个请求，需要返回一个JSON对象，包含strategy、confidence和reasoning字段。首先，我需要理解用户的具体需求。用户提到action是training，framework是python，需要2个GPU。这可能是在询问如何配置分布式训练的策略。\n\n接下来，我得考虑常见的分布式训练策略。常用的有数据并行、模型并行、混合并行等。数据并行（Data Parallelism）通常适用于模型可以放在单个GPU上的情况，通过复制模型到多个GPU，每个GPU处理不同的数据批次，然后同步梯度。而模型并行（Model Parallelism）适用于模型太大无法放入单个GPU的情况，将模型的不同部分分配到不同的GPU上。\n\n用户需要2个GPU，可能是在进行数据并行训练，因为数据并行在多个GPU上扩展性较好，尤其是当模型大小适中时。Python框架如PyTorch或TensorFlow都支持数据并行，比如PyTorch的DistributedDataParallel。因此，选择least_connections策略可能不太合适，因为least_connections通常用于负载均衡，比如网络请求分发，而不是分布式训练。\n\n不过用户可能误解了策略名称，或者有其他特定需求。但根据常规情况，数据并行更常见。但用户提供的策略选项是least_connections，这可能是一个错误，",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "嗯，用户给了一个请求，需要返回一个JSON对象，包含strategy、confidence和reasoning字段。首先，我需要理解用户的具体需求。用户提到action是training，framework是python，需要2个GPU。这可能是在询问如何配置分布式训练的策略。\n\n接下来，我得考虑常见的分布式训练策略。常用的有数据并行、模型并行、混合并行等。数据并行（Data Parallelism）通常适用于模型可以放在单个GPU上的情况，通过复制模型到多个GPU，每个GPU处理不同的数据批次，然后同步梯度。而模型并行（Model Parallelism）适用于模型太大无法放入单个GPU的情况，将模型的不同部分分配到不同的GPU上。\n\n用户需要2个GPU，可能是在进行数据并行训练，因为数据并行在多个GPU上扩展性较好，尤其是当模型大小适中时。Python框架如PyTorch或TensorFlow都支持数据并行，比如PyTorch的DistributedDataParallel。因此，选择least_connections策略可能不太合适，因为least_connections通常用于负载均衡，比如网络请求分发，而不是分布式训练。\n\n不过用户可能误解了策略名称，或者有其他特定需求。但根据常规情况，数据并行更常见。但用户提供的策略选项是least_connections，这可能是一个错误，"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 53,
+         "total_tokens": 309,
+         "completion_tokens": 256,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=53 → completion=256 → total=309
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:00:41.860
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 3336 bytes
+   总耗时: 2.200s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:01:14.874
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '423', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (423B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "system",
+           "content": "You are a task scheduler. Output ONLY this JSON format, no other text: {\"strategy\": \"<least_connections or round_robin>\", \"confidence\": 0.5, \"reasoning\": \"short reason\"}"
+         },
+         {
+           "role": "user",
+           "content": "Task: action=training, framework=python, gpu_required=2"
+         }
+       ],
+       "max_tokens": 128,
+       "temperature": 0.1,
+       "response_format": {
+         "type": "json_object"
+       }
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:01:14.876
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 423 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:01:15.914
+   状态: 200 OK
+   耗时: 1.024s
+   大小: 1047 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:01:14 GMT', 'server': 'uvicorn', 'content-length': '1047', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (1047B):
+     {
+       "id": "chatcmpl-8c116dfd6e12cb5b",
+       "object": "chat.completion",
+       "created": 1777129274,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Thinking Process:\n\n1.  **Analyze the Request:**\n    *   Role: Task Scheduler.\n    *   Input: `Task: action=training, framework=python, gpu_required=2`\n    *   Output Format: JSON only (`{\"strategy\": \"...\", \"confidence\": ..., \"reasoning\": \"...\"}`).\n    *   Available Strategies: `least_connections` or `round_robin`.\n\n2.  **Analyze the Task:**\n    *   Action: `training` (implies a long-running, resource-intensive process).\n    *   Framework: `python`.\n   ",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Thinking Process:\n\n1.  **Analyze the Request:**\n    *   Role: Task Scheduler.\n    *   Input: `Task: action=training, framework=python, gpu_required=2`\n    *   Output Format: JSON only (`{\"strategy\": \"...\", \"confidence\": ..., \"reasoning\": \"...\"}`).\n    *   Available Strategies: `least_connections` or `round_robin`.\n\n2.  **Analyze the Task:**\n    *   Action: `training` (implies a long-running, resource-intensive process).\n    *   Framework: `python`.\n   "
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 72,
+         "total_tokens": 200,
+         "completion_tokens": 128,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=72 → completion=128 → total=200
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:01:15.917
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 1576 bytes
+   总耗时: 1.027s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:03:17.431
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '1370', 'Host': '192.168.1.17:8765', 'Content-Type': 'application/json', 'User-Agent': 'ComputeHub/2.0-ai-scheduling', 'Connection': 'close'}
+   请求体 (1370B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "system",
+           "content": "你是一个AI调度专家，负责为分布式计算任务选择最优调度策略。\n\n可选策略：\n1. least_connections: 选择当前活跃任务最少的节点（适合短任务、I/O密集型）\n2. round_robin: 轮询分配（适合任务负载均衡、长任务）\n\n基于任务特征和历史数据，选择最优策略。只返回JSON格式：\n{\"strategy\": \"least_connections\", \"confidence\": 0.8, \"reasoning\": \"简要说明\"}\n"
+         },
+         {
+           "role": "user",
+           "content": "任务特征：\n- action: training\n- framework: python\n- gpu_required: 2\n- memory_required_gb: 8\n\n历史数据（相似任务）：\n{\n  \"total_similar_tasks\": 0,\n  \"status\": \"no_historical_data\",\n  \"note\": \"等待积累执行数据后再启用 AI 历史分析\"\n}\n\n请选择调度策略，只输出JSON。"
+         }
+       ],
+       "max_tokens": 256,
+       "temperature": 0.1
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:03:17.433
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: ComputeHub/2.0-ai-scheduling
+   请求体: 1370 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:03:19.294
+   状态: 200 OK
+   耗时: 1.846s
+   大小: 1604 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:03:16 GMT', 'server': 'uvicorn', 'content-length': '1604', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (1604B):
+     {
+       "id": "chatcmpl-bd75c156fd37e1e8",
+       "object": "chat.completion",
+       "created": 1777129397,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - **Role:** AI Scheduling Expert for distributed computing tasks.\n   - **Available Strategies:**\n     - `least_connections`: Best for short tasks, I/O intensive.\n     - `round_robin`: Best for load balancing, long tasks.\n   - **Task Features:**\n     - `action`: training (implies long-running, compute-intensive, likely GPU-bound)\n     - `framework`: python\n     - `gpu_required`: 2\n     - `memory_required_gb`: 8\n   - **Historical Data:** No historical data (`total_similar_tasks: 0`, `status: no_historical_data`).\n   - **Output Requirement:** Only JSON format: `{\"strategy\": \"...\", \"confidence\": ..., \"reasoning\": \"...\"}`\n\n2.  **Evaluate Task Characteristics against Strategies:**\n   - `action: training` strongly indicates a long-running, compute-intensive task (likely CPU/GPU bound, not I/O bound).\n   - `gpu_required: 2` confirms it's a heavy compute task.\n   - Long tasks benefit from `round_robin` for stable load distribution over time,",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - **Role:** AI Scheduling Expert for distributed computing tasks.\n   - **Available Strategies:**\n     - `least_connections`: Best for short tasks, I/O intensive.\n     - `round_robin`: Best for load balancing, long tasks.\n   - **Task Features:**\n     - `action`: training (implies long-running, compute-intensive, likely GPU-bound)\n     - `framework`: python\n     - `gpu_required`: 2\n     - `memory_required_gb`: 8\n   - **Historical Data:** No historical data (`total_similar_tasks: 0`, `status: no_historical_data`).\n   - **Output Requirement:** Only JSON format: `{\"strategy\": \"...\", \"confidence\": ..., \"reasoning\": \"...\"}`\n\n2.  **Evaluate Task Characteristics against Strategies:**\n   - `action: training` strongly indicates a long-running, compute-intensive task (likely CPU/GPU bound, not I/O bound).\n   - `gpu_required: 2` confirms it's a heavy compute task.\n   - Long tasks benefit from `round_robin` for stable load distribution over time,"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 204,
+         "total_tokens": 460,
+         "completion_tokens": 256,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=204 → completion=256 → total=460
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:03:19.298
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 2689 bytes
+   总耗时: 1.850s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:03:19.663
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '1375', 'Host': '192.168.1.17:8765', 'Content-Type': 'application/json', 'User-Agent': 'ComputeHub/2.0-ai-scheduling', 'Connection': 'close'}
+   请求体 (1375B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "system",
+           "content": "你是一个AI调度专家，负责为分布式计算任务选择最优调度策略。\n\n可选策略：\n1. least_connections: 选择当前活跃任务最少的节点（适合短任务、I/O密集型）\n2. round_robin: 轮询分配（适合任务负载均衡、长任务）\n\n基于任务特征和历史数据，选择最优策略。只返回JSON格式：\n{\"strategy\": \"least_connections\", \"confidence\": 0.8, \"reasoning\": \"简要说明\"}\n"
+         },
+         {
+           "role": "user",
+           "content": "任务特征：\n- action: data_pipeline\n- framework: python\n- gpu_required: 1\n- memory_required_gb: 4\n\n历史数据（相似任务）：\n{\n  \"total_similar_tasks\": 0,\n  \"status\": \"no_historical_data\",\n  \"note\": \"等待积累执行数据后再启用 AI 历史分析\"\n}\n\n请选择调度策略，只输出JSON。"
+         }
+       ],
+       "max_tokens": 256,
+       "temperature": 0.1
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:03:19.666
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: ComputeHub/2.0-ai-scheduling
+   请求体: 1375 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:03:21.471
+   状态: 200 OK
+   耗时: 1.790s
+   大小: 1619 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:03:18 GMT', 'server': 'uvicorn', 'content-length': '1619', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (1619B):
+     {
+       "id": "chatcmpl-a7cce1073f44ea42",
+       "object": "chat.completion",
+       "created": 1777129399,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - **Role:** AI Scheduling Expert for distributed computing tasks.\n   - **Available Strategies:**\n     - `least_connections`: Best for short tasks, I/O intensive.\n     - `round_robin`: Best for task load balancing, long tasks.\n   - **Task Features:**\n     - `action`: data_pipeline\n     - `framework`: python\n     - `gpu_required`: 1\n     - `memory_required_gb`: 4\n   - **Historical Data:**\n     - `total_similar_tasks`: 0\n     - `status`: \"no_historical_data\"\n     - `note`: \"等待积累执行数据后再启用 AI 历史分析\"\n   - **Output Requirement:** Only return JSON format: `{\"strategy\": \"...\", \"confidence\": ..., \"reasoning\": \"...\"}`\n\n2.  **Evaluate Task Characteristics:**\n   - `data_pipeline`: Typically involves data ingestion, transformation, and loading. Often I/O intensive, can be long-running or batch-oriented.\n   - `gpu_required: 1`: Uses GPU, which implies compute-intensive or ML-related pipeline steps. GPUs are expensive resources",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - **Role:** AI Scheduling Expert for distributed computing tasks.\n   - **Available Strategies:**\n     - `least_connections`: Best for short tasks, I/O intensive.\n     - `round_robin`: Best for task load balancing, long tasks.\n   - **Task Features:**\n     - `action`: data_pipeline\n     - `framework`: python\n     - `gpu_required`: 1\n     - `memory_required_gb`: 4\n   - **Historical Data:**\n     - `total_similar_tasks`: 0\n     - `status`: \"no_historical_data\"\n     - `note`: \"等待积累执行数据后再启用 AI 历史分析\"\n   - **Output Requirement:** Only return JSON format: `{\"strategy\": \"...\", \"confidence\": ..., \"reasoning\": \"...\"}`\n\n2.  **Evaluate Task Characteristics:**\n   - `data_pipeline`: Typically involves data ingestion, transformation, and loading. Often I/O intensive, can be long-running or batch-oriented.\n   - `gpu_required: 1`: Uses GPU, which implies compute-intensive or ML-related pipeline steps. GPUs are expensive resources"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 205,
+         "total_tokens": 461,
+         "completion_tokens": 256,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=205 → completion=256 → total=461
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:03:21.474
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 2719 bytes
+   总耗时: 1.794s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:05:03.776
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '861', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (861B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "system",
+           "content": "你是一个AI调度专家。\n\n可选策略：least_connections, round_robin\n\n判断规则：\n- training 任务：需要 GPU 资源，选 least_connections\n- data_pipeline 任务：I/O 密集，选 least_connections\n- 通用/短任务：选 round_robin\n\n请分析以下任务并返回 JSON，只返回 JSON，不要其他文字：\n{\"strategy\": \"策略名\", \"confidence\": 0.8, \"reasoning\": \"一句话说明\"}\n"
+         },
+         {
+           "role": "user",
+           "content": "action=training, framework=python, gpu_required=2, memory_required_gb=8"
+         }
+       ],
+       "max_tokens": 256,
+       "temperature": 0.0
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:05:03.783
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 861 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:05:05.608
+   状态: 200 OK
+   耗时: 1.807s
+   大小: 1429 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:05:03 GMT', 'server': 'uvicorn', 'content-length': '1429', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (1429B):
+     {
+       "id": "chatcmpl-bd18b3b427f1c6ff",
+       "object": "chat.completion",
+       "created": 1777129503,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - Input: `action=training, framework=python, gpu_required=2, memory_required_gb=8`\n   - Key parameters: `action=training`, `gpu_required=2`\n   - This clearly indicates a training task that requires GPU resources.\n\n2.  **Apply Decision Rules:**\n   - Rule 1: `training` 任务：需要 GPU 资源，选 `least_connections`\n   - Rule 2: `data_pipeline` 任务：I/O 密集，选 `least_connections`\n   - Rule 3: 通用/短任务：选 `round_robin`\n   - The input matches Rule 1 exactly.\n\n3.  **Determine Output Fields:**\n   - `strategy`: \"least_connections\"\n   - `confidence`: High, since it directly matches a rule. I'll set it to 0.9 or 1.0. Let's use 0.95 or 0.9. The prompt example uses 0.8, but I can adjust based on certainty. I'll stick to 0.9 for high certainty.\n   - `reason",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - Input: `action=training, framework=python, gpu_required=2, memory_required_gb=8`\n   - Key parameters: `action=training`, `gpu_required=2`\n   - This clearly indicates a training task that requires GPU resources.\n\n2.  **Apply Decision Rules:**\n   - Rule 1: `training` 任务：需要 GPU 资源，选 `least_connections`\n   - Rule 2: `data_pipeline` 任务：I/O 密集，选 `least_connections`\n   - Rule 3: 通用/短任务：选 `round_robin`\n   - The input matches Rule 1 exactly.\n\n3.  **Determine Output Fields:**\n   - `strategy`: \"least_connections\"\n   - `confidence`: High, since it directly matches a rule. I'll set it to 0.9 or 1.0. Let's use 0.95 or 0.9. The prompt example uses 0.8, but I can adjust based on certainty. I'll stick to 0.9 for high certainty.\n   - `reason"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 134,
+         "total_tokens": 390,
+         "completion_tokens": 256,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=134 → completion=256 → total=390
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:05:05.611
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 2339 bytes
+   总耗时: 1.810s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:05:29.455
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '454', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (454B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "system",
+           "content": "You are a task scheduler. Respond with ONLY a JSON object. No thinking, no explanation, no markdown.\n\nValid strategies: least_connections, round_robin\n\nReturn format:\n{strategy: strategy_name, confidence: 0.8, reasoning: brief}"
+         },
+         {
+           "role": "user",
+           "content": "Task: action=training, framework=python, gpu_required=2, memory_required_gb=8"
+         }
+       ],
+       "max_tokens": 512,
+       "temperature": 0.0
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:05:29.457
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 454 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:05:30.789
+   状态: 200 OK
+   耗时: 1.315s
+   大小: 1375 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:05:29 GMT', 'server': 'uvicorn', 'content-length': '1375', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (1375B):
+     {
+       "id": "chatcmpl-b2c2feadd8302ad0",
+       "object": "chat.completion",
+       "created": 1777129529,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "\n\n{strategy: least_connections, confidence: 0.9, reasoning: \"Resource-aware scheduling is preferred for tasks with specific hardware requirements.\"}",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "The user wants to schedule a task.\nTask details:\n- action: training\n- framework: python\n- gpu_required: 2\n- memory_required_gb: 8\n\nI need to choose a strategy: `least_connections` or `round_robin`.\nSince the task requires specific resources (2 GPUs, 8GB memory), `least_connections` is generally better for resource-constrained environments to balance the load and avoid overloading nodes that might already be running heavy tasks. `round_robin` ignores resource usage.\n\nTherefore, `least_connections` is the appropriate strategy.\nConfidence: 0.9\nReasoning: Resource-aware scheduling is preferred for tasks with specific hardware requirements.\n"
+           },
+           "logprobs": null,
+           "finish_reason": "stop",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 89,
+         "total_tokens": 267,
+         "completion_tokens": 178,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=89 → completion=178 → total=267
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:05:30.793
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 1429 bytes
+   总耗时: 1.320s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:16:17.042
+   来源: 192.168.1.25
+   请求: GET /
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:16:17.049
+   目标: http://58.23.129.98:8000/
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+======================================================================
+📥 【REMOTE ERROR】 2026-04-25 23:16:17.390
+   状态: 404 Not Found
+   耗时: 0.316s
+   响应体: b'{"detail":"Not Found"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:16:48.090
+   来源: 192.168.1.25
+   请求: GET /
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:16:48.091
+   目标: http://58.23.129.98:8000/
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:16:48.130
+   来源: 192.168.1.25
+   请求: GET /
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:16:48.131
+   目标: http://58.23.129.98:8000/
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+======================================================================
+📥 【REMOTE ERROR】 2026-04-25 23:16:48.213
+======================================================================
+   状态: 404 Not Found
+📥 【REMOTE ERROR】 2026-04-25 23:16:48.214
+   耗时: 0.071s
+   状态: 404 Not Found
+   响应体: b'{"detail":"Not Found"}'
+   耗时: 0.089s
+======================================================================
+   响应体: b'{"detail":"Not Found"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:16:48.339
+   来源: 192.168.1.25
+   请求: GET /health
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:16:48.340
+   目标: http://58.23.129.98:8000/health
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:16:48.452
+   状态: 200 OK
+   耗时: 0.096s
+   大小: 0 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:16:47 GMT', 'server': 'uvicorn', 'content-length': '0', 'connection': 'close'}
+   响应体 (0B):
+     
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:16:48.453
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 0 bytes
+   总耗时: 0.098s
+======================================================================
+
+======================================================================
+❌ 【ERROR】 2026-04-25 23:16:48.454
+   GET /health
+   错误: Expecting value: line 1 column 1 (char 0)
+   耗时: 0.098s
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:16:48.619
+   来源: 192.168.1.25
+   请求: GET /api
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:16:48.621
+   目标: http://58.23.129.98:8000/api
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+======================================================================
+📥 【REMOTE ERROR】 2026-04-25 23:16:48.769
+   状态: 404 Not Found
+   耗时: 0.133s
+   响应体: b'{"detail":"Not Found"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:16:48.871
+   来源: 192.168.1.25
+   请求: GET /docs
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:16:48.875
+   目标: http://58.23.129.98:8000/docs
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:16:48.922
+   状态: 200 OK
+   耗时: 0.035s
+   大小: 1006 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:16:48 GMT', 'server': 'uvicorn', 'content-length': '1006', 'content-type': 'text/html; charset=utf-8', 'connection': 'close'}
+   响应体 (1006B):
+     
+         <!DOCTYPE html>
+         <html>
+         <head>
+         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+         <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css">
+         <link rel="shortcut icon" href="https://fastapi.tiangolo.com/img/favicon.png">
+         <title>FastAPI - Swagger UI</title>
+         </head>
+         <body>
+         <div id="swagger-ui">
+         </div>
+         <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+         <!-- `SwaggerUIBundle` is now available on the page -->
+         <script>
+         const ui = SwaggerUIBundle({
+             url: '/openapi.json',
+         "dom_id": "#swagger-ui",
+     "layout": "BaseLayout",
+     "deepLinking": true,
+     "showExtensions": true,
+     "showCommonExtensions": true,
+     oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
+         presets: [
+             SwaggerUIBundle.presets.apis,
+             SwaggerUIBundle.SwaggerUIStandalonePreset
+             ],
+         })
+         </script>
+         </body>
+         </html>
+         
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:16:48.924
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 1006 bytes
+   总耗时: 0.037s
+======================================================================
+
+======================================================================
+❌ 【ERROR】 2026-04-25 23:16:48.925
+   GET /docs
+   错误: Expecting value: line 2 column 5 (char 5)
+   耗时: 0.037s
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:16:49.288
+   来源: 192.168.1.25
+   请求: POST /
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*', 'Content-Type': 'application/json', 'Content-Length': '2'}
+   请求体 (2B):
+     {}
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:16:49.289
+   目标: http://58.23.129.98:8000/
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+   请求体: 2 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-25 23:16:49.393
+   状态: 404 Not Found
+   耗时: 0.089s
+   响应体: b'{"detail":"Not Found"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:17:22.149
+   来源: 192.168.1.25
+   请求: GET /v1
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:17:22.157
+   目标: http://58.23.129.98:8000/v1
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:17:22.160
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*', 'Content-Type': 'application/json', 'Content-Length': '76'}
+   请求体 (76B):
+     {
+       "model": "test",
+       "messages": [
+         {
+           "role": "user",
+           "content": "hi"
+         }
+       ],
+       "max_tokens": 10
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:17:22.163
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+   请求体: 76 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-25 23:17:22.508
+   状态: 404 Not Found
+   耗时: 0.338s
+   响应体: b'{"detail":"Not Found"}'
+======================================================================
+======================================================================
+📥 【REMOTE ERROR】 2026-04-25 23:17:22.515
+   状态: 404 Not Found
+   耗时: 0.341s
+   响应体: b'{"error":{"message":"The model `test` does not exist.","type":"NotFoundError","param":"model","code":404}}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:17:22.796
+   来源: 192.168.1.25
+   请求: POST /chat/completions
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*', 'Content-Type': 'application/json', 'Content-Length': '76'}
+   请求体 (76B):
+     {
+       "model": "test",
+       "messages": [
+         {
+           "role": "user",
+           "content": "hi"
+         }
+       ],
+       "max_tokens": 10
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:17:22.798
+   目标: http://58.23.129.98:8000/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+   请求体: 76 bytes
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:17:22.801
+   来源: 192.168.1.25
+   请求: GET /v1/models
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:17:22.801
+   目标: http://58.23.129.98:8000/v1/models
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:17:22.916
+   状态: 200 OK
+   耗时: 0.100s
+   大小: 479 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:17:22 GMT', 'server': 'uvicorn', 'content-length': '479', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (479B):
+     {
+       "object": "list",
+       "data": [
+         {
+           "id": "qwen3.6-35b",
+           "object": "model",
+           "created": 1777130242,
+           "owned_by": "vllm",
+           "root": "/data/models/Qwen3.6-35B-A3B-FP8",
+           "parent": null,
+           "max_model_len": 262144,
+           "permission": [
+             {
+               "id": "modelperm-86386c788f570d04",
+               "object": "model_permission",
+               "created": 1777130242,
+               "allow_create_engine": false,
+               "allow_sampling": true,
+               "allow_logprobs": true,
+               "allow_search_indices": false,
+               "allow_view": true,
+               "allow_fine_tuning": false,
+               "organization": "*",
+               "group": null,
+               "is_blocking": false
+             }
+           ]
+         }
+       ]
+     }
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:17:22.921
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 520 bytes
+   总耗时: 0.105s
+======================================================================
+
+======================================================================
+📥 【REMOTE ERROR】 2026-04-25 23:17:22.937
+   状态: 404 Not Found
+   耗时: 0.125s
+   响应体: b'{"detail":"Not Found"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:17:23.013
+   来源: 192.168.1.25
+   请求: GET /favicon.ico
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:17:23.014
+   目标: http://58.23.129.98:8000/favicon.ico
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:17:23.019
+   来源: 192.168.1.25
+   请求: POST /generate
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*', 'Content-Type': 'application/json', 'Content-Length': '15'}
+   请求体 (15B):
+     {
+       "prompt": "hi"
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:17:23.020
+   目标: http://58.23.129.98:8000/generate
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+   请求体: 15 bytes
+======================================================================
+📥 【REMOTE ERROR】 2026-04-25 23:17:23.089
+   状态: 404 Not Found
+   耗时: 0.059s
+   响应体: b'{"detail":"Not Found"}'
+======================================================================
+======================================================================
+📥 【REMOTE ERROR】 2026-04-25 23:17:23.095
+   状态: 404 Not Found
+   耗时: 0.058s
+   响应体: b'{"detail":"Not Found"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:17:23.151
+   来源: 192.168.1.25
+   请求: GET /health/ready
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:17:23.154
+   目标: http://58.23.129.98:8000/health/ready
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+======================================================================
+📥 【REMOTE ERROR】 2026-04-25 23:17:23.669
+   状态: 404 Not Found
+   耗时: 0.497s
+   响应体: b'{"detail":"Not Found"}'
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:17:28.925
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*', 'Content-Type': 'application/json', 'Content-Length': '154'}
+   请求体 (154B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "用一句话介绍自己"
+         }
+       ],
+       "max_tokens": 100,
+       "temperature": 0.7
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:17:28.926
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+   请求体: 154 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:17:29.779
+   状态: 200 OK
+   耗时: 0.837s
+   大小: 963 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:17:28 GMT', 'server': 'uvicorn', 'content-length': '963', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (963B):
+     {
+       "id": "chatcmpl-85c60b44fc983275",
+       "object": "chat.completion",
+       "created": 1777130249,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - **Input:** \"用一句话介绍自己\" (Introduce yourself in one sentence)\n   - **Language:** Chinese\n   - **Constraint:** Exactly one sentence\n   - **Task:** Self-introduction\n\n2.  **Identify Key Requirements:**\n   - Must be a single sentence\n   - Must clearly state who/what I am\n   - Should be concise, accurate, and",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - **Input:** \"用一句话介绍自己\" (Introduce yourself in one sentence)\n   - **Language:** Chinese\n   - **Constraint:** Exactly one sentence\n   - **Task:** Self-introduction\n\n2.  **Identify Key Requirements:**\n   - Must be a single sentence\n   - Must clearly state who/what I am\n   - Should be concise, accurate, and"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 14,
+         "total_tokens": 114,
+         "completion_tokens": 100,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=14 → completion=100 → total=114
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:17:29.782
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 1408 bytes
+   总耗时: 0.840s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:18:49.125
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*', 'Content-Type': 'application/json', 'Content-Length': '154'}
+   请求体 (154B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "用一句话介绍自己"
+         }
+       ],
+       "max_tokens": 200,
+       "temperature": 0.7
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:18:49.152
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+   请求体: 154 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:18:50.703
+   状态: 200 OK
+   耗时: 1.538s
+   大小: 1390 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:18:49 GMT', 'server': 'uvicorn', 'content-length': '1390', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (1390B):
+     {
+       "id": "chatcmpl-9a16db5836e0ec68",
+       "object": "chat.completion",
+       "created": 1777130329,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - **Input:** \"用一句话介绍自己\" (Introduce yourself in one sentence)\n   - **Language:** Chinese\n   - **Constraint:** Exactly one sentence\n   - **Task:** Self-introduction\n\n2.  **Identify Key Requirements:**\n   - Must be concise (one sentence)\n   - Must accurately represent my identity/function as an AI assistant\n   - Should be in Chinese\n   - Should be professional, helpful, and clear\n\n3.  **Determine Core Identity/Function:**\n   - I am Qwen (通义千问), a large language model developed by Alibaba Group's Tongyi Lab.\n   - My purpose is to assist users with information, reasoning, creativity, coding, etc.\n   - I should reflect that I'm an AI designed to help and answer questions.\n\n4.  **Draft - Mental Refinement (Chinese",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - **Input:** \"用一句话介绍自己\" (Introduce yourself in one sentence)\n   - **Language:** Chinese\n   - **Constraint:** Exactly one sentence\n   - **Task:** Self-introduction\n\n2.  **Identify Key Requirements:**\n   - Must be concise (one sentence)\n   - Must accurately represent my identity/function as an AI assistant\n   - Should be in Chinese\n   - Should be professional, helpful, and clear\n\n3.  **Determine Core Identity/Function:**\n   - I am Qwen (通义千问), a large language model developed by Alibaba Group's Tongyi Lab.\n   - My purpose is to assist users with information, reasoning, creativity, coding, etc.\n   - I should reflect that I'm an AI designed to help and answer questions.\n\n4.  **Draft - Mental Refinement (Chinese"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 14,
+         "total_tokens": 214,
+         "completion_tokens": 200,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=14 → completion=200 → total=214
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:18:50.706
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 2262 bytes
+   总耗时: 1.542s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:19:31.036
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*', 'Content-Type': 'application/json', 'Content-Length': '228'}
+   请求体 (228B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "用一句话介绍自己，直接回答，不要输出思考过程"
+         }
+       ],
+       "max_tokens": 200,
+       "temperature": 0.5,
+       "stop": [
+         "\n\n",
+         "\n\n\n"
+       ]
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:19:31.039
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+   请求体: 228 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:19:31.317
+   状态: 200 OK
+   耗时: 0.260s
+   大小: 593 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:19:30 GMT', 'server': 'uvicorn', 'content-length': '593', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (593B):
+     {
+       "id": "chatcmpl-95c4bf75ab3e2aba",
+       "object": "chat.completion",
+       "created": 1777130371,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:"
+           },
+           "logprobs": null,
+           "finish_reason": "stop",
+           "stop_reason": "\n\n",
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 22,
+         "total_tokens": 29,
+         "completion_tokens": 7,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=22 → completion=7 → total=29
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:19:31.322
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 671 bytes
+   总耗时: 0.265s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:19:42.376
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Content-Type': 'application/json', 'Accept': 'text/event-stream', 'Content-Length': '190'}
+   请求体 (190B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "什么是机器学习？用3句话回答"
+         }
+       ],
+       "max_tokens": 100,
+       "temperature": 0.5,
+       "stream": true
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:19:42.378
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: User-Agent: curl/8.14.1
+   头: Accept: text/event-stream
+   请求体: 190 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:19:43.192
+   状态: 200 OK
+   耗时: 0.799s
+   大小: 22778 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:19:42 GMT', 'server': 'uvicorn', 'content-type': 'text/event-stream; charset=utf-8', 'connection': 'close', 'transfer-encoding': 'chunked'}
+   响应体 (22778B):
+     data: {"id":"chatcmpl-8a86292f429ff2d1","object":"chat.completion.chunk","created":1777130382,"model":"qwen3.6-35b","choices":[{"index":0,"delta":{"role":"assistant","content":""},"logprobs":null,"finish_reason":null}],"prompt_token_ids":null}
+     
+     data: {"id":"chatcmpl-8a86292f429ff2d1","object":"chat.completion.chunk","created":1777130382,"model":"qwen3.6-35b","choices":[{"index":0,"delta":{"reasoning":"Here"},"logprobs":null,"finish_reason":null,"token_ids":null}]}
+     
+     data: {"id":"chatcmpl-8a86292f429ff2d1","object":"chat.completion.chunk","created":1777130382,"model":"qwen3.6-35b","choices":[{"index":0,"delta":{"reasoning":"'s"},"logprobs":null,"finish_reason":null,"token_ids":null}]}
+     
+     data: {"id":"chatcmpl-8a86292f429ff2d1","object":"chat.completion.chunk","created":1777130382,"model":"qwen3.6-35b","choices":[{"index":0,"delta":{"reasoning":" a"},"logprobs":null,"finish_reason":null,"token_ids":null}]}
+     
+     data: {"id":"chatcmpl-8a86292f429ff2d1","object":"chat.completion.chunk","created":1777130382,"model":"qwen3.6-35b","choices":[{"index":0,"delta":{"reasoning":" thinking"},"logprobs":null,"finish_reason":null,"token_ids":null}]}
+     
+     data: {"id":"chatcmpl-8a86292f429ff2d1","object":"chat.completion.chunk","created":1777130382,"model":"qwen3.6-35b","choices":[{"index":0,"delta":{"reasoning":" process"},"logprobs":null,"finish_reason":null,"token_ids":null}]}
+     
+     data: {"id":"chatcmpl-8a86292f429ff2d1","object":"chat.completion.chunk","created":1777130382,"model":"qwen3.6-35b","choices":[{"index":0,"delta":{"reasoning":":"},"logprobs":null,"finish_reason":null,"token_ids":null}]}
+     
+     data: {"id":"chatcmpl-8a86292f429ff2d1","object":"chat.completion.chunk","created":1777130382,"model":"qwen3.6-35b","choices":[{"index":0,"delta":{"reasoning":"\n\n"},"logprobs":null,"finish_reason":null,"token_ids":null}]}
+     
+     data: {"id":"chatcmpl-8a86292f429ff2d1","object":"chat.completion.chunk","created":1777130382,"model":"qwen3.6-35b","choices":[{"index":0,"delta":{"reasoning":"1"},"logprobs":nul
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:19:43.202
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 22778 bytes
+   总耗时: 0.810s
+======================================================================
+
+======================================================================
+❌ 【ERROR】 2026-04-25 23:19:43.204
+   POST /v1/chat/completions
+   错误: Expecting value: line 1 column 1 (char 0)
+   耗时: 0.811s
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:19:43.300
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*', 'Content-Type': 'application/json', 'Content-Length': '170'}
+   请求体 (170B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "什么是机器学习？用3句话回答"
+         }
+       ],
+       "max_tokens": 100,
+       "temperature": 0.5
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:19:43.301
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+   请求体: 170 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:19:44.289
+   状态: 200 OK
+   耗时: 0.974s
+   大小: 1007 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:19:43 GMT', 'server': 'uvicorn', 'content-length': '1007', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (1007B):
+     {
+       "id": "chatcmpl-ae812986d849325d",
+       "object": "chat.completion",
+       "created": 1777130383,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - **Question:** 什么是机器学习？ (What is machine learning?)\n   - **Constraint:** 用3句话回答 (Answer in exactly 3 sentences)\n\n2.  **Identify Key Concepts of Machine Learning:**\n   - It's a subset of artificial intelligence.\n   - It involves algorithms that learn patterns from data.\n   - It enables computers to make predictions or decisions without being",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - **Question:** 什么是机器学习？ (What is machine learning?)\n   - **Constraint:** 用3句话回答 (Answer in exactly 3 sentences)\n\n2.  **Identify Key Concepts of Machine Learning:**\n   - It's a subset of artificial intelligence.\n   - It involves algorithms that learn patterns from data.\n   - It enables computers to make predictions or decisions without being"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 17,
+         "total_tokens": 117,
+         "completion_tokens": 100,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=17 → completion=100 → total=117
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:19:44.294
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 1496 bytes
+   总耗时: 0.978s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:23:03.525
+   来源: 192.168.1.25
+   请求: GET /v1/models
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:23:03.526
+   目标: http://58.23.129.98:8000/v1/models
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:23:03.687
+   状态: 200 OK
+   耗时: 0.146s
+   大小: 479 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:23:02 GMT', 'server': 'uvicorn', 'content-length': '479', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (479B):
+     {
+       "object": "list",
+       "data": [
+         {
+           "id": "qwen3.6-35b",
+           "object": "model",
+           "created": 1777130583,
+           "owned_by": "vllm",
+           "root": "/data/models/Qwen3.6-35B-A3B-FP8",
+           "parent": null,
+           "max_model_len": 262144,
+           "permission": [
+             {
+               "id": "modelperm-a3eae09907b16574",
+               "object": "model_permission",
+               "created": 1777130583,
+               "allow_create_engine": false,
+               "allow_sampling": true,
+               "allow_logprobs": true,
+               "allow_search_indices": false,
+               "allow_view": true,
+               "allow_fine_tuning": false,
+               "organization": "*",
+               "group": null,
+               "is_blocking": false
+             }
+           ]
+         }
+       ]
+     }
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:23:03.691
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 520 bytes
+   总耗时: 0.150s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:25:01.043
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*', 'Content-Type': 'application/json', 'Content-Length': '284'}
+   请求体 (284B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "system",
+           "content": "你是一个简洁直接的AI助手，用中文回答问题。"
+         },
+         {
+           "role": "user",
+           "content": "介绍一下你自己，简单说就行"
+         }
+       ],
+       "max_tokens": 500,
+       "temperature": 0.7
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:25:01.045
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+   请求体: 284 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:25:04.059
+   状态: 200 OK
+   耗时: 2.997s
+   大小: 2458 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:25:00 GMT', 'server': 'uvicorn', 'content-length': '2458', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (2458B):
+     {
+       "id": "chatcmpl-95f21ac3f3f7ea91",
+       "object": "chat.completion",
+       "created": 1777130701,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "\n\n我是 Qwen（通义千问），由阿里巴巴集团旗下通义实验室自主研发的大语言模型。我能协助回答问题、创作文字、逻辑推理、编程等。有什么我可以帮你的吗？",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - **User:** \"介绍一下你自己，简单说就行\" (Introduce yourself, keep it simple)\n   - **Language:** Chinese\n   - **Requirement:** Concise, direct introduction\n\n2.  **Identify Key Constraints:**\n   - I am Qwen (通义千问), developed by Alibaba Group's Tongyi Lab.\n   - Must respond in Chinese.\n   - Keep it simple and direct.\n\n3.  **Formulate Response (Internal Refinement):**\n   - I am Qwen, a large language model developed by Alibaba Group's Tongyi Lab. I'm designed to assist with a wide range of tasks, including answering questions, generating text, logical reasoning, programming, and more. I aim to provide clear, accurate, and helpful responses. How can I assist you today?\n   - Translate/Adapt to Chinese concisely: 我是 Qwen（通义千问），由阿里巴巴集团旗下通义实验室自主研发的大语言模型。我能协助回答问题、创作文字、逻辑推理、编程等。有什么我可以帮你的吗？\n\n4.  **Check Against Constraints:**\n   - Concise? Yes.\n   - Direct? Yes.\n   - In Chinese? Yes.\n   - Matches identity? Yes.\n\n5.  **Final Output Generation:** (matches the refined version)\n   我是 Qwen（通义千问），由阿里巴巴集团旗下通义实验室自主研发的大语言模型。我能协助回答问题、创作文字、逻辑推理、编程等。有什么我可以帮你的吗？✅\n   - Self-Correction/Verification during thought: The response is direct, covers identity, origin, capabilities, and ends with an offer to help. Fits all constraints. No extra fluff. Ready. \n   - Output matches the final refined version.✅\n"
+           },
+           "logprobs": null,
+           "finish_reason": "stop",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 31,
+         "total_tokens": 465,
+         "completion_tokens": 434,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=31 → completion=434 → total=465
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:25:04.062
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 2512 bytes
+   总耗时: 3.001s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:30:01.707
+   来源: 192.168.1.25
+   请求: GET /v1/models
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:30:01.712
+   目标: http://58.23.129.98:8000/v1/models
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:30:01.870
+   状态: 200 OK
+   耗时: 0.132s
+   大小: 479 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:30:01 GMT', 'server': 'uvicorn', 'content-length': '479', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (479B):
+     {
+       "object": "list",
+       "data": [
+         {
+           "id": "qwen3.6-35b",
+           "object": "model",
+           "created": 1777131001,
+           "owned_by": "vllm",
+           "root": "/data/models/Qwen3.6-35B-A3B-FP8",
+           "parent": null,
+           "max_model_len": 262144,
+           "permission": [
+             {
+               "id": "modelperm-b3acc9cc594a3828",
+               "object": "model_permission",
+               "created": 1777131001,
+               "allow_create_engine": false,
+               "allow_sampling": true,
+               "allow_logprobs": true,
+               "allow_search_indices": false,
+               "allow_view": true,
+               "allow_fine_tuning": false,
+               "organization": "*",
+               "group": null,
+               "is_blocking": false
+             }
+           ]
+         }
+       ]
+     }
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:30:01.874
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 520 bytes
+   总耗时: 0.136s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:31:43.646
+   来源: 127.0.0.1
+   请求: GET /v1/models
+   头部: {'Host': '127.0.0.1:8765', 'User-Agent': 'curl/8.18.0', 'Accept': '*/*'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:31:43.647
+   目标: http://58.23.129.98:8000/v1/models
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: User-Agent: curl/8.18.0
+   头: Accept: */*
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:31:43.933
+   状态: 200 OK
+   耗时: 0.266s
+   大小: 479 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:31:42 GMT', 'server': 'uvicorn', 'content-length': '479', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (479B):
+     {
+       "object": "list",
+       "data": [
+         {
+           "id": "qwen3.6-35b",
+           "object": "model",
+           "created": 1777131103,
+           "owned_by": "vllm",
+           "root": "/data/models/Qwen3.6-35B-A3B-FP8",
+           "parent": null,
+           "max_model_len": 262144,
+           "permission": [
+             {
+               "id": "modelperm-86f1e81dbde95023",
+               "object": "model_permission",
+               "created": 1777131103,
+               "allow_create_engine": false,
+               "allow_sampling": true,
+               "allow_logprobs": true,
+               "allow_search_indices": false,
+               "allow_view": true,
+               "allow_fine_tuning": false,
+               "organization": "*",
+               "group": null,
+               "is_blocking": false
+             }
+           ]
+         }
+       ]
+     }
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:31:43.935
+   发送给: 127.0.0.1
+   状态: 200
+   大小: 520 bytes
+   总耗时: 0.268s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:32:49.724
+   来源: 192.168.1.25
+   请求: GET /health
+   头部: {'Accept-Encoding': 'identity', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Connection': 'close'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:32:49.726
+   目标: http://58.23.129.98:8000/health
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:32:49.915
+   状态: 200 OK
+   耗时: 0.169s
+   大小: 0 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:32:49 GMT', 'server': 'uvicorn', 'content-length': '0', 'connection': 'close'}
+   响应体 (0B):
+     
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:32:49.916
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 0 bytes
+   总耗时: 0.171s
+======================================================================
+
+======================================================================
+❌ 【ERROR】 2026-04-25 23:32:49.917
+   GET /health
+   错误: Expecting value: line 1 column 1 (char 0)
+   耗时: 0.171s
+======================================================================
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:32:49.943
+   来源: 192.168.1.25
+   请求: GET /v1/models
+   头部: {'Accept-Encoding': 'identity', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Connection': 'close'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:32:49.944
+   目标: http://58.23.129.98:8000/v1/models
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:32:49.995
+   状态: 200 OK
+   耗时: 0.034s
+   大小: 479 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:32:49 GMT', 'server': 'uvicorn', 'content-length': '479', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (479B):
+     {
+       "object": "list",
+       "data": [
+         {
+           "id": "qwen3.6-35b",
+           "object": "model",
+           "created": 1777131169,
+           "owned_by": "vllm",
+           "root": "/data/models/Qwen3.6-35B-A3B-FP8",
+           "parent": null,
+           "max_model_len": 262144,
+           "permission": [
+             {
+               "id": "modelperm-8ae05363e715ab83",
+               "object": "model_permission",
+               "created": 1777131169,
+               "allow_create_engine": false,
+               "allow_sampling": true,
+               "allow_logprobs": true,
+               "allow_search_indices": false,
+               "allow_view": true,
+               "allow_fine_tuning": false,
+               "organization": "*",
+               "group": null,
+               "is_blocking": false
+             }
+           ]
+         }
+       ]
+     }
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:32:49.997
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 520 bytes
+   总耗时: 0.037s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:32:50.095
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '114', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (114B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "Hello"
+         }
+       ],
+       "max_tokens": 20,
+       "temperature": 0.7
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:32:50.096
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 114 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:32:50.481
+   状态: 200 OK
+   耗时: 0.368s
+   大小: 636 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:32:50 GMT', 'server': 'uvicorn', 'content-length': '636', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (636B):
+     {
+       "id": "chatcmpl-b09fc612a03df3ce",
+       "object": "chat.completion",
+       "created": 1777131170,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 11,
+         "total_tokens": 31,
+         "completion_tokens": 20,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=11 → completion=20 → total=31
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:32:50.485
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 756 bytes
+   总耗时: 0.373s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:32:50.549
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '111', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (111B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "Hi"
+         }
+       ],
+       "max_tokens": 10,
+       "temperature": 0.0
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:32:50.551
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 111 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:33:26.514
+   状态: 200 OK
+   耗时: 35.948s
+   大小: 601 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:33:25 GMT', 'server': 'uvicorn', 'content-length': '601', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (601B):
+     {
+       "id": "chatcmpl-b408f2f1f506d6be",
+       "object": "chat.completion",
+       "created": 1777131206,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1. ",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1. "
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 11,
+         "total_tokens": 21,
+         "completion_tokens": 10,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=11 → completion=10 → total=21
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:33:26.516
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 686 bytes
+   总耗时: 35.951s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:33:26.772
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '111', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (111B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "Hi"
+         }
+       ],
+       "max_tokens": 10,
+       "temperature": 0.3
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:33:26.774
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 111 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:33:27.289
+   状态: 200 OK
+   耗时: 0.498s
+   大小: 601 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:33:26 GMT', 'server': 'uvicorn', 'content-length': '601', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (601B):
+     {
+       "id": "chatcmpl-9b7a9b8fdd872660",
+       "object": "chat.completion",
+       "created": 1777131206,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1. ",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1. "
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 11,
+         "total_tokens": 21,
+         "completion_tokens": 10,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=11 → completion=10 → total=21
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:33:27.293
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 686 bytes
+   总耗时: 0.502s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:33:27.723
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '111', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (111B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "Hi"
+         }
+       ],
+       "max_tokens": 10,
+       "temperature": 0.7
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:33:27.732
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 111 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:33:27.987
+   状态: 200 OK
+   耗时: 0.240s
+   大小: 601 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:33:27 GMT', 'server': 'uvicorn', 'content-length': '601', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (601B):
+     {
+       "id": "chatcmpl-bc9c5e8dd46819ab",
+       "object": "chat.completion",
+       "created": 1777131207,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1. ",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1. "
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 11,
+         "total_tokens": 21,
+         "completion_tokens": 10,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=11 → completion=10 → total=21
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:33:27.992
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 686 bytes
+   总耗时: 0.245s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:33:28.021
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '111', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (111B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "Hi"
+         }
+       ],
+       "max_tokens": 10,
+       "temperature": 1.0
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:33:28.023
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 111 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:33:28.302
+   状态: 200 OK
+   耗时: 0.266s
+   大小: 601 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:33:27 GMT', 'server': 'uvicorn', 'content-length': '601', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (601B):
+     {
+       "id": "chatcmpl-b831be93446bde64",
+       "object": "chat.completion",
+       "created": 1777131208,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1. ",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1. "
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 11,
+         "total_tokens": 21,
+         "completion_tokens": 10,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=11 → completion=10 → total=21
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:33:28.305
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 686 bytes
+   总耗时: 0.269s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:33:28.348
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '115', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (115B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "test 1"
+         }
+       ],
+       "max_tokens": 20,
+       "temperature": 0.7
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:33:28.350
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 115 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:33:28.671
+   状态: 200 OK
+   耗时: 0.307s
+   大小: 636 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:33:28 GMT', 'server': 'uvicorn', 'content-length': '636', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (636B):
+     {
+       "id": "chatcmpl-a52fd24e722aa1eb",
+       "object": "chat.completion",
+       "created": 1777131208,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 13,
+         "total_tokens": 33,
+         "completion_tokens": 20,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=13 → completion=20 → total=33
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:33:28.675
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 756 bytes
+   总耗时: 0.311s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:33:28.797
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '115', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (115B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "test 2"
+         }
+       ],
+       "max_tokens": 20,
+       "temperature": 0.7
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:33:28.799
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 115 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:33:29.147
+   状态: 200 OK
+   耗时: 0.332s
+   大小: 636 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:33:28 GMT', 'server': 'uvicorn', 'content-length': '636', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (636B):
+     {
+       "id": "chatcmpl-b9023850c82620f3",
+       "object": "chat.completion",
+       "created": 1777131208,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 13,
+         "total_tokens": 33,
+         "completion_tokens": 20,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=13 → completion=20 → total=33
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:33:29.149
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 756 bytes
+   总耗时: 0.334s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:33:29.381
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '115', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (115B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "test 3"
+         }
+       ],
+       "max_tokens": 20,
+       "temperature": 0.7
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:33:29.383
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 115 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:33:29.660
+   状态: 200 OK
+   耗时: 0.263s
+   大小: 636 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:33:29 GMT', 'server': 'uvicorn', 'content-length': '636', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (636B):
+     {
+       "id": "chatcmpl-9125d5a4d671c0eb",
+       "object": "chat.completion",
+       "created": 1777131209,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 13,
+         "total_tokens": 33,
+         "completion_tokens": 20,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=13 → completion=20 → total=33
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:33:29.662
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 756 bytes
+   总耗时: 0.265s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:33:29.896
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '115', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (115B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "test 4"
+         }
+       ],
+       "max_tokens": 20,
+       "temperature": 0.7
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:33:29.898
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 115 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:33:30.203
+   状态: 200 OK
+   耗时: 0.290s
+   大小: 636 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:33:29 GMT', 'server': 'uvicorn', 'content-length': '636', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (636B):
+     {
+       "id": "chatcmpl-b2bde5cf3da2ef98",
+       "object": "chat.completion",
+       "created": 1777131209,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 13,
+         "total_tokens": 33,
+         "completion_tokens": 20,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=13 → completion=20 → total=33
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:33:30.206
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 756 bytes
+   总耗时: 0.293s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:33:30.388
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '115', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (115B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "test 5"
+         }
+       ],
+       "max_tokens": 20,
+       "temperature": 0.7
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:33:30.394
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 115 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:33:30.710
+   状态: 200 OK
+   耗时: 0.301s
+   大小: 636 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:33:30 GMT', 'server': 'uvicorn', 'content-length': '636', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (636B):
+     {
+       "id": "chatcmpl-b387e3180f8726ac",
+       "object": "chat.completion",
+       "created": 1777131210,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 13,
+         "total_tokens": 33,
+         "completion_tokens": 20,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=13 → completion=20 → total=33
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:33:30.714
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 756 bytes
+   总耗时: 0.305s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:33:30.796
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '115', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (115B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "test 6"
+         }
+       ],
+       "max_tokens": 20,
+       "temperature": 0.7
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:33:30.798
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 115 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:33:31.153
+   状态: 200 OK
+   耗时: 0.340s
+   大小: 636 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:33:30 GMT', 'server': 'uvicorn', 'content-length': '636', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (636B):
+     {
+       "id": "chatcmpl-a08d79a23e41edb4",
+       "object": "chat.completion",
+       "created": 1777131210,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 13,
+         "total_tokens": 33,
+         "completion_tokens": 20,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=13 → completion=20 → total=33
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:33:31.157
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 756 bytes
+   总耗时: 0.344s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:33:31.373
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '115', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (115B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "test 7"
+         }
+       ],
+       "max_tokens": 20,
+       "temperature": 0.7
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:33:31.375
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 115 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:33:31.668
+   状态: 200 OK
+   耗时: 0.278s
+   大小: 636 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:33:31 GMT', 'server': 'uvicorn', 'content-length': '636', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (636B):
+     {
+       "id": "chatcmpl-b6046258dd1ab7a7",
+       "object": "chat.completion",
+       "created": 1777131211,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 13,
+         "total_tokens": 33,
+         "completion_tokens": 20,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=13 → completion=20 → total=33
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:33:31.673
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 756 bytes
+   总耗时: 0.283s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:33:31.819
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '115', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (115B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "test 8"
+         }
+       ],
+       "max_tokens": 20,
+       "temperature": 0.7
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:33:31.820
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 115 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:33:32.210
+   状态: 200 OK
+   耗时: 0.374s
+   大小: 644 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:33:31 GMT', 'server': 'uvicorn', 'content-length': '644', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (644B):
+     {
+       "id": "chatcmpl-89341915d241f1ea",
+       "object": "chat.completion",
+       "created": 1777131211,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:** The user just said",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:** The user just said"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 13,
+         "total_tokens": 33,
+         "completion_tokens": 20,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=13 → completion=20 → total=33
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:33:32.214
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 772 bytes
+   总耗时: 0.379s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:33:32.532
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '115', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (115B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "test 9"
+         }
+       ],
+       "max_tokens": 20,
+       "temperature": 0.7
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:33:32.534
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 115 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:33:33.170
+   状态: 200 OK
+   耗时: 0.621s
+   大小: 636 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:33:32 GMT', 'server': 'uvicorn', 'content-length': '636', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (636B):
+     {
+       "id": "chatcmpl-a7f56ca932932236",
+       "object": "chat.completion",
+       "created": 1777131212,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 13,
+         "total_tokens": 33,
+         "completion_tokens": 20,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=13 → completion=20 → total=33
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:33:33.173
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 756 bytes
+   总耗时: 0.624s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:33:33.352
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '116', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (116B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "test 10"
+         }
+       ],
+       "max_tokens": 20,
+       "temperature": 0.7
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:33:33.355
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 116 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:33:33.713
+   状态: 200 OK
+   耗时: 0.340s
+   大小: 636 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:33:33 GMT', 'server': 'uvicorn', 'content-length': '636', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (636B):
+     {
+       "id": "chatcmpl-a782d6ffa34f9fa3",
+       "object": "chat.completion",
+       "created": 1777131213,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Input:**\n   - User"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 14,
+         "total_tokens": 34,
+         "completion_tokens": 20,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=14 → completion=20 → total=34
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:33:33.715
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 756 bytes
+   总耗时: 0.342s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:33:33.907
+   来源: 192.168.1.25
+   请求: POST /v1/chat/completions
+   头部: {'Accept-Encoding': 'identity', 'Content-Length': '143', 'Host': '192.168.1.17:8765', 'User-Agent': 'Python-urllib/3.13', 'Content-Type': 'application/json', 'Connection': 'close'}
+   请求体 (143B):
+     {
+       "model": "qwen3.6-35b",
+       "messages": [
+         {
+           "role": "user",
+           "content": "Write a Chinese poem about spring"
+         }
+       ],
+       "max_tokens": 128,
+       "temperature": 0.7
+     }
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:33:33.909
+   目标: http://58.23.129.98:8000/v1/chat/completions
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: Content-Type: application/json
+   头: Accept-Encoding: identity
+   头: User-Agent: Python-urllib/3.13
+   请求体: 143 bytes
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:33:34.969
+   状态: 200 OK
+   耗时: 1.043s
+   大小: 1070 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:33:33 GMT', 'server': 'uvicorn', 'content-length': '1070', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (1070B):
+     {
+       "id": "chatcmpl-b064c61d58a3aaf7",
+       "object": "chat.completion",
+       "created": 1777131214,
+       "model": "qwen3.6-35b",
+       "choices": [
+         {
+           "index": 0,
+           "message": {
+             "role": "assistant",
+             "content": "Here's a thinking process:\n\n1.  **Analyze User Request:**\n   - **Topic:** Spring (春)\n   - **Language:** Chinese\n   - **Format:** Poem (诗)\n   - **Implicit Expectations:** Traditional Chinese poetic form (likely regulated verse or quatrain), classical imagery, proper tone/rhyme scheme, evocative of spring themes.\n\n2.  **Identify Key Elements of Chinese Spring Poetry:**\n   - Imagery: blossoms (peach, plum, apricot), willow branches, swallows returning, gentle breeze, melting ice, rain,",
+             "refusal": null,
+             "annotations": null,
+             "audio": null,
+             "function_call": null,
+             "tool_calls": [],
+             "reasoning": "Here's a thinking process:\n\n1.  **Analyze User Request:**\n   - **Topic:** Spring (春)\n   - **Language:** Chinese\n   - **Format:** Poem (诗)\n   - **Implicit Expectations:** Traditional Chinese poetic form (likely regulated verse or quatrain), classical imagery, proper tone/rhyme scheme, evocative of spring themes.\n\n2.  **Identify Key Elements of Chinese Spring Poetry:**\n   - Imagery: blossoms (peach, plum, apricot), willow branches, swallows returning, gentle breeze, melting ice, rain,"
+           },
+           "logprobs": null,
+           "finish_reason": "length",
+           "stop_reason": null,
+           "token_ids": null
+         }
+       ],
+       "service_tier": null,
+       "system_fingerprint": null,
+       "usage": {
+         "prompt_tokens": 16,
+         "total_tokens": 144,
+         "completion_tokens": 128,
+         "prompt_tokens_details": null
+       },
+       "prompt_logprobs": null,
+       "prompt_token_ids": null,
+       "kv_transfer_params": null
+     }
+   📊 Token: prompt=16 → completion=128 → total=144
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:33:34.973
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 1622 bytes
+   总耗时: 1.048s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-25 23:37:45.792
+   来源: 192.168.1.25
+   请求: GET /v1/models
+   头部: {'Host': '192.168.1.17:8765', 'User-Agent': 'curl/8.14.1', 'Accept': '*/*'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-25 23:37:45.794
+   目标: http://58.23.129.98:8000/v1/models
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: User-Agent: curl/8.14.1
+   头: Accept: */*
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-25 23:37:45.949
+   状态: 200 OK
+   耗时: 0.137s
+   大小: 479 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 15:37:45 GMT', 'server': 'uvicorn', 'content-length': '479', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (479B):
+     {
+       "object": "list",
+       "data": [
+         {
+           "id": "qwen3.6-35b",
+           "object": "model",
+           "created": 1777131465,
+           "owned_by": "vllm",
+           "root": "/data/models/Qwen3.6-35B-A3B-FP8",
+           "parent": null,
+           "max_model_len": 262144,
+           "permission": [
+             {
+               "id": "modelperm-8664e2bd7cb474a6",
+               "object": "model_permission",
+               "created": 1777131465,
+               "allow_create_engine": false,
+               "allow_sampling": true,
+               "allow_logprobs": true,
+               "allow_search_indices": false,
+               "allow_view": true,
+               "allow_fine_tuning": false,
+               "organization": "*",
+               "group": null,
+               "is_blocking": false
+             }
+           ]
+         }
+       ]
+     }
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-25 23:37:45.967
+   发送给: 192.168.1.25
+   状态: 200
+   大小: 520 bytes
+   总耗时: 0.156s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 00:01:40.090
+   来源: 127.0.0.1
+   请求: GET /v1/models
+   头部: {'Host': '127.0.0.1:8765', 'User-Agent': 'curl/8.18.0', 'Accept': '*/*'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 00:01:40.093
+   目标: http://58.23.129.98:8000/v1/models
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: User-Agent: curl/8.18.0
+   头: Accept: */*
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-26 00:01:40.211
+   状态: 200 OK
+   耗时: 0.091s
+   大小: 479 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 16:01:39 GMT', 'server': 'uvicorn', 'content-length': '479', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (479B):
+     {
+       "object": "list",
+       "data": [
+         {
+           "id": "qwen3.6-35b",
+           "object": "model",
+           "created": 1777132900,
+           "owned_by": "vllm",
+           "root": "/data/models/Qwen3.6-35B-A3B-FP8",
+           "parent": null,
+           "max_model_len": 262144,
+           "permission": [
+             {
+               "id": "modelperm-b5f0327d62a03251",
+               "object": "model_permission",
+               "created": 1777132900,
+               "allow_create_engine": false,
+               "allow_sampling": true,
+               "allow_logprobs": true,
+               "allow_search_indices": false,
+               "allow_view": true,
+               "allow_fine_tuning": false,
+               "organization": "*",
+               "group": null,
+               "is_blocking": false
+             }
+           ]
+         }
+       ]
+     }
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-26 00:01:40.215
+   发送给: 127.0.0.1
+   状态: 200
+   大小: 520 bytes
+   总耗时: 0.095s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 00:47:13.391
+   来源: 127.0.0.1
+   请求: GET /v1/models
+   头部: {'Host': '127.0.0.1:8765', 'User-Agent': 'curl/8.18.0', 'Accept': '*/*'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 00:47:13.397
+   目标: http://58.23.129.98:8000/v1/models
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: User-Agent: curl/8.18.0
+   头: Accept: */*
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-26 00:47:13.471
+   状态: 200 OK
+   耗时: 0.052s
+   大小: 479 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 16:47:12 GMT', 'server': 'uvicorn', 'content-length': '479', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (479B):
+     {
+       "object": "list",
+       "data": [
+         {
+           "id": "qwen3.6-35b",
+           "object": "model",
+           "created": 1777135633,
+           "owned_by": "vllm",
+           "root": "/data/models/Qwen3.6-35B-A3B-FP8",
+           "parent": null,
+           "max_model_len": 262144,
+           "permission": [
+             {
+               "id": "modelperm-a91829928f28ef93",
+               "object": "model_permission",
+               "created": 1777135633,
+               "allow_create_engine": false,
+               "allow_sampling": true,
+               "allow_logprobs": true,
+               "allow_search_indices": false,
+               "allow_view": true,
+               "allow_fine_tuning": false,
+               "organization": "*",
+               "group": null,
+               "is_blocking": false
+             }
+           ]
+         }
+       ]
+     }
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-26 00:47:13.475
+   发送给: 127.0.0.1
+   状态: 200
+   大小: 520 bytes
+   总耗时: 0.056s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 01:37:41.427
+   来源: 127.0.0.1
+   请求: GET /v1/models
+   头部: {'Host': '127.0.0.1:8765', 'User-Agent': 'curl/8.18.0', 'Accept': '*/*'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 01:37:41.429
+   目标: http://58.23.129.98:8000/v1/models
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: User-Agent: curl/8.18.0
+   头: Accept: */*
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-26 01:37:42.737
+   状态: 200 OK
+   耗时: 1.287s
+   大小: 479 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 17:37:42 GMT', 'server': 'uvicorn', 'content-length': '479', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (479B):
+     {
+       "object": "list",
+       "data": [
+         {
+           "id": "qwen3.6-35b",
+           "object": "model",
+           "created": 1777138662,
+           "owned_by": "vllm",
+           "root": "/data/models/Qwen3.6-35B-A3B-FP8",
+           "parent": null,
+           "max_model_len": 262144,
+           "permission": [
+             {
+               "id": "modelperm-81f52ea55ef12363",
+               "object": "model_permission",
+               "created": 1777138662,
+               "allow_create_engine": false,
+               "allow_sampling": true,
+               "allow_logprobs": true,
+               "allow_search_indices": false,
+               "allow_view": true,
+               "allow_fine_tuning": false,
+               "organization": "*",
+               "group": null,
+               "is_blocking": false
+             }
+           ]
+         }
+       ]
+     }
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-26 01:37:42.741
+   发送给: 127.0.0.1
+   状态: 200
+   大小: 520 bytes
+   总耗时: 1.290s
+======================================================================
+
+======================================================================
+📥 【INCOMING REQUEST】 2026-04-26 02:43:49.322
+   来源: 127.0.0.1
+   请求: GET /v1/models
+   头部: {'Host': '127.0.0.1:8765', 'User-Agent': 'curl/8.18.0', 'Accept': '*/*'}
+   请求体: (空)
+======================================================================
+📤 【OUTGOING REQUEST】 2026-04-26 02:43:49.326
+   目标: http://58.23.129.98:8000/v1/models
+   头: Authorization: Bearer sk-78sadn09bjawde123e
+   头: User-Agent: curl/8.18.0
+   头: Accept: */*
+======================================================================
+📥 【REMOTE RESPONSE】 2026-04-26 02:43:49.446
+   状态: 200 OK
+   耗时: 0.096s
+   大小: 479 bytes
+   远程头: {'date': 'Sat, 25 Apr 2026 18:43:48 GMT', 'server': 'uvicorn', 'content-length': '479', 'content-type': 'application/json', 'connection': 'close'}
+   响应体 (479B):
+     {
+       "object": "list",
+       "data": [
+         {
+           "id": "qwen3.6-35b",
+           "object": "model",
+           "created": 1777142629,
+           "owned_by": "vllm",
+           "root": "/data/models/Qwen3.6-35B-A3B-FP8",
+           "parent": null,
+           "max_model_len": 262144,
+           "permission": [
+             {
+               "id": "modelperm-9b11a6b03cebc1ad",
+               "object": "model_permission",
+               "created": 1777142629,
+               "allow_create_engine": false,
+               "allow_sampling": true,
+               "allow_logprobs": true,
+               "allow_search_indices": false,
+               "allow_view": true,
+               "allow_fine_tuning": false,
+               "organization": "*",
+               "group": null,
+               "is_blocking": false
+             }
+           ]
+         }
+       ]
+     }
+======================================================================
+📤 【CLIENT RESPONSE】 2026-04-26 02:43:49.448
+   发送给: 127.0.0.1
+   状态: 200
+   大小: 520 bytes
+   总耗时: 0.099s
+======================================================================
+

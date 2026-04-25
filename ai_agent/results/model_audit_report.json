@@ -1,0 +1,57 @@
+{
+  "timestamp": "2026-04-25 21:26:28",
+  "available_configs": [],
+  "unavailable_configs": [
+    "qwen3.6-35b-local",
+    "qwen3.6-35b-alt",
+    "ollama-cloud",
+    "ollama-cloud-2",
+    "modelstudio",
+    "zhangtuo-ai",
+    "local-ollama",
+    "remote-ollama"
+  ],
+  "detailed_results": {
+    "qwen3.6-35b-local": {
+      "success": false,
+      "message": "Connection failed (code: 2)",
+      "type": "local_api"
+    },
+    "qwen3.6-35b-alt": {
+      "success": false,
+      "message": "Connection failed (code: 2)",
+      "type": "local_api"
+    },
+    "ollama-cloud": {
+      "success": false,
+      "message": "Connection failed (code: 2)",
+      "type": "cloud_api"
+    },
+    "ollama-cloud-2": {
+      "success": false,
+      "message": "Connection failed (code: 2)",
+      "type": "cloud_api"
+    },
+    "modelstudio": {
+      "success": false,
+      "message": "Connection failed (code: 2)",
+      "type": "cloud_api"
+    },
+    "zhangtuo-ai": {
+      "success": false,
+      "message": "Connection failed (code: 2)",
+      "type": "cloud_api"
+    },
+    "local-ollama": {
+      "success": false,
+      "message": "Connection failed (code: 2)",
+      "models": [],
+      "type": "local_ollama"
+    },
+    "remote-ollama": {
+      "success": false,
+      "message": "Connection failed (code: 2)",
+      "type": "remote_ollama"
+    }
+  }
+}

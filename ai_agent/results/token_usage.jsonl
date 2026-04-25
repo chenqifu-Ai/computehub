@@ -1,0 +1,5 @@
+{"time": "2026-04-25T09:34:56.743440", "model": "qwen3.6-35b", "prompt_tokens": 83, "completion_tokens": 187, "total_tokens": 270, "cost_cny": 0.0}
+{"time": "2026-04-25T09:43:44.060476", "model": "qwen3.6-35b", "prompt_tokens": 85, "completion_tokens": 241, "total_tokens": 326, "cost_cny": 0.0}
+{"time": "2026-04-25T09:45:30.159652", "model": "qwen3.6-35b", "prompt_tokens": 85, "completion_tokens": 474, "total_tokens": 559, "cost_cny": 0.0}
+{"time": "2026-04-25T09:45:32.385063", "model": "qwen3.6-35b", "prompt_tokens": 83, "completion_tokens": 318, "total_tokens": 401, "cost_cny": 0.0}
+{"time": "2026-04-25T09:45:40.894185", "model": "qwen3.6-35b", "prompt_tokens": 84, "completion_tokens": 1143, "total_tokens": 1227, "cost_cny": 0.0}

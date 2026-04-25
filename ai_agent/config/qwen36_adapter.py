@@ -16,8 +16,57 @@ qwen3.6-35b API 统一适配层 v5 (最终版)
 
 import re
 import os
+import json
+import time
+import datetime
 import requests
 from typing import Optional, Dict, Any, List
+from pathlib import Path
+
+# ===== Token 使用量记录 =====
+_TOKEN_LOG_DIR = os.path.join(str(Path.home()), ".openclaw", "workspace", "ai_agent", "results")
+_TOKEN_LOG_FILE = os.path.join(_TOKEN_LOG_DIR, "token_usage.jsonl")
+_CONVERSATION_LOG_FILE = os.path.join(_TOKEN_LOG_DIR, "conversation_debug.jsonl")
+
+# ===== 对话计数器 =====
+_call_count = 0
+
+def _log_token_usage(prompt_tokens: int, completion_tokens: int, total_tokens: int, model: str = "qwen3.6-35b", cost_cny: float = 0.0):
+    """记录 token 使用量到日志文件"""
+    try:
+        os.makedirs(_TOKEN_LOG_DIR, exist_ok=True)
+        entry = {
+            "time": datetime.datetime.now().isoformat(),
+            "model": model,
+            "prompt_tokens": prompt_tokens,
+            "completion_tokens": completion_tokens,
+            "total_tokens": total_tokens,
+            "cost_cny": round(cost_cny, 6),
+        }
+        with open(_TOKEN_LOG_FILE, "a", encoding="utf-8") as f:
+            f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    except Exception as e:
+        pass  # 静默失败，不影响正常调用
+
+def _log_conversation(request_data: dict, response_data: dict, error: str = None):
+    """记录完整对话到日志"""
+    try:
+        global _call_count
+        _call_count += 1
+        os.makedirs(_TOKEN_LOG_DIR, exist_ok=True)
+        
+        log_entry = {
+            "id": _call_count,
+            "time": datetime.datetime.now().isoformat(),
+            "request": request_data,
+            "response": response_data if response_data else {},
+            "error": error,
+        }
+        
+        with open(_CONVERSATION_LOG_FILE, "a", encoding="utf-8") as f:
+            f.write(json.dumps(log_entry, ensure_ascii=False, indent=2) + "\n")
+    except Exception as e:
+        pass  # 静默失败，不影响正常调用
 
 
 class Qwen36Adapter:
@@ -39,28 +88,60 @@ class Qwen36Adapter:
 
     def _call(self, messages: List[Dict], max_tokens=2000, temperature=0.7) -> Dict:
         """调用 API"""
-        resp = requests.post(
-            self.api_url, headers=self.headers,
-            json={"model": self.model, "messages": messages,
-                  "max_tokens": max_tokens, "temperature": temperature},
-            timeout=self.timeout
-        )
-        resp.raise_for_status()
-        data = resp.json()
-        msg = data["choices"][0]["message"]
-        # 核心修复：content 字段才是正确答案，reasoning 只是推理过程
-        # 旧逻辑：reasoning or content → 永远取 reasoning（因为总不为空）
-        # 新逻辑：优先 content（干净答案），fallback reasoning
-        content = msg.get("content") or ""
-        reasoning = msg.get("reasoning") or ""
-        raw = content.strip() if content.strip() else reasoning.strip()
-        return {
-            "raw": raw,
-            "reasoning": reasoning,
-            "content": content,
-            "finish_reason": data["choices"][0].get("finish_reason"),
-            "usage": data.get("usage"),
+        request_data = {
+            "model": self.model,
+            "messages": messages,
+            "max_tokens": max_tokens,
+            "temperature": temperature,
+            "timeout": self.timeout,
         }
+        
+        try:
+            resp = requests.post(
+                self.api_url, headers=self.headers,
+                json=request_data,
+                timeout=self.timeout
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            
+            msg = data["choices"][0]["message"]
+            # 核心修复：content 字段才是正确答案，reasoning 只是推理过程
+            # 旧逻辑：reasoning or content → 永远取 reasoning（因为总不为空）
+            # 新逻辑：优先 content（干净答案），fallback reasoning
+            content = msg.get("content") or ""
+            reasoning = msg.get("reasoning") or ""
+            raw = content.strip() if content.strip() else reasoning.strip()
+
+            # 提取 usage 并记录
+            usage = data.get("usage", {})
+            prompt_tokens = usage.get("prompt_tokens", 0)
+            completion_tokens = usage.get("completion_tokens", 0)
+            total_tokens = usage.get("total_tokens", prompt_tokens + completion_tokens)
+
+            # 记录 token 使用量
+            if prompt_tokens or completion_tokens:
+                _log_token_usage(
+                    prompt_tokens=prompt_tokens,
+                    completion_tokens=completion_tokens,
+                    total_tokens=total_tokens,
+                    model=self.model,
+                )
+            
+            # 记录完整对话
+            _log_conversation(request_data, data)
+
+            return {
+                "raw": raw,
+                "reasoning": reasoning,
+                "content": content,
+                "finish_reason": data["choices"][0].get("finish_reason"),
+                "usage": data.get("usage"),
+            }
+        except Exception as e:
+            # 记录错误对话
+            _log_conversation(request_data, None, str(e))
+            raise
 
     def ask(self, prompt: str, system: str = None) -> str:
         """

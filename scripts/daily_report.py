@@ -215,8 +215,12 @@ def generate_next_day_plan(positions, stock_map):
             plan.append(f"📊 {name}({code}): 距成本{profit_pct:+.2f}%，关注止损位¥{stop_loss:.2f}")
 
     # 仓位管理
-    ratio = positions[0]["profit_pct"] if positions else 0
-    if p["has_data"] if p else False:
+    position_ratio = 0.0
+    cash = 0
+    if positions:
+        position_ratio = positions[0].get("position_ratio", 0)
+        cash = sum(p.get("cost_total", 0) for p in positions)
+    if p and p.get("has_data", False):
         plan.append(
             f"💼 仓位{position_ratio:.1f}%，现金¥{cash:,.0f}，当前仓位偏低"
         )
