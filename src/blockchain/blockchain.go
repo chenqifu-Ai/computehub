@@ -257,6 +257,23 @@ func (bc *Blockchain) calculateUSD(record *SettlementRecord) float64 {
 	return cost
 }
 
+// ─── 内部无锁方法 ───
+
+// getOrCreateWalletInternal - 必须持有写锁调用
+func (bc *Blockchain) getOrCreateWalletInternal(nodeID string) *Wallet {
+	if wallet, exists := bc.wallets[nodeID]; exists {
+		return wallet
+	}
+	wallet := &Wallet{
+		NodeID:     nodeID,
+		Balance:    0.0,
+		Created:    time.Now(),
+		LastTx:     time.Now(),
+	}
+	bc.wallets[nodeID] = wallet
+	return wallet
+}
+
 // ─── 钱包管理 ───
 
 // GetOrCreateWallet returns a wallet for the given node, creating it if needed.
@@ -282,17 +299,10 @@ func (bc *Blockchain) GetOrCreateWallet(nodeID string) *Wallet {
 func (bc *Blockchain) CreditWallet(nodeID string, amount float64) (*Wallet, error) {
 	bc.mu.Lock()
 	defer bc.mu.Unlock()
-
-	wallet, exists := bc.wallets[nodeID]
-	if !exists {
-		wallet = &Wallet{NodeID: nodeID, Created: time.Now()}
-		bc.wallets[nodeID] = wallet
-	}
-
+	wallet := bc.getOrCreateWalletInternal(nodeID)
 	wallet.Balance += amount
 	wallet.TotalEarned += amount
 	wallet.LastTx = time.Now()
-
 	return wallet, nil
 }
 
@@ -318,16 +328,35 @@ func (bc *Blockchain) DebitWallet(nodeID string, amount float64) (*Wallet, error
 	return wallet, nil
 }
 
+// ─── 内部无锁方法（调用方必须持有锁） ───
+
+func (bc *Blockchain) addTxLocked(tx *Transaction) {
+	tx.ID = fmt.Sprintf("tx-%d", time.Now().UnixNano())
+	tx.Timestamp = time.Now()
+	bc.mempool = append(bc.mempool, *tx)
+}
+
+func (bc *Blockchain) getOrCreateWalletLocked(nodeID string) *Wallet {
+	if wallet, exists := bc.wallets[nodeID]; exists {
+		return wallet
+	}
+	wallet := &Wallet{
+		NodeID:     nodeID,
+		Balance:    0.0,
+		Created:    time.Now(),
+		LastTx:     time.Now(),
+	}
+	bc.wallets[nodeID] = wallet
+	return wallet
+}
+
 // ─── 交易处理 ───
 
 // AddTransaction adds a transaction to the mempool.
 func (bc *Blockchain) AddTransaction(tx Transaction) {
 	bc.mu.Lock()
 	defer bc.mu.Unlock()
-
-	tx.ID = fmt.Sprintf("tx-%d", time.Now().UnixNano())
-	tx.Timestamp = time.Now()
-	bc.mempool = append(bc.mempool, tx)
+	bc.addTxLocked(&tx)
 }
 
 // MineBlock validates and appends mempool transactions to the chain.
@@ -404,8 +433,8 @@ func (bc *Blockchain) DisputeSettlement(recordID string) error {
 		record.Status = "disputed"
 		record.Disputed = true
 
-		// Add refund transaction
-		bc.AddTransaction(Transaction{
+		// Add refund transaction (no lock needed here since we hold the lock)
+		bc.addTxLocked(&Transaction{
 			ID:       fmt.Sprintf("refund-%s", recordID),
 			FromNode: record.NodeID,
 			ToNode:   record.NodeID + "-client",
@@ -443,7 +472,9 @@ func (bc *Blockchain) GetChainInfo() map[string]any {
 	defer bc.mu.RUnlock()
 
 	totalBlocks := bc.height + 1 // +1 for genesis block
-		"total_blocks":   bc.height,
+	result := map[string]any{
+		"height":       bc.height,
+		"total_blocks": totalBlocks,
 		"total_nodes":    len(bc.wallets),
 		"mempool_size":   len(bc.mempool),
 		"total_settlements": len(bc.settlements),
@@ -461,6 +492,7 @@ func (bc *Blockchain) GetChainInfo() map[string]any {
 		"gpu_price_usd":   DefaultGPUPricePerHour,
 		"cpu_price_usd":   DefaultCPPricePerHour,
 	}
+	return result
 }
 
 // SettleAllPending processes all pending settlements.
@@ -495,24 +527,8 @@ func (bc *Blockchain) SettleAllPending() int {
 	return count
 }
 
-// DebiteWallet is the internal debit implementation.
-func (bc *Blockchain) DebiteWallet(nodeID string, amount float64) (*Wallet, error) {
-	bc.mu.Lock()
-	defer bc.mu.Unlock()
-
-	wallet, exists := bc.wallets[nodeID]
-	if !exists {
-		wallet = &Wallet{NodeID: nodeID, Created: time.Now()}
-		bc.wallets[nodeID] = wallet
-	}
-
-	if wallet.Balance < amount {
-		return nil, fmt.Errorf("insufficient balance: %.4f CHB < %.4f CHB", wallet.Balance, amount)
-	}
-
-	wallet.Balance -= amount
-	wallet.TotalSpent += amount
-	wallet.LastTx = time.Now()
-
-	return wallet, nil
+// PayClient withdraws CHB from client wallet to pay for a settlement.
+func (bc *Blockchain) PayClient(clientID string, amount float64) error {
+	_, err := bc.DebitWallet(clientID, amount)
+	return err
 }

@@ -2,6 +2,7 @@
 package blockchain
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -168,7 +169,7 @@ func TestDebitWallet_Success(t *testing.T) {
 
 	bc.CreditWallet("debit-001", 50.0)
 
-	wallet, err := bc.DebiteWallet("debit-001", 30.0)
+	wallet, err := bc.DebitWallet("debit-001", 30.0)
 	if err != nil {
 		t.Fatalf("DebitWallet should succeed: %v", err)
 	}
@@ -186,7 +187,7 @@ func TestDebitWallet_InsufficientFunds(t *testing.T) {
 
 	bc.CreditWallet("debit-fail-001", 10.0)
 
-	_, err := bc.DebiteWallet("debit-fail-001", 50.0)
+	_, err := bc.DebitWallet("debit-fail-001", 50.0)
 	if err == nil {
 		t.Error("DebitWallet should fail with insufficient funds")
 	}
@@ -307,17 +308,22 @@ func TestSettleAllPending(t *testing.T) {
 	tmpDir := t.TempDir()
 	bc := NewBlockchain(filepath.Join(tmpDir, "chain.json"))
 
+	// Create wallet with funds
 	bc.CreditWallet("batch-client", 100.0)
 
+	// Create pending settlement records directly (bypass ExecuteSettlement which already settles)
 	for i := 0; i < 3; i++ {
 		record := &SettlementRecord{
-			TaskID:       "batch-001",
+			ID:           fmt.Sprintf("batch-pending-%d", i),
+			TaskID:       fmt.Sprintf("batch-task-%d", i),
 			NodeID:       "node-001",
 			ResourceType: "cpu",
 			CPUCount:     1,
 			DurationSecs: 1800,
+			CostCHB:      1.0, // Pre-calculated
+			Status:       "pending",
 		}
-		bc.ExecuteSettlement(record)
+		bc.settlements[record.ID] = record
 	}
 
 	settled := bc.SettleAllPending()
