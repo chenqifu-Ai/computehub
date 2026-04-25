@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+*.db
+*.log
+*.pid
+.env
+venv/
+.computehub/
+/tmp/computehub-sandbox/

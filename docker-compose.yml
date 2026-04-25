@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "${COMPUTEHUB_PORT:-8000}:8000"
+    environment:
+      - COMPUTEHUB_DATABASE_URL=sqlite+aiosqlite:///./computehub.db
+      - COMPUTEHUB_SECRET_KEY=dev-secret-key-change-in-production
+    volumes:
+      - ./computehub.db:/app/computehub.db
+    command: >
+      sh -c "python -c 'from src.core.database import engine, Base; import src.models; Base.metadata.create_all(bind=engine)' && uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload"
+
+  worker:
+    build: .
+    environment:
+      - COMPUTEHUB_DATABASE_URL=sqlite+aiosqlite:///./computehub.db
+      - COMPUTEHUB_SECRET_KEY=dev-secret-key-change-in-production
+      - COMPUTEHUB_REDIS_URL=redis://redis:6379/0
+    volumes:
+      - ./computehub.db:/app/computehub.db
+      - /tmp/computehub-sandbox:/tmp/computehub-sandbox
+    command: celery -A src.workers.task_worker worker --loglevel=info
+    depends_on:
+      - redis
+    profiles:
+      - worker
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    profiles:
+      - worker
