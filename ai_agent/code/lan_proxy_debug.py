@@ -20,13 +20,12 @@ os.makedirs(LOG_DIR, exist_ok=True)
 
 LOG_FILE = os.path.join(LOG_DIR, "lan_proxy_debug.log")
 
-console_handler = logging.StreamHandler()
 file_handler = logging.FileHandler(LOG_FILE, mode='a', encoding='utf-8')
 
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(message)s",
-    handlers=[console_handler, file_handler]
+    handlers=[file_handler]
 )
 logger = logging.getLogger("lan-proxy")
 
