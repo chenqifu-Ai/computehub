@@ -12,6 +12,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/chenqifu-Ai/computehub/src/blockchain"
 	"github.com/chenqifu-Ai/computehub/src/executor"
 	"github.com/chenqifu-Ai/computehub/src/gene"
 	"github.com/chenqifu-Ai/computehub/src/kernel"
@@ -66,6 +67,15 @@ type Gateway struct {
 	mu          sync.Mutex
 	startTime   time.Time
 	Port        int
+
+	// Sprint 3 — 区块链结算层
+	TokenMgr   *blockchain.TokenManager
+	Escrow     *blockchain.PaymentEscrow
+	Staking    *blockchain.NodeStaking
+	Disputes   *blockchain.DisputeResolution
+	Billing    *blockchain.BillingEngine
+	TaskReg    *blockchain.TaskRegistry
+	Chain      *blockchain.Blockchain
 }
 
 // ─── 初始化 ───
@@ -102,6 +112,16 @@ func NewGateway(port int, sandboxPath string, genesPath string) (*Gateway, error
 	// Initialize scheduler with balanced strategy
 	sc := scheduler.NewScheduler(nm, scheduler.StrategyBalanced)
 
+	// ── Sprint 3: 区块链结算层初始化 ──
+	chainFile := sandboxPath + "/blockchain.json"
+	chain := blockchain.NewBlockchain(chainFile)
+	tm := blockchain.NewTokenManager()
+	_ = chain // chain integrated via token manager for settlement
+
+	// 初始化系统账户
+	systemWallet := tm.GetOrCreateAccount("system")
+	_ = systemWallet
+
 	gw := &Gateway{
 		Kernel:    k,
 		Pipeline:  p,
@@ -111,7 +131,19 @@ func NewGateway(port int, sandboxPath string, genesPath string) (*Gateway, error
 		Scheduler: sc,
 		startTime: time.Now(),
 		Port:      port,
+
+		// Sprint 3
+		TokenMgr: tm,
+		Escrow:   blockchain.NewPaymentEscrow(tm),
+		Staking:  blockchain.NewNodeStaking(tm),
+		Disputes: blockchain.NewDisputeResolution(tm),
+		Billing:  blockchain.NewBillingEngine(),
+		TaskReg:  blockchain.NewTaskRegistry(),
+		Chain:    chain,
 	}
+
+	// 注册默认仲裁人
+	gw.Disputes.RegisterArbiter("system", 10.0)
 
 	return gw, nil
 }
@@ -127,11 +159,39 @@ func (g *Gateway) Serve(port int) error {
 	http.HandleFunc("/api/jobs/", g.handleJobDetail)
 	http.HandleFunc("/api/nodes", g.handleNodes)
 	// Distributed node endpoints (for node-to-gateway communication)
-	http.HandleFunc("/api/node/register", g.handleNodeRegister)
+		http.HandleFunc("/api/node/register", g.handleNodeRegister)
 	http.HandleFunc("/api/node/heartbeat", g.handleNodeHeartbeat)
 	http.HandleFunc("/api/node/assign", g.handleNodeAssign)
 	http.HandleFunc("/api/node/result", g.handleNodeResult)
 	http.HandleFunc("/api/node/capability", g.handleNodeCapability)
+	// Sprint 3: 区块链结算层 API
+	http.HandleFunc("/api/blockchain/info", g.handleChainInfo)
+	http.HandleFunc("/api/blockchain/token/balance", g.handleTokenBalance)
+	http.HandleFunc("/api/blockchain/token/deposit", g.handleTokenDeposit)
+	http.HandleFunc("/api/blockchain/token/withdraw", g.handleTokenWithdraw)
+	http.HandleFunc("/api/blockchain/token/transfer", g.handleTokenTransfer)
+	http.HandleFunc("/api/blockchain/token/stats", g.handleTokenStats)
+	http.HandleFunc("/api/blockchain/escrow/create", g.handleEscrowCreate)
+	http.HandleFunc("/api/blockchain/escrow/release", g.handleEscrowRelease)
+	http.HandleFunc("/api/blockchain/escrow/refund", g.handleEscrowRefund)
+	http.HandleFunc("/api/blockchain/staking/stake", g.handleStakingStake)
+	http.HandleFunc("/api/blockchain/staking/unstake", g.handleStakingUnstake)
+	http.HandleFunc("/api/blockchain/staking/slash", g.handleStakingSlash)
+	http.HandleFunc("/api/blockchain/staking/stats", g.handleStakingStats)
+	http.HandleFunc("/api/blockchain/dispute/open", g.handleDisputeOpen)
+	http.HandleFunc("/api/blockchain/dispute/vote", g.handleDisputeVote)
+	http.HandleFunc("/api/blockchain/dispute/resolve", g.handleDisputeResolve)
+	http.HandleFunc("/api/blockchain/dispute/get", g.handleDisputeGet)
+	http.HandleFunc("/api/blockchain/dispute/stats", g.handleDisputeStats)
+	http.HandleFunc("/api/blockchain/billing/calculate", g.handleBillingCalculate)
+	http.HandleFunc("/api/blockchain/billing/record", g.handleBillingRecordUsage)
+	http.HandleFunc("/api/blockchain/billing/list", g.handleBillingList)
+	http.HandleFunc("/api/blockchain/billing/summary", g.handleBillingSummary)
+	http.HandleFunc("/api/blockchain/task/register", g.handleTaskRegister)
+	http.HandleFunc("/api/blockchain/task/assign", g.handleTaskAssign)
+	http.HandleFunc("/api/blockchain/task/complete", g.handleTaskComplete)
+	http.HandleFunc("/api/blockchain/task/fail", g.handleTaskFail)
+	http.HandleFunc("/api/blockchain/task/stats", g.handleTaskStats)
 
 	addr := fmt.Sprintf(":%d", port)
 	fmt.Printf("[Gateway] 🌐 ComputeHub Gateway listening on %s\n", addr)
@@ -566,6 +626,534 @@ func (g *Gateway) handleNodeCapability(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jsonOK(w, localNode.GetCapability())
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Sprint 3 — 区块链结算层 Handler
+// ════════════════════════════════════════════════════════════════════
+
+// ─── 1. 链信息 ──────────────────────────────────────────────────────
+
+func (g *Gateway) handleChainInfo(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	info := g.Chain.GetChainInfo()
+	info["token_stats"] = g.TokenMgr.GetTokenStats()
+	jsonOK(w, info)
+}
+
+// ─── 2. Token 管理 ──────────────────────────────────────────────────
+
+func (g *Gateway) handleTokenBalance(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	addr := r.URL.Query().Get("address")
+	if addr == "" {
+		jsonError(w, "address required", http.StatusBadRequest)
+		return
+	}
+	balance, exists := g.TokenMgr.GetBalance(addr)
+	if !exists {
+		jsonOK(w, map[string]any{"address": addr, "balance": 0, "exists": false})
+		return
+	}
+	account, _ := g.TokenMgr.GetAccount(addr)
+	jsonOK(w, map[string]any{
+		"address":    addr,
+		"balance":    balance,
+		"total_in":   account.TotalIn,
+		"total_out":  account.TotalOut,
+		"exists":     true,
+	})
+}
+
+func (g *Gateway) handleTokenDeposit(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		Address   string  `json:"address"`
+		Amount    float64 `json:"amount"`
+		UsdEquiv  float64 `json:"usd_equiv"`
+		Tx        string  `json:"transaction"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonError(w, "invalid JSON", http.StatusBadRequest)
+		return
+	}
+	record, err := g.TokenMgr.Deposit(req.Address, req.Amount, req.UsdEquiv, req.Tx)
+	if err != nil {
+		jsonError(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+	jsonOK(w, record)
+}
+
+func (g *Gateway) handleTokenWithdraw(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		Address   string  `json:"address"`
+		Amount    float64 `json:"amount"`
+		ToAddress string  `json:"to_address"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonError(w, "invalid JSON", http.StatusBadRequest)
+		return
+	}
+	record, err := g.TokenMgr.Withdraw(req.Address, req.Amount, req.ToAddress)
+	if err != nil {
+		jsonError(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+	jsonOK(w, record)
+}
+
+func (g *Gateway) handleTokenTransfer(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		From   string  `json:"from"`
+		To     string  `json:"to"`
+		Amount float64 `json:"amount"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonError(w, "invalid JSON", http.StatusBadRequest)
+		return
+	}
+	tx, err := g.TokenMgr.Transfer(req.From, req.To, req.Amount)
+	if err != nil {
+		jsonError(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+	jsonOK(w, tx)
+}
+
+func (g *Gateway) handleTokenStats(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	jsonOK(w, g.TokenMgr.GetTokenStats())
+}
+
+// ─── 3. 资金托管 ────────────────────────────────────────────────────
+
+func (g *Gateway) handleEscrowCreate(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		ClientAddr string  `json:"client_addr"`
+		NodeAddr   string  `json:"node_addr"`
+		TaskID     string  `json:"task_id"`
+		Amount     float64 `json:"amount"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonError(w, "invalid JSON", http.StatusBadRequest)
+		return
+	}
+	escrow, err := g.Escrow.CreateEscrow(req.ClientAddr, req.NodeAddr, req.TaskID, req.Amount)
+	if err != nil {
+		jsonError(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+	jsonOK(w, escrow)
+}
+
+func (g *Gateway) handleEscrowRelease(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		EscrowID   string  `json:"escrow_id"`
+		ActualCost float64 `json:"actual_cost"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonError(w, "invalid JSON", http.StatusBadRequest)
+		return
+	}
+	record, err := g.Escrow.ReleaseEscrow(req.EscrowID, req.ActualCost)
+	if err != nil {
+		jsonError(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+	jsonOK(w, record)
+}
+
+func (g *Gateway) handleEscrowRefund(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		EscrowID string `json:"escrow_id"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonError(w, "invalid JSON", http.StatusBadRequest)
+		return
+	}
+	if err := g.Escrow.RefundEscrow(req.EscrowID); err != nil {
+		jsonError(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+	jsonOK(w, map[string]string{"status": "refunded"})
+}
+
+// ─── 4. 节点质押 ────────────────────────────────────────────────────
+
+func (g *Gateway) handleStakingStake(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		NodeAddr string  `json:"node_addr"`
+		Amount   float64 `json:"amount"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonError(w, "invalid JSON", http.StatusBadRequest)
+		return
+	}
+	record, err := g.Staking.Stake(req.NodeAddr, req.Amount)
+	if err != nil {
+		jsonError(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+	jsonOK(w, record)
+}
+
+func (g *Gateway) handleStakingUnstake(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		NodeAddr string `json:"node_addr"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonError(w, "invalid JSON", http.StatusBadRequest)
+		return
+	}
+	record, err := g.Staking.Unstake(req.NodeAddr)
+	if err != nil {
+		jsonError(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+	jsonOK(w, record)
+}
+
+func (g *Gateway) handleStakingSlash(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		NodeAddr      string  `json:"node_addr"`
+		Reason        string  `json:"reason"`
+		SlashPercent  float64 `json:"slash_percent"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonError(w, "invalid JSON", http.StatusBadRequest)
+		return
+	}
+	if err := g.Staking.Slash(req.NodeAddr, req.Reason, req.SlashPercent); err != nil {
+		jsonError(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+	jsonOK(w, map[string]string{"status": "slashed"})
+}
+
+func (g *Gateway) handleStakingStats(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	jsonOK(w, g.Staking.StakingStats())
+}
+
+// ─── 5. 争议仲裁 ────────────────────────────────────────────────────
+
+func (g *Gateway) handleDisputeOpen(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		TaskID     string `json:"task_id"`
+		Requester  string `json:"requester"`
+		Respondent string `json:"respondent"`
+		Reason     string `json:"reason"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonError(w, "invalid JSON", http.StatusBadRequest)
+		return
+	}
+	dispute, err := g.Disputes.OpenDispute(req.TaskID, req.Requester, req.Respondent, req.Reason)
+	if err != nil {
+		jsonError(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+	jsonOK(w, dispute)
+}
+
+func (g *Gateway) handleDisputeVote(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		DisputeID string `json:"dispute_id"`
+		Arbiter   string `json:"arbiter"`
+		Side      string `json:"side"` // favor_requester or favor_respondent
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonError(w, "invalid JSON", http.StatusBadRequest)
+		return
+	}
+	if err := g.Disputes.CastVote(req.DisputeID, req.Arbiter, req.Side); err != nil {
+		jsonError(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+	jsonOK(w, map[string]string{"status": "vote_cast"})
+}
+
+func (g *Gateway) handleDisputeResolve(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		DisputeID string `json:"dispute_id"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonError(w, "invalid JSON", http.StatusBadRequest)
+		return
+	}
+	record, err := g.Disputes.ResolveDispute(req.DisputeID)
+	if err != nil {
+		jsonError(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+	jsonOK(w, record)
+}
+
+func (g *Gateway) handleDisputeGet(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	disputeID := r.URL.Query().Get("id")
+	if disputeID == "" {
+		jsonError(w, "id required", http.StatusBadRequest)
+		return
+	}
+	record, ok := g.Disputes.GetDispute(disputeID)
+	if !ok {
+		jsonError(w, "dispute not found", http.StatusNotFound)
+		return
+	}
+	jsonOK(w, record)
+}
+
+func (g *Gateway) handleDisputeStats(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	jsonOK(w, g.Disputes.DisputeStats())
+}
+
+// ─── 6. 物理计费 ────────────────────────────────────────────────────
+
+func (g *Gateway) handleBillingRecordUsage(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		TaskID      string  `json:"task_id"`
+		GPUUtilPct  float64 `json:"gpu_util_pct"`
+		GPUMemUsedMB uint64 `json:"gpu_mem_used_mb"`
+		CPUPct      float64 `json:"cpu_pct"`
+		MemUsedMB   uint64  `json:"mem_used_mb"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonError(w, "invalid JSON", http.StatusBadRequest)
+		return
+	}
+	sample := blockchain.UsageSample{
+		GPUUtilPct:   req.GPUUtilPct,
+		GPUMemUsedMB: req.GPUMemUsedMB,
+		CPUPct:       req.CPUPct,
+		MemUsedMB:    req.MemUsedMB,
+	}
+	g.Billing.RecordUsage(req.TaskID, sample)
+	jsonOK(w, map[string]string{"status": "recorded"})
+}
+
+func (g *Gateway) handleBillingCalculate(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		TaskID       string `json:"task_id"`
+		NodeID       string `json:"node_id"`
+		GPUCount     int    `json:"gpu_count"`
+		CPUCount     int    `json:"cpu_count"`
+		MemoryGB     int    `json:"memory_gb"`
+		Mode         string `json:"mode"` // time, gpu_util, token, inference, hybrid
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonError(w, "invalid JSON", http.StatusBadRequest)
+		return
+	}
+	if req.Mode == "" {
+		req.Mode = "time"
+	}
+	record, err := g.Billing.CalculateAndBill(req.TaskID, req.NodeID, req.GPUCount, req.CPUCount, req.MemoryGB, req.Mode)
+	if err != nil {
+		jsonError(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+	jsonOK(w, record)
+}
+
+func (g *Gateway) handleBillingList(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	nodeID := r.URL.Query().Get("node_id")
+	bills := g.Billing.ListBillingByNode(nodeID)
+	jsonOK(w, bills)
+}
+
+func (g *Gateway) handleBillingSummary(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	jsonOK(w, g.Billing.ComputeBillSummary())
+}
+
+// ─── 7. 任务注册 ────────────────────────────────────────────────────
+
+func (g *Gateway) handleTaskRegister(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		TaskID       string  `json:"task_id"`
+		ClientAddr   string  `json:"client_addr"`
+		ResourceType string  `json:"resource_type"`
+		GPUCount     int     `json:"gpu_count"`
+		CPUCount     int     `json:"cpu_count"`
+		MemoryGB     int     `json:"memory_gb"`
+		MaxDuration  int     `json:"max_duration_sec"`
+		Priority     int     `json:"priority"`
+		Budget       float64 `json:"budget"`
+		EscrowID     string  `json:"escrow_id"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonError(w, "invalid JSON", http.StatusBadRequest)
+		return
+	}
+	taskReq := blockchain.TaskRequirement{
+		ResourceType:   req.ResourceType,
+		GPUCount:       req.GPUCount,
+		CPUCount:       req.CPUCount,
+		MemoryGB:       req.MemoryGB,
+		MaxDurationSec: req.MaxDuration,
+		Priority:       req.Priority,
+	}
+	task, err := g.TaskReg.RegisterTask(req.TaskID, req.ClientAddr, taskReq, req.Budget, req.EscrowID)
+	if err != nil {
+		jsonError(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+	jsonOK(w, task)
+}
+
+func (g *Gateway) handleTaskAssign(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		TaskID   string `json:"task_id"`
+		NodeAddr string `json:"node_addr"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonError(w, "invalid JSON", http.StatusBadRequest)
+		return
+	}
+	if err := g.TaskReg.AssignTask(req.TaskID, req.NodeAddr); err != nil {
+		jsonError(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+	jsonOK(w, map[string]string{"status": "assigned"})
+}
+
+func (g *Gateway) handleTaskComplete(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		TaskID     string  `json:"task_id"`
+		ActualCost float64 `json:"actual_cost"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonError(w, "invalid JSON", http.StatusBadRequest)
+		return
+	}
+	if err := g.TaskReg.CompleteTask(req.TaskID, req.ActualCost); err != nil {
+		jsonError(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+	jsonOK(w, map[string]string{"status": "completed"})
+}
+
+func (g *Gateway) handleTaskFail(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		TaskID string `json:"task_id"`
+		Reason string `json:"reason"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonError(w, "invalid JSON", http.StatusBadRequest)
+		return
+	}
+	if err := g.TaskReg.FailTask(req.TaskID, req.Reason); err != nil {
+		jsonError(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+	jsonOK(w, map[string]string{"status": "failed"})
+}
+
+func (g *Gateway) handleTaskStats(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		jsonError(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	jsonOK(w, g.TaskReg.TaskStats())
 }
 
 // ─── HTTP 辅助函数 ───

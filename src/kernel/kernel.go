@@ -241,7 +241,6 @@ func (k *Kernel) handleSubmit(task *ComputeTask) *Response {
 	task.ID = fmt.Sprintf("task-%d", k.taskCounter)
 	k.taskCounter++
 	task.Status = StatePending
-	task.Source = task.Source
 	task.StartTime = time.Now()
 
 	// Register task

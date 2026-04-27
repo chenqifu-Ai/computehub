@@ -217,6 +217,24 @@ func (nm *NodeManager) GetNode(nodeID string) (*Node, bool) {
 	return node, ok
 }
 
+// copyNode creates a safe shallow copy of a Node without copying the lock.
+func copyNode(n *Node) *Node {
+	return &Node{
+		ID:           n.ID,
+		Name:         n.Name,
+		IP:           n.IP,
+		Port:         n.Port,
+		Status:       n.Status,
+		Capability:   n.GetCapability(),
+		Load:         n.Load,
+		Region:       n.Region,
+		Registered:   n.Registered,
+		LastHB:       n.LastHB,
+		TasksRunning: n.TasksRunning,
+		Tags:         n.Tags,
+	}
+}
+
 // GetAllNodes returns all nodes (safe copy).
 func (nm *NodeManager) GetAllNodes() []*Node {
 	nm.mu.RLock()
@@ -224,10 +242,7 @@ func (nm *NodeManager) GetAllNodes() []*Node {
 
 	result := make([]*Node, 0, len(nm.nodes))
 	for _, node := range nm.nodes {
-		// Copy essential fields for safe consumption
-		cp := *node
-		cp.Capability = node.GetCapability()
-		result = append(result, &cp)
+		result = append(result, copyNode(node))
 	}
 	return result
 }
@@ -240,9 +255,7 @@ func (nm *NodeManager) GetOnlineNodes() []*Node {
 	result := make([]*Node, 0)
 	for _, node := range nm.nodes {
 		if node.Status == NodeStatusOnline || node.Status == NodeStatusBusy {
-			cp := *node
-			cp.Capability = node.GetCapability()
-			result = append(result, &cp)
+			result = append(result, copyNode(node))
 		}
 	}
 	return result
