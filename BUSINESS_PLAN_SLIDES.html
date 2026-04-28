@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ComputeHub - 商业计划书 (简洁版)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',-apple-system,sans-serif;background:#0d1117;color:#c9d1d9;line-height:1.6;}
+  .slide{max-width:1100px;margin:0 auto;padding:60px 48px;min-height:100vh;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid #21262d;}
+  .slide:last-child{border-bottom:none;}
+
+  h1{font-size:3.2em;font-weight:900;background:linear-gradient(135deg,#58a6ff,#bc8cff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px;letter-spacing:-1px;}
+  h2{font-size:2em;font-weight:700;color:#f0f6fc;margin-bottom:24px;}
+  h2 .num{color:#58a6ff;margin-right:12px;}
+  h3{font-size:1.2em;font-weight:600;color:#e6edf3;margin-bottom:12px;}
+
+  .tagline{font-size:1.3em;color:#8b949e;margin-bottom:32px;}
+  .meta{color:#8b949e;font-size:0.95em;}
+  .highlight{color:#58a6ff;font-weight:600;}
+  .green{color:#3fb950;}
+  .red{color:#f85149;}
+  .yellow{color:#d29922;}
+  .purple{color:#bc8cff;}
+  .orange{color:#ffa657;}
+
+  .grid{display:grid;gap:20px;}
+  .g2{grid-template-columns:1fr 1fr;}
+  .g3{grid-template-columns:1fr 1fr 1fr;}
+  .g4{grid-template-columns:1fr 1fr 1fr 1fr;}
+
+  .card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:20px;}
+  .card:hover{border-color:#484f5e;}
+  .card .num{font-size:2em;font-weight:800;display:block;margin-bottom:4px;}
+  .card .label{color:#8b949e;font-size:0.9em;}
+  .card .desc{color:#c9d1d9;font-size:0.95em;margin-top:8px;}
+
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:0.95em;}
+  th{text-align:left;padding:10px 12px;background:#21262d;color:#8b949e;font-weight:600;border-bottom:2px solid #30363d;}
+  td{padding:10px 12px;border-bottom:1px solid #21262d;}
+  tr:hover td{background:#0d1117;}
+
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.85em;font-weight:600;}
+  .badge-green{background:#0f2d1a;color:#3fb950;border:1px solid #1a4a2a;}
+  .badge-blue{background:#0c2d4a;color:#58a6ff;border:1px solid #1a4a6a;}
+  .badge-purple{background:#1c0d3a;color:#bc8cff;border:1px solid #2a1a4a;}
+  .badge-yellow{background:#2d1f0a;color:#d29922;border:1px solid #4a3a1a;}
+
+  .stat-row{display:flex;gap:16px;margin:16px 0;flex-wrap:wrap;}
+  .stat-item{flex:1;min-width:140px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;text-align:center;}
+  .stat-item .val{font-size:1.8em;font-weight:800;}
+  .stat-item .lbl{color:#8b949e;font-size:0.85em;margin-top:4px;}
+
+  .pipeline{display:flex;gap:8px;margin:20px 0;flex-wrap:wrap;}
+  .pipe-step{flex:1;min-width:100px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;text-align:center;}
+  .pipe-step .step{color:#58a6ff;font-size:0.8em;}
+  .pipe-step .name{font-weight:600;font-size:0.95em;}
+  .arrow{color:#30363d;font-size:1.5em;align-self:center;}
+
+  .footer-text{color:#8b949e;font-size:0.85em;margin-top:32px;border-top:1px solid #21262d;padding-top:16px;}
+
+  @media print{body{background:white;color:#333;}.slide{min-height:auto;padding:40px;page-break-after:always;}.card{background:#f6f8fa;border-color:#d0d7de;}}
+  @media(max-width:768px){.g2,.g3,.g4{grid-template-columns:1fr;}.slide{padding:32px 20px;}h1{font-size:2.2em;}}
+</style>
+</head>
+<body>
+
+<!-- ═══ COVER ═══ -->
+<div class="slide" style="text-align:center;">
+  <div style="margin-bottom:40px;">
+    <span style="font-size:4em;">⚡</span>
+  </div>
+  <h1 style="font-size:4em;">ComputeHub</h1>
+  <div style="font-size:1.6em;color:#8b949e;margin-bottom:16px;">分布式算力出海平台</div>
+  <div class="tagline" style="max-width:600px;margin:0 auto 32px;">让全球闲置 GPU 流动起来，为 AI 时代提供人人可及的算力</div>
+  <div class="stat-row" style="justify-content:center;max-width:600px;margin:0 auto;">
+    <div class="stat-item"><div class="val" style="color:#58a6ff;">11,300</div><div class="lbl">行 Go 代码</div></div>
+    <div class="stat-item"><div class="val" style="color:#3fb950;">194</div><div class="lbl">单元测试</div></div>
+    <div class="stat-item"><div class="val" style="color:#bc8cff;">8/8</div><div class="lbl">模块全绿</div></div>
+    <div class="stat-item"><div class="val" style="color:#ffa657;">56+</div><div class="lbl">测试用例</div></div>
+  </div>
+  <div class="meta" style="margin-top:48px;">2026-04-28 · v1.0</div>
+</div>
+
+<!-- ═══ 1. 问题 ═══ -->
+<div class="slide">
+  <h2><span class="num">01</span>核心问题</h2>
+  <div class="grid g2">
+    <div class="card">
+      <div class="num" style="color:#f85149;">$500亿+</div>
+      <div class="label">全球 GPU 算力市场 (2026)</div>
+      <div class="desc">年增长率 35%+，但大部分算力被少数云厂商垄断</div>
+    </div>
+    <div class="card">
+      <div class="num" style="color:#d29922;">30-50%</div>
+      <div class="label">去中心化算力成本 vs 云服务</div>
+      <div class="desc">云 GPU ($3-4/小时) vs ComputeHub ($0.05/GPU小时)</div>
+    </div>
+    <div class="card">
+      <div class="num" style="color:#f85149;">80%</div>
+      <div class="label">个人游戏显卡闲置率</div>
+      <div class="desc">RTX 4090 每天闲置 ~20 小时——全球数千万张显卡</div>
+    </div>
+    <div class="card">
+      <div class="num" style="color:#d29922;">$24,000+</div>
+      <div class="label">一人公司年算力成本</div>
+      <div class="desc">云 GPU 价格门槛扼杀了大量 AI 创新</div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:20px;padding:16px;background:#161b22;border:1px solid #30363d;border-radius:10px;">
+    <strong>核心矛盾</strong>：全球 GPU 大量闲置 vs 算力需求方买不起——<span class="highlight">中间缺一个去中心化的算力"Airbnb"</span>
+  </div>
+</div>
+
+<!-- ═══ 2. 解决方案 ═══ -->
+<div class="slide">
+  <h2><span class="num">02</span>解决方案</h2>
+  <div style="text-align:center;margin-bottom:24px;">
+    <div style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:12px;padding:16px 32px;font-size:1.1em;">
+      <span class="badge badge-green">算力提供方</span>
+      <span style="margin:0 16px;">← 闲置 GPU →</span>
+      <span class="badge badge-blue">ComputeHub</span>
+      <span style="margin:0 16px;">← 按需租赁 →</span>
+      <span class="badge badge-purple">算力需求方</span>
+    </div>
+  </div>
+  <div class="grid g3">
+    <div class="card">
+      <div style="font-size:1.2em;margin-bottom:8px;">⚙️ 确定性内核</div>
+      <div class="desc">严格状态机 + 线性任务队列，保证任务执行可预测。从 OpenPC 继承的核心能力。</div>
+    </div>
+    <div class="card">
+      <div style="font-size:1.2em;margin-bottom:8px;">📊 物理计费引擎</div>
+      <div class="desc">5 种计费模式（时间/GPU利用率/Token/推理/混合），基于真实硬件指标而非简单时长。</div>
+    </div>
+    <div class="card">
+      <div style="font-size:1.2em;margin-bottom:8px;">⛓️ 区块链结算</div>
+      <div class="desc"><span class="highlight">CHB Token</span> + 4 类智能合约（托管/质押/争议/计费），自动结算无需信任。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 3. 产品架构 ═══ -->
+<div class="slide">
+  <h2><span class="num">03</span>产品架构</h2>
+  <div style="font-family:monospace;font-size:0.85em;background:#161b22;border:1px solid #30363d;border-radius:12px;padding:24px;line-height:1.8;overflow-x:auto;">
+<pre style="color:#c9d1d9;">
+                        ┌──────────────┐
+                        │  CLI / TUI   │  入口层
+                        └──────┬───────┘
+                               │ HTTP :8282
+┌───────────────────────────────────────────────┐
+│              Gateway (40+ API)                │  网关层
+└───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬─────┘
+    │   │   │   │   │   │   │   │   │   │
+    ▼   ▼   ▼   ▼   ▼   ▼   ▼   ▼   ▼   ▼
+┌───┐ ┌─┐ ┌──┐ ┌─┐ ┌──┐ ┌──┐ ┌──┐ ┌─┐ ┌───┐
+│ K │ │P│ │EX│ │G│ │NM│ │SC│ │TM│ │B│ │Web│  引擎层
+└───┘ └─┘ └──┘ └─┘ └──┘ └──┘ └──┘ └─┘ └───┘
+内核  纯化 执行 基因 节点 调度 Token 链 仪表板
+</pre>
+  </div>
+  <div style="margin-top:16px;">
+    <span class="badge badge-green">✅ 已完成</span>
+    <span class="badge badge-blue" style="margin-left:8px;">40+ API 端点</span>
+    <span class="badge badge-purple" style="margin-left:8px;">无外部依赖</span>
+    <span class="badge badge-yellow" style="margin-left:8px;">纯 Go 标准库</span>
+  </div>
+</div>
+
+<!-- ═══ 4. 技术差异化 ═══ -->
+<div class="slide">
+  <h2><span class="num">04</span>技术差异化</h2>
+  <table>
+    <tr><th>维度</th><th>ComputeHub</th><th>AWS / 云服务</th><th>Golem / Akash</th></tr>
+    <tr><td><strong>去中心化</strong></td><td>✅ 高</td><td>❌ 中心化</td><td>✅ 高</td></tr>
+    <tr><td><strong>GPU 原生支持</strong></td><td>✅ 5种计费模式</td><td>✅ 全系列</td><td>⚠️ 有限</td></tr>
+    <tr><td><strong>物理计费</strong></td><td class="highlight">✅ 5种模式</td><td>❌ 时长</td><td>❌ 时长</td></tr>
+    <tr><td><strong>确定性内核</strong></td><td class="highlight">✅ 有</td><td>❌ 无</td><td>❌ 无</td></tr>
+    <tr><td><strong>智能合约</strong></td><td>✅ 4类合约</td><td>❌ 无</td><td>⚠️ 基础</td></tr>
+    <tr><td><strong>沙盒隔离</strong></td><td>✅ 梯度降级</td><td>✅ 完善</td><td>⚠️ Docker</td></tr>
+    <tr><td><strong>成本</strong></td><td class="green"><strong>30-50%</strong></td><td>100%</td><td>40-60%</td></tr>
+    <tr><td><strong>开源</strong></td><td>✅ MIT</td><td>❌ 闭源</td><td>✅ GPL/Apache</td></tr>
+  </table>
+  <div style="margin-top:16px;" class="card">
+    <strong>核心差异化</strong>：<span class="highlight">物理计费</span>（基于真实 GPU 利用率而非时长）+ <span class="highlight">确定性内核</span>（严格状态机保证任务可预测）—— 竞品都没有做到。
+  </div>
+</div>
+
+<!-- ═══ 5. 商业模式 ═══ -->
+<div class="slide">
+  <h2><span class="num">05</span>商业模式</h2>
+  <div class="stat-row">
+    <div class="stat-item"><div class="val" style="color:#3fb950;">5-10%</div><div class="lbl">平台抽成</div></div>
+    <div class="stat-item"><div class="val" style="color:#58a6ff;">$0.05</div><div class="lbl">GPU/小时定价</div></div>
+    <div class="stat-item"><div class="val" style="color:#bc8cff;">85%+</div><div class="lbl">毛利率</div></div>
+    <div class="stat-item"><div class="val" style="color:#ffa657;">$99/月</div><div class="lbl">Pro 节点认证</div></div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>💰 核心收入</h3>
+      <div class="desc">算力交易抽成 5-10%（GPU/CPU/存储/推理 API）</div>
+    </div>
+    <div class="card">
+      <h3>📈 增值收入</h3>
+      <div class="desc">Pro 认证 $99/月 · SLA 保障 · 私有集群 · 优先调度</div>
+    </div>
+    <div class="card">
+      <h3>🪙 Token 经济</h3>
+      <div class="desc">CHB Token — 算力支付 · 节点质押 · 治理投票 · 交易费用</div>
+    </div>
+    <div class="card">
+      <h3>🌏 生态收入（远期）</h3>
+      <div class="desc">托管费 · 第三方应用市场 · 企业级部署</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 6. Token 经济 ═══ -->
+<div class="slide">
+  <h2><span class="num">06</span>CHB Token 经济模型</h2>
+  <div class="grid g2">
+    <div class="card">
+      <div class="num" style="color:#d29922;">100亿</div>
+      <div class="label">总供应量 (固定)</div>
+      <div class="desc">无通胀，固定供应</div>
+    </div>
+    <div class="card">
+      <div class="num" style="color:#58a6ff;">$0.001</div>
+      <div class="label">初始定价</div>
+      <div class="desc">1 CHB = $0.001</div>
+    </div>
+  </div>
+  <div style="margin:16px 0;">
+    <h3>分配方案</h3>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:120px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;text-align:center;">
+        <div style="font-size:1.5em;font-weight:700;color:#3fb950;">40%</div><div style="font-size:0.85em;">社区挖矿</div>
+      </div>
+      <div style="flex:1;min-width:120px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;text-align:center;">
+        <div style="font-size:1.5em;font-weight:700;color:#58a6ff;">20%</div><div style="font-size:0.85em;">生态基金</div>
+      </div>
+      <div style="flex:1;min-width:120px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;text-align:center;">
+        <div style="font-size:1.5em;font-weight:700;color:#bc8cff;">15%</div><div style="font-size:0.85em;">团队 (4年解锁)</div>
+      </div>
+      <div style="flex:1;min-width:120px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;text-align:center;">
+        <div style="font-size:1.5em;font-weight:700;color:#ffa657;">15%</div><div style="font-size:0.85em;">投资者 (1年锁仓)</div>
+      </div>
+      <div style="flex:1;min-width:120px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;text-align:center;">
+        <div style="font-size:1.5em;font-weight:700;color:#d29922;">10%</div><div style="font-size:0.85em;">流动性+空投</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <strong>经济飞轮</strong>：算力需求增长 → 更多节点提供算力赚 CHB → 质押需求增加 → CHB 稀缺升值 → 吸引更多用户
+  </div>
+</div>
+
+<!-- ═══ 7. 市场与竞品 ═══ -->
+<div class="slide">
+  <h2><span class="num">07</span>市场机会</h2>
+  <div class="stat-row">
+    <div class="stat-item"><div class="val" style="color:#3fb950;">$680亿</div><div class="lbl">2026 全球算力市场</div></div>
+    <div class="stat-item"><div class="val" style="color:#58a6ff;">$96亿</div><div class="lbl">2028 去中心化算力 TAM</div></div>
+    <div class="stat-item"><div class="val" style="color:#ffa657;">35%+</div><div class="lbl">年增长率</div></div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>🎯 目标客户</h3>
+      <div class="desc">
+        <strong>独立开发者/一人公司</strong>：$200-1,000/月 · 500万+潜在用户<br>
+        <strong>小团队/创业公司</strong>：$1,000-5,000/月 · 100万+<br>
+        <strong>研究机构/高校</strong>：$500-3,000/月 · 50万+
+      </div>
+    </div>
+    <div class="card">
+      <h3>🚀 市场驱动力</h3>
+      <div class="desc">
+        生成式 AI 爆发 · 一人公司浪潮 · GPU 供给过剩（矿卡退役）· 去中心化趋势 · 芯片出口管制
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 8. 冷启动策略 ═══ -->
+<div class="slide">
+  <h2><span class="num">08</span>冷启动策略</h2>
+  <div class="pipeline">
+    <div class="pipe-step"><div class="step">Phase 1</div><div class="name">私有算力池</div><div class="desc" style="font-size:0.85em;color:#8b949e;margin-top:4px;">✅ 已完成</div></div>
+    <div class="arrow">→</div>
+    <div class="pipe-step"><div class="step">Phase 2</div><div class="name">社区 Beta</div><div class="desc" style="font-size:0.85em;color:#8b949e;margin-top:4px;">10-20 开发者</div></div>
+    <div class="arrow">→</div>
+    <div class="pipe-step"><div class="step">Phase 3</div><div class="name">开放市场</div><div class="desc" style="font-size:0.85em;color:#8b949e;margin-top:4px;">Token 经济激活</div></div>
+    <div class="arrow">→</div>
+    <div class="pipe-step"><div class="step">Phase 4</div><div class="name">出海</div><div class="desc" style="font-size:0.85em;color:#8b949e;margin-top:4px;">东南亚/拉美</div></div>
+  </div>
+  <div class="card" style="margin-top:16px;">
+    <strong>获客渠道</strong>：GitHub 开源社区 · 矿工社群 · Hugging Face · Hacker News · AI 开发者社区 · 技术博客
+  </div>
+</div>
+
+<!-- ═══ 9. 财务预测 ═══ -->
+<div class="slide">
+  <h2><span class="num">09</span>财务预测</h2>
+  <table>
+    <tr><th>指标</th><th>Year 1</th><th>Year 2</th><th>Year 3</th></tr>
+    <tr><td>活跃节点</td><td>200</td><td>1,000</td><td>5,000</td></tr>
+    <tr><td><strong>营收</strong></td><td><strong>$222,000</strong></td><td><strong>$967,680</strong></td><td><strong>$6,912,000</strong></td></tr>
+    <tr><td>成本</td><td>$354,000</td><td>$768,000</td><td>$1,596,000</td></tr>
+    <tr><td><strong>净利润</strong></td><td class="red">-$132,000</td><td class="green">$199,680</td><td class="green">$5,316,000</td></tr>
+    <tr><td>利润率</td><td class="red">-59.5%</td><td class="green">20.6%</td><td class="green">76.9%</td></tr>
+  </table>
+  <div class="card" style="margin-top:16px;">
+    <strong>盈亏平衡点</strong>：第 2 年 Q1（月交易额 &gt; $60,000）<br>
+    <strong>毛利率</strong>：85%+（轻资产软件平台）
+  </div>
+</div>
+
+<!-- ═══ 10. 路线图 ═══ -->
+<div class="slide">
+  <h2><span class="num">10</span>开发路线图</h2>
+  <table>
+    <tr><th>Sprint</th><th>名称</th><th>状态</th><th>关键交付</th></tr>
+    <tr><td>0</td><td>工程规范化</td><td><span class="badge badge-green">✅</span></td><td>Go 依赖、测试、脚本、二进制</td></tr>
+    <tr><td>1</td><td>物理执行引擎</td><td><span class="badge badge-green">✅</span></td><td>Docker 沙盒、GPU 执行、验证器</td></tr>
+    <tr><td>2</td><td>分布式节点层</td><td><span class="badge badge-green">✅</span></td><td>多节点、熔断器、调度器 (64/65 测试)</td></tr>
+    <tr><td>3</td><td>区块链结算</td><td><span class="badge badge-green">✅</span></td><td>CHB Token、4合约、物理计费 (49 测试)</td></tr>
+    <tr><td>4</td><td>Web 仪表板</td><td><span class="badge badge-green">✅</span></td><td>HTMX 暗色主题、实时指标</td></tr>
+    <tr><td>5</td><td>生产就绪</td><td><span class="badge badge-yellow">⏳</span></td><td>Docker、CI/CD、压测（预计 5 月）</td></tr>
+    <tr><td>6-8</td><td>Beta → 正式发布</td><td><span class="badge badge-blue">📋</span></td><td>社区测试、Token 上线、开放注册</td></tr>
+  </table>
+  <div style="margin-top:16px;text-align:center;color:#8b949e;">
+    🏁 目标：2026 Q3 正式发布 · 2026 Q4 500 节点 · 2027 Q1 盈亏平衡
+  </div>
+</div>
+
+<!-- ═══ 11. 融资 ═══ -->
+<div class="slide">
+  <h2><span class="num">11</span>融资需求</h2>
+  <div class="stat-row">
+    <div class="stat-item"><div class="val" style="color:#3fb950;">$100K</div><div class="lbl">Pre-Seed</div></div>
+    <div class="stat-item"><div class="val" style="color:#58a6ff;">$500K</div><div class="lbl">估值 $500K</div></div>
+    <div class="stat-item"><div class="val" style="color:#bc8cff;">20%</div><div class="lbl">出让股份</div></div>
+  </div>
+  <div style="margin:16px 0;">
+    <h3>Pre-Seed 资金用途 ($100K)</h3>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:100px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;text-align:center;">
+        <div style="font-size:1.2em;font-weight:700;">20%</div><div style="font-size:0.85em;">基础设施</div>
+      </div>
+      <div style="flex:1;min-width:100px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;text-align:center;">
+        <div style="font-size:1.2em;font-weight:700;">15%</div><div style="font-size:0.85em;">法务合规</div>
+      </div>
+      <div style="flex:1;min-width:100px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;text-align:center;">
+        <div style="font-size:1.2em;font-weight:700;">20%</div><div style="font-size:0.85em;">营销推广</div>
+      </div>
+      <div style="flex:1;min-width:100px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;text-align:center;">
+        <div style="font-size:1.2em;font-weight:700;">10%</div><div style="font-size:0.85em;">开发工具</div>
+      </div>
+      <div style="flex:1;min-width:100px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;text-align:center;">
+        <div style="font-size:1.2em;font-weight:700;">30%</div><div style="font-size:0.85em;">团队保障</div>
+      </div>
+      <div style="flex:1;min-width:100px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;text-align:center;">
+        <div style="font-size:1.2em;font-weight:700;">5%</div><div style="font-size:0.85em;">预留</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <strong>投资人价值主张</strong><br>
+    🔥 踩中三大风口：AI 爆发 + 一人公司浪潮 + 去中心化基础设施<br>
+    🛠️ 工程扎实：11,300 行 Go 代码，194 测试全绿<br>
+    💡 真实差异化：物理计费 + 确定性内核是竞品没有的<br>
+    🌏 出海想象空间：东南亚/拉美没有本土算力平台
+  </div>
+</div>
+
+<!-- ═══ 12. 团队 ═══ -->
+<div class="slide">
+  <h2><span class="num">12</span>团队</h2>
+  <div style="text-align:center;padding:32px;background:#161b22;border:1px solid #30363d;border-radius:12px;margin-bottom:20px;">
+    <div style="font-size:3em;margin-bottom:8px;">🤖</div>
+    <div style="font-size:1.4em;font-weight:700;">小智</div>
+    <div style="color:#8b949e;">创始人 · 全栈工程师</div>
+    <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <span class="badge badge-green">Go 开发</span>
+      <span class="badge badge-blue">系统架构</span>
+      <span class="badge badge-purple">区块链</span>
+      <span class="badge badge-yellow">分布式系统</span>
+    </div>
+  </div>
+  <div class="grid g3">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:2em;font-weight:700;color:#3fb950;">11,300</div>
+      <div class="label">行 Go 代码 (独立完成)</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div style="font-size:2em;font-weight:700;color:#58a6ff;">194</div>
+      <div class="label">单元测试 · 8/8 包全绿</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div style="font-size:2em;font-weight:700;color:#bc8cff;">9</div>
+      <div class="label">模块架构 · 40+ API</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CLOSING ═══ -->
+<div class="slide" style="text-align:center;">
+  <div style="font-size:5em;margin-bottom:24px;">⚡</div>
+  <h2 style="font-size:2.5em;">Start local. <span class="highlight">Scale globally.</span></h2>
+  <div class="tagline" style="max-width:500px;margin:24px auto;">让全球闲置 GPU 流动起来，为 AI 时代提供人人可及的算力</div>
+  <div class="stat-row" style="justify-content:center;">
+    <div class="stat-item"><div class="lbl">📧</div><div class="val" style="font-size:1em;font-weight:400;">19525456@qq.com</div></div>
+  </div>
+  <div class="footer-text" style="border:none;padding-top:32px;">
+    ComputeHub · 2026-04-28 · <a href="BUSINESS_PLAN.md" style="color:#58a6ff;">完整版 BP</a>
+  </div>
+</div>
+
+</body>
+</html>
