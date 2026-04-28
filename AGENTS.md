@@ -59,6 +59,18 @@ Don't ask permission. Just do it.
 - **代码目录**: `/root/.openclaw/workspace/ai_agent/code/`
 - **结果目录**: `/root/.openclaw/workspace/ai_agent/results/`
 
+### 📐 模型配置修改标准 (MCP-STD-001)
+
+修改 OpenClaw 模型配置前，**必须**遵循标准流程：
+
+- **标准文档**: `memory/topics/执行规则/模型配置修改标准流程.md`
+- **三层架构**: Provider → Primary → Alias（必须链路完整一致）
+- **4 步流程**: 读取 → 确认 → 修改 → 验证
+- **验证脚本**: 必须执行链路验证和 primary 验证，有 ❌ 标记必须修正
+- **常见错误**: provider 名写错（漏 `-common`）、model id 不存在、primary 指向错误
+
+> ⚠️ **任何模型配置变更（改 primary / 加 alias / 换 provider）都要走这个标准**，不允许跳过验证。
+
 ## Memory
 
 You wake up fresh each session. These files are your continuity:
