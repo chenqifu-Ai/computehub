@@ -87,7 +87,21 @@ python scripts/git-memory-search.py history "MEMORY.md"
 - **Qwen 3.6 35B (推理模型)**: http://58.23.129.98:8000/v1 (Key: sk-78sadn09bjawde123e) ⭐ 默认
 - **Ollama 云端**: https://ollama.com (Key: 8e6253b418564cd4b4a3428f927ee6f0.3g95X2YSoELm9knHxHNci1ii)
 - **OpenClaw 本地**: ollama/qwen3.6-35b (备选)
-- **NewAPI (t.zhangtuokeji.top)**: https://ai.zhangtuokeji.top:9090 (Key: sk-eVmVrxyJYmKAv7YzvJnauPBCl457mqvbSzUENMo70lBRIxH3)
+- **NewAPI (ai.zhangtuokeji.top)**: https://ai.zhangtuokeji.top:9090 (Key: sk-3RgMq1COL9uqn29hCBwXOt5X3d5TpIddaRKH44chQ2QcAybl) ⭐ 当前主力
+  - ⚠️ **max_tokens ≥ 1024**，推荐 2048
+  - ⚠️ **content 字段永远为 null**（所有输出在 reasoning 字段）
+  - ✅ 适配层已处理 fallback（读取 reasoning）
+  - ✅ 响应速度 ~0.7s
+
+### AI 使用规则
+
+#### NewAPI qwen3.6-35b-common 规则
+1. **max_tokens 必须 ≥ 1024**（推荐 2048）
+2. **content 永远为 null**，适配层从 reasoning 字段读取
+3. **temperature 0-1 都可用**，代码生成建议 0.7+
+4. **模型 ID**: `qwen3.6-35b-common`（不是 `qwen3.6-35b`）
+5. **API Key**: `sk-3RgMq1COL9uqn29hCBwXOt5X3d5TpIddaRKH44chQ2QcAybl`
+6. **Provider**: `zhangtuo-ai-common`
 
 ### 设备标识
 

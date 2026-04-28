@@ -3,3 +3,28 @@
 {"time": "2026-04-25T09:45:30.159652", "model": "qwen3.6-35b", "prompt_tokens": 85, "completion_tokens": 474, "total_tokens": 559, "cost_cny": 0.0}
 {"time": "2026-04-25T09:45:32.385063", "model": "qwen3.6-35b", "prompt_tokens": 83, "completion_tokens": 318, "total_tokens": 401, "cost_cny": 0.0}
 {"time": "2026-04-25T09:45:40.894185", "model": "qwen3.6-35b", "prompt_tokens": 84, "completion_tokens": 1143, "total_tokens": 1227, "cost_cny": 0.0}
+{"time": "2026-04-28T20:53:33.021865", "model": "qwen3.6-35b-common", "prompt_tokens": 84, "completion_tokens": 215, "total_tokens": 299, "cost_cny": 0.0}
+{"time": "2026-04-28T20:54:01.616091", "model": "qwen3.6-35b-common", "prompt_tokens": 62, "completion_tokens": 3411, "total_tokens": 3473, "cost_cny": 0.0}
+{"time": "2026-04-28T20:54:03.490819", "model": "qwen3.6-35b-common", "prompt_tokens": 79, "completion_tokens": 211, "total_tokens": 290, "cost_cny": 0.0}
+{"time": "2026-04-28T21:08:15.855023", "model": "qwen3.6-35b-common", "prompt_tokens": 84, "completion_tokens": 254, "total_tokens": 338, "cost_cny": 0.0}
+{"time": "2026-04-28T21:08:18.095805", "model": "qwen3.6-35b-common", "prompt_tokens": 88, "completion_tokens": 287, "total_tokens": 375, "cost_cny": 0.0}
+{"time": "2026-04-28T21:08:22.790230", "model": "qwen3.6-35b-common", "prompt_tokens": 80, "completion_tokens": 669, "total_tokens": 749, "cost_cny": 0.0}
+{"time": "2026-04-28T21:08:36.041328", "model": "qwen3.6-35b-common", "prompt_tokens": 83, "completion_tokens": 333, "total_tokens": 416, "cost_cny": 0.0}
+{"time": "2026-04-28T21:08:37.946762", "model": "qwen3.6-35b-common", "prompt_tokens": 79, "completion_tokens": 255, "total_tokens": 334, "cost_cny": 0.0}
+{"time": "2026-04-29T05:22:10.974175", "model": "qwen3.6-35b-common", "prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15}
+{"time": "2026-04-29T05:22:10.997826", "model": "qwen3.6-35b-common", "prompt_tokens": 20, "completion_tokens": 50, "total_tokens": 70}
+{"time": "2026-04-29T05:22:11.013152", "model": "qwen3.6-35b-common", "prompt_tokens": 15, "completion_tokens": 40, "total_tokens": 55}
+{"time": "2026-04-29T05:26:06.831515", "model": "qwen3.6-35b-common", "prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15}
+{"time": "2026-04-29T05:26:06.844931", "model": "qwen3.6-35b-common", "prompt_tokens": 20, "completion_tokens": 50, "total_tokens": 70}
+{"time": "2026-04-29T05:26:06.859807", "model": "qwen3.6-35b-common", "prompt_tokens": 15, "completion_tokens": 40, "total_tokens": 55}
+{"time": "2026-04-29T05:36:11.145846", "model": "qwen3.6-35b-common", "prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15}
+{"time": "2026-04-29T05:36:11.161091", "model": "qwen3.6-35b-common", "prompt_tokens": 20, "completion_tokens": 50, "total_tokens": 70}
+{"time": "2026-04-29T05:36:11.175543", "model": "qwen3.6-35b-common", "prompt_tokens": 15, "completion_tokens": 40, "total_tokens": 55}
+{"time": "2026-04-29T05:44:24.279441", "model": "qwen3.6-35b-common", "prompt_tokens": 84, "completion_tokens": 225, "total_tokens": 309}
+{"time": "2026-04-29T05:44:27.099639", "model": "qwen3.6-35b-common", "prompt_tokens": 88, "completion_tokens": 347, "total_tokens": 435}
+{"time": "2026-04-29T05:44:29.217973", "model": "qwen3.6-35b-common", "prompt_tokens": 84, "completion_tokens": 298, "total_tokens": 382}
+{"time": "2026-04-29T05:44:59.723703", "model": "qwen3.6-35b-common", "prompt_tokens": 68, "completion_tokens": 2307, "total_tokens": 2375}
+{"time": "2026-04-29T05:45:09.779480", "model": "qwen3.6-35b-common", "prompt_tokens": 85, "completion_tokens": 918, "total_tokens": 1003}
+{"time": "2026-04-29T05:45:12.740364", "model": "qwen3.6-35b-common", "prompt_tokens": 87, "completion_tokens": 423, "total_tokens": 510}
+{"time": "2026-04-29T05:45:16.942914", "model": "qwen3.6-35b-common", "prompt_tokens": 99, "completion_tokens": 607, "total_tokens": 706}
+{"time": "2026-04-29T05:45:19.991811", "model": "qwen3.6-35b-common", "prompt_tokens": 91, "completion_tokens": 408, "total_tokens": 499}

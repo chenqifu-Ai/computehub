@@ -1,0 +1,328 @@
+package composer
+
+import (
+	"context"
+	"testing"
+	"time"
+)
+
+func TestDefaultConfig(t *testing.T) {
+	cfg := DefaultConfig()
+	if cfg.MaxConcurrency != 10 {
+		t.Errorf("Expected MaxConcurrency 10, got %d", cfg.MaxConcurrency)
+	}
+	if cfg.Timeout != 300*time.Second {
+		t.Errorf("Expected Timeout 300s, got %v", cfg.Timeout)
+	}
+	if cfg.MaxFailures != 2 {
+		t.Errorf("Expected MaxFailures 2, got %d", cfg.MaxFailures)
+	}
+	if cfg.DecomposeModel != "qwen3.6-35b" {
+		t.Errorf("Expected DecomposeModel 'qwen3.6-35b', got '%s'", cfg.DecomposeModel)
+	}
+}
+
+func TestNewTaskComposer(t *testing.T) {
+	cfg := DefaultConfig()
+	tc := NewTaskComposer(cfg)
+
+	if tc == nil {
+		t.Fatal("TaskComposer should not be nil")
+	}
+	if tc.Decomposer == nil {
+		t.Fatal("Decomposer should not be nil")
+	}
+	if tc.DispatchEngine == nil {
+		t.Fatal("DispatchEngine should not be nil")
+	}
+	if tc.Compositor == nil {
+		t.Fatal("Compositor should not be nil")
+	}
+}
+
+func TestNewDispatchEngine(t *testing.T) {
+	models := []string{"qwen2.5:3b", "glm-4.7-flash"}
+	de := NewDispatchEngine(models, 5, 30*time.Second)
+
+	if de == nil {
+		t.Fatal("DispatchEngine should not be nil")
+	}
+	if len(de.Models) != 2 {
+		t.Errorf("Expected 2 models, got %d", len(de.Models))
+	}
+	if de.MaxConcurrency != 5 {
+		t.Errorf("Expected MaxConcurrency 5, got %d", de.MaxConcurrency)
+	}
+}
+
+func TestDispatchEngineSelectModel(t *testing.T) {
+	models := []string{"test-model"}
+	de := NewDispatchEngine(models, 5, 30*time.Second)
+
+	selected := de.selectModel()
+	if selected != "test-model" {
+		t.Errorf("Expected 'test-model', got '%s'", selected)
+	}
+}
+
+func TestDispatchEngineSelectModelUnknown(t *testing.T) {
+	de := NewDispatchEngine([]string{}, 5, 30*time.Second)
+	selected := de.selectModel()
+	if selected != "unknown" {
+		t.Errorf("Expected 'unknown' for empty models, got '%s'", selected)
+	}
+}
+
+func TestDispatchEngineDispatch(t *testing.T) {
+	models := []string{"test-model"}
+	de := NewDispatchEngine(models, 5, 30*time.Second)
+	ctx := context.Background()
+
+	tasks := []DecomposedTask{
+		{ID: "sub_1", Description: "Task 1"},
+		{ID: "sub_2", Description: "Task 2"},
+		{ID: "sub_3", Description: "Task 3"},
+	}
+
+	results, err := de.Dispatch(ctx, tasks)
+	if err != nil {
+		t.Fatalf("Dispatch failed: %v", err)
+	}
+	if len(results) != 3 {
+		t.Errorf("Expected 3 results, got %d", len(results))
+	}
+
+	for _, r := range results {
+		if !r.Success {
+			t.Errorf("Subtask %s should succeed (mock), got error: %s", r.SubtaskID, r.Error)
+		}
+		if r.ModelUsed != "test-model" {
+			t.Errorf("Expected model 'test-model', got '%s'", r.ModelUsed)
+		}
+	}
+}
+
+func TestDispatchEngineContextCancellation(t *testing.T) {
+	models := []string{"test-model"}
+	de := NewDispatchEngine(models, 5, 30*time.Second)
+
+	// Cancelled context
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel() // Cancel immediately
+
+	tasks := []DecomposedTask{
+		{ID: "sub_1", Description: "Task 1"},
+	}
+
+	results, err := de.Dispatch(ctx, tasks)
+	if err != nil {
+		t.Fatalf("Dispatch should not return error on cancellation: %v", err)
+	}
+
+	// Results might or might not have succeeded depending on goroutine timing
+	_ = results
+}
+
+func TestDispatchEnginePriority(t *testing.T) {
+	models := []string{"test-model"}
+	de := NewDispatchEngine(models, 5, 30*time.Second)
+	ctx := context.Background()
+
+	tasks := []DecomposedTask{
+		{ID: "low", Description: "Low priority", Priority: 1},
+		{ID: "high", Description: "High priority", Priority: 10},
+		{ID: "med", Description: "Medium priority", Priority: 5},
+	}
+
+	results, err := de.Dispatch(ctx, tasks)
+	if err != nil {
+		t.Fatalf("Dispatch failed: %v", err)
+	}
+	if len(results) != 3 {
+		t.Errorf("Expected 3 results, got %d", len(results))
+	}
+}
+
+func TestLLMDecomposer(t *testing.T) {
+	d := &LLMDecomposer{
+		Model:  "test-model",
+		Prompt: "Decompose this task",
+	}
+
+	input := TaskComposerInput{
+		TaskID:       "test-task-001",
+		OriginalTask: "Analyze GPU utilization data",
+	}
+
+	result, err := d.Decompose(input)
+	if err != nil {
+		t.Fatalf("Decompose failed: %v", err)
+	}
+	if result.TaskID != "test-task-001" {
+		t.Errorf("Expected TaskID 'test-task-001', got '%s'", result.TaskID)
+	}
+	if len(result.Subtasks) == 0 {
+		t.Fatal("Expected at least 1 subtask")
+	}
+	if result.DecomposeModel != "test-model" {
+		t.Errorf("Expected model 'test-model', got '%s'", result.DecomposeModel)
+	}
+}
+
+func TestLLMDecomposerWithContext(t *testing.T) {
+	d := &LLMDecomposer{
+		Model:  "test-model",
+		Prompt: "Decompose this task",
+	}
+
+	input := TaskComposerInput{
+		TaskID:       "test-context",
+		OriginalTask: "Task with context",
+		ExtraContext: "GPU metrics available",
+	}
+
+	result, err := d.Decompose(input)
+	if err != nil {
+		t.Fatalf("Decompose with context failed: %v", err)
+	}
+	if result.TaskID != "test-context" {
+		t.Errorf("Expected TaskID 'test-context', got '%s'", result.TaskID)
+	}
+}
+
+func TestLLMCompositor(t *testing.T) {
+	c := &LLMCompositor{
+		Model:  "test-model",
+		Prompt: "Compose results",
+	}
+
+	results := []SubtaskExecution{
+		{SubtaskID: "sub_1", Success: true, Result: "Analysis complete"},
+		{SubtaskID: "sub_2", Success: true, Result: "Report generated"},
+	}
+
+	result, err := c.Compose("Original task description", results)
+	if err != nil {
+		t.Fatalf("Compose failed: %v", err)
+	}
+	if result == "" {
+		t.Fatal("Expected non-empty compose result")
+	}
+}
+
+func TestLLMCompositorWithFailures(t *testing.T) {
+	c := &LLMCompositor{
+		Model:  "test-model",
+		Prompt: "Compose with failures",
+	}
+
+	results := []SubtaskExecution{
+		{SubtaskID: "sub_1", Success: true, Result: "Success result"},
+		{SubtaskID: "sub_2", Success: false, Result: "", Error: "timeout"},
+	}
+
+	result, err := c.Compose("Task with failures", results)
+	if err != nil {
+		t.Fatalf("Compose with failures failed: %v", err)
+	}
+	if result == "" {
+		t.Fatal("Expected non-empty compose result even with failures")
+	}
+}
+
+func TestCallLLM(t *testing.T) {
+	result, err := callLLM("test-model", "http://test", "", "test prompt", 100)
+	if err != nil {
+		t.Fatalf("callLLM failed: %v", err)
+	}
+	if !contains(result, "test-model") {
+		t.Errorf("Expected result to contain model name, got '%s'", result)
+	}
+}
+
+func TestCallSmallModel(t *testing.T) {
+	ctx := context.Background()
+	task := DecomposedTask{
+		ID:          "test-sub",
+		Description: "Test subtask",
+	}
+
+	result, err := callSmallModel(ctx, "test-model", task)
+	if err != nil {
+		t.Fatalf("callSmallModel failed: %v", err)
+	}
+	if !contains(result, "test-sub") {
+		t.Errorf("Expected result to contain subtask ID, got '%s'", result)
+	}
+}
+
+func TestParseDecomposeResult(t *testing.T) {
+	result, err := parseDecomposeResult("task-001", "mock result")
+	if err != nil {
+		t.Fatalf("parseDecomposeResult failed: %v", err)
+	}
+	if result.TaskID != "task-001" {
+		t.Errorf("Expected TaskID 'task-001', got '%s'", result.TaskID)
+	}
+	if len(result.Subtasks) != 3 {
+		t.Errorf("Expected 3 subtasks, got %d", len(result.Subtasks))
+	}
+}
+
+func TestSortTasksByPriority(t *testing.T) {
+	tasks := []DecomposedTask{
+		{ID: "low", Priority: 1},
+		{ID: "high", Priority: 10},
+		{ID: "med", Priority: 5},
+	}
+
+	sortTasksByPriority(tasks)
+
+	if tasks[0].ID != "high" {
+		t.Errorf("Expected first task 'high', got '%s'", tasks[0].ID)
+	}
+	if tasks[1].ID != "med" {
+		t.Errorf("Expected second task 'med', got '%s'", tasks[1].ID)
+	}
+	if tasks[2].ID != "low" {
+		t.Errorf("Expected third task 'low', got '%s'", tasks[2].ID)
+	}
+}
+
+func TestMin(t *testing.T) {
+	if min(1, 2) != 1 {
+		t.Error("min(1,2) should be 1")
+	}
+	if min(5, 3) != 3 {
+		t.Error("min(5,3) should be 3")
+	}
+	if min(4, 4) != 4 {
+		t.Error("min(4,4) should be 4")
+	}
+}
+
+func TestComposerOutputStructure(t *testing.T) {
+	output := &TaskComposerOutput{
+		TaskID:      "test-output",
+		Success:     true,
+		Subtasks:    []DecomposedTask{{ID: "sub_1"}},
+		Results:     []SubtaskExecution{{SubtaskID: "sub_1", Success: true}},
+		FinalResult: "Final answer",
+	}
+
+	if output.TaskID != "test-output" {
+		t.Errorf("Expected TaskID 'test-output', got '%s'", output.TaskID)
+	}
+	if !output.Success {
+		t.Error("Expected Success to be true")
+	}
+}
+
+func contains(s, substr string) bool {
+	for i := 0; i <= len(s)-len(substr); i++ {
+		if s[i:i+len(substr)] == substr {
+			return true
+		}
+	}
+	return false
+}

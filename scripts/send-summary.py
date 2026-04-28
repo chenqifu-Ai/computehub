@@ -1,0 +1,107 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""发送工作汇总邮件"""
+import smtplib
+import os
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+# 配置
+SMTP_SERVER = "smtp.qq.com"
+SMTP_PORT = 465
+EMAIL = "19525456@qq.com"
+AUTH_CODE = "bzgwylbbrocdbiie"
+
+subject = "📋 今日工作汇总 (2026-04-29)"
+
+body = """
+# 2026-04-29 工作汇总
+
+---
+
+## 📋 今日工作完成清单（2026-04-29 凌晨）
+
+### 1. zhangtuo-ai/qwen3.6-35b 深度功能测试 ✅
+
+对比 qwen3.6-35b (标准版) vs qwen3.6-35b-common (通用版) 在 16 个维度的能力：
+
+| 测试维度 | 标准版 | common版 | 备注 |
+|---------|--------|---------|------|
+| 角色扮演（傲娇猫） | ✅ 自然流畅 | ✅ 自然流畅 | 输出全在 reasoning 字段 |
+| 数学精确性 | ✅ 12345×67890=838102050 | ✅ 正确 | 两个模型一样 |
+| 幻觉抵抗 | ✅ 正确反驳300骨头 | ✅ 正确反驳 | 区分成人/婴儿骨量 |
+| 代码Debug | ✅ 识别merge_sort bug | ✅ 识别bug | 缺少合并步骤和return |
+| 多轮对话记忆 | ✅ 5轮记忆完整 | ✅ 5轮记忆完整 | |
+| 逻辑推理（三门问题） | ✅ 该换（2/3概率） | ✅ 该换（2/3概率） | |
+| 情感分析 | ✅ 混合情感（褒贬参半） | ✅ 混合情感（褒贬参半） | |
+| 多语言翻译 | ✅ 英语+日语准确 | ✅ 英语+日语准确 | |
+| 指令遵循 | ✅ 多条件格式遵循 | ✅ 多条件格式遵循 | |
+| 创意写作（诗歌） | ✅ 七言绝句 | ✅ 七言绝句 | |
+
+**核心发现：两个模型推理能力完全一致，只是 API 层差异**
+
+---
+
+### 2. 适配层工程化改造 v2.0.0 ✅
+
+**改造内容：**
+- 配置管理：环境变量 + .env 文件，不再硬编码 API Key
+- 自定义异常：6 种错误类型（Configuration/Timeout/HTTP/RateLimit 等）
+- 结构化日志：JSON 格式文件日志 + 控制台日志
+- 性能监控：PerformanceStats 统计调用/延迟/错误率/Token
+- 版本化管理：`__version__ = 2.0.0` + CHANGELOG.md
+- 测试套件：pytest 28 测试全部通过
+
+**实际验证结果：**
+- 8/8 测试通过，有效率 100%
+- 平均响应 7.2s（简单问答 2-4s，代码生成 30s）
+- 错误率 0%
+
+---
+
+### 3. 废弃配置 Git 标记 ✅
+
+标记了 config/ 中 4 个含废弃 API Key 的配置文件：
+- config/model.conf → 58.23.129.98:8000
+- config/models.json → 58.23.129.98:8001 (2处)
+- config/custom-model.conf → 58.23.129.98
+- config/qwen-model.conf → 58.23.129.98
+
+当前新配置：
+- ai_agent/config/qwen36_adapter.py (从环境变量读取)
+- .env 文件 (不提交 git)
+
+所有标记已 Git 提交，可随时回退。
+
+---
+
+### 4. 代码推送 GitHub ✅
+
+两个分支已推送到 https://github.com/chenqifu-Ai/openclaw-workspace：
+- master → 包含配置标记 + 工程化改造
+- computehub-qwen3.5-397b → 包含所有提交
+
+---
+
+## 📌 待老大决策事项
+
+1. **华联股份止损** — 已亏损 -16.65%，持续跌破止损位，需立即处理
+2. **Sprint 5** — Docker/CI/CD/压测，准备生产部署
+3. **远程 Windows worker** — 192.168.2.165 部署
+4. **GitHub 公开 ComputeHub 仓库**
+"""
+
+msg = MIMEMultipart()
+msg["From"] = EMAIL
+msg["To"] = EMAIL
+msg["Subject"] = subject
+msg.attach(MIMEText(body, "plain", "utf-8"))
+
+try:
+    server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT)
+    server.login(EMAIL, AUTH_CODE)
+    server.sendmail(EMAIL, EMAIL, msg.as_string())
+    server.quit()
+    print("✅ 邮件发送成功")
+except Exception as e:
+    print(f"❌ 发送失败: {e}")

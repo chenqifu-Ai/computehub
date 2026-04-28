@@ -16,13 +16,22 @@
 - **账号**: 19525456@qq.com
 - **当前使用**: deepseek-v3.1:671b ✅
 
-## 🆕 Qwen 3.6 本地API (2026-04-23 新增) - ❌ 已停用
-- **地址**: http://58.23.129.98:8000/v1
-- **模型**: qwen3.6-35b (深度推理模型)
-- **API Key**: sk-78sadn09bjawde123e
-- **状态**: ❌ 2026-04-25 审计确认不可用，已从配置中移除
-- **注意**: 推理模型，max_tokens 需设 ≥2000
-- **⚠️ API 格式异常**: 输出在 reasoning 字段，content 为 null → 使用适配层 `ai_agent/config/qwen36_adapter.py`，详情见 `memory/topics/技术经验/qwen36-35b-api-format-fix.md`
+## 🆕 NewAPI (ai.zhangtuokeji.top) — 当前主力 (2026-04-28)
+- **地址**: https://ai.zhangtuokeji.top:9090/v1
+- **模型**: qwen3.6-35b-common
+- **API Key**: sk-3RgMq1COL9uqn29hCBwXOt5X3d5TpIddaRKH44chQ2QcAybl
+- **状态**: ✅ 可用，~0.7s 响应
+- ⚠️ **max_tokens ≥ 1024**（推荐 2048）
+- ⚠️ **content 永远为 null**（输出全在 reasoning 字段），适配层已处理 fallback
+- **配置位置**: openclaw.json (zhangtuo-ai-common provider) + ComputeHub config.json + TOOLS.md
+
+## ❌ Qwen 3.6 本地API (已停用)
+- **旧地址**: http://58.23.129.98:8000/v1
+** 已停用：2026-04-28 已迁移至 NewAPI (ai.zhangtuokeji.top:9090)
+** 旧配置已标记：config/*.conf
+- **旧模型**: qwen3.6-35b (深度推理模型)
+- **原因**: 2026-04-25 审计确认不可用
+- **旧问题**: content 始终为 null，需适配层
 
 ## 服务器信息
 - **本机IP**: 192.168.1.17
@@ -58,12 +67,11 @@
 
 **完整错误记录见**: `memory/topics/错误记录/常见错误.md`
 
-## qwen3.6-35b API 格式异常 (2026-04-24) - ❌ 已停用
+## qwen3.6-35b API 格式异常 (2026-04-24) - ❌ 已解决
 - 该模型 API 所有输出在 `reasoning` 字段，`content` 始终为 null
-- 已创建统一适配层: `ai_agent/config/qwen36_adapter.py`
-- 调用方式: `from ai_agent.config.qwen36_adapter import ask, ask_detailed, ask_code`
-- **状态**: ❌ 2026-04-25 审计确认模型端点不可用，相关配置已移除
-- 详情见: `memory/topics/技术经验/qwen36-35b-api-format-fix.md`
+- 已适配层 `ai_agent/config/qwen36_adapter.py`
+- **当前状态**: 已切换至 NewAPI，content 正常输出，不再需要适配层
+- 旧文档见: `memory/topics/技术经验/qwen36-35b-api-format-fix.md`
 
 ## 当前持仓 (2026-04-23 更新)
 | 股票 | 代码 | 数量 | 成本价 | 止损位 | 当前价 | 浮动盈亏 |

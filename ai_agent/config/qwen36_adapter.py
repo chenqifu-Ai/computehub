@@ -245,7 +245,7 @@ def _log_conversation(request_data: dict, response_data: dict, error: str = None
 
 
 # ============================================================
-# 性能监控
+# 性能监控 (增强版)
 # ============================================================
 @dataclass
 class PerformanceStats:
@@ -255,11 +255,36 @@ class PerformanceStats:
     failed_calls: int = 0
     total_tokens: int = 0
     total_latency_ms: float = 0.0
-    _latencies: list = field(default_factory=list)
+    _latencies: list = field(default_factory=list, repr=False)
+    _daily_stats: dict = field(default_factory=dict, repr=False)
 
     @property
     def avg_latency_ms(self) -> float:
         return self.total_latency_ms / max(1, self.successful_calls)
+
+    @property
+    def p95_latency_ms(self) -> float:
+        if not self._latencies:
+            return 0.0
+        sorted_latencies = sorted(self._latencies)
+        idx = int(len(sorted_latencies) * 0.95)
+        return sorted_latencies[min(idx, len(sorted_latencies) - 1)]
+
+    @property
+    def p99_latency_ms(self) -> float:
+        if not self._latencies:
+            return 0.0
+        sorted_latencies = sorted(self._latencies)
+        idx = int(len(sorted_latencies) * 0.99)
+        return sorted_latencies[min(idx, len(sorted_latencies) - 1)]
+
+    @property
+    def max_latency_ms(self) -> float:
+        return max(self._latencies) if self._latencies else 0.0
+
+    @property
+    def min_latency_ms(self) -> float:
+        return min(self._latencies) if self._latencies else 0.0
 
     @property
     def error_rate(self) -> float:
@@ -267,13 +292,43 @@ class PerformanceStats:
         return self.failed_calls / max(1, total)
 
     def to_dict(self) -> dict:
-        return asdict(self)
+        d = asdict(self)
+        # 移除内部字段
+        d.pop('_latencies', None)
+        d.pop('_daily_stats', None)
+        d['avg_latency_ms'] = self.avg_latency_ms
+        d['p95_latency_ms'] = self.p95_latency_ms
+        d['p99_latency_ms'] = self.p99_latency_ms
+        d['max_latency_ms'] = self.max_latency_ms
+        d['min_latency_ms'] = self.min_latency_ms
+        d['error_rate'] = self.error_rate
+        return d
+
+    def record_latency(self, latency_ms: float):
+        """记录延迟并维护最近 1000 条"""
+        self._latencies.append(latency_ms)
+        if len(self._latencies) > 1000:
+            self._latencies = self._latencies[-1000:]
+
+    def daily_summary(self, date: str = None) -> dict:
+        """获取每日统计摘要"""
+        if not date:
+            date = datetime.datetime.now().strftime("%Y-%m-%d")
+        return self._daily_stats.get(date, {
+            "date": date,
+            "total_calls": 0,
+            "successful_calls": 0,
+            "failed_calls": 0,
+            "total_tokens": 0,
+            "avg_latency_ms": 0.0,
+        })
 
     def summary(self) -> str:
         return (
             f"统计: 调用{self.total_calls}次 | 成功{self.successful_calls}次 | "
             f"失败{self.failed_calls}次 | 错误率{self.error_rate:.1%} | "
-            f"平均延迟{self.avg_latency_ms:.0f}ms | Token总消耗{self.total_tokens}"
+            f"平均延迟{self.avg_latency_ms:.0f}ms | P95:{self.p95_latency_ms:.0f}ms | "
+            f"Token总消耗{self.total_tokens}"
         )
 
 
@@ -375,6 +430,9 @@ class Qwen36Adapter:
             _performance.total_tokens += total_tokens
             _performance.successful_calls += 1
 
+            # 记录延迟
+            _performance.record_latency(elapsed_ms)
+
             # 记录日志
             _log_token_usage(prompt_tokens, completion_tokens, total_tokens, self.config.model)
             _log_conversation(request_data, data)
@@ -382,6 +440,8 @@ class Qwen36Adapter:
             # 性能日志
             if elapsed_ms > 5000:
                 logger.warning(f"慢请求: {elapsed_ms:.0f}ms > 5000ms")
+            elif elapsed_ms > 2000:
+                logger.info(f"较慢请求: {elapsed_ms:.0f}ms")
 
             return {
                 "raw": raw,

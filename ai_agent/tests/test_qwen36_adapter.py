@@ -205,6 +205,23 @@ class TestPerformanceStats:
         assert "8" in summary
         assert "2" in summary
 
+    def test_p95_p99_calculation(self):
+        stats = PerformanceStats()
+        # 添加一些测试延迟数据
+        for i in range(100):
+            stats.record_latency(float(i * 10))
+        
+        assert stats.p95_latency_ms >= 900.0
+        assert stats.p99_latency_ms >= 950.0
+        assert stats.min_latency_ms == 0.0
+        assert stats.max_latency_ms == 990.0
+
+    def test_daily_summary(self):
+        stats = PerformanceStats()
+        summary = stats.daily_summary("2026-04-29")
+        assert summary["date"] == "2026-04-29"
+        assert summary["total_calls"] == 0
+
 
 # ============================================================
 # 输出清洗测试
