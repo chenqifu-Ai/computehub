@@ -19,6 +19,7 @@ import (
 	"github.com/chenqifu-Ai/computehub/src/node"
 	"github.com/chenqifu-Ai/computehub/src/pure"
 	"github.com/chenqifu-Ai/computehub/src/scheduler"
+	"github.com/chenqifu-Ai/computehub/src/web"
 )
 
 // ─── API 请求/响应结构 ───
@@ -76,6 +77,9 @@ type Gateway struct {
 	Billing    *blockchain.BillingEngine
 	TaskReg    *blockchain.TaskRegistry
 	Chain      *blockchain.Blockchain
+
+	// Sprint 4 — Web Dashboard
+	Dashboard *web.DashboardServer
 }
 
 // ─── 初始化 ───
@@ -145,6 +149,45 @@ func NewGateway(port int, sandboxPath string, genesPath string) (*Gateway, error
 	// 注册默认仲裁人
 	gw.Disputes.RegisterArbiter("system", 10.0)
 
+	// ── Sprint 4: Web Dashboard ──
+	dash := web.NewDashboardServer()
+	dash.SetProviders(
+		// Node provider
+		&web.GatewayAdapter{
+			GetOnlineNodesFn: func() []*node.Node {
+				return nm.GetOnlineNodes()
+			},
+			GetTotalNodesFn: func() int {
+				return len(nm.GetAllNodes())
+			},
+		},
+		// Blockchain provider
+		&web.GatewayAdapter{
+			GetChainInfoFn:   chain.GetChainInfo,
+			StakingStatsFn:   func() map[string]interface{} {
+				if gw.Staking != nil { return gw.Staking.StakingStats() }
+				return nil
+			},
+			EscrowStatsFn:    func() map[string]int {
+				if gw.Escrow != nil { return gw.Escrow.EscrowStats() }
+				return nil
+			},
+			DisputeStatsFn:   func() map[string]int {
+				if gw.Disputes != nil { return gw.Disputes.DisputeStats() }
+				return nil
+			},
+			TokenSymbolVal:   blockchain.TokenSymbol,
+		},
+		// Task provider
+		&web.GatewayAdapter{
+			TaskStatsFn: func() map[string]int {
+				if gw.TaskReg != nil { return gw.TaskReg.TaskStats() }
+				return nil
+			},
+		},
+	)
+	gw.Dashboard = dash
+
 	return gw, nil
 }
 
@@ -192,6 +235,12 @@ func (g *Gateway) Serve(port int) error {
 	http.HandleFunc("/api/blockchain/task/complete", g.handleTaskComplete)
 	http.HandleFunc("/api/blockchain/task/fail", g.handleTaskFail)
 	http.HandleFunc("/api/blockchain/task/stats", g.handleTaskStats)
+
+	// Sprint 4: Web Dashboard
+	if g.Dashboard != nil {
+		http.HandleFunc("/web/dashboard", g.Dashboard.ServeDashboard)
+		http.HandleFunc("/web/api/metrics", g.Dashboard.ServeMetrics)
+	}
 
 	addr := fmt.Sprintf(":%d", port)
 	fmt.Printf("[Gateway] 🌐 ComputeHub Gateway listening on %s\n", addr)
