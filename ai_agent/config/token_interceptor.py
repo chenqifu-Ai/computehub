@@ -210,11 +210,11 @@ class InterceptorHandler(http.server.BaseHTTPRequestHandler):
             req_data = json.loads(body)
             messages = req_data.get("messages", [])
             msg_count = len(messages)
-            max_tokens = req_data.get("max_tokens", req_data.get("n_ctx", 2048))
+            max_tokens = req_data.get("max_tokens", req_data.get("n_ctx", 4096))
         except:
             messages = []
             msg_count = 0
-            max_tokens = 2048
+            max_tokens = 4096
 
         scenario = _detect_model(messages) if messages else "unknown"
 
