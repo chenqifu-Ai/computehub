@@ -46,8 +46,10 @@ class ModelRouter:
             "model_usage": {},
             "success_rate": {},
             "avg_latency": {},
+            "available_models": [],
         }
         self._setup_endpoints()
+        self.stats["available_models"] = list(self.adapters.keys())
     
     def _setup_endpoints(self):
         """设置模型端点"""
@@ -55,7 +57,7 @@ class ModelRouter:
         config_common = Qwen36Config(
             api_key=os.getenv("QWEN36_API_KEY_COMMON", os.getenv("QWEN36_API_KEY", "")),
             model="qwen3.6-35b-common",
-            url=os.getenv("QWEN36_API_URL_COMMON", "https://ai.zhangtuokeji.top:9090/v1/chat/completions"),
+            api_url=os.getenv("QWEN36_API_URL_COMMON", "https://ai.zhangtuokeji.top:9090/v1/chat/completions"),
             timeout=30,  # 快速响应
             max_tokens=2048,
         )
@@ -68,7 +70,7 @@ class ModelRouter:
         config_std = Qwen36Config(
             api_key=os.getenv("QWEN36_API_KEY_STD", os.getenv("QWEN36_API_KEY", "")),
             model="qwen3.6-35b",
-            url=os.getenv("QWEN36_API_URL_STD", "https://ai.zhangtuokeji.top:9090/v1/chat/completions"),
+            api_url=os.getenv("QWEN36_API_URL_STD", "https://ai.zhangtuokeji.top:9090/v1/chat/completions"),
             timeout=60,
             max_tokens=4096,
         )

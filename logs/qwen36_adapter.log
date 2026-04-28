@@ -30,3 +30,7 @@
 {"timestamp": "2026-04-29 05:45:12,743", "level": "INFO", "module": "qwen36_adapter", "message": "较慢请求: 2941ms"}
 {"timestamp": "2026-04-29 05:45:16,954", "level": "INFO", "module": "qwen36_adapter", "message": "较慢请求: 4194ms"}
 {"timestamp": "2026-04-29 05:45:19,994", "level": "INFO", "module": "qwen36_adapter", "message": "较慢请求: 3030ms"}
+{"timestamp": "2026-04-29 06:42:08,883", "level": "INFO", "module": "qwen36_adapter", "message": "适配层初始化 | 模型: qwen3.6-35b-common | URL: https://ai.zhangtuokeji.top:9090/v1/chat/completions"}
+{"timestamp": "2026-04-29 06:42:08,886", "level": "INFO", "module": "qwen36_adapter", "message": "适配层初始化 | 模型: qwen3.6-35b | URL: https://ai.zhangtuokeji.top:9090/v1/chat/completions"}
+{"timestamp": "2026-04-29 06:43:37,612", "level": "INFO", "module": "qwen36_adapter", "message": "适配层初始化 | 模型: qwen3.6-35b-common | URL: https://ai.zhangtuokeji.top:9090/v1/chat/completions"}
+{"timestamp": "2026-04-29 06:43:37,615", "level": "INFO", "module": "qwen36_adapter", "message": "适配层初始化 | 模型: qwen3.6-35b | URL: https://ai.zhangtuokeji.top:9090/v1/chat/completions"}
