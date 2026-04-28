@@ -42,3 +42,6 @@ ai_agent/results/.git
 *TUI_*.md
 *OK*.md
 *OpenClaw-*.md
+-e 
+# CI/CD 文件（OAuth 无 workflow scope，需手动创建）
+.github/workflows/
