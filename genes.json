@@ -1,0 +1,37 @@
+{
+  "genes": {
+    "cuda_not_found": {
+      "pattern": "cuda_not_found",
+      "correct_path": "use_cpu_fallback",
+      "failure_reason": "CUDA not available on assigned node",
+      "created_at": "2026-04-28T01:59:44.395871422Z",
+      "last_verified": "2026-04-28T01:59:44.395872038Z",
+      "confidence": 0.85,
+      "usage_count": 0,
+      "last_used": "0001-01-01T00:00:00Z",
+      "source": "predefined"
+    },
+    "docker_unavailable": {
+      "pattern": "docker_unavailable",
+      "correct_path": "fallback_to_direct_execute",
+      "failure_reason": "Docker daemon not running or unavailable",
+      "created_at": "2026-04-28T01:59:44.395865884Z",
+      "last_verified": "2026-04-28T01:59:44.395866884Z",
+      "confidence": 0.7,
+      "usage_count": 0,
+      "last_used": "0001-01-01T00:00:00Z",
+      "source": "predefined"
+    },
+    "insufficient_memory": {
+      "pattern": "insufficient_memory",
+      "correct_path": "reduce_batch_size",
+      "failure_reason": "OOM error during task execution",
+      "created_at": "2026-04-28T01:59:44.395869345Z",
+      "last_verified": "2026-04-28T01:59:44.395869961Z",
+      "confidence": 0.8,
+      "usage_count": 0,
+      "last_used": "0001-01-01T00:00:00Z",
+      "source": "predefined"
+    }
+  }
+}
