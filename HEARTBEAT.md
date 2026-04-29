@@ -228,8 +228,8 @@
 - ✅ Swap: 5.8G/15G (39%) — 改善中（昨晚64%→现在39%）
 - ✅ 磁盘: 36% (165G/462G) — 已清理，空间充足
 - 运行时间: 7天 21小时
-- 云端Qwen: 🔴 不可用（持续>2天）
-- 远程Ollama: 🔴 不可达（持续>2天）
+- 云端Qwen (zhangtuokeji): 🔴 API Key 失效（2026-04-29 14:08 报错 Invalid token）
+- 远程Ollama: ✅ 已恢复 — 39 个模型可用（kimi-k2.6, glm-5, deepseek-v4-flash 等）
 - 本地qwen3.6-35b: ✅ 可用（vllm-local → 10.111.223.227:8765）
 - Git: ✅ 已推送（vllm-backup 备用代理配置）
 
