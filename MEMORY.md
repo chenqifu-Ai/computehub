@@ -16,7 +16,11 @@
 - **账号**: 19525456@qq.com
 - **当前使用**: deepseek-v3.1:671b ✅
 
-## 🆕 NewAPI (ai.zhangtuokeji.top) — 当前主力 (2026-04-28)
+## 🚫 模型规则 (2026-04-29)
+- **当前 primary**: `ollama-cloud-2/deepseek-v4-flash`
+- **我（小智）不乱动** — 老大没说就不改 primary
+- 可以临时切 session 测试别的模型，测完立即恢复
+- ✅ 老大随时决定什么时候换
 - **地址**: https://ai.zhangtuokeji.top:9090/v1
 - **模型**: qwen3.6-35b-common
 - **API Key**: sk-3RgMq1COL9uqn29hCBwXOt5X3d5TpIddaRKH44chQ2QcAybl

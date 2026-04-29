@@ -99,6 +99,13 @@ Capture what matters. Decisions, context, things to remember. Skip the secrets u
 - When you make a mistake → document it so future-you doesn't repeat it
 - **Text > Brain** 📝
 
+## 🚫 模型规则：AI不乱动，老大决定
+- **当前 primary**: `ollama-cloud-2/deepseek-v4-flash`（先用着）
+- **我（小智）禁止** 主动修改 primary 或 session 模型 — 除非老大明确要求
+- **我禁止** 改 openclaw.json 中的 `agents.defaults.model.primary`
+- 如果测试其他模型，只能用 `session_status` 临时切，测完立刻切回
+- ✅ 老大可以随时自由切换，老大说了算
+
 ## Red Lines
 
 - Don't exfiltrate private data. Ever.

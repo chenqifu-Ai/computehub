@@ -84,37 +84,27 @@
 
 ## 🚨 系统状态监控
 
-### 实时系统状态 (2026-04-28 18:09 心跳)
-- **系统负载**: 🟡 proot 27.8/26.7/28.1 (虚高，已知现象)
-- **内存使用**: 🟡 偏高 (8.2G/11G, 75%)
-- **Swap使用**: 🟡 偏高 (8.2G/11G, 74%)
-- **磁盘空间**: 🟡 警戒 (80% 使用率, 94G可用)
-- **运行时间**: 3天 20小时
-- **ComputeHub Gateway**: 🟢 运行中 (端口8282)
+### 实时系统状态 (2026-04-29 22:53 心跳)
+- **系统负载**: 🟡 proot 18.3/19.2/20.3 (虚高，已知现象)
+- **内存使用**: 🟡 偏高 (8.6G/11G, 78%)
+- **Swap使用**: 🟡 偏高 (6.7G/11G, 61%)
+- **磁盘空间**: 🟡 警戒 (81% 使用率, 92G可用)
+- **运行时间**: ~5天
+- **ComputeHub Gateway**: 🟡 需确认 (上次 04-28 正常运行)
+- **当前 session 模型**: ollama-cloud-2/deepseek-v4-flash ✅
 
 ### AI服务状态
-- **NewAPI (zhangtuokeji.top)**: 🟢 ✅ (qwen3.6-35b-common, ~0.7s) ⭐ 主力
-  - ✅ API Key: sk-3RgMq1... (2026-04-28 更新)
-  - ⚠️ content 永远为 null（输出全在 reasoning），适配层 fallback 处理
-  - ✅ 适配层已从 reasoning 读取
-  - ⚡ 响应 ~0.7s
-- **Ollama云端 (ollama.com)**: 🟢 ✅ (deepseek-v3.1:671b, ~1.8s)
+- **Primary**: ollama-cloud-2/deepseek-v4-flash ✅ (ollama.com · 1M context · reasoning=True)
+- **qwen3.6-35b (58.23.129.98:8001)**: ⚠️ content 字段全空，所有输出在 reasoning
+- **NewAPI (ai.zhangtuokeji.top)**: 🟡 qwen3.6-35b (非 common, content 正常 ✅)
 - **Ollama本地**: 🟢 8个模型在线
 
-### 今日完成 (2026-04-28)
-- ✅ **ComputeHub 私有算力池** — Gateway 运行 ✅, 结算链路全通 ✅
-- ✅ **商业计划书** — 完整版 (~21KB) + HTML幻灯片 (14页)
-- ✅ **BP邮件发送** — 已发到 19525456@qq.com
-- ✅ **NewAPI统一配置** — TOOLS.md / openclaw.json / config.json 全部更新
-- ✅ **废弃API清理** — 旧 qwen3.6-35b provider (58.23.129.98) 已移除
-- ✅ **NewAPI 适配层** — qwen36_adapter.py 默认 key+model 已更新为 qwen3.6-35b-common
-- ✅ **HEARTBEAT.md** — 模型描述已更新为 qwen3.6-35b-common
-- ✅ **NewAPI 性能测试** — 并发/延迟/max_tokens 全面测试完成
-  - 最佳配置：max_tokens=4096，并发 2-4
-- ✅ **NewAPI Key 轮换** — 旧 key 过期已换为新 key (sk-1G7n...)
-  - 切换至 `qwen3.6-35b`（非 common），content 正常输出 ✅
-  - 模型有深度推理，reasoning 平均 4000-7800 字
-- ✅ **max_tokens 全局更新** — token_interceptor.py + qwen36_adapter.py 默认值 2048→4096
+### 今日完成 (2026-04-29)
+- 🧪 **qwen3.6-35b 全面测试** — 12项功能测试 + 图片识别测试（3项形状+1张本地照片+2张手机相册）
+- 📝 **图片识别操作规范 v1.0** — IMG-REC-001，7步流程+4种prompt模板
+- 🚫 **模型规则固化** — AGENTS.md / MCP-STD-001 / MEMORY.md 三处写入
+- 🔍 **图片识别：** VEAR MSU1 磁性传感器 / 阿里云ECS监控仪表盘 / 金色福运包装盒
+- ✅ **primary 确认：** ollama-cloud-2/deepseek-v4-flash（不再擅自改动）
 
 ### 专家系统状态 (今日)
 - **法律顾问**: ✅ 已执行 (12:02) - 模板版本
