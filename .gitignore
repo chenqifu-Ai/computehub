@@ -1,0 +1,17 @@
+# Compiled binaries
+computehub-gateway
+computehub-tui
+opc-gateway
+opc-tui
+opc-gateway-v2
+opc-tui-v2
+bin/
+
+# Build artifacts
+*.exe
+*.o
+*.a
+*.so
+
+# Config overrides
+.env
