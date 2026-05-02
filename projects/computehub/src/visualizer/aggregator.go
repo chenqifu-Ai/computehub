@@ -335,12 +335,10 @@ func (gpm *GlobalPowerMap) GetRegionData(region string) *RegionData {
 	defer gpm.mu.RUnlock()
 
 	if rd, exists := gpm.regions[region]; exists {
-		// 深拷贝
+		// 深拷贝 (注意：make + append 会翻倍，必须用 make([]T, 0, len) 或直接 copy)
 		copy := *rd
-		copy.Nodes = make([]NodeVisual, len(rd.Nodes))
-		copy.Alerts = make([]Alert, len(rd.Alerts))
-		copy.Nodes = append(copy.Nodes, rd.Nodes...)
-		copy.Alerts = append(copy.Alerts, rd.Alerts...)
+		copy.Nodes = append([]NodeVisual{}, rd.Nodes...)
+		copy.Alerts = append([]Alert{}, rd.Alerts...)
 		return &copy
 	}
 	return nil
@@ -354,10 +352,8 @@ func (gpm *GlobalPowerMap) GetAllRegions() map[string]*RegionData {
 	result := make(map[string]*RegionData)
 	for name, rd := range gpm.regions {
 		copy := *rd
-		copy.Nodes = make([]NodeVisual, len(rd.Nodes))
-		copy.Alerts = make([]Alert, len(rd.Alerts))
-		copy.Nodes = append(copy.Nodes, rd.Nodes...)
-		copy.Alerts = append(copy.Alerts, rd.Alerts...)
+		copy.Nodes = append([]NodeVisual{}, rd.Nodes...)
+		copy.Alerts = append([]Alert{}, rd.Alerts...)
 		result[name] = &copy
 	}
 	return result
