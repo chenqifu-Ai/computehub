@@ -45,3 +45,4 @@ ai_agent/results/.git
 -e 
 # CI/CD 文件（OAuth 无 workflow scope，需手动创建）
 .github/workflows/
+.github/workflows/
