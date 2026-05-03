@@ -1,0 +1,51 @@
+# ComputeHub — Docker 构建忽略
+# 不需要打进镜像的文件
+
+# 源代码 (Go 二进制在容器内编译)
+# src/ cmd/ 会显式 COPY
+
+# 二进制/构建产物
+/bin/
+/obj/
+/dist/
+/coverage/
+*.exe
+*.out
+*.test
+opc-gateway
+opc-tui
+opc-gateway-*
+opc-tui-*
+
+# 测试和临时文件
+tests/
+_archive/
+*.bak
+*.backup*
+*.tmp
+*.swp
+*~
+
+# 日志
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# Git
+.git/
+.gitignore
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 敏感文件
+*.key
+*.pem
+.env
+.env.local
+
+# 其他项目资源
+results/

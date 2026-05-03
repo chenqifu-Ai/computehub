@@ -15,7 +15,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # 配置
-TRACKING_FILE = Path.home() / ".openclaw" / "workspace" / "token-usage.json"
+TRACKING_FILE = Path.home() / ".openclaw" / "workspace" / "ai_agent" / "results" / "token_usage.jsonl"
 DAILY_REPORT_DIR = Path.home() / ".openclaw" / "workspace" / "reports"
 EMAIL_CONFIG = {
     "smtp_server": "smtp.qq.com",
@@ -26,71 +26,104 @@ EMAIL_CONFIG = {
 }
 
 def load_usage_data():
-    """加载用量数据"""
+    """从 JSONL 文件加载用量数据"""
+    daily = {}
+    total = {"input": 0, "output": 0, "total": 0, "calls": 0}
+    
     if TRACKING_FILE.exists():
         try:
-            with open(TRACKING_FILE, 'r', encoding='utf-8') as f:
-                return json.load(f)
+            for line in open(TRACKING_FILE, 'r', encoding='utf-8'):
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    entry = json.loads(line)
+                    day = entry.get('time', '')[:10]
+                    if not day:
+                        continue
+                    
+                    if day not in daily:
+                        daily[day] = {"input": 0, "output": 0, "total": 0, "calls": 0}
+                    
+                    inp = entry.get('prompt_tokens', 0)
+                    out = entry.get('completion_tokens', 0)
+                    tot = entry.get('total_tokens', 0)
+                    
+                    daily[day]['input'] += inp
+                    daily[day]['output'] += out
+                    daily[day]['total'] += tot
+                    daily[day]['calls'] += 1
+                    
+                    total['input'] += inp
+                    total['output'] += out
+                    total['total'] += tot
+                    total['calls'] += 1
+                except json.JSONDecodeError:
+                    continue
         except Exception as e:
             print(f"❌ 读取用量数据失败: {e}")
-            return {"daily": {}, "total": {"input": 0, "output": 0, "total": 0}}
-    else:
-        return {"daily": {}, "total": {"input": 0, "output": 0, "total": 0}}
+            return None
+    
+    return {"daily": daily, "total": total}
 
-def generate_daily_report(target_date=None):
+def generate_daily_report(target_date=None, show_latest=False):
     """生成日报"""
     if target_date is None:
         target_date = date.today().isoformat()
     
     data = load_usage_data()
+    if data is None:
+        return None
+    
     daily_data = data.get("daily", {}).get(target_date)
     
     if not daily_data:
-        print(f"❌ 没有找到指定日期 {target_date} 的数据")
-        return None
+        if show_latest:
+            # 发送最近有数据的日期
+            daily = data.get("daily", {})
+            if daily:
+                latest = sorted(daily.keys(), reverse=True)[0]
+                daily_data = daily[latest]
+                target_date = latest
+            else:
+                return None
     
     report = f"📊 百炼 API Token 用量日报 - {target_date}\n\n"
     report += "=" * 50 + "\n\n"
     
-    # 总体统计
     report += "🎯 总体统计:\n"
     report += f"   • 输入 tokens: {daily_data.get('input', 0):,}\n"
     report += f"   • 输出 tokens: {daily_data.get('output', 0):,}\n"
     report += f"   • 总计 tokens: {daily_data.get('total', 0):,}\n"
     report += f"   • API 调用次数: {daily_data.get('calls', 0):,}\n\n"
     
-    # 任务详情
-    tasks = daily_data.get("tasks", {})
-    if tasks:
-        report += "📋 任务详情:\n"
-        for task_name, task_data in tasks.items():
-            report += f"   • {task_name}: {task_data.get('total', 0):,} tokens ({task_data.get('calls', 0)}次调用)\n"
-        report += "\n"
-    
-    # 累计统计
-    total_data = data.get("total", {})
-    report += "📈 累计统计:\n"
-    report += f"   • 总输入 tokens: {total_data.get('input', 0):,}\n"
-    report += f"   • 总输出 tokens: {total_data.get('output', 0):,}\n"
-    report += f"   • 总计 tokens: {total_data.get('total', 0):,}\n\n"
-    
-    # 成本估算 (假设 $0.002/1K tokens)
+    # 成本估算 (阿里云百炼: qwen-plus ¥0.008/1K tokens)
     total_tokens = daily_data.get('total', 0)
-    cost_usd = (total_tokens / 1000) * 0.002
-    cost_cny = cost_usd * 7.0  # 假设汇率 7.0
+    cost_cny = total_tokens * 0.000008  # 估算 ¥0.008/1K tokens
     
     report += "💰 成本估算:\n"
-    report += f"   • 当日成本: ${cost_usd:.4f} (约 ¥{cost_cny:.2f})\n"
+    report += f"   • 当日成本: ¥{cost_cny:.4f}\n"
     report += f"   • 平均每次调用: {total_tokens/daily_data.get('calls', 1):.0f} tokens\n\n"
     
-    report += "⏰ 报告生成时间: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "\n"
+    report += "📈 累计统计:\n"
+    report += f"   • 总输入 tokens: {data['total']['input']:,}\n"
+    report += f"   • 总输出 tokens: {data['total']['output']:,}\n"
+    report += f"   • 总计 tokens: {data['total']['total']:,}\n"
+    report += f"   • 总调用次数: {data['total']['calls']:,}\n\n"
+    
+    report += "📅 最近记录:\n"
+    for d in sorted(data['daily'].keys(), reverse=True)[:5]:
+        info = data['daily'][d]
+        mark = " ◀ 今天" if d == target_date else ""
+        report += f"   • {d}: {info['total']:,} tokens ({info['calls']}次) - 输入 {info['input']} / 输出 {info['output']}{mark}\n"
+    
+    report += f"\n⏰ 报告生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
     
     return report
 
 def send_email(subject, content):
     """发送邮件"""
     try:
-        # 创建邮件
         msg = MIMEMultipart()
         msg['From'] = EMAIL_CONFIG['from_email']
         msg['To'] = EMAIL_CONFIG['to_email']
@@ -100,7 +133,7 @@ def send_email(subject, content):
         msg.attach(MIMEText(content, 'plain', 'utf-8'))
         
         # 连接SMTP服务器发送
-        with smtplib.SMTP_SSL(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port']) as server:
+        with smtplib.SMTP_SSL(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port'], timeout=30) as server:
             server.login(EMAIL_CONFIG['from_email'], EMAIL_CONFIG['password'])
             server.send_message(msg)
         
@@ -116,7 +149,7 @@ def main():
     if len(sys.argv) > 1 and sys.argv[1] == "send":
         # 发送日报模式
         target_date = date.today().isoformat()
-        report = generate_daily_report(target_date)
+        report = generate_daily_report(target_date, show_latest=True)
         
         if report:
             subject = f"百炼 API Token 用量日报 - {target_date}"
@@ -132,14 +165,11 @@ def main():
                     f.write(report)
                 print(f"📁 报告已保存: {report_file}")
         else:
-            # 没有今日数据，发送空报告说明
+            # 没有数据，发送空报告说明
             empty_report = f"📊 百炼 API Token 用量日报 - {target_date}\n\n"
-            empty_report += "=" * 50 + "\n\n"
-            empty_report += "ℹ️  今日暂无 API Token 使用数据\n\n"
-            empty_report += "可能原因:\n"
-            empty_report += "• 今日未使用百炼 API\n"
-            empty_report += "• Token 统计系统暂未记录\n\n"
-            empty_report += "⏰ 报告生成时间: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "\n"
+            empty_report += "ℹ️ 今日暂无 API Token 使用数据\n\n"
+            empty_report += "可能原因: 今日未使用 API 或统计系统未记录\n\n"
+            empty_report += f"⏰ 报告生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
             
             subject = f"百炼 API Token 用量日报 - {target_date} (无数据)"
             

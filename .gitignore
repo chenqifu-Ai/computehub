@@ -42,7 +42,27 @@ ai_agent/results/.git
 *TUI_*.md
 *OK*.md
 *OpenClaw-*.md
--e 
+
 # CI/CD 文件（OAuth 无 workflow scope，需手动创建）
 .github/workflows/
-.github/workflows/
+
+# 临时图片/视频帧
+_temp_image_recognition/
+_temp_video_frames/
+
+# 临时结果目录
+ai_agent/results/compress_test/
+
+# Node modules
+node_modules/
+package-lock.json
+package.json
+
+# 编译产物
+projects/computehub/code/bin/
+projects/computehub/opc-gateway
+projects/computehub/opc-tui
+
+# 专家系统日志 (JSON)
+expert_work_logs/
+reports/token_usage_report.txt

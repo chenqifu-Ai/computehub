@@ -10,7 +10,7 @@ with open(config_path) as f:
     config = dict(line.strip().split('=') for line in f if '=' in line)
 
 smtp_server = config.get('SMTP_SERVER', 'smtp.qq.com')
-smtp_port = int(config.get('SMTP_PORT', 465))
+smtp_port = int(config.get('SMTP_PORT', 587))  # 使用 587 STARTTLS (465 SSL 被 QQ 拒)
 email_user = config.get('EMAIL', config.get('email', ''))
 email_pass = config.get('AUTH_CODE', config.get('password', ''))
 
@@ -23,7 +23,8 @@ def send_email(subject, body, to_email):
     msg.attach(MIMEText(body, 'plain'))
     
     try:
-        server = smtplib.SMTP_SSL(smtp_server, smtp_port, timeout=10)
+        server = smtplib.SMTP(smtp_server, smtp_port, timeout=10)
+        server.starttls()  # 启用 TLS 加密
         server.set_debuglevel(1)
         server.login(email_user, email_pass)
         server.sendmail(email_user, to_email, msg.as_string())

@@ -113,7 +113,7 @@ type OpcGateway struct {
 
 func NewOpcGateway(port int, config *GatewayConfig) *OpcGateway {
 	// Use config values or fall back to defaults
-	geneStorePath := "/root/downloads/opcsystem/genes.json"
+	geneStorePath := "./genes.json"
 	sandboxPath := "/tmp/opc-sandbox"
 	bufferSize := 100
 	maxStates := 1000
