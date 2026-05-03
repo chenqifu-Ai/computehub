@@ -23,6 +23,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/computehub/opc/src/kernel"
 )
 
 // ====== 可视化网关 ======
@@ -46,6 +48,10 @@ type VisualizerGateway struct {
 
 	// 子图序列号
 	subSeq int
+
+	// 桥接 kernel（真实节点数据源）
+	bridgedKernel *kernel.ExtendedKernel
+	kernelMu      sync.Mutex
 }
 
 // NewVisualizerGateway 创建可视化网关

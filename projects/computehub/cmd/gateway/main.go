@@ -121,6 +121,20 @@ func main() {
 
 		// Create visualizer gateway and register routes (same port, different paths)
 		vg := visualizer.NewVisualizerGateway(gpm, config.Visualizer.Simulate)
+		vg.BridgeKernel(gw.Kernel)
+
+		// Wire up unregister fallback so simulated nodes can also be deleted
+		gw.SetSimUnregisterFallback(func(nodeID string) error {
+			return gpm.RemoveNode(nodeID)
+		})
+
+		// 定时从 kernel 同步真实节点数据（每 5s）
+		go func() {
+			for {
+				time.Sleep(5 * time.Second)
+				vg.SyncFromKernel()
+			}
+		}()
 
 		// Register v2 API routes on the default ServeMux
 		http.Handle("/api/v2/", vg)

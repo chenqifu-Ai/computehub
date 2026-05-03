@@ -130,11 +130,13 @@ type MetricsSnapshot struct {
 
 // Alert 告警
 type Alert struct {
-	ID        string    `json:"id"`
+	ID        string    `json:"alert_id"`
+	AlertID   string    `json:"id,omitempty"`  // alias 兼容
 	Type      string    `json:"type"`  // "temperature" | "utilization" | "offline" | "failure_rate"
 	Severity  string    `json:"severity"` // "info" | "warning" | "critical"
 	Message   string    `json:"message"`
-	Source    string    `json:"source"` // node_id
+	Source    string    `json:"source"`
+	NodeID    string    `json:"node_id"`
 	Timestamp time.Time `json:"timestamp"`
 }
 
@@ -225,6 +227,56 @@ func (gpm *GlobalPowerMap) RegisterNodeDiscovery(node *discover.NodeInfo) {
 
 	gpm.totalNodes++
 	gpm.totalGPUs += 4
+}
+
+// RegisterNodeFromKernel 从 kernel 节点管理器注册节点
+func (gpm *GlobalPowerMap) RegisterNodeFromKernel(nv *NodeVisual) {
+	gpm.mu.Lock()
+	defer gpm.mu.Unlock()
+
+	region := nv.Region
+	if _, exists := gpm.regions[region]; !exists {
+		gpm.regions[region] = &RegionData{
+			Name:    region,
+			Country: regionToCountry(region),
+			Lat:     regionToLat(region),
+			Lng:     regionToLng(region),
+		}
+	}
+
+	rd := gpm.regions[region]
+	rd.TotalNodes++
+	if nv.Status == "online" {
+		rd.OnlineNodes++
+	}
+
+	// Replace existing node if same ID, else append
+	found := false
+	for i, existing := range rd.Nodes {
+		if existing.ID == nv.ID {
+			rd.Nodes[i] = *nv
+			found = true
+			break
+		}
+	}
+	if !found {
+		rd.Nodes = append(rd.Nodes, *nv)
+	}
+
+	rd.TotalGPUs = 0
+	for _, n := range rd.Nodes {
+		if n.Status == "online" {
+			rd.TotalGPUs += len(n.GPUs)
+		}
+	}
+
+	// 更新汇总
+	gpm.totalNodes = 0
+	gpm.totalGPUs = 0
+	for _, r := range gpm.regions {
+		gpm.totalNodes += r.TotalNodes
+		gpm.totalGPUs += r.TotalGPUs
+	}
 }
 
 // UpdateGPU 更新 GPU 监控数据
@@ -695,4 +747,31 @@ func localIP() string {
 		}
 	}
 	return "127.0.0.1"
+}
+
+// RemoveNode 从模拟/视觉数据中删除节点
+func (gpm *GlobalPowerMap) RemoveNode(nodeID string) error {
+	gpm.mu.Lock()
+	defer gpm.mu.Unlock()
+
+	for region, rd := range gpm.regions {
+		for i, n := range rd.Nodes {
+			if n.ID == nodeID {
+				rd.Nodes = append(rd.Nodes[:i], rd.Nodes[i+1:]...)
+				rd.TotalNodes--
+				if n.Status == "online" {
+					rd.OnlineNodes--
+				}
+				gpm.totalNodes--
+				// Re-count GPUs
+				gpuCount := len(n.GPUs)
+				gpm.totalGPUs -= gpuCount
+				rd.TotalGPUs -= gpuCount
+
+				log.Printf("[Visualizer] Removed simulated node %s from region %s", nodeID, region)
+				return nil
+			}
+		}
+	}
+	return fmt.Errorf("node %s not found in visualizer data", nodeID)
 }

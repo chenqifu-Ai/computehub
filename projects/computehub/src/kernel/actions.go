@@ -11,6 +11,7 @@ import (
 // ComputeAction 新增算力相关的 Action 类型
 const (
 	ActionNodeRegister  = "NODE_REGISTER"
+	ActionNodeUnregister = "NODE_UNREGISTER"
 	ActionNodeHeartbeat = "NODE_HEARTBEAT"
 	ActionNodeOffline   = "NODE_OFFLINE"
 	ActionTaskSubmit    = "TASK_SUBMIT"
@@ -146,6 +147,20 @@ func (nm *NodeManager) RegisterNode(reg *NodeRegister) error {
 		Tasks: make(map[string]*TaskState),
 	}
 
+	return nil
+}
+
+// UnregisterNode removes a node from the manager
+func (nm *NodeManager) UnregisterNode(nodeID string) error {
+	nm.mu.Lock()
+	defer nm.mu.Unlock()
+
+	_, exists := nm.nodes[nodeID]
+	if !exists {
+		return fmt.Errorf("node %s not found", nodeID)
+	}
+
+	delete(nm.nodes, nodeID)
 	return nil
 }
 
@@ -285,6 +300,21 @@ func (ek *ExtendedKernel) DispatchExtended(id, action string, payload interface{
 			respChan <- Response{
 				Success:  true,
 				Data:     map[string]string{"message": "node registered", "node_id": reg.NodeID},
+				Duration: time.Since(start).String(),
+			}
+		}
+		return respChan
+
+	case ActionNodeUnregister:
+		nodeID, ok := payload.(string)
+		if !ok {
+			respChan <- Response{Success: false, Error: fmt.Errorf("invalid node_id")}
+		} else if err := ek.NodeMgr.UnregisterNode(nodeID); err != nil {
+			respChan <- Response{Success: false, Error: err}
+		} else {
+			respChan <- Response{
+				Success:  true,
+				Data:     map[string]string{"message": "node removed", "node_id": nodeID},
 				Duration: time.Since(start).String(),
 			}
 		}

@@ -103,12 +103,18 @@ type GPUMetricSummary struct {
 
 // OpcGateway provides a REST API for the ComputeHub System
 type OpcGateway struct {
-	Kernel    *kernel.ExtendedKernel
-	Pipeline  *pure.PurePipeline
-	Executor  *executor.OpcExecutor
-	GeneStore *gene.GeneStore
-	startTime time.Time
-	mu        sync.Mutex
+	Kernel                 *kernel.ExtendedKernel
+	Pipeline               *pure.PurePipeline
+	Executor               *executor.OpcExecutor
+	GeneStore              *gene.GeneStore
+	startTime              time.Time
+	mu                     sync.Mutex
+	unregisterSimFallback  func(nodeID string) error
+}
+
+// SetSimUnregisterFallback sets a fallback for deleting simulated nodes
+func (g *OpcGateway) SetSimUnregisterFallback(fn func(nodeID string) error) {
+	g.unregisterSimFallback = fn
 }
 
 func NewOpcGateway(port int, config *GatewayConfig) *OpcGateway {
@@ -172,6 +178,7 @@ func (g *OpcGateway) Serve(port int, dashboardDir ...string) {
 
 	// ComputeHub API endpoints
 	http.HandleFunc("/api/v1/nodes/register", g.handleNodeRegister)
+	http.HandleFunc("/api/v1/nodes/unregister", g.handleNodeUnregister)
 	http.HandleFunc("/api/v1/nodes/heartbeat", g.handleNodeHeartbeat)
 	http.HandleFunc("/api/v1/nodes/list", g.handleNodeList)
 	http.HandleFunc("/api/v1/nodes/metrics", g.handleNodeMetrics)
@@ -210,6 +217,8 @@ func (g *OpcGateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		g.handleStatus(w, r)
 	case "/api/v1/nodes/register":
 		g.handleNodeRegister(w, r)
+	case "/api/v1/nodes/unregister":
+		g.handleNodeUnregister(w, r)
 	case "/api/v1/nodes/heartbeat":
 		g.handleNodeHeartbeat(w, r)
 	case "/api/v1/nodes/list":
@@ -424,6 +433,58 @@ func (g *OpcGateway) handleNodeRegister(w http.ResponseWriter, r *http.Request) 
 		Success:  resp.Success,
 		Data:     resp.Data,
 		Error:    fmt.Sprintf("%v", resp.Error),
+		Duration: resp.Duration,
+	})
+}
+
+func (g *OpcGateway) handleNodeUnregister(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, `{"error":"Only POST allowed"}`, http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req struct {
+		NodeID string `json:"node_id"`
+	}
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		g.sendResponse(w, Response{Success: false, Error: "Failed to read request body"})
+		return
+	}
+	defer r.Body.Close()
+
+	if err := json.Unmarshal(body, &req); err != nil {
+		g.sendResponse(w, Response{Success: false, Error: fmt.Sprintf("Invalid JSON: %v", err)})
+		return
+	}
+
+	if req.NodeID == "" {
+		g.sendResponse(w, Response{Success: false, Error: "node_id is required"})
+		return
+	}
+
+	respChan := g.Kernel.DispatchExtended("gw-"+time.Now().Format("150405"), kernel.ActionNodeUnregister, req.NodeID)
+	resp := <-respChan
+
+	// If kernel didn't find it and we have a sim fallback, try that
+	if !resp.Success && g.unregisterSimFallback != nil {
+		if fbErr := g.unregisterSimFallback(req.NodeID); fbErr == nil {
+			g.sendResponse(w, Response{
+				Success: true,
+				Data:    map[string]string{"message": "node removed", "node_id": req.NodeID},
+			})
+			return
+		}
+	}
+
+	errStr := ""
+	if resp.Error != nil {
+		errStr = fmt.Sprintf("%v", resp.Error)
+	}
+	g.sendResponse(w, Response{
+		Success:  resp.Success,
+		Data:     resp.Data,
+		Error:    errStr,
 		Duration: resp.Duration,
 	})
 }

@@ -489,6 +489,63 @@ func fetchV2History() []V2HistoryEntry {
 	return resp.History
 }
 
+// ── Node management helpers ──
+
+type addNodeResponse struct {
+	Success bool   `json:"success"`
+	Error   string `json:"error"`
+}
+
+func registerNode(nodeID, gpuType, region string, cpuCores int, memoryGB float64) error {
+	payload := map[string]interface{}{
+		"node_id":   nodeID,
+		"gpu_type":  gpuType,
+		"region":    region,
+		"cpu_cores": cpuCores,
+		"memory_gb": memoryGB,
+		"status":    "online",
+	}
+	data, _ := json.Marshal(payload)
+	resp, err := http.Post(gw+"/api/v1/nodes/register", "application/json", bytes.NewBuffer(data))
+	if err != nil {
+		return fmt.Errorf("connection failed: %w", err)
+	}
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	var ar addNodeResponse
+	if err := json.Unmarshal(body, &ar); err != nil {
+		return fmt.Errorf("parse error: %w", err)
+	}
+	if !ar.Success {
+		return fmt.Errorf("%s", ar.Error)
+	}
+	return nil
+}
+
+type unregisterResponse struct {
+	Success bool   `json:"success"`
+	Error   string `json:"error"`
+}
+
+func unregisterNode(nodeID string) error {
+	payload := map[string]string{"node_id": nodeID}
+	data, _ := json.Marshal(payload)
+	resp, err := http.Post(gw+"/api/v1/nodes/unregister", "application/json", bytes.NewBuffer(data))
+	if err != nil {
+		return fmt.Errorf("connection failed: %w", err)
+	}
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	var ur unregisterResponse
+	if err := json.Unmarshal(body, &ur); err != nil {
+		return fmt.Errorf("parse error: %w", err)
+	}
+	if !ur.Success {
+		return fmt.Errorf("%s", ur.Error)
+	}
+	return nil
+}
+
 // ── Color helpers ──
 func statusColor(s string) string {
 	switch strings.ToLower(s) {
@@ -838,7 +895,7 @@ func screenNodes(state *AppState) {
 	}
 
 	fmt.Println()
-	fmt.Printf(" %s输入节点ID查看详情，或按 Enter 返回%s\n", Yellow, Reset)
+	fmt.Printf(" %s输入节点ID查看详情 | delete <id> 删除 | add 新增 | Enter 返回%s\n", Yellow, Reset)
 	fmt.Printf(" node> ")
 }
 
@@ -913,7 +970,7 @@ func screenNodeDetail(state *AppState, prefix string) {
 			powerColor(g.PowerWatts))
 	}
 
-	fmt.Printf("\n %s按 Enter 返回%s\n", Yellow, Reset)
+	fmt.Printf("\n %s[d] 删除此节点 | 按 Enter 返回%s\n", Yellow, Reset)
 }
 
 // ═══════════════════════════════════════════
@@ -1484,11 +1541,78 @@ func main() {
 
 		case cmd == "n" || cmd == "nodes":
 			screenNodes(state)
-			// Wait for node selection
+			// Wait for node selection or delete command
 			detailInput := readLine("\r node> ")
+			detailInput = strings.TrimSpace(detailInput)
 			if detailInput != "" && detailInput != "q" && detailInput != "back" {
-				screenNodeDetail(state, detailInput)
-				readLine("\r \u6309 Enter \u8fd4\u56de> ")
+				if strings.HasPrefix(strings.ToLower(detailInput), "delete ") || strings.HasPrefix(strings.ToLower(detailInput), "rm ") {
+					parts := strings.Fields(detailInput)
+					if len(parts) >= 2 {
+						targetNode := parts[1]
+						fmt.Printf("\n %s正在删除节点 %s...%s", Yellow, targetNode, Reset)
+						if err := unregisterNode(targetNode); err != nil {
+							fmt.Printf("\n %s❌ 删除失败: %v%s\n", Red+Bold, err, Reset)
+						} else {
+							fmt.Printf("\n %s✅ 节点 %s 已删除%s\n", Green+Bold, targetNode, Reset)
+						}
+						fmt.Printf("\n %s按 Enter 返回%s", Yellow, Reset)
+						readLine("\r")
+					} else {
+						fmt.Printf("\n %s用法: delete <node_id> 或 rm <node_id>%s\n", Yellow, Reset)
+						fmt.Printf("\n %s按 Enter 返回%s", Yellow, Reset)
+						readLine("\r")
+					}
+				} else if strings.ToLower(detailInput) == "add" || strings.ToLower(detailInput) == "new" {
+					fmt.Printf("\n")
+					fmt.Printf(" %s━━━ 新增节点 ━━━%s\n", Cyan+Bold, Reset)
+					fmt.Printf(" %s输入节点信息（直接 Enter 跳过可选字段）%s\n\n", Yellow, Reset)
+					fmt.Printf(" 节点ID %s>%s ", Dim, Reset)
+					nid := readLine("")
+					if nid == "" {
+						fmt.Printf(" %s❌ 节点ID不能为空%s\n", Red+Bold, Reset)
+						fmt.Printf("\n %s按 Enter 返回%s", Yellow, Reset)
+						readLine("\r")
+					} else {
+						fmt.Printf(" GPU类型 (默认 H100) > ")
+						gpu := readLine("")
+						if gpu == "" { gpu = "H100" }
+						fmt.Printf(" 区域 (默认 cn-east) > ")
+						region := readLine("")
+						if region == "" { region = "cn-east" }
+						fmt.Printf(" CPU核心 (默认 16) > ")
+						cpuStr := readLine("")
+						cpu := 16
+						if cpuStr != "" { fmt.Sscanf(cpuStr, "%d", &cpu) }
+						fmt.Printf(" 内存GB (默认 64) > ")
+						memStr := readLine("")
+						mem := 64.0
+						if memStr != "" { fmt.Sscanf(memStr, "%f", &mem) }
+						fmt.Printf(" %s正在注册节点 %s...%s", Yellow, nid, Reset)
+						if err := registerNode(nid, gpu, region, cpu, mem); err != nil {
+							fmt.Printf("\n %s❌ 注册失败: %v%s\n", Red+Bold, err, Reset)
+						} else {
+							fmt.Printf("\n %s✅ 节点 %s 注册成功! [%s | %s | %dc/%dGB]%s\n", Green+Bold, nid, gpu, region, cpu, int(mem), Reset)
+						}
+						fmt.Printf("\n %s按 Enter 返回%s", Yellow, Reset)
+						readLine("\r")
+					}
+				} else {
+					screenNodeDetail(state, detailInput)
+					// Check if user wants to delete
+					fmt.Printf("\r detail> ")
+					detailCmd := readLine("")
+					dc := strings.ToLower(strings.TrimSpace(detailCmd))
+					if dc == "d" || dc == "delete" || dc == "rm" {
+						fmt.Printf("\n %s删除节点 %s...%s", Yellow, detailInput, Reset)
+						if err := unregisterNode(detailInput); err != nil {
+							fmt.Printf("\n %s❌ 删除失败: %v%s\n", Red+Bold, err, Reset)
+						} else {
+							fmt.Printf("\n %s✅ 节点 %s 已删除%s\n", Green+Bold, detailInput, Reset)
+						}
+						fmt.Printf("\n %s按 Enter 返回%s", Yellow, Reset)
+						readLine("\r")
+					}
+				}
 			}
 
 		case cmd == "g" || cmd == "gpu" || cmd == "gpumon":
