@@ -56,6 +56,9 @@ const (
 // ── Width constant ──
 const termW = 80
 
+// ── Version ──
+const version = "0.6.0"
+
 // ── History (for arrow-key recall) ──
 var cmdHistory []string
 var cmdHistIdx int = -1
@@ -570,7 +573,8 @@ func printPrompt() {
 
 func printHelp() {
 	fmt.Println()
-	fmt.Printf("%s ComputeHub TUI 快捷键%s\n", Yellow+Bold, Reset)
+	fmt.Printf("%s ComputeHub TUI v%s%s\n", Yellow+Bold, version, Reset)
+	fmt.Printf(" %s━━━ 快捷键 ━━━%s\n", Cyan+Bold, Reset)
 	fmt.Printf("  %-20s %s\n", "d / dashboard", "📊 系统仪表板")
 	fmt.Printf("  %-20s %s\n", "n / nodes", "🔌 节点浏览器")
 	fmt.Printf("  %-20s %s\n", "g / gpu / gpumon", "🎮 GPU 实时监控")
@@ -638,7 +642,7 @@ func screenDashboard(state *AppState) {
 		avgUtil /= float64(totalGPUCount)
 	}
 
-	printHeader("📊 ComputeHub 系统仪表板", state.lastUpdate.Format("15:04:05"))
+	printHeader("📊 ComputeHub 系统仪表板", fmt.Sprintf("v%s  %s", version, state.lastUpdate.Format("15:04:05")))
 
 	// ── Row 1: Core KPI ──
 	fmt.Println()
