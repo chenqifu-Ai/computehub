@@ -12,5 +12,10 @@
   },
   "gene_store": {
     "path": "./genes.json"
+  },
+  "visualizer": {
+    "enabled": true,
+    "simulate": true,
+    "port": 8282
   }
 }

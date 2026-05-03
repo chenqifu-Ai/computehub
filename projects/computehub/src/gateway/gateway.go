@@ -164,7 +164,7 @@ type GatewayConfig struct {
 	MaxNodes      int
 }
 
-func (g *OpcGateway) Serve(port int) {
+func (g *OpcGateway) Serve(port int, dashboardDir ...string) {
 	// Legacy endpoints (backward compatible)
 	http.HandleFunc("/api/dispatch", g.handleDispatch)
 	http.HandleFunc("/api/health", g.handleHealth)
@@ -178,6 +178,20 @@ func (g *OpcGateway) Serve(port int) {
 	http.HandleFunc("/api/v1/tasks/submit", g.handleTaskSubmit)
 	http.HandleFunc("/api/v1/tasks/result", g.handleTaskResult)
 	http.HandleFunc("/api/v1/tasks/list", g.handleTaskList)
+
+	// Dashboard static files (if directory provided)
+	if len(dashboardDir) > 0 && dashboardDir[0] != "" {
+		fs := http.FileServer(http.Dir(dashboardDir[0]))
+		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			// Don't intercept API/WS paths
+			if strings.HasPrefix(r.URL.Path, "/api/") || strings.HasPrefix(r.URL.Path, "/ws/") {
+				http.NotFound(w, r)
+				return
+			}
+			fs.ServeHTTP(w, r)
+		})
+		logWithTimestamp("📂 Dashboard static files: %s", dashboardDir[0])
+	}
 
 	logWithTimestamp("🌐 ComputeHub Gateway listening on :%d", port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {

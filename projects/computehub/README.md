@@ -67,9 +67,25 @@ docker compose logs -f gateway
 
 | 服务 | 地址 | 说明 |
 |------|------|------|
-| Gateway API | http://localhost:8282 | REST API |
-| Dashboard | http://localhost:8080 | 可视化面板 |
+| Gateway API + Dashboard | http://localhost:8282 | REST API + 可视化面板 |
 | TUI 客户端 | `docker compose --profile tui run tui` | 交互式终端 |
+
+### Dashboard 功能
+
+Dashboard 由 gateway 内置静态文件服务直接提供，无需额外容器：
+
+| 模块 | 数据源 | 更新方式 |
+|------|--------|----------|
+| 🌍 全球算力地图 | `/api/v2/map/global` | REST (30s 轮询) |
+| 📊 GPU 利用率分布 | `/api/v2/gpu/realtime` | REST + WS 实时 |
+| 📋 节点列表 | `/api/v2/nodes` | REST |
+| 🔔 告警面板 | 嵌套在地图数据中 | REST |
+| 📈 系统健康雷达图 | `/api/v2/health` | REST + WS 实时 |
+| 🔄 WebSocket 实时推送 | `/ws/visual` | 2s 间隔推送 |
+
+**打开浏览器访问**: [http://localhost:8282](http://localhost:8282)
+
+**文件位置**: `code/dashboard/index.html` — 纯静态页面，无需构建
 
 ### API 测试
 

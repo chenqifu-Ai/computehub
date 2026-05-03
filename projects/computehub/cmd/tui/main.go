@@ -27,6 +27,8 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"golang.org/x/term"
 )
 
 // ── ANSI ──
@@ -53,6 +55,127 @@ const (
 
 // ── Width constant ──
 const termW = 80
+
+// ── History (for arrow-key recall) ──
+var cmdHistory []string
+var cmdHistIdx int = -1
+
+const maxHistory = 64
+
+// readLine reads a line from raw stdin with arrow-key history support.
+func readLine(prompt string) string {
+	fd := int(os.Stdin.Fd())
+	old, err := term.MakeRaw(fd)
+	if err != nil {
+		// Fallback: read a line using bufio
+		fmt.Print(prompt)
+		s, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+		return strings.TrimSpace(s)
+	}
+	defer term.Restore(fd, old)
+
+	fmt.Print(prompt)
+	var buf []byte
+	histIdx := cmdHistIdx // local copy, -1 means fresh input
+
+	for {
+		var b [1]byte
+		n, _ := os.Stdin.Read(b[:])
+		if n == 0 {
+			continue
+		}
+		ch := b[0]
+
+		switch ch {
+		case 3: // Ctrl+C
+			os.Exit(0)
+		case 4: // Ctrl+D
+			return ""
+		case 13, 10: // Enter
+			fmt.Print("\r\n")
+			line := string(buf)
+			if line != "" {
+				// Add to history (dedup last)
+				if len(cmdHistory) == 0 || cmdHistory[len(cmdHistory)-1] != line {
+					cmdHistory = append(cmdHistory, line)
+					if len(cmdHistory) > maxHistory {
+						cmdHistory = cmdHistory[1:]
+					}
+				}
+				cmdHistIdx = len(cmdHistory)
+			}
+			return line
+		case 27: // ESC sequence (arrows, etc.)
+			var seq [2]byte
+			if n2, _ := os.Stdin.Read(seq[:]); n2 < 2 {
+				buf = append(buf, ch)
+				continue
+			}
+			if seq[0] != '[' {
+				buf = append(buf, ch, seq[0])
+				continue
+			}
+			switch seq[1] {
+			case 'A': // Up
+				if histIdx <= 0 {
+					histIdx = 0
+				} else {
+					histIdx--
+				}
+				if histIdx >= 0 && histIdx < len(cmdHistory) {
+					// Clear current line
+					for i := 0; i < len(buf)+8; i++ {
+						fmt.Print(" ")
+					}
+					buf = []byte(cmdHistory[histIdx])
+					fmt.Print("\r" + prompt + string(buf))
+					// clear rest
+					fmt.Print("\033[K")
+				}
+			case 'B': // Down
+				if histIdx < len(cmdHistory)-1 {
+					histIdx++
+					// Clear current line
+					for i := 0; i < len(buf)+8; i++ {
+						fmt.Print(" ")
+					}
+					buf = []byte(cmdHistory[histIdx])
+					fmt.Print("\r" + prompt + string(buf))
+					fmt.Print("\033[K")
+				} else {
+					histIdx = len(cmdHistory)
+					for i := 0; i < len(buf)+8; i++ {
+						fmt.Print(" ")
+					}
+					buf = nil
+					fmt.Print("\r" + prompt)
+					fmt.Print("\033[K")
+				}
+			case 'C': // Right
+				fmt.Print(string(ch) + string(seq[:]))
+			case 'D': // Left
+				fmt.Print(string(ch) + string(seq[:]))
+			case 'H': // Home
+				// ignore
+			case 'F': // End
+				// ignore
+			case '3': // Delete
+				os.Stdin.Read([]byte{0}) // consume ~
+				fmt.Print("\033[P")
+			}
+		case 127, 8: // Backspace
+			if len(buf) > 0 {
+				buf = buf[:len(buf)-1]
+				fmt.Print("\b \b")
+			}
+		default:
+			if ch >= 32 {
+				buf = append(buf, ch)
+				fmt.Printf("%c", ch)
+			}
+		}
+	}
+}
 
 // ── Data Types ──
 
@@ -487,8 +610,6 @@ func screenDashboard(state *AppState) {
 	totalGPUs := 0
 	totalTFLOPS := 0.0
 	avgUtil := 0.0
-	totalTasks := 0
-	activeTasks := 0
 
 	if h != nil {
 		onlineNodes = h.OnlineNodes
@@ -498,34 +619,23 @@ func screenDashboard(state *AppState) {
 	} else if s != nil {
 		onlineNodes = s.NodeManager.OnlineNodes
 		totalNodes = s.NodeManager.TotalNodes
-		totalTasks = s.NodeManager.TotalTasks
-		activeTasks = s.NodeManager.ActiveTasks
 	}
 
 	// GPU 型号分布
 	gpuModelCount := make(map[string]int)
 	gpuModelUtil := make(map[string]float64)
-	gpuModelCount2 := make(map[string]int)
+	totalGPUCount := 0
 	for _, n := range nodes {
-		totalTasks += n.ActiveTasks
-		activeTasks += n.ActiveTasks
 		for _, g := range n.GPUs {
 			model := g.Model
 			gpuModelCount[model]++
 			gpuModelUtil[model] += g.Utilization
-			if g.Status == "idle" || g.Status == "busy" {
-				gpuModelCount2[model]++
-			}
+			avgUtil += g.Utilization
+			totalGPUCount++
 		}
 	}
-	// Calculate avg util
-	for model, cnt := range gpuModelCount2 {
-		if cnt > 0 {
-			avgUtil += gpuModelUtil[model] / float64(cnt)
-		}
-	}
-	if len(gpuModelCount2) > 0 {
-		avgUtil /= float64(len(gpuModelCount2))
+	if totalGPUCount > 0 {
+		avgUtil /= float64(totalGPUCount)
 	}
 
 	printHeader("📊 ComputeHub 系统仪表板", state.lastUpdate.Format("15:04:05"))
@@ -569,7 +679,8 @@ func screenDashboard(state *AppState) {
 	type gpuModelStat struct { name string; count int; util float64 }
 	var stats []gpuModelStat
 	for m, c := range gpuModelCount {
-		stats = append(stats, gpuModelStat{m, c, gpuModelUtil[m] / float64(gpuModelCount2[m])})
+		u := gpuModelUtil[m] / float64(c)
+		stats = append(stats, gpuModelStat{m, c, u})
 	}
 	sort.Slice(stats, func(i, j int) bool { return stats[i].count > stats[j].count })
 
@@ -1082,8 +1193,8 @@ func screenAlerts(state *AppState) {
 	}
 
 	fmt.Printf("\n %s%-8s │ %-10s │ %-12s │ %-30s │ %-16s%s\n",
-		White+Bold, "Severity", "Type", "Node", "Message", "Timestamp"+Reset)
-	fmt.Printf(" %s%s\n", Dim, strings.Repeat("─", 100))
+		White+Bold, "Severity", "Type", "Node", "Message", "Timestamp", Reset)
+	fmt.Printf(" %s%s%s\n", Dim, strings.Repeat("─", 92), Reset)
 
 	for _, a := range alerts {
 		sc := White
@@ -1266,7 +1377,7 @@ func screenHealth(state *AppState) {
 		memPct := totalMemUsed / (float64(totalGPU) * 64.0) * 100
 
 		fmt.Printf("  平均 GPU 利用率: %s\n", pctColor(avgUtil))
-		fmt.Printf("  平均 GPU 温度: %s\n", pctColor(avgTemp))
+		fmt.Printf("  平均 GPU 温度: %s\n", tempColor(avgTemp))
 		fmt.Printf("  平均 GPU 显存占用: %.1f%%\n", memPct)
 
 		// Health bar
@@ -1298,12 +1409,9 @@ func screenShell(state *AppState) {
 	fmt.Printf("%s  输入命令直接发送到网关%s\n", Dim, Reset)
 	fmt.Printf("%s  'back' 返回  'help' 查看命令%s\n\n", Dim, Reset)
 
-	scanner := bufio.NewScanner(os.Stdin)
 	for {
-		fmt.Printf("%s [OPC-Shell] > %s", Cyan+Bold, Reset)
-		if !scanner.Scan() { break }
-		input := strings.TrimSpace(scanner.Text())
-		if input == "" { continue }
+		input := readLine("\r" + Cyan + Bold + " [OPC-Shell] > " + Reset)
+		if input == "" { return }
 		if input == "back" || input == "exit" || input == "q" { return }
 		if input == "help" {
 			fmt.Printf("%s 命令: PING / EXEC <cmd> / STATUS / NODES / DISPATCH / GPUMON / REGIONS%s\n", Yellow, Reset)
@@ -1343,41 +1451,40 @@ func screenShell(state *AppState) {
 func main() {
 	// Check gateway
 	if err := checkGateway(); err != nil {
-		fmt.Printf("%s❌ 无法连接网关 %s: %v%s\n", Red, gw, err, Reset)
-		fmt.Printf("%s💡 请先启动网关: cd %s && go run ./cmd/gateway%s\n", Yellow, projectDir(), Reset)
+		fmt.Printf("%s\u274c \u65e0\u6cd5\u8fde\u63a5\u7f51\u5173 %s: %v%s\n", Red, gw, err, Reset)
+		fmt.Printf("%s\U0001f4a1 \u8bf7\u5148\u542f\u52a8\u7f51\u5173: cd %s && go run ./cmd/gateway%s\n", Yellow, projectDir(), Reset)
 		os.Exit(1)
 	}
 
 	state := &AppState{}
-	scanner := bufio.NewScanner(os.Stdin)
 
 	// Show dashboard on startup
 	screenDashboard(state)
 
-	for scanner.Scan() {
-		input := strings.TrimSpace(scanner.Text())
+	for {
+		input := readLine("\r> ")
 		if input == "" { continue }
 
+		// Strip leading "/" so /d → d, /nodes → nodes, etc.
+		input = strings.TrimLeft(input, "/")
 		cmd := strings.ToLower(input)
 
 		switch {
 		case cmd == "q" || cmd == "quit" || cmd == "exit":
 			clearScreen()
-			fmt.Printf("%s👋 Goodbye!%s\n", Cyan, Reset)
+			fmt.Printf("%s\U0001f44b Goodbye!%s\n", Cyan, Reset)
 			return
 
-		case cmd == "d" || cmd == "dashboard" || cmd == "r" || cmd == "refresh":
+		case cmd == "d" || cmd == "dashboard" || cmd == "r" || cmd == "refresh" || cmd == "back":
 			screenDashboard(state)
 
 		case cmd == "n" || cmd == "nodes":
 			screenNodes(state)
 			// Wait for node selection
-			if scanner.Scan() {
-				detailInput := strings.TrimSpace(scanner.Text())
-				if detailInput != "" && detailInput != "q" && detailInput != "back" {
-					screenNodeDetail(state, detailInput)
-					scanner.Scan() // wait for Enter
-				}
+			detailInput := readLine("\r node> ")
+			if detailInput != "" && detailInput != "q" && detailInput != "back" {
+				screenNodeDetail(state, detailInput)
+				readLine("\r \u6309 Enter \u8fd4\u56de> ")
 			}
 
 		case cmd == "g" || cmd == "gpu" || cmd == "gpumon":
@@ -1407,7 +1514,7 @@ func main() {
 			printHelp()
 
 		default:
-			fmt.Printf("%s 未知命令: %s%s\n", Red, input, Reset)
+			fmt.Printf("%s \u672a\u77e5\u547d\u4ee4: %s%s\n", Red, input, Reset)
 			printHelp()
 		}
 

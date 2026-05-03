@@ -14,9 +14,10 @@ WORKDIR /build
 COPY go.mod go.sum ./
 RUN go mod download
 
-# 拷贝源码
+# 拷贝源码 + 配置文件 + Dashboard
 COPY cmd/ ./cmd/
 COPY src/ ./src/
+COPY code/ ./code/
 COPY config.json ./config.json
 COPY genes.json ./genes.json
 
@@ -35,6 +36,7 @@ WORKDIR /app
 COPY --from=builder /build/computehub-gateway .
 COPY --from=builder /build/config.json .
 COPY --from=builder /build/genes.json .
+COPY --from=builder /build/code/dashboard ./code/dashboard
 
 # 创建 sandbox 目录
 RUN mkdir -p /tmp/opc-sandbox

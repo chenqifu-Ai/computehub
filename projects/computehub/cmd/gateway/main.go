@@ -1,15 +1,31 @@
 // Command: go run ./cmd/gateway
-// Launches the ComputeHub gateway server.
+// Launches the ComputeHub gateway server + Visualizer dashboard.
+//
+// 端口: 8282
+// API 端点:
+//   /api/health          → 健康检查 (OpcGateway v1)
+//   /api/status          → 系统状态 (OpcGateway v1)
+//   /api/v1/nodes/*      → 节点管理 (OpcGateway v1)
+//   /api/v1/tasks/*      → 任务管理 (OpcGateway v1)
+//   /api/v2/map/global   → 全球算力地图 (Visualizer v2)
+//   /api/v2/gpu/realtime → GPU 实时监控 (Visualizer v2)
+//   /api/v2/nodes        → 节点可视化 (Visualizer v2)
+//   /api/v2/alerts       → 告警 (Visualizer v2)
+//   /api/v2/health       → 系统健康 (Visualizer v2)
+//   /api/v2/history      → 历史趋势 (Visualizer v2)
+//   /ws/visual           → WebSocket 实时推送 (Visualizer v2)
 
 package main
 
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"time"
 
 	"github.com/computehub/opc/src/gateway"
+	"github.com/computehub/opc/src/visualizer"
 )
 
 // logWithTimestamp 添加时间戳的日志函数
@@ -35,6 +51,11 @@ type Config struct {
 	GeneStore struct {
 		Path string `json:"path"`
 	} `json:"gene_store"`
+	Visualizer struct {
+		Enabled  bool `json:"enabled"`
+		Simulate bool `json:"simulate"`
+		Port     int  `json:"port"`
+	} `json:"visualizer"`
 }
 
 // loadConfig 加载配置文件，返回完整配置
@@ -49,6 +70,9 @@ func loadConfig() (Config, error) {
 	config.Kernel.MaxStates = 1000
 	config.Executor.SandboxPath = "/tmp/opc-sandbox"
 	config.GeneStore.Path = "./genes.json"
+	config.Visualizer.Enabled = true
+	config.Visualizer.Simulate = true
+	config.Visualizer.Port = 8282 // same port as gateway (different URL paths)
 
 	// 尝试读取配置文件
 	if data, err := os.ReadFile(configFile); err == nil {
@@ -85,8 +109,35 @@ func main() {
 
 	gw := gateway.NewOpcGateway(port, gwConfig)
 
-	logWithTimestamp("Gateway service starting...")
-	gw.Serve(port)
+	// Initialize Visualizer (global power map + v2 API + WebSocket)
+	if config.Visualizer.Enabled {
+		logWithTimestamp("🌍 Initializing Visualizer (simulate=%v, port=%d)", config.Visualizer.Simulate, config.Visualizer.Port)
+
+		// Create global power map
+		gpm := visualizer.NewGlobalPowerMap(config.Visualizer.Simulate)
+		if config.Visualizer.Simulate {
+			gpm.GenerateSimulationData()
+		}
+
+		// Create visualizer gateway and register routes (same port, different paths)
+		vg := visualizer.NewVisualizerGateway(gpm, config.Visualizer.Simulate)
+
+		// Register v2 API routes on the default ServeMux
+		http.Handle("/api/v2/", vg)
+		http.Handle("/ws/visual", vg)
+
+		logWithTimestamp("🌐 Visualizer v2 API registered:")
+		logWithTimestamp("   - /api/v2/map/global  → 全球算力地图")
+		logWithTimestamp("   - /api/v2/gpu/realtime → GPU 实时监控")
+		logWithTimestamp("   - /api/v2/nodes        → 节点可视化")
+		logWithTimestamp("   - /api/v2/alerts       → 告警")
+		logWithTimestamp("   - /api/v2/health       → 系统健康")
+		logWithTimestamp("   - /api/v2/history      → 历史趋势")
+		logWithTimestamp("   - /ws/visual           → WebSocket 实时推送")
+	}
+
+	logWithTimestamp("Gateway service starting on :%d...", port)
+	gw.Serve(port, "./code/dashboard")
 
 	logWithTimestamp("Gateway service stopped")
 }
