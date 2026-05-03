@@ -185,6 +185,7 @@ func (g *OpcGateway) Serve(port int, dashboardDir ...string) {
 	http.HandleFunc("/api/v1/tasks/submit", g.handleTaskSubmit)
 	http.HandleFunc("/api/v1/tasks/result", g.handleTaskResult)
 	http.HandleFunc("/api/v1/tasks/list", g.handleTaskList)
+	http.HandleFunc("/api/v1/tasks/detail", g.handleTaskDetail)
 
 	// Dashboard static files (if directory provided)
 	if len(dashboardDir) > 0 && dashboardDir[0] != "" {
@@ -231,6 +232,8 @@ func (g *OpcGateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		g.handleTaskResult(w, r)
 	case "/api/v1/tasks/list":
 		g.handleTaskList(w, r)
+	case "/api/v1/tasks/detail":
+		g.handleTaskDetail(w, r)
 	default:
 		http.NotFound(w, r)
 	}
@@ -643,5 +646,56 @@ func (g *OpcGateway) handleTaskList(w http.ResponseWriter, r *http.Request) {
 	g.sendResponse(w, Response{
 		Success: true,
 		Data:    taskList,
+	})
+}
+
+// handleTaskDetail returns the full task details (including command) for a given task_id.
+// This is used by workers to fetch tasks they need to execute.
+func (g *OpcGateway) handleTaskDetail(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, `{"error":"Only GET allowed"}`, http.StatusMethodNotAllowed)
+		return
+	}
+
+	taskID := r.URL.Query().Get("task_id")
+	nodeID := r.URL.Query().Get("node_id")
+	if taskID == "" || nodeID == "" {
+		g.sendResponse(w, Response{Success: false, Error: "task_id and node_id are required"})
+		return
+	}
+
+	nodeState, err := g.Kernel.NodeMgr.GetNodeState(nodeID)
+	if err != nil {
+		g.sendResponse(w, Response{Success: false, Error: fmt.Sprintf("node not found: %v", err)})
+		return
+	}
+
+	ts, exists := nodeState.Tasks[taskID]
+	if !exists {
+		g.sendResponse(w, Response{Success: false, Error: fmt.Sprintf("task %s not found on node %s", taskID, nodeID)})
+		return
+	}
+
+	taskDetail := struct {
+		TaskID     string `json:"task_id"`
+		Command    string `json:"command"`
+		NodeID     string `json:"node_id"`
+		Timeout    int    `json:"timeout"`
+		Priority   int    `json:"priority"`
+		SourceType string `json:"source_type"`
+		Status     string `json:"status"`
+	}{
+		TaskID:     ts.Task.TaskID,
+		Command:    ts.Task.Command,
+		NodeID:     nodeID,
+		Timeout:    ts.Task.Timeout,
+		Priority:   ts.Task.Priority,
+		SourceType: ts.Task.SourceType,
+		Status:     ts.Status,
+	}
+
+	g.sendResponse(w, Response{
+		Success: true,
+		Data:    taskDetail,
 	})
 }

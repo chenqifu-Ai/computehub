@@ -255,6 +255,18 @@ func (nm *NodeManager) GetNodeMetrics(nodeID string) (*NodeMetrics, error) {
 	return state.Metrics, nil
 }
 
+// GetNodeState returns the full node state including task details.
+func (nm *NodeManager) GetNodeState(nodeID string) (*NodeManagerState, error) {
+	nm.mu.RLock()
+	defer nm.mu.RUnlock()
+
+	state, exists := nm.nodes[nodeID]
+	if !exists {
+		return nil, fmt.Errorf("node %s not found", nodeID)
+	}
+	return state, nil
+}
+
 // ListNodes returns all registered nodes
 func (nm *NodeManager) ListNodes() []*NodeManagerState {
 	nm.mu.RLock()
