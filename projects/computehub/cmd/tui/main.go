@@ -57,7 +57,7 @@ const (
 const termW = 80
 
 // ── Version ──
-const version = "0.6.1"
+const version = "0.6.2"
 
 // ── History (for arrow-key recall) ──
 var cmdHistory []string
@@ -627,7 +627,9 @@ func powerColor(w float64) string {
 	return White + fmt.Sprintf("%.0fW", w) + Reset
 }
 
-func clearScreen() { fmt.Print(ClrScr) }
+func clearScreen() {
+	fmt.Print("\033[2J\033[H\033[3J") // 清屏 + 清滚动缓冲区 + 归位
+}
 
 func printLine(c, s string) {
 	fmt.Println(c + s + Reset)
@@ -687,78 +689,48 @@ func printHelp() {
 }
 
 // ═══════════════════════════════════════════
-// DASHBOARD — 集群总览（每秒自动刷新）
+// DASHBOARD — 集群总览（自动刷新模式）
 // ═══════════════════════════════════════════
 
 func screenDashboard(state *AppState) {
-	fd := int(os.Stdin.Fd())
-	old, err := term.MakeRaw(fd)
-	if err != nil {
-		// Fallback: 单次显示
-		renderDashboard(state)
-		printPrompt()
-		readLine("")
-		return
-	}
-	defer term.Restore(fd, old)
+	renderDashboard(state)
 
-	// 启动键盘监听 goroutine（检测 q / Enter / Ctrl+C）
-	quit := make(chan struct{})
-	keyPressed := make(chan byte, 4)
+	// 启动输入监听 goroutine：实时检测按键退出自动刷新
+	inputCh := make(chan string, 1)
 	go func() {
-		defer close(quit)
+		reader := bufio.NewReader(os.Stdin)
 		for {
-			var b [1]byte
-			n, _ := os.Stdin.Read(b[:])
-			if n > 0 {
-				ch := b[0]
-				if ch == 'q' || ch == 'Q' || ch == 27 { // q / ESC
-					// Drain keyPressed to unblock select
-					select {
-					case keyPressed <- ch:
-					default:
-					}
-					return
-				}
-				if ch == 13 || ch == 10 { // Enter → 退出自动刷新
-					select {
-					case keyPressed <- ch:
-					default:
-					}
-					return
-				}
-				if ch == 3 { // Ctrl+C → 直接退出程序
-					term.Restore(fd, old)
-					os.Exit(0)
-				}
+			s, err := reader.ReadString('\n')
+			if err != nil {
+				close(inputCh)
+				return
+			}
+			select {
+			case inputCh <- strings.TrimSpace(s):
+			default:
 			}
 		}
 	}()
 
-	ticker := time.NewTicker(1 * time.Second)
+	ticker := time.NewTicker(5 * time.Second)
 	defer ticker.Stop()
 
-	// 初始渲染
-	clearScreen()
-	renderDashboard(state)
-
-	// 主循环：1 秒刷新 or 按键退出
-	running := true
-	for running {
+	for {
 		select {
 		case <-ticker.C:
-			// 光标回到顶部 + 清空往下内容，避免闪烁
-			fmt.Print("\033[H")
+			// 输出分隔线 + 新一帧数据（不用清屏转义码，纯文本）
+			fmt.Print("\n" + Dim + strings.Repeat("─", 80) + Reset + "\n")
 			renderDashboard(state)
-		case k := <-keyPressed:
-			_ = k
-			running = false
-		case <-quit:
-			running = false
+		case input, ok := <-inputCh:
+			if !ok {
+				return
+			}
+			cmd := strings.ToLower(input)
+			if cmd == "q" || cmd == "quit" || cmd == "exit" || cmd == "" {
+				return
+			}
 		}
 	}
-
-	clearScreen()
 }
 
 // renderDashboard — 绘制单帧仪表板内容（不含清屏和循环控制）
