@@ -72,10 +72,10 @@ func TestRegisterMaxNodes(t *testing.T) {
 
 	for i := 0; i < 2; i++ {
 		reg := &NodeRegister{
-			NodeID:     fmt.Sprintf("test-node-%03d", i),
-			NodeType:   "gpu",
-			Region:     "us-east",
-			Status:     "online",
+			NodeID:   fmt.Sprintf("test-node-%03d", i),
+			NodeType: "gpu",
+			Region:   "us-east",
+			Status:   "online",
 		}
 		if err := nm.RegisterNode(reg); err != nil {
 			t.Fatalf("Registration %d failed: %v", i, err)
@@ -98,7 +98,7 @@ func TestHeartbeat(t *testing.T) {
 	nm := NewNodeManager(5)
 
 	reg := &NodeRegister{
-		NodeID: "test-hb-001",
+		NodeID:   "test-hb-001",
 		NodeType: "gpu",
 		GPUType:  "H100",
 		Region:   "eu-west",
@@ -109,9 +109,9 @@ func TestHeartbeat(t *testing.T) {
 	}
 
 	metrics := &GPUMetrics{
-		NodeID:     "test-hb-001",
-		Utilization: 75.5,
-		Temperature: 65.0,
+		NodeID:       "test-hb-001",
+		Utilization:  75.5,
+		Temperature:  65.0,
 		MemoryUsedGB: 32.0,
 		MemoryTotalGB: 80.0,
 	}
@@ -155,12 +155,12 @@ func TestSubmitTask(t *testing.T) {
 	}
 
 	task := &TaskSubmit{
-		TaskID:       "task-001",
-		SourceType:   "direct",
-		Priority:     8,
-		Timeout:      300,
-		Command:      "nvidia-smi",
-		MaxRetries:   3,
+		TaskID:   "task-001",
+		SourceType: "direct",
+		Priority: 8,
+		Timeout:  300,
+		Command:  "nvidia-smi",
+		MaxRetries: 3,
 	}
 
 	if err := nm.SubmitTask(task); err != nil {
@@ -180,8 +180,8 @@ func TestSubmitTaskNoAvailableNodes(t *testing.T) {
 	nm := NewNodeManager(5)
 
 	task := &TaskSubmit{
-		TaskID:   "task-no-node",
-		Command:  "echo test",
+		TaskID: "task-no-node",
+		Command: "echo test",
 	}
 
 	if err := nm.SubmitTask(task); err == nil {
@@ -288,14 +288,16 @@ func TestListNodes(t *testing.T) {
 
 func TestExtendedKernelDispatch(t *testing.T) {
 	ek := NewExtendedKernel(100, 1000, 50)
+	ek.Start()
+	defer ek.GetKernel().Stop()
 
 	// Register a node
 	reg := &NodeRegister{
-		NodeID:     "ek-node-001",
-		NodeType:   "gpu",
-		GPUType:    "A100",
-		Region:     "us-east",
-		Status:     "online",
+		NodeID:   "ek-node-001",
+		NodeType: "gpu",
+		GPUType:  "A100",
+		Region:   "us-east",
+		Status:   "online",
 	}
 
 	respChan := ek.DispatchExtended("ek-test-001", ActionNodeRegister, reg)
@@ -317,6 +319,8 @@ func TestExtendedKernelDispatch(t *testing.T) {
 
 func TestExtendedKernelTaskSubmit(t *testing.T) {
 	ek := NewExtendedKernel(100, 1000, 50)
+	ek.Start()
+	defer ek.GetKernel().Stop()
 
 	// Register node first (sync - wait for response)
 	reg := &NodeRegister{
@@ -346,6 +350,8 @@ func TestExtendedKernelTaskSubmit(t *testing.T) {
 
 func TestExtendedKernelGPUMonitor(t *testing.T) {
 	ek := NewExtendedKernel(100, 1000, 50)
+	ek.Start()
+	defer ek.GetKernel().Stop()
 
 	// Register node
 	reg := &NodeRegister{
@@ -376,6 +382,8 @@ func TestExtendedKernelGPUMonitor(t *testing.T) {
 
 func TestExtendedKernelTaskResult(t *testing.T) {
 	ek := NewExtendedKernel(100, 1000, 50)
+	ek.Start()
+	defer ek.GetKernel().Stop()
 
 	// Register node
 	reg := &NodeRegister{
@@ -457,10 +465,10 @@ func BenchmarkRegisterNode(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		reg := &NodeRegister{
-			NodeID:     "bench-node-" + string(rune('0'+i%10)),
-			NodeType:   "gpu",
-			Region:     "us-east",
-			Status:     "online",
+			NodeID:   "bench-node-" + string(rune('0'+i%10)),
+			NodeType: "gpu",
+			Region:   "us-east",
+			Status:   "online",
 		}
 		nm.RegisterNode(reg)
 	}

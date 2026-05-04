@@ -21,8 +21,7 @@ func TestNewKernel(t *testing.T) {
 func TestKernelStart(t *testing.T) {
 	k := NewKernel(10, 100)
 	k.Start()
-
-	// Give goroutine time to start
+	defer k.Stop()
 	time.Sleep(50 * time.Millisecond)
 
 	respChan := k.Dispatch("test-1", "PING", nil)
@@ -40,6 +39,7 @@ func TestKernelStart(t *testing.T) {
 func TestKernelStatus(t *testing.T) {
 	k := NewKernel(10, 100)
 	k.Start()
+	defer k.Stop()
 	time.Sleep(50 * time.Millisecond)
 
 	respChan := k.Dispatch("test-2", "STATUS", nil)
@@ -53,6 +53,7 @@ func TestKernelStatus(t *testing.T) {
 func TestKernelUnknownAction(t *testing.T) {
 	k := NewKernel(10, 100)
 	k.Start()
+	defer k.Stop()
 	time.Sleep(50 * time.Millisecond)
 
 	respChan := k.Dispatch("test-3", "UNKNOWN_ACTION", nil)
@@ -69,9 +70,9 @@ func TestKernelUnknownAction(t *testing.T) {
 func TestKernelStateMirrorLimit(t *testing.T) {
 	k := NewKernel(10, 3)
 	k.Start()
+	defer k.Stop()
 	time.Sleep(50 * time.Millisecond)
 
-	// Dispatch 5 commands - state mirror should be capped at 3
 	for i := 0; i < 5; i++ {
 		respChan := k.Dispatch("test", "PING", nil)
 		<-respChan
@@ -89,12 +90,12 @@ func TestKernelStateMirrorLimit(t *testing.T) {
 func TestKernelDispatchOrder(t *testing.T) {
 	k := NewKernel(100, 1000)
 	k.Start()
+	defer k.Stop()
 	time.Sleep(50 * time.Millisecond)
 
 	results := make([]string, 0, 5)
 	done := make(chan string, 5)
 
-	// Dispatch 5 commands
 	for i := 0; i < 5; i++ {
 		go func(n int) {
 			respChan := k.Dispatch("test", "PING", nil)
@@ -113,6 +114,7 @@ func TestKernelDispatchOrder(t *testing.T) {
 func TestKernelLatencyRecorded(t *testing.T) {
 	k := NewKernel(10, 100)
 	k.Start()
+	defer k.Stop()
 	time.Sleep(50 * time.Millisecond)
 
 	respChan := k.Dispatch("test", "PING", nil)
@@ -130,16 +132,15 @@ func TestKernelLatencyRecorded(t *testing.T) {
 func TestKernelBufferSize(t *testing.T) {
 	k := NewKernel(2, 100)
 	k.Start()
+	defer k.Stop()
 	time.Sleep(50 * time.Millisecond)
 
-	// Dispatch more than buffer can hold at once
 	responses := make([]chan Response, 5)
 	for i := 0; i < 5; i++ {
 		respChan := k.Dispatch("test", "PING", nil)
 		responses[i] = respChan
 	}
 
-	// All should complete
 	for i, respChan := range responses {
 		resp := <-respChan
 		if !resp.Success {
@@ -151,7 +152,6 @@ func TestKernelBufferSize(t *testing.T) {
 func TestKernelSnapshotState(t *testing.T) {
 	k := NewKernel(10, 100)
 
-	// Snapshot without starting
 	k.snapshotState()
 
 	k.Mu.RLock()
@@ -167,7 +167,6 @@ func TestKernelSnapshotState(t *testing.T) {
 
 func TestNewExtendedKernel(t *testing.T) {
 	ek := NewExtendedKernel(100, 1000, 50)
-
 	if ek.NodeMgr == nil {
 		t.Fatal("NodeManager should not be nil")
 	}
@@ -178,7 +177,8 @@ func TestNewExtendedKernel(t *testing.T) {
 
 func TestExtendedKernelPing(t *testing.T) {
 	ek := NewExtendedKernel(10, 100, 10)
-	ek.Start() // Must start the kernel goroutine for PING/STATUS dispatching
+	ek.Start()
+	defer ek.GetKernel().Stop()
 	time.Sleep(50 * time.Millisecond)
 
 	respChan := ek.DispatchExtended("ext-test", "PING", nil)
@@ -191,30 +191,64 @@ func TestExtendedKernelPing(t *testing.T) {
 
 func TestExtendedKernelNodeOffline(t *testing.T) {
 	ek := NewExtendedKernel(10, 100, 10)
+	ek.Start()
+	defer ek.GetKernel().Stop()
+	time.Sleep(50 * time.Millisecond)
 
-	respChan := ek.DispatchExtended("off-test", "NODE_OFFLINE", nil)
+	reg := &NodeRegister{
+		NodeID:   "test-offline",
+		NodeType: "gpu",
+		Region:   "us-east",
+		Status:   "online",
+	}
+	respChan := ek.DispatchExtended("reg", ActionNodeRegister, reg)
+	<-respChan
+
+	respChan = ek.DispatchExtended("off-test", ActionNodeOffline, "test-offline")
 	resp := <-respChan
 
-	if resp.Success {
-		t.Fatal("NODE_OFFLINE should return not implemented")
+	if !resp.Success {
+		t.Fatalf("NODE_OFFLINE failed: %v", resp.Error)
 	}
 }
 
 func TestExtendedKernelTaskCancel(t *testing.T) {
 	ek := NewExtendedKernel(10, 100, 10)
+	ek.Start()
+	defer ek.GetKernel().Stop()
+	time.Sleep(50 * time.Millisecond)
 
-	respChan := ek.DispatchExtended("cancel-test", "TASK_CANCEL", nil)
+	reg := &NodeRegister{
+		NodeID:        "test-cancel",
+		NodeType:      "gpu",
+		Region:        "us-east",
+		MaxConcurrency: 5,
+		Status:        "online",
+	}
+	respChan := ek.DispatchExtended("reg", ActionNodeRegister, reg)
+	<-respChan
+
+	task := &TaskSubmit{
+		TaskID: "cancel-task",
+	}
+	respChan = ek.DispatchExtended("sub", ActionTaskSubmit, task)
+	<-respChan
+
+	respChan = ek.DispatchExtended("cancel-test", ActionTaskCancel, "cancel-task")
 	resp := <-respChan
 
-	if resp.Success {
-		t.Fatal("TASK_CANCEL should return not implemented")
+	if !resp.Success {
+		t.Fatalf("TASK_CANCEL failed: %v", resp.Error)
 	}
 }
 
 func TestExtendedKernelRegionQuery(t *testing.T) {
 	ek := NewExtendedKernel(10, 100, 10)
+	ek.Start()
+	defer ek.GetKernel().Stop()
+	time.Sleep(50 * time.Millisecond)
 
-	respChan := ek.DispatchExtended("region-test", "REGION_QUERY", nil)
+	respChan := ek.DispatchExtended("region-test", ActionRegionQuery, nil)
 	resp := <-respChan
 
 	if !resp.Success {
@@ -224,8 +258,11 @@ func TestExtendedKernelRegionQuery(t *testing.T) {
 
 func TestExtendedKernelMetricsReport(t *testing.T) {
 	ek := NewExtendedKernel(10, 100, 10)
+	ek.Start()
+	defer ek.GetKernel().Stop()
+	time.Sleep(50 * time.Millisecond)
 
-	respChan := ek.DispatchExtended("metrics-test", "METRICS_REPORT", nil)
+	respChan := ek.DispatchExtended("metrics-test", ActionMetricsReport, nil)
 	resp := <-respChan
 
 	if !resp.Success {
@@ -235,8 +272,10 @@ func TestExtendedKernelMetricsReport(t *testing.T) {
 
 func TestExtendedKernelInvalidPayload(t *testing.T) {
 	ek := NewExtendedKernel(10, 100, 10)
+	ek.Start()
+	defer ek.GetKernel().Stop()
+	time.Sleep(50 * time.Millisecond)
 
-	// Pass invalid payload type for NodeRegister
 	respChan := ek.DispatchExtended("invalid", ActionNodeRegister, "not a NodeRegister")
 	resp := <-respChan
 
@@ -248,6 +287,7 @@ func TestExtendedKernelInvalidPayload(t *testing.T) {
 func BenchmarkKernelDispatch(b *testing.B) {
 	k := NewKernel(1000, 1000)
 	k.Start()
+	defer k.Stop()
 	time.Sleep(50 * time.Millisecond)
 
 	b.ResetTimer()

@@ -92,6 +92,9 @@ python scripts/git-memory-search.py history "MEMORY.md"
   - ⚠️ **content 字段永远为 null**（所有输出在 reasoning 字段）
   - ✅ 适配层已处理 fallback（读取 reasoning）
   - ✅ 响应速度 ~0.7s
+- **qwen36-backup**: http://58.23.129.98:8999/v1 (Key: sk-E_Ta97lGlSDu3HZCSqiZbg)
+  - 模型: qwen3.6-35b (reasoning=True)
+  - 状态: 2026-05-04 记录，待确认是否接入
 
 ### AI 使用规则
 

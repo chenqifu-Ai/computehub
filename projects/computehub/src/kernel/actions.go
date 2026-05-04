@@ -417,128 +417,24 @@ type ExtendedKernel struct {
 
 // NewExtendedKernel creates a kernel with node management
 func NewExtendedKernel(bufferSize, maxStates, maxNodes int) *ExtendedKernel {
+	km := NewNodeManager(maxNodes)
 	return &ExtendedKernel{
-		OpcKernel: NewKernel(bufferSize, maxStates),
-		NodeMgr:   NewNodeManager(maxNodes),
+		OpcKernel: &OpcKernel{
+			stateMirror: make([]State, 0),
+			maxStates:   maxStates,
+			LinearQueue: make(chan Command, bufferSize),
+			done:        make(chan struct{}),
+			NodeMgr:     km,
+		},
+		NodeMgr: km,
 	}
 }
 
-// DispatchExtended handles compute-specific actions
+// DispatchExtended queues a compute-specific action through the deterministic kernel
+// queue. This ensures all commands are processed linearly (no race conditions).
+//
+// Note: All action names (ActionNodeRegister, ActionTaskSubmit, etc.) are defined
+// in this file and processed by ExtendedKernel.executeAction → NodeMgr.
 func (ek *ExtendedKernel) DispatchExtended(id, action string, payload interface{}) chan Response {
-	respChan := make(chan Response, 1)
-
-	start := time.Now()
-
-	switch action {
-	case ActionNodeRegister:
-		reg, ok := payload.(*NodeRegister)
-		if !ok {
-			respChan <- Response{Success: false, Error: fmt.Errorf("invalid NodeRegister payload")}
-		} else if err := ek.NodeMgr.RegisterNode(reg); err != nil {
-			respChan <- Response{Success: false, Error: err}
-		} else {
-			respChan <- Response{
-				Success:  true,
-				Data:     map[string]string{"message": "node registered", "node_id": reg.NodeID},
-				Duration: time.Since(start).String(),
-			}
-		}
-		return respChan
-
-	case ActionNodeUnregister:
-		nodeID, ok := payload.(string)
-		if !ok {
-			respChan <- Response{Success: false, Error: fmt.Errorf("invalid node_id")}
-		} else if err := ek.NodeMgr.UnregisterNode(nodeID); err != nil {
-			respChan <- Response{Success: false, Error: err}
-		} else {
-			respChan <- Response{
-				Success:  true,
-				Data:     map[string]string{"message": "node removed", "node_id": nodeID},
-				Duration: time.Since(start).String(),
-			}
-		}
-		return respChan
-
-	case ActionTaskSubmit:
-		task, ok := payload.(*TaskSubmit)
-		if !ok {
-			respChan <- Response{Success: false, Error: fmt.Errorf("invalid TaskSubmit payload")}
-		} else if err := ek.NodeMgr.SubmitTask(task); err != nil {
-			respChan <- Response{Success: false, Error: err}
-		} else {
-			respChan <- Response{
-				Success:  true,
-				Data:     map[string]string{"message": "task submitted", "task_id": task.TaskID},
-				Duration: time.Since(start).String(),
-			}
-		}
-		return respChan
-
-	case ActionGPUMonitor:
-		metrics, ok := payload.(*GPUMetrics)
-		if !ok {
-			respChan <- Response{Success: false, Error: fmt.Errorf("invalid GPUMetrics payload")}
-		} else if err := ek.NodeMgr.Heartbeat(metrics.NodeID, metrics); err != nil {
-			respChan <- Response{Success: false, Error: err}
-		} else {
-			respChan <- Response{
-				Success:  true,
-				Data:     metrics,
-				Duration: time.Since(start).String(),
-			}
-		}
-		return respChan
-
-	case ActionTaskResult:
-		result, ok := payload.(*TaskResult)
-		if !ok {
-			respChan <- Response{Success: false, Error: fmt.Errorf("invalid TaskResult payload")}
-		} else if err := ek.NodeMgr.CompleteTask(result.TaskID, result.ExecutedOn, result); err != nil {
-			respChan <- Response{Success: false, Error: err}
-		} else {
-			respChan <- Response{
-				Success:  true,
-				Data:     map[string]interface{}{"task_id": result.TaskID, "verified": result.Verified},
-				Duration: time.Since(start).String(),
-			}
-		}
-		return respChan
-
-	case ActionNodeHeartbeat:
-		respChan <- Response{
-			Success:  true,
-			Data:     map[string]string{"message": "heartbeat acknowledged"},
-			Duration: time.Since(start).String(),
-		}
-		return respChan
-
-	case ActionNodeOffline:
-		respChan <- Response{Success: false, Error: fmt.Errorf("not yet implemented"), Duration: time.Since(start).String()}
-		return respChan
-
-	case ActionTaskCancel:
-		respChan <- Response{Success: false, Error: fmt.Errorf("not yet implemented"), Duration: time.Since(start).String()}
-		return respChan
-
-	case ActionRegionQuery:
-		respChan <- Response{Success: true, Data: ek.NodeMgr.ListNodes(), Duration: time.Since(start).String()}
-		return respChan
-
-	case ActionMetricsReport:
-		respChan <- Response{Success: true, Data: ek.NodeMgr.ListNodes(), Duration: time.Since(start).String()}
-		return respChan
-
-	default:
-		// Fall through to base kernel for PING/STATUS - direct call, no goroutine wrapper
-		baseChan := ek.OpcKernel.Dispatch(id, action, payload)
-		baseResp := <-baseChan
-		respChan <- Response{
-			Success:  baseResp.Success,
-			Data:     baseResp.Data,
-			Error:    baseResp.Error,
-			Duration: time.Since(start).String(),
-		}
-		return respChan
-	}
+	return ek.OpcKernel.Dispatch(id, action, payload)
 }

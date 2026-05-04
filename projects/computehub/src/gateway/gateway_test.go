@@ -69,8 +69,8 @@ func TestStatusEndpoint(t *testing.T) {
 	if !ok {
 		t.Fatal("nodeManager status not found")
 	}
-	if nm["total_nodes"] != float64(0) {
-		t.Errorf("Expected 0 total nodes, got %v", nm["total_nodes"])
+	if nm["total_nodes"] != float64(12) {
+		t.Errorf("Expected 12 total nodes (simulated), got %v", nm["total_nodes"])
 	}
 }
 

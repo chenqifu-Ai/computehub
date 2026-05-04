@@ -26,14 +26,16 @@ type OpcKernel struct {
 	maxStates     int
 	LinearQueue   chan Command
 	LastLatency   time.Duration
+	NodeMgr       *NodeManager // node management for extended actions
+	done          chan struct{}
 }
 
 // Command represents a linearized system instruction
 type Command struct {
-	ID        string
-	Action    string
-	Payload   interface{}
-	Response  chan Response
+	ID       string
+	Action   string
+	Payload  interface{}
+	Response chan Response
 }
 
 type Response struct {
@@ -44,11 +46,12 @@ type Response struct {
 }
 
 // NewKernel initializes a new deterministic kernel
-func NewKernel(bufferSize int, maxStateHistory int) *OpcKernel {
+func NewKernel(bufferSize int, maxStates int) *OpcKernel {
 	return &OpcKernel{
 		stateMirror: make([]State, 0),
-		maxStates:   maxStateHistory,
+		maxStates:   maxStates,
 		LinearQueue: make(chan Command, bufferSize),
+		done:        make(chan struct{}),
 	}
 }
 
@@ -58,37 +61,302 @@ func (k *OpcKernel) Start() {
 		for cmd := range k.LinearQueue {
 			k.processCommand(cmd)
 		}
+		close(k.done)
 	}()
 }
 
 // processCommand executes commands linearly to eliminate race conditions
 func (k *OpcKernel) processCommand(cmd Command) {
 	start := time.Now()
-	
-	// 1. Snapshot current state before execution
+
+	// Snapshot state before execution
 	k.snapshotState()
 
-	// 2. Physical Execution (Deterministic path)
 	logWithTimestamp("[Kernel] Processing Command %s: %s", cmd.ID, cmd.Action)
-	
-	// Simplified execution logic for v0.1 Alpha
-	var resp Response
-	switch cmd.Action {
-	case "PING":
-		resp = Response{Success: true, Data: "PONG"}
-	case "STATUS":
-		resp = Response{Success: true, Data: "System Healthy | Kernel: Deterministic | Memory: Stable"}
-	default:
-		resp = Response{Success: false, Error: fmt.Errorf("unknown action: %s", cmd.Action)}
-	}
+
+	// Execute based on action type
+	resp := k.executeAction(cmd)
 
 	duration := time.Since(start)
 	k.Mu.Lock()
 	k.LastLatency = duration
 	k.Mu.Unlock()
-	logWithTimestamp("[Kernel] Command %s completed in %v", cmd.ID, duration)
-	
+
+	logWithTimestamp("[Kernel] Command %s completed in %v (success=%v)", cmd.ID, duration, resp.Success)
 	cmd.Response <- resp
+}
+
+// executeAction dispatches to the appropriate handler
+func (k *OpcKernel) executeAction(cmd Command) Response {
+	switch cmd.Action {
+	case "PING":
+		return Response{Success: true, Data: "PONG", Duration: "0s"}
+	case "STATUS":
+		return Response{Success: true, Data: "System Healthy | Kernel: Deterministic", Duration: "0s"}
+	case ActionNodeRegister:
+		return k.handleNodeRegister(cmd)
+	case ActionNodeUnregister:
+		return k.handleNodeUnregister(cmd)
+	case ActionNodeHeartbeat:
+		return k.handleNodeHeartbeat(cmd)
+	case ActionTaskSubmit:
+		return k.handleTaskSubmit(cmd)
+	case ActionTaskResult:
+		return k.handleTaskResult(cmd)
+	case ActionTaskCancel:
+		return k.handleTaskCancel(cmd)
+	case ActionNodeOffline:
+		return k.handleNodeOffline(cmd)
+	case ActionGPUMonitor:
+		return k.handleGPUMonitor(cmd)
+	case ActionRegionQuery:
+		return k.handleRegionQuery(cmd)
+	case ActionMetricsReport:
+		return k.handleMetricsReport(cmd)
+	default:
+		return Response{Success: false, Error: fmt.Errorf("unknown action: %s", cmd.Action)}
+	}
+}
+
+// ====== Action Handlers ======
+
+func (k *OpcKernel) handleNodeRegister(cmd Command) Response {
+	start := time.Now()
+
+	reg, ok := cmd.Payload.(*NodeRegister)
+	if !ok {
+		return Response{Success: false, Error: fmt.Errorf("invalid NodeRegister payload")}
+	}
+
+	if k.NodeMgr == nil {
+		return Response{Success: false, Error: fmt.Errorf("NodeManager not initialized")}
+	}
+
+	if err := k.NodeMgr.RegisterNode(reg); err != nil {
+		return Response{Success: false, Error: err, Duration: time.Since(start).String()}
+	}
+
+	return Response{
+		Success:  true,
+		Data:     map[string]string{"message": "node registered", "node_id": reg.NodeID},
+		Duration: time.Since(start).String(),
+	}
+}
+
+func (k *OpcKernel) handleNodeUnregister(cmd Command) Response {
+	start := time.Now()
+
+	nodeID, ok := cmd.Payload.(string)
+	if !ok {
+		return Response{Success: false, Error: fmt.Errorf("invalid node_id payload")}
+	}
+
+	if k.NodeMgr == nil {
+		return Response{Success: false, Error: fmt.Errorf("NodeManager not initialized")}
+	}
+
+	if err := k.NodeMgr.UnregisterNode(nodeID); err != nil {
+		return Response{Success: false, Error: err, Duration: time.Since(start).String()}
+	}
+
+	return Response{
+		Success:  true,
+		Data:     map[string]string{"message": "node removed", "node_id": nodeID},
+		Duration: time.Since(start).String(),
+	}
+}
+
+func (k *OpcKernel) handleNodeHeartbeat(cmd Command) Response {
+	start := time.Now()
+
+	if k.NodeMgr == nil {
+		return Response{Success: false, Error: fmt.Errorf("NodeManager not initialized")}
+	}
+
+	// payload can be GPUMetrics, string (nodeID), or map
+	switch p := cmd.Payload.(type) {
+	case *GPUMetrics:
+		if p == nil {
+			return Response{Success: false, Error: fmt.Errorf("nil GPUMetrics payload")}
+		}
+		if err := k.NodeMgr.Heartbeat(p.NodeID, p); err != nil {
+			return Response{Success: false, Error: err, Duration: time.Since(start).String()}
+		}
+	case string:
+		// heartbeat with just nodeID
+		if err := k.NodeMgr.Heartbeat(p, nil); err != nil {
+			return Response{Success: false, Error: err, Duration: time.Since(start).String()}
+		}
+	case map[string]interface{}:
+		nodeID, _ := p["node_id"].(string)
+		if nodeID == "" {
+			return Response{Success: false, Error: fmt.Errorf("heartbeat payload missing node_id")}
+		}
+		if err := k.NodeMgr.Heartbeat(nodeID, nil); err != nil {
+			return Response{Success: false, Error: err, Duration: time.Since(start).String()}
+		}
+	default:
+		return Response{Success: false, Error: fmt.Errorf("invalid heartbeat payload type")}
+	}
+
+	return Response{
+		Success:  true,
+		Data:     map[string]string{"message": "heartbeat acknowledged"},
+		Duration: time.Since(start).String(),
+	}
+}
+
+func (k *OpcKernel) handleTaskSubmit(cmd Command) Response {
+	start := time.Now()
+
+	task, ok := cmd.Payload.(*TaskSubmit)
+	if !ok {
+		return Response{Success: false, Error: fmt.Errorf("invalid TaskSubmit payload")}
+	}
+
+	if k.NodeMgr == nil {
+		return Response{Success: false, Error: fmt.Errorf("NodeManager not initialized")}
+	}
+
+	if err := k.NodeMgr.SubmitTask(task); err != nil {
+		return Response{Success: false, Error: err, Duration: time.Since(start).String()}
+	}
+
+	return Response{
+		Success:  true,
+		Data:     map[string]string{"message": "task submitted", "task_id": task.TaskID},
+		Duration: time.Since(start).String(),
+	}
+}
+
+func (k *OpcKernel) handleTaskResult(cmd Command) Response {
+	start := time.Now()
+
+	result, ok := cmd.Payload.(*TaskResult)
+	if !ok {
+		return Response{Success: false, Error: fmt.Errorf("invalid TaskResult payload")}
+	}
+
+	if k.NodeMgr == nil {
+		return Response{Success: false, Error: fmt.Errorf("NodeManager not initialized")}
+	}
+
+	if err := k.NodeMgr.CompleteTask(result.TaskID, result.ExecutedOn, result); err != nil {
+		return Response{Success: false, Error: err, Duration: time.Since(start).String()}
+	}
+
+	return Response{
+		Success:  true,
+		Data: map[string]interface{}{
+			"task_id":  result.TaskID,
+			"verified": result.Verified,
+		},
+		Duration: time.Since(start).String(),
+	}
+}
+
+func (k *OpcKernel) handleTaskCancel(cmd Command) Response {
+	start := time.Now()
+
+	taskID, ok := cmd.Payload.(string)
+	if !ok {
+		return Response{Success: false, Error: fmt.Errorf("invalid task_id payload")}
+	}
+
+	if k.NodeMgr == nil {
+		return Response{Success: false, Error: fmt.Errorf("NodeManager not initialized")}
+	}
+
+	// Find and cancel task on any node
+	k.NodeMgr.mu.Lock()
+	cancelled := false
+	for _, state := range k.NodeMgr.nodes {
+		if ts, exists := state.Tasks[taskID]; exists {
+			ts.Status = "cancelled"
+			state.Metrics.ActiveTasks--
+			cancelled = true
+			break
+		}
+	}
+	k.NodeMgr.mu.Unlock()
+
+	if !cancelled {
+		return Response{Success: false, Error: fmt.Errorf("task %s not found", taskID), Duration: time.Since(start).String()}
+	}
+
+	return Response{
+		Success:  true,
+		Data:     map[string]string{"message": "task cancelled", "task_id": taskID},
+		Duration: time.Since(start).String(),
+	}
+}
+
+func (k *OpcKernel) handleNodeOffline(cmd Command) Response {
+	start := time.Now()
+
+	nodeID, ok := cmd.Payload.(string)
+	if !ok {
+		return Response{Success: false, Error: fmt.Errorf("invalid node_id payload")}
+	}
+
+	if k.NodeMgr == nil {
+		return Response{Success: false, Error: fmt.Errorf("NodeManager not initialized")}
+	}
+
+	k.NodeMgr.mu.Lock()
+	if state, exists := k.NodeMgr.nodes[nodeID]; exists {
+		state.Register.Status = "offline"
+	}
+	k.NodeMgr.mu.Unlock()
+
+	return Response{
+		Success:  true,
+		Data:     map[string]string{"message": "node marked offline", "node_id": nodeID},
+		Duration: time.Since(start).String(),
+	}
+}
+
+func (k *OpcKernel) handleGPUMonitor(cmd Command) Response {
+	start := time.Now()
+
+	metrics, ok := cmd.Payload.(*GPUMetrics)
+	if !ok {
+		return Response{Success: false, Error: fmt.Errorf("invalid GPUMetrics payload")}
+	}
+
+	if k.NodeMgr == nil {
+		return Response{Success: false, Error: fmt.Errorf("NodeManager not initialized")}
+	}
+
+	if err := k.NodeMgr.Heartbeat(metrics.NodeID, metrics); err != nil {
+		return Response{Success: false, Error: err, Duration: time.Since(start).String()}
+	}
+
+	return Response{
+		Success:  true,
+		Data:     metrics,
+		Duration: time.Since(start).String(),
+	}
+}
+
+func (k *OpcKernel) handleRegionQuery(cmd Command) Response {
+	start := time.Now()
+
+	if k.NodeMgr == nil {
+		return Response{Success: false, Error: fmt.Errorf("NodeManager not initialized")}
+	}
+
+	nodes := k.NodeMgr.ListNodes()
+	return Response{
+		Success:  true,
+		Data:     nodes,
+		Duration: time.Since(start).String(),
+	}
+}
+
+func (k *OpcKernel) handleMetricsReport(cmd Command) Response {
+	// Alias for region query — returns all node metrics
+	return k.handleRegionQuery(cmd)
 }
 
 // snapshotState saves the current physical state to the mirror for rollback
@@ -100,7 +368,7 @@ func (k *OpcKernel) snapshotState() {
 		Timestamp: time.Now().UnixNano(),
 		Payload:   make(map[string]interface{}),
 	}
-	
+
 	k.stateMirror = append(k.stateMirror, state)
 	if len(k.stateMirror) > k.maxStates {
 		k.stateMirror = k.stateMirror[1:]
@@ -117,4 +385,20 @@ func (k *OpcKernel) Dispatch(id, action string, payload interface{}) chan Respon
 		Response: respChan,
 	}
 	return respChan
+}
+
+// GetNodeManager returns the NodeManager (for testing/introspection)
+func (k *OpcKernel) GetNodeManager() *NodeManager {
+	return k.NodeMgr
+}
+
+// Stop closes the LinearQueue channel, stopping the processing goroutine.
+// Call this in test cleanup or when shutting down the kernel.
+func (k *OpcKernel) Stop() {
+	close(k.LinearQueue)
+}
+
+// GetKernel returns the underlying OpcKernel from ExtendedKernel
+func (ek *ExtendedKernel) GetKernel() *OpcKernel {
+	return ek.OpcKernel
 }
