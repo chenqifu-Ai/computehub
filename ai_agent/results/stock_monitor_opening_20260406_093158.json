@@ -1,0 +1,57 @@
+{
+  "timestamp": "2026-04-06 09:31:58",
+  "market_status": "opening",
+  "stocks_monitored": [
+    {
+      "symbol": "000001",
+      "name": "上证指数",
+      "current_price": 3189.08,
+      "yesterday_close": 3200.0,
+      "open_price": 3194.71,
+      "high_price": 3193.71,
+      "low_price": 3186.52,
+      "volume": 282491496,
+      "amount": 12829492540.5,
+      "change_percent": -0.34
+    },
+    {
+      "symbol": "399001",
+      "name": "深证成指",
+      "current_price": 11501.88,
+      "yesterday_close": 11500.0,
+      "open_price": 11534.43,
+      "high_price": 11505.86,
+      "low_price": 11459.96,
+      "volume": 183995623,
+      "amount": 22166564314.63,
+      "change_percent": 0.02
+    },
+    {
+      "symbol": "399006",
+      "name": "创业板指",
+      "current_price": 2396.81,
+      "yesterday_close": 2400.0,
+      "open_price": 2395.94,
+      "high_price": 2402.18,
+      "low_price": 2385.45,
+      "volume": 369296562,
+      "amount": 46927381555.46,
+      "change_percent": -0.13
+    },
+    {
+      "symbol": "000832",
+      "name": "可转债指数",
+      "current_price": 1797.76,
+      "yesterday_close": 1800.0,
+      "open_price": 1801.07,
+      "high_price": 1799.22,
+      "low_price": 1791.59,
+      "volume": 249843818,
+      "amount": 13207561891.37,
+      "change_percent": -0.12
+    }
+  ],
+  "alerts": [],
+  "summary": "📊 股票开盘监控报告 (2026-04-06 09:31:58)\n⚠️ 注意: 由于外部数据源限制，本报告使用模拟数据生成。实际交易请以官方数据为准。\n📈 监控股票数量: 4\n⚠️ 警报数量: 0\n\n📋 监控详情 (模拟数据):\n   • 上证指数: 3189.08 (-0.34%)\n   • 深证成指: 11501.88 (+0.02%)\n   • 创业板指: 2396.81 (-0.13%)\n   • 可转债指数: 1797.76 (-0.12%)",
+  "note": "⚠️ 注意: 由于外部数据源限制，本报告使用模拟数据生成。实际交易请以官方数据为准。"
+}

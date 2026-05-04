@@ -1,0 +1,37 @@
+# OpenPC Gateway Configuration
+
+gateway:
+  # Gateway service port
+  port: 8081
+  
+  # Maximum connections  
+  max_connections: 100
+  
+  # Logging settings
+  logging:
+    level: "info"
+    timestamp: true
+    
+  # Security settings
+  security:
+    cors_enabled: true
+    rate_limit: 1000
+    
+  # Service endpoints
+  endpoints:
+    dispatch: "/api/dispatch"
+    health: "/api/health"
+    status: "/api/status"
+
+# Kernel settings
+kernel:
+  buffer_size: 100
+  max_states: 1000
+
+# Executor settings  
+executor:
+  sandbox_path: "/tmp/opc-sandbox"
+
+# Gene store settings
+gene_store:
+  path: "/root/downloads/opcsystem/genes.json"

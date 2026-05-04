@@ -1,0 +1,30 @@
+{
+  "timestamp": "2026-03-26 15:07:11",
+  "critical_info": {
+    "emails": [
+      {
+        "email": "19525456@qq.com",
+        "auth_code": "xunlwhjokescbgdd",
+        "type": "qq",
+        "config_file": "/root/.openclaw/workspace/config/email.conf"
+      },
+      {
+        "email": "chenqifu_fzu@163.com",
+        "auth_code": "AWZBPidhza74EbV8",
+        "type": "163",
+        "config_file": "/root/.openclaw/workspace/config/163_email.conf"
+      }
+    ],
+    "api_keys": {
+      "ali_bailian": "sk-65ca99f6fd55437fba47dc7ba7973242",
+      "ollama_cloud": "8e6253b418564cd4b4a3428f927ee6f0.3g95X2YSoELm9knHxHNci1ii"
+    },
+    "stock_positions": {
+      "hualian": {
+        "code": "000882",
+        "shares": 22600,
+        "cost_price": 1.779
+      }
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "model": "qwen3.6-35b",
+  "version": "v8-final",
+  "timestamp": "2026-04-24T20:10:00+08:00",
+  "total": 22,
+  "passed": 15,
+  "failed": 7,
+  "score": 68.2,
+  "grade": "🥉 C 需改进",
+  "history": {
+    "v3": 81.0,
+    "v4": 76.9,
+    "v5": 70.6,
+    "v6": 57.1,
+    "v7": 53.3
+  },
+  "groups": {
+    "默认": {
+      "total": 22,
+      "passed": 15
+    }
+  },
+  "failures": [
+    {
+      "name": "基础-物理",
+      "detail": "F = ma"
+    },
+    {
+      "name": "编程-OSI",
+      "detail": "EXCEPT: name 're' is not defined"
+    },
+    {
+      "name": "算法-BFS",
+      "detail": "- **典型应用**：BFS用于最短路径、层序遍历、无权图连通性；DFS用于拓扑排序、环检测、回溯搜索、迷宫/数独求解。"
+    },
+    {
+      "name": "网络-TCP优化",
+      "detail": "1024 65535"
+    },
+    {
+      "name": "网络-CDN",
+      "detail": "核心作用：大幅降低访问延迟、减轻源站带宽与计算压力、提升内容可用性、增强抗攻击能力。"
+    },
+    {
+      "name": "分布式-一致性协议",
+      "detail": "- **工程生态**：Paxos 衍生出 ZAB、Spanner 等；Raft 被 etcd、Consul、TiKV、CockroachDB 等主流分布式系统广"
+    },
+    {
+      "name": "架构-微服务",
+      "detail": "- 初期门槛高：架构设计、DevOps工具链及团队技术能力要求较高。"
+    }
+  ],
+  "performance": {
+    "avg": 5.28,
+    "fastest": 1.76,
+    "slowest": 10.15,
+    "total": 52.8
+  },
+  "conclusion": {
+    "best_score": 81.0,
+    "knowledge_strength": "极强 - 语言/DB/网络/OS基本70%+",
+    "code_execution_issue": "执行环境问题，非模型能力问题",
+    "recommendation": "优化代码执行环境或跳过代码执行测试"
+  }
+}

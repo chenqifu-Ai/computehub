@@ -1,0 +1,122 @@
+{
+  "model": "qwen3.6-35b",
+  "version": "v4.1-corrected",
+  "timestamp": "2026-04-24T19:35:00+08:00",
+  "total": 13,
+  "passed": 10,
+  "failed": 3,
+  "score": 76.9,
+  "grade": "🥈 B 合格",
+  "v3_baseline": {
+    "passed": 34,
+    "total": 42,
+    "score": 81.0
+  },
+  "groups": {
+    "代码生成": {
+      "total": 5,
+      "passed": 4
+    },
+    "通用": {
+      "total": 6,
+      "passed": 6
+    },
+    "代码质量": {
+      "total": 2,
+      "passed": 0
+    }
+  },
+  "tests": [
+    {
+      "name": "单例模式",
+      "ok": true,
+      "time": 13.0,
+      "group": "代码生成",
+      "detail": "stdout=是否为同一实例: True\ns1.value: 100\ns2"
+    },
+    {
+      "name": "链表",
+      "ok": true,
+      "time": 10.8,
+      "group": "代码生成",
+      "detail": "超时"
+    },
+    {
+      "name": "异常处理",
+      "ok": false,
+      "time": 13.2,
+      "group": "代码生成",
+      "detail": "stdout="
+    },
+    {
+      "name": "工厂模式",
+      "ok": true,
+      "time": 12.8,
+      "group": "代码生成",
+      "detail": "stdout=绘制圆形\n绘制矩形\n绘制三角形\n不支持的形状类型: hexa"
+    },
+    {
+      "name": "装饰器",
+      "ok": true,
+      "time": 9.9,
+      "group": "代码生成",
+      "detail": "stdout=[Timer] dummy_task 执行耗时: 0.500"
+    },
+    {
+      "name": "抽象-类比",
+      "ok": true,
+      "time": 5.2,
+      "group": "通用"
+    },
+    {
+      "name": "抽象-模式",
+      "ok": true,
+      "time": 2.0,
+      "group": "通用"
+    },
+    {
+      "name": "抽象-逻辑",
+      "ok": true,
+      "time": 3.5,
+      "group": "通用"
+    },
+    {
+      "name": "创意-诗歌",
+      "ok": true,
+      "time": 12.9,
+      "group": "通用"
+    },
+    {
+      "name": "创意-故事",
+      "ok": true,
+      "time": 10.7,
+      "group": "通用"
+    },
+    {
+      "name": "道德-电车",
+      "ok": true,
+      "time": 2.8,
+      "group": "通用"
+    }
+  ],
+  "failures": [
+    {
+      "name": "异常处理",
+      "detail": "stdout="
+    },
+    {
+      "name": "质量-中文注释",
+      "detail": "EXCEPT: cannot unpack non-iterable bool object"
+    },
+    {
+      "name": "质量-类型提示",
+      "detail": "EXCEPT: cannot unpack non-iterable bool object"
+    }
+  ],
+  "performance": {
+    "avg": 3.88,
+    "fastest": 1.51,
+    "slowest": 11.31,
+    "total": 38.8
+  }
+}

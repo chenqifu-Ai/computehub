@@ -1,0 +1,39 @@
+{
+  "timestamp": "2026-03-31 06:57:51",
+  "stock_system": {
+    "hualian_monitor.py": "正常运行",
+    "cosco_monitor.py": "脚本缺失"
+  },
+  "learning_system": {
+    "ceo-advisor": "65个学习文件",
+    "finance-advisor": "35个学习文件",
+    "finance-expert": "42个学习文件",
+    "hr-expert": "32个学习文件",
+    "legal-advisor": "27个学习文件",
+    "marketing-expert": "26个学习文件",
+    "network-expert": "25个学习文件"
+  },
+  "openremoteai_project": {
+    "项目目录": "存在",
+    "码神接管指令.md": "存在",
+    "码神接管指令.md_size": "3681字节",
+    "internal/protocol/handler.go": "存在",
+    "internal/protocol/handler.go_size": "2704字节",
+    "internal/ai/engine.go": "存在",
+    "internal/ai/engine.go_size": "5483字节",
+    "go.mod": "存在",
+    "go.mod_size": "681字节",
+    "项目状态": "码神加速推进中",
+    "目标完成时间": "2026-03-28 15:37",
+    "剩余时间": "23小时56分钟"
+  },
+  "task_system": {
+    "task_pipeline.py": "语法正确",
+    "workflow_executor.py": "语法正确"
+  },
+  "system_health": {
+    "磁盘空间": "67%",
+    "内存使用": "77.8%",
+    "CPU负载": "21.34,, 20.30,, 19.74"
+  }
+}

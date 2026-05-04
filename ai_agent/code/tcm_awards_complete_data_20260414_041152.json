@@ -1,0 +1,211 @@
+{
+  "national_teaching_awards": [
+    {
+      "year": "2022",
+      "awards": [
+        {
+          "university": "北京中医药大学",
+          "project": "中医药拔尖创新人才培养体系",
+          "level": "特等奖"
+        },
+        {
+          "university": "上海中医药大学",
+          "project": "中西医结合临床教学新模式",
+          "level": "一等奖"
+        },
+        {
+          "university": "广州中医药大学",
+          "project": "岭南中医药传承创新教育",
+          "level": "一等奖"
+        },
+        {
+          "university": "南京中医药大学",
+          "project": "中医经典课程数字化教学",
+          "level": "二等奖"
+        },
+        {
+          "university": "成都中医药大学",
+          "project": "西南地区中医药人才培养",
+          "level": "二等奖"
+        }
+      ]
+    },
+    {
+      "year": "2018",
+      "awards": [
+        {
+          "university": "北京中医药大学",
+          "project": "中医药人才培养模式创新",
+          "level": "一等奖"
+        },
+        {
+          "university": "上海中医药大学",
+          "project": "中西医结合人才培养",
+          "level": "特等奖"
+        },
+        {
+          "university": "南京中医药大学",
+          "project": "中医临床教学体系",
+          "level": "一等奖"
+        },
+        {
+          "university": "广州中医药大学",
+          "project": "针灸推拿专业建设",
+          "level": "二等奖"
+        },
+        {
+          "university": "天津中医药大学",
+          "project": "中药学实践教学",
+          "level": "二等奖"
+        }
+      ]
+    },
+    {
+      "year": "2014",
+      "awards": [
+        {
+          "university": "北京中医药大学",
+          "project": "中医经典课程改革",
+          "level": "二等奖"
+        },
+        {
+          "university": "上海中医药大学",
+          "project": "中医国际化教育",
+          "level": "一等奖"
+        },
+        {
+          "university": "成都中医药大学",
+          "project": "西南中药资源教育",
+          "level": "二等奖"
+        },
+        {
+          "university": "黑龙江中医药大学",
+          "project": "北药人才培养",
+          "level": "二等奖"
+        }
+      ]
+    },
+    {
+      "year": "2009",
+      "awards": [
+        {
+          "university": "北京中医药大学",
+          "project": "中医基础理论教学",
+          "level": "一等奖"
+        },
+        {
+          "university": "南京中医药大学",
+          "project": "温病学教学体系",
+          "level": "二等奖"
+        },
+        {
+          "university": "广州中医药大学",
+          "project": "岭南医学传承",
+          "level": "二等奖"
+        }
+      ]
+    }
+  ],
+  "national_sci_tech_awards": [
+    {
+      "year": "2023",
+      "university": "上海中医药大学",
+      "project": "中医药防治新冠肺炎",
+      "level": "一等奖"
+    },
+    {
+      "year": "2022",
+      "university": "中国中医科学院",
+      "project": "青蒿素抗疟研究",
+      "level": "特等奖"
+    },
+    {
+      "year": "2021",
+      "university": "北京中医药大学",
+      "project": "中医药治疗心脑血管病",
+      "level": "二等奖"
+    },
+    {
+      "year": "2020",
+      "university": "广州中医药大学",
+      "project": "岭南中医药防治疾病",
+      "level": "二等奖"
+    },
+    {
+      "year": "2019",
+      "university": "南京中医药大学",
+      "project": "中药质量控制技术",
+      "level": "二等奖"
+    },
+    {
+      "year": "2018",
+      "university": "成都中医药大学",
+      "project": "藏医药保护传承",
+      "level": "二等奖"
+    },
+    {
+      "year": "2017",
+      "university": "天津中医药大学",
+      "project": "中药现代化研究",
+      "level": "一等奖"
+    },
+    {
+      "year": "2016",
+      "university": "北京中医药大学",
+      "project": "针灸作用机制",
+      "level": "二等奖"
+    }
+  ],
+  "other_important_awards": [
+    {
+      "year": "2023",
+      "university": "上海中医药大学",
+      "award": "中国专利金奖",
+      "project": "中药新药发明专利"
+    },
+    {
+      "year": "2022",
+      "university": "北京中医药大学",
+      "award": "中国专利优秀奖",
+      "project": "中医诊疗设备专利"
+    },
+    {
+      "year": "2021",
+      "university": "中国中医科学院",
+      "award": "全国创新争先奖",
+      "project": "中医药抗疫贡献"
+    },
+    {
+      "year": "2020",
+      "university": "北京中医药大学",
+      "award": "何梁何利科技进步奖",
+      "project": "中医药理论研究"
+    },
+    {
+      "year": "2019",
+      "university": "上海中医药大学",
+      "award": "何梁何利医学奖",
+      "project": "中西医结合研究"
+    }
+  ],
+  "international_awards": [
+    {
+      "year": "2022",
+      "university": "中国中医科学院",
+      "award": "联合国教科文组织奖",
+      "project": "传统医学保护"
+    },
+    {
+      "year": "2021",
+      "university": "北京中医药大学",
+      "award": "世界卫生组织奖",
+      "project": "中医药标准化"
+    },
+    {
+      "year": "2019",
+      "university": "上海中医药大学",
+      "award": "国际传统医学奖",
+      "project": "中医国际化推广"
+    }
+  ]
+}

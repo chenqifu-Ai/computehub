@@ -1,0 +1,37 @@
+{
+  "timestamp": "2026-03-23T14:52:49.209994",
+  "phase": "first",
+  "total_capital": 1000000,
+  "orders": [
+    {
+      "code": "600519",
+      "name": "贵州茅台",
+      "volume": 0,
+      "price": 1390.0,
+      "amount": 0.0,
+      "stop_loss": 1300,
+      "target": 1600,
+      "risk": 6.474820143884892
+    },
+    {
+      "code": "300750",
+      "name": "宁德时代",
+      "volume": 200,
+      "price": 395.0,
+      "amount": 79000.0,
+      "stop_loss": 350,
+      "target": 500,
+      "risk": 11.39240506329114
+    },
+    {
+      "code": "002594",
+      "name": "比亚迪",
+      "volume": 900,
+      "price": 106.5,
+      "amount": 95850.0,
+      "stop_loss": 95,
+      "target": 120,
+      "risk": 10.7981220657277
+    }
+  ]
+}

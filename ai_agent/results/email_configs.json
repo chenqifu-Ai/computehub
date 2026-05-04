@@ -1,0 +1,19 @@
+{
+  "primary_email": {
+    "email": "19525456@qq.com",
+    "auth_code": "xunlwhjokescbgdd",
+    "imap_server": "imap.qq.com",
+    "imap_port": 993,
+    "smtp_server": "smtp.qq.com",
+    "smtp_port": 465,
+    "config_file": "~/.openclaw/workspace/config/email.conf"
+  },
+  "config_file_details": {
+    "IMAP_SERVER": "imap.qq.com",
+    "IMAP_PORT": "993",
+    "SMTP_SERVER": "smtp.qq.com",
+    "SMTP_PORT": "465",
+    "EMAIL": "19525456@qq.com",
+    "AUTH_CODE": "xunlwhjokescbgdd"
+  }
+}

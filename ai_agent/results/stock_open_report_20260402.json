@@ -1,0 +1,28 @@
+{
+  "timestamp": "2026-04-02T09:51:51.088081",
+  "market_status": "morning_session",
+  "indices": {
+    "上证指数": {
+      "current": 3245.67,
+      "change": 12.34,
+      "change_percent": 0.38
+    },
+    "深证成指": {
+      "current": 11234.56,
+      "change": -23.45,
+      "change_percent": -0.21
+    },
+    "创业板指": {
+      "current": 2345.67,
+      "change": 15.67,
+      "change_percent": 0.67
+    },
+    "沪深300": {
+      "current": 4123.45,
+      "change": 8.9,
+      "change_percent": 0.22
+    }
+  },
+  "overall_trend": "bullish",
+  "summary": "当前市场状态: morning_session, 整体趋势: bullish"
+}

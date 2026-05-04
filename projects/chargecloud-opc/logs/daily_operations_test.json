@@ -1,0 +1,88 @@
+{
+  "workflow_id": "workflow_20260419065330",
+  "workflow_name": "日常运营",
+  "start_time": "2026-04-19T06:53:30.072696",
+  "end_time": "2026-04-19T06:53:33.647767",
+  "duration_seconds": 3.575071,
+  "total_steps": 8,
+  "completed_steps": 8,
+  "failed_steps": 0,
+  "completion_rate": "100.0%",
+  "status": "completed",
+  "steps": [
+    {
+      "step_id": "step_1",
+      "name": "数据采集",
+      "agent": "data_agent",
+      "status": "completed",
+      "dependencies": []
+    },
+    {
+      "step_id": "step_2",
+      "name": "营销日报",
+      "agent": "marketing_agent",
+      "status": "completed",
+      "dependencies": [
+        "step_1"
+      ]
+    },
+    {
+      "step_id": "step_3",
+      "name": "运营日报",
+      "agent": "operations_agent",
+      "status": "completed",
+      "dependencies": [
+        "step_1"
+      ]
+    },
+    {
+      "step_id": "step_4",
+      "name": "财务日报",
+      "agent": "finance_agent",
+      "status": "completed",
+      "dependencies": [
+        "step_1"
+      ]
+    },
+    {
+      "step_id": "step_5",
+      "name": "风控检查",
+      "agent": "risk_agent",
+      "status": "completed",
+      "dependencies": [
+        "step_1"
+      ]
+    },
+    {
+      "step_id": "step_6",
+      "name": "数据汇总",
+      "agent": "data_agent",
+      "status": "completed",
+      "dependencies": [
+        "step_2",
+        "step_3",
+        "step_4",
+        "step_5"
+      ]
+    },
+    {
+      "step_id": "step_7",
+      "name": "CEO 审阅",
+      "agent": "ceo_agent",
+      "status": "completed",
+      "dependencies": [
+        "step_6"
+      ]
+    },
+    {
+      "step_id": "step_8",
+      "name": "指令发布",
+      "agent": "ceo_agent",
+      "status": "completed",
+      "dependencies": [
+        "step_7"
+      ]
+    }
+  ],
+  "failed_details": []
+}

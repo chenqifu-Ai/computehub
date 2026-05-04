@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-04-03 09:36:14",
+  "market_status": "open",
+  "indices": {
+    "SH000001": {
+      "name": "上证指数",
+      "opening_price": 3000,
+      "current_price": 3020.42,
+      "price_change": 20.42,
+      "price_change_percent": 0.68,
+      "volume_ratio": 1.22,
+      "status": "normal"
+    },
+    "SZ399001": {
+      "name": "深证成指",
+      "opening_price": 11000,
+      "current_price": 11147.88,
+      "price_change": 147.88,
+      "price_change_percent": 1.34,
+      "volume_ratio": 1.78,
+      "status": "normal"
+    },
+    "CYBZ": {
+      "name": "创业板指",
+      "opening_price": 2000,
+      "current_price": 2031.22,
+      "price_change": 31.22,
+      "price_change_percent": 1.56,
+      "volume_ratio": 0.87,
+      "status": "normal"
+    },
+    "KZZ": {
+      "name": "科创50",
+      "opening_price": 1000,
+      "current_price": 983.19,
+      "price_change": -16.81,
+      "price_change_percent": -1.68,
+      "volume_ratio": 2.93,
+      "status": "high_volume"
+    }
+  }
+}

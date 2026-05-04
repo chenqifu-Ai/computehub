@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>充电云 - 管理后台</title>
+    <link href="https://cdn.jsdelivr.net/npm/element-plus/dist/index.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f5f5f5; }
+        .layout { display: flex; height: 100vh; }
+        .sidebar { width: 220px; background: #1e3c72; color: white; }
+        .sidebar-logo { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-logo h1 { font-size: 20px; margin-top: 10px; }
+        .sidebar-menu { padding: 10px 0; }
+        .menu-item { padding: 12px 20px; cursor: pointer; display: flex; align-items: center; }
+        .menu-item:hover { background: rgba(255,255,255,0.1); }
+        .menu-item.active { background: #00d2ff; }
+        .menu-item span { margin-left: 10px; }
+        .main { flex: 1; display: flex; flex-direction: column; }
+        .header { height: 60px; background: white; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .content { flex: 1; padding: 20px; overflow: auto; }
+        .dashboard-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .stat-card h3 { color: #666; font-size: 14px; margin-bottom: 10px; }
+        .stat-card .value { font-size: 32px; font-weight: bold; color: #1e3c72; }
+        .stat-card .change { font-size: 12px; margin-top: 5px; }
+        .stat-card .change.up { color: #52c41a; }
+        .stat-card .change.down { color: #f5222d; }
+        .panel { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .panel-title { font-size: 16px; font-weight: bold; color: #1e3c72; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="layout">
+            <div class="sidebar">
+                <div class="sidebar-logo">
+                    <div style="font-size: 36px;">⚡</div>
+                    <h1>充电云</h1>
+                </div>
+                <div class="sidebar-menu">
+                    <div class="menu-item active" @click="currentPage='dashboard'"><span>📊</span><span>数据看板</span></div>
+                    <div class="menu-item" @click="currentPage='stations'"><span>🏢</span><span>充电站管理</span></div>
+                    <div class="menu-item" @click="currentPage='piles'"><span>🔌</span><span>充电桩管理</span></div>
+                    <div class="menu-item" @click="currentPage='orders'"><span>📋</span><span>订单管理</span></div>
+                    <div class="menu-item" @click="currentPage='users'"><span>👥</span><span>用户管理</span></div>
+                    <div class="menu-item" @click="currentPage='finance'"><span>💰</span><span>财务管理</span></div>
+                    <div class="menu-item" @click="currentPage='settings'"><span>⚙️</span><span>系统设置</span></div>
+                </div>
+            </div>
+            <div class="main">
+                <div class="header">
+                    <h2>{{ pageTitle }}</h2>
+                    <div>
+                        <span>管理员</span>
+                        <el-button type="primary" size="small" @click="logout" style="margin-left: 10px;">退出</el-button>
+                    </div>
+                </div>
+                <div class="content">
+                    <!-- 数据看板 -->
+                    <div v-if="currentPage==='dashboard'">
+                        <div class="dashboard-cards">
+                            <div class="stat-card">
+                                <h3>今日收入</h3>
+                                <div class="value">¥{{ stats.todayIncome }}</div>
+                                <div class="change up">↑ 12.5%</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>今日订单</h3>
+                                <div class="value">{{ stats.todayOrders }}</div>
+                                <div class="change up">↑ 8.3%</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>今日充电量</h3>
+                                <div class="value">{{ stats.todayEnergy }}度</div>
+                                <div class="change up">↑ 15.2%</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>设备在线率</h3>
+                                <div class="value">{{ stats.onlineRate }}%</div>
+                                <div class="change up">正常</div>
+                            </div>
+                        </div>
+                        <div class="panel">
+                            <div class="panel-header">
+                                <span class="panel-title">最近订单</span>
+                                <el-button size="small" @click="currentPage='orders'">查看全部</el-button>
+                            </div>
+                            <el-table :data="recentOrders">
+                                <el-table-column prop="orderNo" label="订单号" width="180"></el-table-column>
+                                <el-table-column prop="stationName" label="站点"></el-table-column>
+                                <el-table-column prop="energy" label="充电量(度)"></el-table-column>
+                                <el-table-column prop="amount" label="金额(元)"></el-table-column>
+                                <el-table-column prop="status" label="状态">
+                                    <template #default="scope">
+                                        <el-tag :type="scope.row.status===2?'success':'warning'">
+                                            {{ scope.row.status===2?'已完成':'充电中' }}
+                                        </el-tag>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="createdAt" label="时间" width="180"></el-table-column>
+                            </el-table>
+                        </div>
+                    </div>
+                    
+                    <!-- 充电站管理 -->
+                    <div v-if="currentPage==='stations'">
+                        <div class="panel">
+                            <div class="panel-header">
+                                <span class="panel-title">充电站列表</span>
+                                <el-button type="primary" size="small" @click="showAddStation=true">添加站点</el-button>
+                            </div>
+                            <el-table :data="stations">
+                                <el-table-column prop="id" label="ID" width="80"></el-table-column>
+                                <el-table-column prop="name" label="站点名称"></el-table-column>
+                                <el-table-column prop="city" label="城市"></el-table-column>
+                                <el-table-column prop="address" label="地址"></el-table-column>
+                                <el-table-column prop="totalPiles" label="充电桩数"></el-table-column>
+                                <el-table-column prop="availablePiles" label="可用数"></el-table-column>
+                                <el-table-column prop="status" label="状态">
+                                    <template #default="scope">
+                                        <el-tag :type="scope.row.status===1?'success':'danger'">
+                                            {{ scope.row.status===1?'正常':'停用' }}
+                                        </el-tag>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="操作" width="200">
+                                    <template #default="scope">
+                                        <el-button size="small" @click="editStation(scope.row)">编辑</el-button>
+                                        <el-button size="small" type="danger" @click="deleteStation(scope.row)">删除</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </div>
+                    
+                    <!-- 充电桩管理 -->
+                    <div v-if="currentPage==='piles'">
+                        <div class="panel">
+                            <div class="panel-header">
+                                <span class="panel-title">充电桩列表</span>
+                                <el-button type="primary" size="small" @click="showAddPile=true">添加充电桩</el-button>
+                            </div>
+                            <el-table :data="piles">
+                                <el-table-column prop="id" label="ID" width="80"></el-table-column>
+                                <el-table-column prop="code" label="编号"></el-table-column>
+                                <el-table-column prop="name" label="名称"></el-table-column>
+                                <el-table-column prop="type" label="类型">
+                                    <template #default="scope">
+                                        <el-tag :type="scope.row.type===1?'primary':'info'">
+                                            {{ scope.row.type===1?'快充':'慢充' }}
+                                        </el-tag>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="power" label="功率(kW)"></el-table-column>
+                                <el-table-column prop="status" label="状态">
+                                    <template #default="scope">
+                                        <el-tag :type="scope.row.status===1?'success':scope.row.status===2?'warning':'danger'">
+                                            {{ scope.row.status===1?'空闲':scope.row.status===2?'充电中':'离线' }}
+                                        </el-tag>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="操作" width="200">
+                                    <template #default="scope">
+                                        <el-button size="small" @click="editPile(scope.row)">编辑</el-button>
+                                        <el-button size="small" type="danger" @click="deletePile(scope.row)">删除</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </div>
+                    
+                    <!-- 订单管理 -->
+                    <div v-if="currentPage==='orders'">
+                        <div class="panel">
+                            <div class="panel-header">
+                                <span class="panel-title">订单列表</span>
+                                <el-button size="small" @click="exportOrders">导出</el-button>
+                            </div>
+                            <el-table :data="orders">
+                                <el-table-column prop="orderNo" label="订单号" width="180"></el-table-column>
+                                <el-table-column prop="stationName" label="站点"></el-table-column>
+                                <el-table-column prop="pileName" label="充电桩"></el-table-column>
+                                <el-table-column prop="energy" label="充电量(度)"></el-table-column>
+                                <el-table-column prop="totalAmount" label="金额(元)"></el-table-column>
+                                <el-table-column prop="status" label="状态">
+                                    <template #default="scope">
+                                        <el-tag :type="scope.row.status===2?'success':scope.row.status===1?'warning':'info'">
+                                            {{ scope.row.status===2?'已完成':scope.row.status===1?'充电中':'已取消' }}
+                                        </el-tag>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="createdAt" label="创建时间" width="180"></el-table-column>
+                            </el-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 添加站点对话框 -->
+        <el-dialog v-model="showAddStation" title="添加充电站" width="500px">
+            <el-form :model="stationForm" label-width="80px">
+                <el-form-item label="站点名称">
+                    <el-input v-model="stationForm.name"></el-input>
+                </el-form-item>
+                <el-form-item label="城市">
+                    <el-input v-model="stationForm.city"></el-input>
+                </el-form-item>
+                <el-form-item label="地址">
+                    <el-input v-model="stationForm.address"></el-input>
+                </el-form-item>
+                <el-form-item label="停车费">
+                    <el-input-number v-model="stationForm.parkingFee" :min="0"></el-input-number>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <el-button @click="showAddStation=false">取消</el-button>
+                <el-button type="primary" @click="saveStation">保存</el-button>
+            </template>
+        </el-dialog>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/element-plus/dist/index.full.js"></script>
+    <script>
+        const { createApp, ref, reactive, computed } = Vue;
+        const app = createApp({
+            setup() {
+                const currentPage = ref('dashboard');
+                const showAddStation = ref(false);
+                const showAddPile = ref(false);
+                
+                const stats = reactive({
+                    todayIncome: 5826,
+                    todayOrders: 156,
+                    todayEnergy: 1250,
+                    onlineRate: 96.8
+                });
+                
+                const stations = ref([
+                    { id: 1, name: '朝阳充电站', city: '北京市', address: '朝阳区xxx路xxx号', totalPiles: 10, availablePiles: 5, status: 1 },
+                    { id: 2, name: '海淀充电站', city: '北京市', address: '海淀区xxx路xxx号', totalPiles: 15, availablePiles: 8, status: 1 }
+                ]);
+                
+                const piles = ref([
+                    { id: 1, code: 'P001', name: '1号充电桩', type: 1, power: 120, status: 1 },
+                    { id: 2, code: 'P002', name: '2号充电桩', type: 1, power: 120, status: 2 },
+                    { id: 3, code: 'P003', name: '3号充电桩', type: 2, power: 7, status: 1 }
+                ]);
+                
+                const orders = ref([
+                    { orderNo: 'C20260321100001', stationName: '朝阳充电站', pileName: 'P001', energy: 45.5, totalAmount: 91, status: 2, createdAt: '2026-03-21 10:00' },
+                    { orderNo: 'C20260321100002', stationName: '朝阳充电站', pileName: 'P002', energy: 32.8, totalAmount: 65.6, status: 1, createdAt: '2026-03-21 10:30' }
+                ]);
+                
+                const recentOrders = computed(() => orders.value.slice(0, 5));
+                
+                const stationForm = reactive({
+                    name: '',
+                    city: '',
+                    address: '',
+                    parkingFee: 0
+                });
+                
+                const pageTitle = computed(() => {
+                    const titles = {
+                        dashboard: '数据看板',
+                        stations: '充电站管理',
+                        piles: '充电桩管理',
+                        orders: '订单管理',
+                        users: '用户管理',
+                        finance: '财务管理',
+                        settings: '系统设置'
+                    };
+                    return titles[currentPage.value] || '充电云';
+                });
+                
+                const logout = () => {
+                    localStorage.removeItem('token');
+                    window.location.href = 'login.html';
+                };
+                
+                const saveStation = () => {
+                    stations.value.push({ ...stationForm, id: stations.value.length + 1, totalPiles: 0, availablePiles: 0, status: 1 });
+                    showAddStation.value = false;
+                };
+                
+                const exportOrders = () => {
+                    alert('导出功能开发中');
+                };
+                
+                return {
+                    currentPage, showAddStation, showAddPile,
+                    stats, stations, piles, orders, recentOrders,
+                    stationForm, pageTitle,
+                    logout, saveStation, exportOrders
+                };
+            }
+        });
+        app.use(ElementPlus);
+        app.mount('#app');
+    </script>
+</body>
+</html>

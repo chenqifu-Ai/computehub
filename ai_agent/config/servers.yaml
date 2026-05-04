@@ -1,0 +1,42 @@
+# AI 服务器配置
+# 自动生成，请勿手动修改
+
+servers:
+  server_a:
+    name: "GPU 服务器 - 实例 A"
+    url: "http://58.23.129.98:8000/v1"
+    api_key: "sk-78sadn09bjawde123e"
+    port: 8000
+    gpu_cards: 4
+    model: qwen3.6-35b
+    max_tokens: 262144
+    type: direct
+    
+  server_b:
+    name: "GPU 服务器 - 实例 B"
+    url: "http://58.23.129.98:8001/v1"
+    api_key: "sk-78sadn09bjawde123e"
+    port: 8001
+    gpu_cards: 4
+    model: qwen3.6-35b
+    max_tokens: 262144
+    type: direct
+    
+  proxy:
+    name: "代理服务器"
+    url: "http://172.29.174.77:8765/v1"
+    api_key: null
+    port: 8765
+    gpu_cards: 4
+    model: qwen3.6-35b
+    max_tokens: 262144
+    type: proxy
+    target_server: server_a
+
+# 邮件配置
+email:
+  smtp_server: "smtp.qq.com"
+  smtp_port: 465
+  sender: "19525456@qq.com"
+  password: "bzgwylbbrocdbiie"
+  receiver: "19525456@qq.com"

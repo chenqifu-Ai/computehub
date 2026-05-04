@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目状态仪表板</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header .timestamp {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .card-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-disabled {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+        
+        .status-waiting {
+            background: #cce7ff;
+            color: #004085;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-100 { background: #28a745; width: 100%; }
+        .progress-85 { background: #28a745; width: 85%; }
+        .progress-70 { background: #ffc107; width: 70%; }
+        .progress-50 { background: #ffc107; width: 50%; }
+        .progress-30 { background: #dc3545; width: 30%; }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .metric {
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .metric-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .metric-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .last-run {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        .gauge-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .gauge {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .gauge-bg {
+            fill: none;
+            stroke: #f0f0f0;
+            stroke-width: 10;
+        }
+        
+        .gauge-fill {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dasharray 0.3s ease;
+        }
+        
+        .gauge-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .alert {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>🎛️ 项目状态仪表板</h1>
+            <div class="timestamp" id="timestamp">2026-03-28 05:05</div>
+        </div>
+        
+        <div class="alert">
+            <strong>📊 实时状态监控</strong> - 所有项目运行状态一目了然
+        </div>
+        
+        <div class="grid">
+            <!-- AI智能决策引擎 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🧠 AI智能决策引擎V2</div>
+                    <div class="status-badge status-success">✅ 运行中</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill progress-100"></div>
+                </div>
+                <div>消除"继续"依赖，实现真正智能自动化</div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value">100%</div>
+                        <div class="metric-label">自动处理率</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">7</div>
+                        <div class="metric-label">集成专家</div>
+                    </div>
+                </div>
+                <div class="last-run">最近运行: 刚刚</div>
+            </div>
+            
+            <!-- 邮件自动化系统 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📧 智能邮件系统</div>
+                    <div class="status-badge status-success">✅ 运行中</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill progress-85"></div>
+                </div>
+                <div>自动处理"小智请执行"邮件命令</div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value">85%</div>
+                        <div class="metric-label">完成度</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">5min</div>
+                        <div class="metric-label">检查间隔</div>
+                    </div>
+                </div>
+                <div class="last-run">定时任务: 每5分钟</div>
+            </div>
+            
+            <!-- 股票监控系统 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📈 股票监控系统</div>
+                    <div class="status-badge status-waiting">⏰ 等待中</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill progress-70"></div>
+                </div>
+                <div>华联股份、中远海发实时监控</div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value">2</div>
+                        <div class="metric-label">监控股票</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">20min</div>
+                        <div class="metric-label">监控频率</div>
+                    </div>
+                </div>
+                <div class="last-run">下次运行: 交易日09:00</div>
+            </div>
+            
+            <!-- 专家学习系统 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">👥 专家学习系统</div>
+                    <div class="status-badge status-success">✅ 运行中</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill progress-85"></div>
+                </div>
+                <div>7大专家轮换学习，知识积累</div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value">7</div>
+                        <div class="metric-label">专家数量</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">2h</div>
+                        <div class="metric-label">学习间隔</div>
+                    </div>
+                </div>
+                <div class="last-run">最近运行: 04:37</div>
+            </div>
+            
+            <!-- 系统健康监控 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🔧 系统健康监控</div>
+                    <div class="status-badge status-success">✅ 正常</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill progress-100"></div>
+                </div>
+                <div>实时监控系统状态和资源使用</div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value">15min</div>
+                        <div class="metric-label">检查间隔</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0</div>
+                        <div class="metric-label">错误数</div>
+                    </div>
+                </div>
+                <div class="last-run">最近运行: 04:49</div>
+            </div>
+            
+            <!-- 投资汇报系统 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">💼 投资汇报系统</div>
+                    <div class="status-badge status-waiting">⏰ 等待中</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill progress-100"></div>
+                </div>
+                <div>自动生成投资日报和交易计划</div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value">2</div>
+                        <div class="metric-label">日报类型</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">20:00</div>
+                        <div class="metric-label">发送时间</div>
+                    </div>
+                </div>
+                <div class="last-run">下次运行: 今日20:00</div>
+            </div>
+        </div>
+        
+        <!-- 仪表盘区域 -->
+        <div class="grid">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📊 总体健康度</div>
+                </div>
+                <div class="gauge-container">
+                    <div class="gauge">
+                        <svg viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="54" class="gauge-bg"></circle>
+                            <circle cx="60" cy="60" r="54" class="gauge-fill" 
+                                    stroke="#28a745"
+                                    stroke-dasharray="339.292, 339.292"
+                                    stroke-dashoffset="50.894"></circle>
+                        </svg>
+                        <div class="gauge-text">85%</div>
+                    </div>
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value">6</div>
+                        <div class="metric-label">运行中</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">2</div>
+                        <div class="metric-label">等待中</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0</div>
+                        <div class="metric-label">错误</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">2</div>
+                        <div class="metric-label">需修复</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">⚡ 性能指标</div>
+                </div>
+                <div class="gauge-container">
+                    <div class="gauge">
+                        <svg viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="54" class="gauge-bg"></circle>
+                            <circle cx="60" cy="60" r="54" class="gauge-fill" 
+                                    stroke="#ffc107"
+                                    stroke-dasharray="339.292, 339.292"
+                                    stroke-dashoffset="101.788"></circle>
+                        </svg>
+                        <div class="gauge-text">70%</div>
+                    </div>
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value">100%</div>
+                        <div class="metric-label">自动化率</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">5min</div>
+                        <div class="metric-label">响应速度</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">29</div>
+                        <div class="metric-label">任务总数</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0</div>
+                        <div class="metric-label">人工干预</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 问题警报 -->
+        <div class="alert alert-error">
+            <strong>⚠️ 需要关注的问题</strong>
+            <ul style="margin-top: 10px; margin-left: 20px;">
+                <li>中远海发价格监控: Channel配置错误 (连续39次失败)</li>
+                <li>10分钟脉搏检查: Channel配置错误 (连续14次失败)</li>
+            </ul>
+        </div>
+        
+        <!-- 今日重点 -->
+        <div class="alert">
+            <strong>🎯 今日重点成就</strong>
+            <ul style="margin-top: 10px; margin-left: 20px;">
+                <li>✅ AI智能决策引擎V2部署完成</li>
+                <li>✅ 7大专家集成AI决策能力</li>
+                <li>✅ 邮件自动化系统上线</li>
+                <li>✅ 消除"继续"依赖，实现真正自动化</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // 更新时间戳
+        function updateTimestamp() {
+            const now = new Date();
+            const timestamp = document.getElementById('timestamp');
+            timestamp.textContent = now.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+        
+        // 初始更新
+        updateTimestamp();
+        
+        // 每分钟更新一次时间
+        setInterval(updateTimestamp, 60000);
+        
+        // 简单的动画效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

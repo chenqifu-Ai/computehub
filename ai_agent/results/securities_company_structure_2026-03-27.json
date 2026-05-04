@@ -1,0 +1,202 @@
+{
+  "company_name": "证券公司",
+  "mission": "努力赚钱",
+  "vision": "成为中国最赚钱的AI驱动证券公司",
+  "core_values": [
+    "赚钱第一",
+    "效率至上",
+    "风险可控",
+    "持续盈利"
+  ],
+  "established_date": "2026-03-27",
+  "governance": {
+    "board_chairman": "老大（控股股东）",
+    "president": "小智（总裁）",
+    "investment_committee": [
+      "小智",
+      "金融顾问",
+      "财务专家",
+      "法律顾问"
+    ],
+    "risk_committee": [
+      "小智",
+      "法律顾问",
+      "财务专家"
+    ]
+  },
+  "business_divisions": {
+    "securities_trading_division": {
+      "name": "证券交易部",
+      "mission": "通过股票交易努力赚钱",
+      "head": "小智（总裁兼交易总监）",
+      "performance_target": "月交易利润≥¥50,000，年化收益率≥100%",
+      "teams": {
+        "equity_trading_team": {
+          "manager": "金融顾问（交易经理）",
+          "members": [
+            "金融顾问",
+            "财务专家"
+          ],
+          "responsibilities": [
+            "股票实时监控",
+            "交易策略执行",
+            "持仓优化管理",
+            "盈亏最大化"
+          ],
+          "profit_target": "月交易利润≥¥30,000"
+        },
+        "risk_management_team": {
+          "manager": "法律顾问（风控经理）",
+          "members": [
+            "法律顾问"
+          ],
+          "responsibilities": [
+            "止损策略制定",
+            "合规风险控制",
+            "资金安全保障",
+            "交易纪律监督"
+          ],
+          "risk_target": "最大回撤≤5%，单日亏损≤2%"
+        }
+      }
+    },
+    "technology_division": {
+      "name": "技术赚钱部",
+      "mission": "通过技术手段辅助赚钱",
+      "head": "网络专家（技术总监）",
+      "performance_target": "系统稳定性≥99.99%，技术创收月增长≥20%",
+      "teams": {
+        "trading_system_team": {
+          "manager": "网络专家（系统经理）",
+          "members": [
+            "网络专家"
+          ],
+          "responsibilities": [
+            "高频交易系统开发",
+            "量化策略实现",
+            "数据接口优化",
+            "系统性能极致化"
+          ],
+          "revenue_target": "技术产品月收入≥¥10,000"
+        },
+        "data_analytics_team": {
+          "manager": "网络专家（数据经理）",
+          "members": [
+            "网络专家"
+          ],
+          "responsibilities": [
+            "市场数据分析",
+            "交易信号挖掘",
+            "风险模型构建",
+            "盈利模式优化"
+          ],
+          "value_target": "通过数据分析提升交易利润≥20%"
+        }
+      }
+    },
+    "business_development_division": {
+      "name": "业务拓展部",
+      "mission": "开拓赚钱业务和客户",
+      "head": "营销专家（业务总监）",
+      "performance_target": "月新增高净值客户≥5个，业务收入月增长≥25%",
+      "teams": {
+        "client_management_team": {
+          "manager": "营销专家（客户经理）",
+          "members": [
+            "营销专家",
+            "CEO顾问"
+          ],
+          "responsibilities": [
+            "高净值客户开发",
+            "资产管理服务",
+            "投资咨询销售",
+            "客户关系维护"
+          ],
+          "revenue_target": "客户服务月收入≥¥20,000"
+        },
+        "strategic_investment_team": {
+          "manager": "CEO顾问（战略经理）",
+          "members": [
+            "CEO顾问"
+          ],
+          "responsibilities": [
+            "战略投资机会",
+            "并购重组业务",
+            "创新业务开发",
+            "商业模式创新"
+          ],
+          "profit_target": "战略投资月收益≥¥15,000"
+        }
+      }
+    },
+    "operations_division": {
+      "name": "运营赚钱部",
+      "mission": "通过运营服务创造收入",
+      "head": "HR专家（运营总监）",
+      "performance_target": "运营效率提升≥30%，服务收入月增长≥15%",
+      "teams": {
+        "performance_optimization_team": {
+          "manager": "HR专家（绩效经理）",
+          "members": [
+            "HR专家"
+          ],
+          "responsibilities": [
+            "员工绩效最大化",
+            "激励机制设计",
+            "成本控制优化",
+            "运营效率提升"
+          ],
+          "profit_target": "通过效率提升增加利润≥¥5,000/月"
+        },
+        "knowledge_monetization_team": {
+          "manager": "HR专家（知识经理）",
+          "members": [
+            "HR专家"
+          ],
+          "responsibilities": [
+            "知识付费产品",
+            "培训服务销售",
+            "咨询服务变现",
+            "IP价值挖掘"
+          ],
+          "revenue_target": "知识变现月收入≥¥8,000"
+        }
+      }
+    }
+  },
+  "profit_targets": {
+    "monthly": {
+      "total": "¥100,000",
+      "breakdown": {
+        "证券交易利润": "¥50,000",
+        "技术产品收入": "¥10,000",
+        "客户服务收入": "¥20,000",
+        "战略投资收益": "¥15,000",
+        "知识变现收入": "¥5,000"
+      }
+    },
+    "quarterly": "¥300,000",
+    "annual": "¥1,200,000"
+  },
+  "immediate_profit_actions": {
+    "today": [
+      "立即停止所有不赚钱的学习活动",
+      "启动华联股份交易监控和操作",
+      "制定各部门赚钱目标",
+      "建立以赚钱为核心的KPI体系"
+    ],
+    "this_week": [
+      "开发高频交易系统",
+      "启动高净值客户开发",
+      "建立知识付费产品",
+      "优化交易策略提升利润"
+    ],
+    "this_month": [
+      "实现月利润目标¥100,000",
+      "建立稳定盈利模式",
+      "扩大业务规模",
+      "优化赚钱架构"
+    ]
+  },
+  "motto": "不赚钱，毋宁死"
+}

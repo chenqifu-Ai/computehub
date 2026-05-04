@@ -1,0 +1,42 @@
+{
+  "version": "1.1",
+  "description": "股票监控系统 - 盘中任务调度配置",
+  "schedules": [
+    {
+      "name": "盘中综合监控",
+      "description": "交易时间段每30分钟执行综合市场监控",
+      "cron": "*/30 10-14 * * 1-5",
+      "command": "bash /root/.openclaw/workspace/scripts/intraday_stock_monitor.sh",
+      "enabled": true,
+      "channel": "cron-event",
+      "monitoring_targets": [
+        "SH000001",
+        "SZ399001", 
+        "CYBZ",
+        "KZZ"
+      ],
+      "alert_thresholds": {
+        "price_change_percent": 3.0,
+        "volume_ratio": 2.0
+      }
+    },
+    {
+      "name": "上午盘中监控",
+      "description": "上午交易时段关键时间点监控",
+      "cron": "0 10,11 * * 1-5",
+      "command": "bash /root/.openclaw/workspace/scripts/intraday_stock_monitor.sh",
+      "enabled": true,
+      "channel": "cron-event"
+    },
+    {
+      "name": "下午盘中监控", 
+      "description": "下午交易时段关键时间点监控",
+      "cron": "0 13,14 * * 1-5",
+      "command": "bash /root/.openclaw/workspace/scripts/intraday_stock_monitor.sh",
+      "enabled": true,
+      "channel": "cron-event"
+    }
+  ],
+  "last_updated": "2026-04-03T11:10:00+08:00",
+  "created_by": "小智"
+}

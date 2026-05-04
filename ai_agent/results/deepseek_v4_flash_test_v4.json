@@ -1,0 +1,148 @@
+{
+  "test_time": "2026-04-25 08:53:51",
+  "provider": "ollama-cloud",
+  "model": "deepseek-v4-flash",
+  "base_url": "https://ollama.com/v1/chat/completions",
+  "categories": {
+    "基础功能": [
+      {
+        "test": "连通性",
+        "status": "✅ PASS",
+        "details": "耗时7.9s"
+      },
+      {
+        "test": "自我介绍",
+        "status": "✅ PASS",
+        "details": "含DeepSeek:True"
+      },
+      {
+        "test": "中文理解",
+        "status": "✅ PASS",
+        "details": "有北京:True"
+      }
+    ],
+    "代码": [
+      {
+        "test": "斐波那契递归",
+        "status": "❌ FAIL",
+        "details": "无代码输出, 总长:103"
+      },
+      {
+        "test": "HTML页面",
+        "status": "❌ FAIL",
+        "details": "含html:True"
+      },
+      {
+        "test": "单例模式",
+        "status": "❌ FAIL",
+        "details": "无正确代码"
+      },
+      {
+        "test": "链表",
+        "status": "❌ FAIL",
+        "details": "无正确代码"
+      },
+      {
+        "test": "装饰器",
+        "status": "❌ FAIL",
+        "details": "有@:False"
+      },
+      {
+        "test": "CSS按钮",
+        "status": "❌ FAIL",
+        "details": "含button:False"
+      }
+    ],
+    "推理": [
+      {
+        "test": "数学",
+        "status": "✅ PASS",
+        "details": "有391:True"
+      },
+      {
+        "test": "逻辑",
+        "status": "✅ PASS",
+        "details": "含刚:True"
+      },
+      {
+        "test": "概率",
+        "status": "✅ PASS",
+        "details": "答案:我们被问到：\"掷两枚骰子，和为7的概率是多少？用分数表示\"。这是一个经典的概率问题。掷两枚标准的六面骰子，总共有36种等"
+      },
+      {
+        "test": "矩阵",
+        "status": "✅ PASS",
+        "details": "有19:True, 我们被问到：\"[[1,2],[3,4]]乘以[[5,6],[7,8]]的结果矩阵是什么？只给结果\"\n\n我们需要计算两个2"
+      },
+      {
+        "test": "线性代数",
+        "status": "✅ PASS",
+        "details": "有11:True, 我们被问到：\"向量(1,2)和(3,4)的点积是多少？\" 点积定义为对应分量相乘再相加。所以 (1)(3) + (2)("
+      }
+    ],
+    "数据结构": [
+      {
+        "test": "栈",
+        "status": "❌ FAIL",
+        "details": "无代码"
+      },
+      {
+        "test": "队列",
+        "status": "❌ FAIL",
+        "details": "有dequeue:True"
+      },
+      {
+        "test": "哈希表",
+        "status": "❌ FAIL",
+        "details": "无代码"
+      }
+    ],
+    "多语言": [
+      {
+        "test": "中译英",
+        "status": "✅ PASS",
+        "details": "用户想让我把\"今天天气真好\"这句话翻译成英文。这是一句简单的中文日常用语，表达对今天好天气的感叹。翻译时需要准确传达原意"
+      },
+      {
+        "test": "英译中",
+        "status": "✅ PASS",
+        "details": "The user asks for a translation of \"Good morning\" into Chine"
+      },
+      {
+        "test": "英译西语",
+        "status": "✅ PASS",
+        "details": "我们要求将'Hello World'翻译成西班牙语。 'Hello World'是常见的问候语。西班牙语中，'Hello"
+      }
+    ],
+    "边界": [
+      {
+        "test": "空输入",
+        "status": "✅ PASS",
+        "details": "无异常:True"
+      },
+      {
+        "test": "特殊字符",
+        "status": "✅ PASS",
+        "details": "回复:191字"
+      },
+      {
+        "test": "多轮记忆",
+        "status": "✅ PASS",
+        "details": "含小王:True"
+      },
+      {
+        "test": "纯中文输出",
+        "status": "✅ PASS",
+        "details": "长度:134, 含数字:False"
+      }
+    ],
+    "速度": [
+      {
+        "test": "5次平均",
+        "status": "✅ PASS",
+        "details": "平均31.5s, 最快1.8s, 最慢121.0s"
+      }
+    ]
+  },
+  "global_issues": []
+}

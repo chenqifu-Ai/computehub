@@ -1,0 +1,137 @@
+{
+  "analysis_time": "2026-04-01 09:35:36",
+  "total_stocks": 10,
+  "strong_stocks": [
+    {
+      "code": "600000",
+      "name": "浦发银行",
+      "prev_close": 119.3,
+      "auction_price": 125.02,
+      "price_change": 5.72,
+      "change_percentage": 4.79,
+      "volume": 841848,
+      "timestamp": "2026-04-01 09:25:00"
+    }
+  ],
+  "weak_stocks": [
+    {
+      "code": "300750",
+      "name": "宁德时代",
+      "prev_close": 64.43,
+      "auction_price": 62.13,
+      "price_change": -2.3,
+      "change_percentage": -3.57,
+      "volume": 263591,
+      "timestamp": "2026-04-01 09:25:00"
+    }
+  ],
+  "volatile_stocks": [
+    {
+      "code": "600000",
+      "name": "浦发银行",
+      "prev_close": 119.3,
+      "auction_price": 125.02,
+      "price_change": 5.72,
+      "change_percentage": 4.79,
+      "volume": 841848,
+      "timestamp": "2026-04-01 09:25:00"
+    }
+  ],
+  "top_gainers": [
+    {
+      "code": "600000",
+      "name": "浦发银行",
+      "prev_close": 119.3,
+      "auction_price": 125.02,
+      "price_change": 5.72,
+      "change_percentage": 4.79,
+      "volume": 841848,
+      "timestamp": "2026-04-01 09:25:00"
+    },
+    {
+      "code": "600036",
+      "name": "招商银行",
+      "prev_close": 130.8,
+      "auction_price": 134.48,
+      "price_change": 3.68,
+      "change_percentage": 2.81,
+      "volume": 13974,
+      "timestamp": "2026-04-01 09:25:00"
+    },
+    {
+      "code": "601318",
+      "name": "中国平安",
+      "prev_close": 156.48,
+      "auction_price": 157.72,
+      "price_change": 1.24,
+      "change_percentage": 0.79,
+      "volume": 42431,
+      "timestamp": "2026-04-01 09:25:00"
+    }
+  ],
+  "top_losers": [
+    {
+      "code": "601012",
+      "name": "隆基绿能",
+      "prev_close": 15.6,
+      "auction_price": 15.43,
+      "price_change": -0.17,
+      "change_percentage": -1.09,
+      "volume": 549315,
+      "timestamp": "2026-04-01 09:25:00"
+    },
+    {
+      "code": "600519",
+      "name": "贵州茅台",
+      "prev_close": 50.85,
+      "auction_price": 49.83,
+      "price_change": -1.02,
+      "change_percentage": -2.01,
+      "volume": 202930,
+      "timestamp": "2026-04-01 09:25:00"
+    },
+    {
+      "code": "300750",
+      "name": "宁德时代",
+      "prev_close": 64.43,
+      "auction_price": 62.13,
+      "price_change": -2.3,
+      "change_percentage": -3.57,
+      "volume": 263591,
+      "timestamp": "2026-04-01 09:25:00"
+    }
+  ],
+  "high_volume_stocks": [
+    {
+      "code": "000858",
+      "name": "五粮液",
+      "prev_close": 127.14,
+      "auction_price": 126.37,
+      "price_change": -0.77,
+      "change_percentage": -0.61,
+      "volume": 933129,
+      "timestamp": "2026-04-01 09:25:00"
+    },
+    {
+      "code": "002594",
+      "name": "比亚迪",
+      "prev_close": 188.48,
+      "auction_price": 187.66,
+      "price_change": -0.82,
+      "change_percentage": -0.44,
+      "volume": 850659,
+      "timestamp": "2026-04-01 09:25:00"
+    },
+    {
+      "code": "600000",
+      "name": "浦发银行",
+      "prev_close": 119.3,
+      "auction_price": 125.02,
+      "price_change": 5.72,
+      "change_percentage": 4.79,
+      "volume": 841848,
+      "timestamp": "2026-04-01 09:25:00"
+    }
+  ],
+  "market_sentiment": "偏谨慎"
+}

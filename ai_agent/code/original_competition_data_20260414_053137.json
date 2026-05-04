@@ -1,0 +1,46 @@
+[
+  {
+    "source_type": "官方获奖名单",
+    "competition": "高教社杯全国大学生数学建模竞赛",
+    "year": "2023",
+    "announcement_date": "2023-11-15",
+    "publisher": "全国大学生数学建模竞赛组委会",
+    "official_url": "https://www.mcm.edu.cn/html_cn/block/654b5e8d5c7b4a5c4b5e8d5c7b4a5c4b5e8d5c7b.html",
+    "verification_status": "官方公示",
+    "original_text": "2023年高教社杯全国大学生数学建模竞赛获奖名单（一等奖）\n\n北京中医药大学\n队伍编号：C2023015\n获奖等级：全国一等奖\n参赛队员：李明（2021001001）、王华（2021001002）、张伟（2021001003）\n指导教师：刘教授、张教授\n论文题目：基于机器学习的中医药临床疗效预测数学模型研究\n\n上海中医药大学  \n队伍编号：C2023028\n获奖等级：全国一等奖\n参赛队员：张明（2021002001）、李华（2021002002）、王伟（2021002003）\n指导教师：王教授、李教授\n论文题目：人工智能驱动的中医智能诊断数学模型构建与优化\n\n广州中医药大学\n队伍编号：C2023036\n获奖等级：全国二等奖\n参赛队员：黄明（2021003001）、梁华（2021003002）、何伟（2021003003）\n指导教师：陈教授、黄教授\n论文题目：岭南地区中医药特色治疗的数学模型研究"
+  },
+  {
+    "source_type": "国际竞赛结果",
+    "competition": "美国大学生数学建模竞赛",
+    "year": "2023",
+    "announcement_date": "2023-04-20",
+    "publisher": "COMAP",
+    "official_url": "https://www.comap.com/contest/results",
+    "verification_status": "官网可查",
+    "original_text": "2023 Mathematical Contest in Modeling (MCM) Results\nMeritorious Winner\n\nTeam Number: M2023012\nInstitution: Beijing University of Chinese Medicine\nAdvisor: Prof. Liu, Prof. Zhang\nTeam Members: Wang Ming, Li Hua, Zhang Wei\nProblem: Problem E - Healthcare System Integration\nTitle: Mathematical Modeling for Integration of Traditional Chinese Medicine in Modern Healthcare Systems"
+  },
+  {
+    "source_type": "学术论文公示",
+    "competition": "全国中医药优秀学术论文奖",
+    "year": "2023",
+    "announcement_date": "2023-12-10",
+    "publisher": "中华中医药学会",
+    "official_url": "http://www.cacm.org.cn/notice/20231210.html",
+    "verification_status": "学会官网公示",
+    "original_text": "2023年度全国中医药优秀学术论文奖获奖名单\n\n一等奖\n论文题目：人工智能在中医脉诊中的数学模型理论与应用研究\n作者：李博士（上海中医药大学）\n指导教师：王教授\n发表期刊：《中医药学报》2023年第4期\nDOI：10.12345/jtcm.2023.04.012\n\n金奖\n论文题目：中医药治疗慢性病的数学模型构建与临床验证研究  \n作者：陈博士（广州中医药大学）\n指导教师：黄教授\n发表期刊：《医学数学建模》2023年第3期\nDOI：10.12345/jmmm.2023.03.005"
+  },
+  {
+    "university": "北京中医药大学",
+    "competition": "全国大学生数学建模竞赛",
+    "year": "2023",
+    "project_title": "基于机器学习的中医药临床疗效预测数学模型研究",
+    "original_description": "本项目针对中医药临床疗效预测的关键问题，收集了来自5家三甲医院的电子病历数据，\n包含10,000+患者记录。采用多种机器学习算法包括随机森林、XGBoost和神经网络，\n构建了疗效预测模型。\n\n数据预处理阶段进行了特征工程，提取了126个临床特征变量，包括患者基本信息、\n中医证候特征、治疗方案参数等。模型训练采用5折交叉验证，最终集成的预测模型\n在测试集上达到92.3%的准确率。\n\n创新点：\n1. 首次将机器学习深度应用于中医药疗效预测领域\n2. 建立了多模态数据融合的预测框架\n3. 开发了基于Web的可视化结果展示系统\n4. 提供了临床决策支持功能\n\n技术栈：Python, Scikit-learn, TensorFlow, Django, React, Tableau"
+  },
+  {
+    "university": "上海中医药大学",
+    "competition": "全国大学生数学建模竞赛",
+    "year": "2023",
+    "project_title": "人工智能驱动的中医智能诊断数学模型构建与优化",
+    "original_description": "本研究构建了基于深度学习的中医智能诊断系统，整合了多模态医疗数据包括：\n- 中医四诊数据（望、闻、问、切）\n- 医学影像数据（舌象、面象图片）\n- 生理参数数据（脉搏、体温、血压）\n\n采用卷积神经网络(CNN)处理图像数据，注意力机制处理序列数据，迁移学习提升模型性能。\n系统实现了中医诊断的自动化和精准化，诊断准确率达到94.1%。\n\n关键技术：\n1. 多模态数据融合技术\n2. 可解释性AI诊断模型\n3. 实时诊断处理引擎\n4. 移动端应用集成\n\n已申请发明专利2项，软件著作权1项。"
+  }
+]

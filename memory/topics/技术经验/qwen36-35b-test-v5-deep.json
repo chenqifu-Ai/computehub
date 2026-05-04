@@ -1,0 +1,165 @@
+{
+  "model": "qwen3.6-35b",
+  "version": "v5-deep",
+  "timestamp": "2026-04-24T19:47:00+08:00",
+  "total": 17,
+  "passed": 12,
+  "failed": 5,
+  "score": 70.6,
+  "grade": "🥈 B 合格",
+  "v3_baseline": {
+    "passed": 34,
+    "total": 42,
+    "score": 81.0
+  },
+  "groups": {
+    "异常处理修复": {
+      "total": 8,
+      "passed": 6
+    },
+    "默认": {
+      "total": 9,
+      "passed": 6
+    }
+  },
+  "tests": [
+    {
+      "name": "异常处理-文件读取",
+      "ok": true,
+      "time": 13.2,
+      "group": "异常处理修复",
+      "detail": "stdout=, stderr=File \"/tmp/tmpczijnxth.py\", li"
+    },
+    {
+      "name": "异常处理-自定义异常",
+      "ok": true,
+      "time": 8.2,
+      "group": "异常处理修复",
+      "detail": "stdout=✅ 10 / 2 = 5.0\n❌ 捕获异常: 除数不能为零 , stderr="
+    },
+    {
+      "name": "异常处理-重试机制",
+      "ok": true,
+      "time": 13.2,
+      "group": "异常处理修复",
+      "detail": "stdout=测试1 - 重试后成功: 操作成功\n测试2 - 达到最大重试, stderr="
+    },
+    {
+      "name": "数学-微积分",
+      "ok": false,
+      "time": 1.8,
+      "group": "默认"
+    },
+    {
+      "name": "数学-矩阵",
+      "ok": true,
+      "time": 3.4,
+      "group": "默认"
+    },
+    {
+      "name": "数学-概率分布",
+      "ok": true,
+      "time": 5.5,
+      "group": "默认"
+    },
+    {
+      "name": "数学-线性代数",
+      "ok": true,
+      "time": 4.8,
+      "group": "默认"
+    },
+    {
+      "name": "数学-数列",
+      "ok": true,
+      "time": 6.8,
+      "group": "默认"
+    },
+    {
+      "name": "数据结构-栈",
+      "ok": true,
+      "time": 12.8,
+      "group": "异常处理修复",
+      "detail": "stdout=所有测试通过！, stderr="
+    },
+    {
+      "name": "数据结构-队列",
+      "ok": true,
+      "time": 13.1,
+      "group": "异常处理修复",
+      "detail": "stdout=所有测试用例通过！, stderr="
+    },
+    {
+      "name": "数据结构-哈希表",
+      "ok": false,
+      "time": 12.8,
+      "group": "异常处理修复",
+      "detail": "stdout=, stderr=File \"/tmp/tmplv8wbmz1.py\", li"
+    },
+    {
+      "name": "API-REST接口",
+      "ok": false,
+      "time": 13.0,
+      "group": "异常处理修复",
+      "detail": "stdout=, stderr="
+    },
+    {
+      "name": "API-中间件",
+      "ok": true,
+      "time": 13.0,
+      "group": "异常处理修复",
+      "detail": "stdout=, stderr="
+    },
+    {
+      "name": "系统设计-负载均衡",
+      "ok": false,
+      "time": 5.5,
+      "group": "默认"
+    },
+    {
+      "name": "系统设计-缓存",
+      "ok": true,
+      "time": 7.2,
+      "group": "默认"
+    },
+    {
+      "name": "安全-SQL注入",
+      "ok": false,
+      "time": 6.7,
+      "group": "默认"
+    },
+    {
+      "name": "安全-XSS",
+      "ok": true,
+      "time": 4.3,
+      "group": "默认"
+    }
+  ],
+  "failures": [
+    {
+      "name": "数学-微积分",
+      "detail": "5"
+    },
+    {
+      "name": "数据结构-哈希表",
+      "detail": "stdout=, stderr=File \"/tmp/tmplv8wbmz1.py\", li"
+    },
+    {
+      "name": "API-REST接口",
+      "detail": "stdout=, stderr="
+    },
+    {
+      "name": "系统设计-负载均衡",
+      "detail": "6. **监控与日志**：采集QPS、延迟、带宽、错误率等指标，输出访问日志与追踪ID，对接Prometheus/Grafana等可观测体系。"
+    },
+    {
+      "name": "安全-SQL注入",
+      "detail": "2. **严格的输入验证与过滤**：对用户输入进行类型、长度和格式校验，采用白名单机制拦截特殊字符（如单引号、分号）及SQL关键字，仅放行合法数据。"
+    }
+  ],
+  "performance": {
+    "avg": 4.8,
+    "fastest": 1.8,
+    "slowest": 13.64,
+    "total": 48.0
+  }
+}

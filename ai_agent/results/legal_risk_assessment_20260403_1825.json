@@ -1,0 +1,56 @@
+{
+  "report_id": "legal_risk_assessment_20260403_182505",
+  "generated_at": "2026-04-03T18:25:05.805469",
+  "expert": "法海（法律顾问）",
+  "assessment_scope": "投资合规与风险控制",
+  "risk_findings": [
+    {
+      "risk_type": "投资合规",
+      "risk_level": "中等",
+      "description": "华联股份持仓已跌破止损位，需要严格执行止损纪律",
+      "recommendation": "立即减仓70%，降低风险敞口"
+    },
+    {
+      "risk_type": "内容合规",
+      "risk_level": "高",
+      "description": "内容产出存在986处高危合规问题，206处中危问题",
+      "recommendation": "加速合规审查，优先处理高危问题"
+    },
+    {
+      "risk_type": "平台政策",
+      "risk_level": "低",
+      "description": "3个平台政策文件近期更新，需要关注变化",
+      "recommendation": "定期检查平台政策更新，及时调整内容策略"
+    }
+  ],
+  "compliance_status": {
+    "high_risk_issues": 986,
+    "medium_risk_issues": 206,
+    "resolved_issues": 246,
+    "resolution_rate": "25%"
+  },
+  "action_items": [
+    {
+      "action": "股票减仓",
+      "priority": "紧急",
+      "deadline": "立即执行"
+    },
+    {
+      "action": "高危合规问题处理",
+      "priority": "高",
+      "deadline": "24小时内"
+    },
+    {
+      "action": "中危合规问题处理",
+      "priority": "中",
+      "deadline": "72小时内"
+    },
+    {
+      "action": "平台政策更新检查",
+      "priority": "低",
+      "deadline": "每周一次"
+    }
+  ],
+  "overall_risk_level": "中等偏高",
+  "recommendation": "优先处理投资风险和内容合规高危问题，建立定期风险评估机制"
+}

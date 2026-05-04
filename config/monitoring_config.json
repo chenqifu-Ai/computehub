@@ -1,0 +1,23 @@
+{
+  "stock_monitoring": {
+    "enabled": false,
+    "last_disabled": "2026-04-09T05:14:00+08:00",
+    "reason": "用户手动暂停",
+    "previous_schedule": {
+      "intraday": "每30分钟",
+      "general": "每2小时"
+    }
+  },
+  "heartbeat": {
+    "frequency": "每8小时",
+    "next_check": "2026-04-09T08:00:00+08:00",
+    "previous_frequency": "每3小时"
+  },
+  "system_checks": {
+    "resource_monitoring": true,
+    "process_monitoring": true,
+    "network_monitoring": true
+  },
+  "last_updated": "2026-04-18T19:43:00+08:00",
+  "updated_by": "系统自动更新"
+}

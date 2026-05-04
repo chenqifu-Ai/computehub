@@ -1,0 +1,18 @@
+{
+  "primary": {
+    "provider": "ollama-local",
+    "base_url": "http://127.0.0.1:11434",
+    "model": "qwen:0.5b",
+    "timeout": 60
+  },
+  "fallback": {
+    "provider": "modelstudio",
+    "model": "qwen3-max",
+    "timeout": 60
+  },
+  "timeout_settings": {
+    "connect_timeout": 10,
+    "read_timeout": 60,
+    "total_timeout": 120
+  }
+}

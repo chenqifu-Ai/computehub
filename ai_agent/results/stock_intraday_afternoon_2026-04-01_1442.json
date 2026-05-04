@@ -1,0 +1,43 @@
+{
+  "monitor_time": "2026-04-01 14:42:00",
+  "session_id": "cron:af6441a7-eef1-42f5-9cb0-bca048b08142",
+  "stocks": {
+    "000882": {
+      "name": "华联股份",
+      "current_price": 1.65,
+      "open_price": 1.67,
+      "high": 1.69,
+      "low": 1.64,
+      "volume": 37022100,
+      "change_pct": -1.20,
+      "position_analysis": {
+        "cost_price": 1.873,
+        "shares": 13500,
+        "current_value": 22140.00,
+        "cost_value": 25285.50,
+        "loss_amount": -3145.50,
+        "loss_percent": -12.44,
+        "stop_loss": 1.60,
+        "distance_to_stop": 0.040,
+        "distance_percent": 2.4,
+        "alert_level": "WATCH",
+        "advice": "⚠️ 注意: 接近止损位，加强监控"
+      }
+    },
+    "601866": {
+      "name": "中远海发",
+      "current_price": 2.72,
+      "open_price": 2.72,
+      "high": 2.79,
+      "low": 2.71,
+      "volume": 102363600,
+      "change_pct": 0.00
+    }
+  },
+  "summary": {
+    "hualian_status": "需要关注 - 距离止损位仅2.4%，处于监控状态",
+    "cosco_status": "价格略高于买入区间上限(2.70)，等待回调至2.50-2.70区间",
+    "trading_session": "下午盘交易时段",
+    "next_check": "建议在收盘前再次检查"
+  }
+}

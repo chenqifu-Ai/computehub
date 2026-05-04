@@ -1,0 +1,188 @@
+{
+  "competitor_analysis": [
+    {
+      "name": "百度AI",
+      "trend": "上升",
+      "recent_news": "文心大模型4.0发布，性能提升40%",
+      "impact": "高",
+      "market_share": "35%",
+      "risk_level": "中"
+    },
+    {
+      "name": "阿里云AI",
+      "trend": "稳定",
+      "recent_news": "通义千问企业版正式商用",
+      "impact": "中",
+      "market_share": "28%",
+      "risk_level": "低"
+    },
+    {
+      "name": "腾讯AI",
+      "trend": "上升",
+      "recent_news": "混元大模型开源，开发者生态建设",
+      "impact": "高",
+      "market_share": "22%",
+      "risk_level": "中"
+    },
+    {
+      "name": "华为AI",
+      "trend": "快速上升",
+      "recent_news": "昇腾910B芯片量产，AI算力突破",
+      "impact": "很高",
+      "market_share": "15%",
+      "risk_level": "高"
+    },
+    {
+      "name": "字节AI",
+      "trend": "上升",
+      "recent_news": "豆包大模型用户破亿，C端应用领先",
+      "impact": "中高",
+      "market_share": "12%",
+      "risk_level": "中"
+    }
+  ],
+  "hot_topics": [
+    {
+      "topic": "AI大模型价格战",
+      "platform": "全网热搜",
+      "heat_level": "爆",
+      "trend": "急速上升",
+      "related_companies": [
+        "百度",
+        "阿里",
+        "腾讯",
+        "字节",
+        "华为"
+      ],
+      "sentiment": "负面",
+      "duration": "2周"
+    },
+    {
+      "topic": "多模态AI突破",
+      "platform": "技术社区",
+      "heat_level": "高",
+      "trend": "稳定上升",
+      "related_companies": [
+        "OpenAI",
+        "Google",
+        "Meta",
+        "百度",
+        "腾讯"
+      ],
+      "sentiment": "正面",
+      "duration": "1个月"
+    },
+    {
+      "topic": "AI芯片国产化",
+      "platform": "财经媒体",
+      "heat_level": "中高",
+      "trend": "快速上升",
+      "related_companies": [
+        "华为",
+        "寒武纪",
+        "地平线",
+        "天数智芯"
+      ],
+      "sentiment": "非常正面",
+      "duration": "持续"
+    },
+    {
+      "topic": "生成式AI监管",
+      "platform": "政策媒体",
+      "heat_level": "高",
+      "trend": "上升",
+      "related_companies": [
+        "所有AI企业"
+      ],
+      "sentiment": "中性",
+      "duration": "刚开始"
+    }
+  ],
+  "market_trends": [
+    {
+      "trend_name": "AI大模型平民化",
+      "direction": "成本下降，应用普及",
+      "timeframe": "2026年",
+      "impact_level": "高",
+      "opportunities": [
+        "中小企业数字化",
+        "开发者工具",
+        "API经济"
+      ],
+      "threats": [
+        "同质化竞争",
+        "利润下降"
+      ]
+    },
+    {
+      "trend_name": "多模态融合",
+      "direction": "文本+图像+语音+视频",
+      "timeframe": "2026-2027",
+      "impact_level": "很高",
+      "opportunities": [
+        "内容创作",
+        "虚拟助手",
+        "教育培训"
+      ],
+      "threats": [
+        "技术复杂度",
+        "算力需求"
+      ]
+    },
+    {
+      "trend_name": "边缘AI计算",
+      "direction": "推理本地化，实时响应",
+      "timeframe": "正在发生",
+      "impact_level": "中高",
+      "opportunities": [
+        "IoT设备",
+        "自动驾驶",
+        "隐私保护"
+      ],
+      "threats": [
+        "硬件限制",
+        "标准化"
+      ]
+    },
+    {
+      "trend_name": "AI监管全球化",
+      "direction": "政策法规完善",
+      "timeframe": "2026-2028",
+      "impact_level": "高",
+      "opportunities": [
+        "合规服务",
+        "审计工具",
+        "标准制定"
+      ],
+      "threats": [
+        "创新限制",
+        "合规成本"
+      ]
+    }
+  ],
+  "summary_report": {
+    "report_time": "2026-04-01 12:13:45",
+    "analysis_scope": "科技AI领域深度监控",
+    "total_competitors": 5,
+    "total_topics": 4,
+    "total_trends": 4,
+    "key_insights": [
+      "4 家AI企业呈现强劲增长态势",
+      "3 个高热话题需要重点关注",
+      "华为AI在芯片领域突破显著，威胁传统格局",
+      "AI价格战反映市场竞争白热化，利润承压",
+      "多模态AI成为技术竞争新焦点"
+    ],
+    "action_items": [
+      "建立华为AI动态专项监控机制",
+      "每日跟踪AI大模型价格战进展",
+      "调研多模态AI技术应用场景",
+      "评估AI监管政策对业务影响",
+      "加强边缘计算技术储备"
+    ],
+    "risk_alerts": [
+      "华为AI 高风险：昇腾910B芯片量产，AI算力突破",
+      "负面话题预警：AI大模型价格战"
+    ]
+  }
+}

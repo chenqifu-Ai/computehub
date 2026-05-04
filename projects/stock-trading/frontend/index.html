@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>量化交易平台</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        :root {
+            --primary: #00d9ff;
+            --success: #2ed573;
+            --danger: #ff4757;
+            --warning: #ffa502;
+            --bg-dark: #0a0a0f;
+            --bg-card: rgba(20, 20, 30, 0.95);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            color: #fff;
+        }
+        .app { min-height: 100vh; }
+        
+        /* 顶部导航 */
+        .header {
+            background: linear-gradient(180deg, rgba(20,20,30,0.98) 0%, rgba(10,10,15,0.95) 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+        }
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav { display: flex; gap: 8px; }
+        .nav-item {
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            color: #888;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(0,217,255,0.2), rgba(46,213,115,0.2));
+            color: #fff;
+        }
+        .user-section { display: flex; align-items: center; gap: 16px; }
+        .balance-box {
+            background: linear-gradient(135deg, rgba(0,217,255,0.15), rgba(46,213,115,0.15));
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-align: right;
+        }
+        .balance-label { font-size: 12px; color: #888; }
+        .balance-value { font-size: 18px; font-weight: 600; color: var(--primary); }
+        
+        /* 主容器 */
+        .main { max-width: 1600px; margin: 0 auto; padding: 20px; }
+        
+        /* 卡片 */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .card-title { font-size: 16px; font-weight: 600; }
+        
+        /* 网格布局 */
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+        .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+        
+        @media (max-width: 1200px) { .grid-5 { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 900px) { .grid-5 { grid-template-columns: repeat(3, 1fr); } .grid-3 { grid-template-columns: 1fr; } }
+        @media (max-width: 600px) { .grid-5 { grid-template-columns: repeat(2, 1fr); } .grid-2 { grid-template-columns: 1fr; } }
+        
+        /* 统计卡片 */
+        .stat-card {
+            background: linear-gradient(135deg, rgba(30,30,40,0.8), rgba(20,20,30,0.9));
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        .stat-icon { font-size: 24px; margin-bottom: 8px; }
+        .stat-value { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+        .stat-label { font-size: 12px; color: #888; }
+        .stat-change { font-size: 12px; margin-top: 4px; }
+        .up { color: var(--danger); }
+        .down { color: var(--success); }
+        .neutral { color: #888; }
+        
+        /* 股票卡片 */
+        .stock-card {
+            background: rgba(30,30,40,0.6);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .stock-card:hover {
+            background: rgba(40,40,50,0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+        .stock-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .stock-code { font-size: 12px; color: #888; }
+        .stock-name { font-size: 15px; font-weight: 600; }
+        .stock-price { font-size: 22px; font-weight: 700; margin: 8px 0; }
+        .stock-change { font-size: 13px; }
+        .stock-volume { font-size: 11px; color: #666; margin-top: 8px; }
+        
+        /* 表格 */
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { font-size: 12px; color: #888; font-weight: 500; text-transform: uppercase; }
+        td { font-size: 14px; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        
+        /* 按钮 */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--success)); color: #000; }
+        .btn-primary:hover { opacity: 0.9; transform: scale(1.02); }
+        .btn-success { background: var(--success); color: #000; }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: #888; }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+        
+        /* 输入框 */
+        .input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(10,10,15,0.8);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .input:focus { outline: none; border-color: var(--primary); }
+        .input-group { position: relative; }
+        .input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666; }
+        
+        /* 登录页面 */
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+        }
+        .login-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            width: 400px;
+            max-width: 90%;
+        }
+        .login-logo {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .login-subtitle { text-align: center; color: #888; margin-bottom: 32px; }
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; margin-bottom: 8px; color: #888; font-size: 13px; }
+        
+        /* 标签页 */
+        .tabs { display: flex; gap: 4px; background: rgba(10,10,15,0.5); padding: 4px; border-radius: 10px; }
+        .tab {
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #888;
+            transition: all 0.2s;
+        }
+        .tab:hover { color: #fff; }
+        .tab.active { background: var(--primary); color: #000; font-weight: 500; }
+        
+        /* 模态框 */
+        .modal-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            width: 500px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-title { font-size: 18px; font-weight: 600; }
+        .modal-close { background: none; border: none; color: #888; font-size: 24px; cursor: pointer; }
+        
+        /* K线图 */
+        .chart-container {
+            background: rgba(10,10,15,0.8);
+            border-radius: 12px;
+            padding: 16px;
+            min-height: 300px;
+        }
+        .chart-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+        .chart-tabs { display: flex; gap: 8px; }
+        .chart-tab {
+            padding: 4px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+            font-size: 12px;
+            color: #888;
+            cursor: pointer;
+        }
+        .chart-tab.active { background: var(--primary); color: #000; }
+        
+        /* 订单状态 */
+        .status-success { color: var(--success); }
+        .status-pending { color: var(--warning); }
+        .status-failed { color: var(--danger); }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .header-content { flex-direction: column; gap: 12px; }
+            .nav { flex-wrap: wrap; }
+            .user-section { width: 100%; justify-content: space-between; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- 登录页面 -->
+        <div v-if="!isLoggedIn" class="login-page">
+            <div class="login-box">
+                <div class="login-logo">📈 量化交易平台</div>
+                <div class="login-subtitle">专业量化交易与策略回测系统</div>
+                <div class="form-group">
+                    <label class="form-label">用户名</label>
+                    <input type="text" v-model="loginForm.username" class="input" placeholder="请输入用户名" @keyup.enter="login">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">密码</label>
+                    <input type="password" v-model="loginForm.password" class="input" placeholder="请输入密码" @keyup.enter="login">
+                </div>
+                <button class="btn btn-primary" style="width: 100%; padding: 14px;" @click="login">登录</button>
+                <div style="margin-top: 16px;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" v-model="rememberMe" style="width: 16px; height: 16px;">
+                        <span style="color: #888; font-size: 13px;">记住登录状态</span>
+                    </label>
+                </div>
+                <p style="text-align: center; margin-top: 12px; color: #666; font-size: 12px;">
+                    演示账号: admin / admin123
+                </p>
+            </div>
+        </div>
+        
+        <!-- 主页面 -->
+        <div v-else class="app">
+            <!-- 顶部导航 -->
+            <header class="header">
+                <div class="header-content">
+                    <div class="logo">📈 量化交易平台</div>
+                    <nav class="nav">
+                        <div class="nav-item" :class="{active: currentView === 'home'}" @click="currentView = 'home'">首页</div>
+                        <div class="nav-item" :class="{active: currentView === 'market'}" @click="currentView = 'market'">行情</div>
+                        <div class="nav-item" :class="{active: currentView === 'trade'}" @click="currentView = 'trade'">交易</div>
+                        <div class="nav-item" :class="{active: currentView === 'broker'}" @click="currentView = 'broker'; loadBrokerData()" style="background: linear-gradient(135deg, rgba(255,165,2,0.3), rgba(255,71,87,0.3));">实盘</div>
+                        <div class="nav-item" :class="{active: currentView === 'strategy'}" @click="currentView = 'strategy'">策略</div>
+                        <div class="nav-item" :class="{active: currentView === 'backtest'}" @click="currentView = 'backtest'">回测</div>
+                        <div class="nav-item" :class="{active: currentView === 'account'}" @click="currentView = 'account'">账户</div>
+                    </nav>
+                    <div class="user-section">
+                        <div class="balance-box">
+                            <div class="balance-label">总资产</div>
+                            <div class="balance-value">¥{{ formatMoney(account.total_asset) }}</div>
+                        </div>
+                        <span style="color: #888; font-size: 12px;">
+                            <span style="background: rgba(0,217,255,0.1); padding: 4px 8px; border-radius: 4px;">
+                                🔄 {{ refreshCountdown }}秒后刷新
+                            </span>
+                        </span>
+                        <span style="color: #888;">{{ user.username }}</span>
+                        <button class="btn btn-outline btn-sm" @click="logout">退出</button>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- 主内容区 -->
+            <main class="main">
+                <!-- 首页 -->
+                <div v-if="currentView === 'home'">
+                    <!-- 账户概览 -->
+                    <div class="card">
+                        <div class="grid-4">
+                            <div class="stat-card">
+                                <div class="stat-icon">💰</div>
+                                <div class="stat-value" style="color: var(--primary);">¥{{ formatMoney(account.balance) }}</div>
+                                <div class="stat-label">可用资金</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📊</div>
+                                <div class="stat-value" style="color: var(--success);">¥{{ formatMoney(account.market_value) }}</div>
+                                <div class="stat-label">持仓市值</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📈</div>
+                                <div class="stat-value">¥{{ formatMoney(account.total_asset) }}</div>
+                                <div class="stat-label">总资产</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">💹</div>
+                                <div class="stat-value" :class="account.total_profit >= 0 ? 'up' : 'down'">
+                                    {{ account.total_profit >= 0 ? '+' : '' }}¥{{ formatMoney(Math.abs(account.total_profit)) }}
+                                </div>
+                                <div class="stat-label">总盈亏</div>
+                                <div class="stat-change" :class="account.total_profit >= 0 ? 'up' : 'down'">
+                                    {{ account.total_profit_percent >= 0 ? '+' : '' }}{{ account.total_profit_percent }}%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 市场概况 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">📊 市场概况</span>
+                            <span style="font-size: 12px; color: #888;">{{ currentTime }}</span>
+                        </div>
+                        <div class="grid-3">
+                            <div class="stat-card">
+                                <div style="font-size: 14px; color: #888; margin-bottom: 8px;">上证指数</div>
+                                <div class="stat-value" :class="marketSummary.sh.change >= 0 ? 'up' : 'down'">
+                                    {{ marketSummary.sh.price.toFixed(2) }}
+                                </div>
+                                <div class="stat-change" :class="marketSummary.sh.change >= 0 ? 'up' : 'down'">
+                                    {{ marketSummary.sh.change >= 0 ? '+' : '' }}{{ marketSummary.sh.change.toFixed(2) }} 
+                                    ({{ marketSummary.sh.change >= 0 ? '+' : '' }}{{ marketSummary.sh.change_percent.toFixed(2) }}%)
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div style="font-size: 14px; color: #888; margin-bottom: 8px;">深证成指</div>
+                                <div class="stat-value" :class="marketSummary.sz.change >= 0 ? 'up' : 'down'">
+                                    {{ marketSummary.sz.price.toFixed(2) }}
+                                </div>
+                                <div class="stat-change" :class="marketSummary.sz.change >= 0 ? 'up' : 'down'">
+                                    {{ marketSummary.sz.change >= 0 ? '+' : '' }}{{ marketSummary.sz.change.toFixed(2) }} 
+                                    ({{ marketSummary.sz.change >= 0 ? '+' : '' }}{{ marketSummary.sz.change_percent.toFixed(2) }}%)
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div style="font-size: 14px; color: #888; margin-bottom: 8px;">创业板指</div>
+                                <div class="stat-value" :class="marketSummary.cy.change >= 0 ? 'up' : 'down'">
+                                    {{ marketSummary.cy.price.toFixed(2) }}
+                                </div>
+                                <div class="stat-change" :class="marketSummary.cy.change >= 0 ? 'up' : 'down'">
+                                    {{ marketSummary.cy.change >= 0 ? '+' : '' }}{{ marketSummary.cy.change.toFixed(2) }} 
+                                    ({{ marketSummary.cy.change >= 0 ? '+' : '' }}{{ marketSummary.cy.change_percent.toFixed(2) }}%)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 热门股票 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">🔥 热门股票</span>
+                            <button class="btn btn-outline btn-sm" @click="refreshStocks">刷新</button>
+                        </div>
+                        <div class="grid-5">
+                            <div v-for="stock in hotStocks" :key="stock.code" class="stock-card" @click="selectStock(stock)">
+                                <div class="stock-header">
+                                    <span class="stock-code">{{ stock.code }}</span>
+                                    <span style="font-size: 11px; color: #666;">{{ stock.industry || '--' }}</span>
+                                </div>
+                                <div class="stock-name">{{ stock.name }}</div>
+                                <div class="stock-price" :class="stock.change_percent >= 0 ? 'up' : 'down'">
+                                    ¥{{ stock.price.toFixed(2) }}
+                                </div>
+                                <div class="stock-change" :class="stock.change_percent >= 0 ? 'up' : 'down'">
+                                    {{ stock.change_percent >= 0 ? '+' : '' }}{{ stock.change_percent.toFixed(2) }}%
+                                </div>
+                                <div class="stock-volume">成交量: {{ formatVolume(stock.volume) }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 我的持仓 -->
+                    <div class="card" v-if="positions.length > 0">
+                        <div class="card-header">
+                            <span class="card-title">💼 我的持仓</span>
+                            <span style="font-size: 13px; color: #888;">共 {{ positions.length }} 只股票</span>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>股票</th>
+                                    <th>数量</th>
+                                    <th>成本价</th>
+                                    <th>现价</th>
+                                    <th>市值</th>
+                                    <th>盈亏</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="pos in positions" :key="pos.stock_code">
+                                    <td>
+                                        <div style="font-weight: 600;">{{ pos.stock_name }}</div>
+                                        <div style="font-size: 12px; color: #888;">{{ pos.stock_code }}</div>
+                                    </td>
+                                    <td>{{ pos.volume }}股</td>
+                                    <td>¥{{ pos.cost_price.toFixed(2) }}</td>
+                                    <td :class="pos.current_price >= pos.cost_price ? 'up' : 'down'">¥{{ pos.current_price.toFixed(2) }}</td>
+                                    <td>¥{{ formatMoney(pos.market_value) }}</td>
+                                    <td>
+                                        <div :class="pos.profit >= 0 ? 'up' : 'down'">
+                                            {{ pos.profit >= 0 ? '+' : '' }}¥{{ formatMoney(Math.abs(pos.profit)) }}
+                                        </div>
+                                        <div style="font-size: 11px;" :class="pos.profit >= 0 ? 'up' : 'down'">
+                                            {{ pos.profit_percent >= 0 ? '+' : '' }}{{ pos.profit_percent.toFixed(2) }}%
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" @click="quickSell(pos)">卖出</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- 行情页面 -->
+                <div v-if="currentView === 'market'">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">📈 股票行情</span>
+                            <div class="input-group" style="width: 300px;">
+                                <input type="text" v-model="searchKeyword" class="input" placeholder="搜索股票代码或名称" @keyup.enter="searchStocks">
+                            </div>
+                        </div>
+                        <div class="tabs" style="margin-bottom: 16px;">
+                            <div class="tab" :class="{active: marketType === 'all'}" @click="marketType = 'all'; loadStocks()">全部</div>
+                            <div class="tab" :class="{active: marketType === 'sh'}" @click="marketType = 'sh'; loadStocks()">沪市</div>
+                            <div class="tab" :class="{active: marketType === 'sz'}" @click="marketType = 'sz'; loadStocks()">深市</div>
+                            <div class="tab" :class="{active: marketType === 'hot'}" @click="marketType = 'hot'; loadStocks()">热门</div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>代码</th>
+                                    <th>名称</th>
+                                    <th>行业</th>
+                                    <th>现价</th>
+                                    <th>涨跌幅</th>
+                                    <th>成交量</th>
+                                    <th>成交额</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="stock in stocks" :key="stock.code">
+                                    <td>{{ stock.code }}</td>
+                                    <td style="font-weight: 600;">{{ stock.name }}</td>
+                                    <td style="color: #888;">{{ stock.industry }}</td>
+                                    <td :class="stock.change_percent >= 0 ? 'up' : 'down'">¥{{ stock.price.toFixed(2) }}</td>
+                                    <td :class="stock.change_percent >= 0 ? 'up' : 'down'">
+                                        {{ stock.change_percent >= 0 ? '+' : '' }}{{ stock.change_percent.toFixed(2) }}%
+                                    </td>
+                                    <td style="color: #888;">{{ formatVolume(stock.volume) }}</td>
+                                    <td style="color: #888;">{{ formatMoney(stock.amount) }}</td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" @click="quickBuy(stock)">买入</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- 交易页面 -->
+                <div v-if="currentView === 'trade'">
+                    <div class="grid-2">
+                        <!-- 左侧：交易面板 -->
+                        <div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <span class="card-title">💹 交易下单</span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">股票代码</label>
+                                    <input type="text" v-model="tradeStock.code" class="input" placeholder="输入股票代码" @blur="getStockInfo">
+                                </div>
+                                <div v-if="tradeStock.name" style="padding: 12px; background: rgba(0,217,255,0.1); border-radius: 8px; margin-bottom: 16px;">
+                                    <div style="font-weight: 600;">{{ tradeStock.name }}</div>
+                                    <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                                        <span>现价: <span :class="tradeStock.change_percent >= 0 ? 'up' : 'down'">¥{{ tradeStock.price }}</span></span>
+                                        <span :class="tradeStock.change_percent >= 0 ? 'up' : 'down'">{{ tradeStock.change_percent >= 0 ? '+' : '' }}{{ tradeStock.change_percent }}%</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">交易价格</label>
+                                    <input type="number" v-model="tradePrice" class="input" placeholder="交易价格" step="0.01">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">交易数量（股）</label>
+                                    <input type="number" v-model="tradeVolume" class="input" placeholder="交易数量">
+                                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                                        <button class="btn btn-outline btn-sm" @click="tradeVolume = 100">100股</button>
+                                        <button class="btn btn-outline btn-sm" @click="tradeVolume = 500">500股</button>
+                                        <button class="btn btn-outline btn-sm" @click="tradeVolume = 1000">1000股</button>
+                                        <button class="btn btn-outline btn-sm" @click="tradeVolume = maxBuy">全部</button>
+                                    </div>
+                                </div>
+                                <div style="padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 16px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                        <span style="color: #888;">最大可买</span>
+                                        <span>{{ maxBuy }} 股</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="color: #888;">预计金额</span>
+                                        <span style="font-weight: 600;">¥{{ formatMoney(tradeVolume * tradePrice) }}</span>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 12px;">
+                                    <button class="btn btn-success" style="flex: 1;" @click="buyStock" :disabled="tradeLoading">
+                                        {{ tradeLoading ? '处理中...' : '买入' }}
+                                    </button>
+                                    <button class="btn btn-danger" style="flex: 1;" @click="sellStock" :disabled="tradeLoading">
+                                        {{ tradeLoading ? '处理中...' : '卖出' }}
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- 持仓快照 -->
+                            <div class="card" v-if="positions.length > 0">
+                                <div class="card-header">
+                                    <span class="card-title">📋 持仓快照</span>
+                                </div>
+                                <div v-for="pos in positions" :key="pos.stock_code" 
+                                     style="display: flex; justify-content: space-between; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px; margin-bottom: 8px; cursor: pointer;"
+                                     @click="selectPosition(pos)">
+                                    <div>
+                                        <div style="font-weight: 600;">{{ pos.stock_name }}</div>
+                                        <div style="font-size: 12px; color: #888;">{{ pos.stock_code }} · {{ pos.volume }}股</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div :class="pos.profit >= 0 ? 'up' : 'down'">¥{{ formatMoney(pos.market_value) }}</div>
+                                        <div style="font-size: 12px;" :class="pos.profit >= 0 ? 'up' : 'down'">
+                                            {{ pos.profit >= 0 ? '+' : '' }}{{ pos.profit_percent.toFixed(2) }}%
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧：K线图 -->
+                        <div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <span class="card-title">📊 K线图</span>
+                                </div>
+                                <div class="chart-container">
+                                    <div class="chart-header">
+                                        <div style="font-weight: 600;">{{ tradeStock.name || '选择股票' }}</div>
+                                        <div class="chart-tabs">
+                                            <div class="chart-tab" :class="{active: chartType === 'day'}" @click="chartType = 'day'; loadKline()">日K</div>
+                                            <div class="chart-tab" :class="{active: chartType === 'week'}" @click="chartType = 'week'; loadKline()">周K</div>
+                                            <div class="chart-tab" :class="{active: chartType === 'month'}" @click="chartType = 'month'; loadKline()">月K</div>
+                                        </div>
+                                    </div>
+                                    <canvas id="klineChart" width="400" height="280" style="width: 100%; background: rgba(10,10,15,0.5); border-radius: 8px;"></canvas>
+                                    <div v-if="klineData.length === 0" style="height: 280px; display: flex; align-items: center; justify-content: center; color: #888;">
+                                        <div style="text-align: center;">
+                                            <div style="font-size: 48px; margin-bottom: 12px;">📈</div>
+                                            <div>选择股票查看K线</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 技术指标 -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <span class="card-title">📉 技术指标</span>
+                                </div>
+                                <div class="grid-3">
+                                    <div style="text-align: center; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                                        <div style="font-size: 12px; color: #888;">MA5</div>
+                                        <div style="font-size: 16px; font-weight: 600;" :class="indicators.ma5 && tradeStock.price > indicators.ma5 ? 'up' : 'down'">{{ indicators.ma5 || '--' }}</div>
+                                    </div>
+                                    <div style="text-align: center; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                                        <div style="font-size: 12px; color: #888;">MA10</div>
+                                        <div style="font-size: 16px; font-weight: 600;">{{ indicators.ma10 || '--' }}</div>
+                                    </div>
+                                    <div style="text-align: center; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                                        <div style="font-size: 12px; color: #888;">MA20</div>
+                                        <div style="font-size: 16px; font-weight: 600;">{{ indicators.ma20 || '--' }}</div>
+                                    </div>
+                                    <div style="text-align: center; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                                        <div style="font-size: 12px; color: #888;">MACD</div>
+                                        <div style="font-size: 16px; font-weight: 600;" :class="indicators.signal === 'buy' ? 'up' : indicators.signal === 'sell' ? 'down' : ''">{{ indicators.macd || '--' }}</div>
+                                    </div>
+                                    <div style="text-align: center; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                                        <div style="font-size: 12px; color: #888;">KDJ</div>
+                                        <div style="font-size: 16px; font-weight: 600;">K:{{ indicators.k || '--' }} D:{{ indicators.d || '--' }}</div>
+                                    </div>
+                                    <div style="text-align: center; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                                        <div style="font-size: 12px; color: #888;">RSI</div>
+                                        <div style="font-size: 16px; font-weight: 600;" :class="indicators.rsi < 30 ? 'up' : indicators.rsi > 70 ? 'down' : ''">{{ indicators.rsi || '--' }}</div>
+                                    </div>
+                                </div>
+                                <div v-if="indicators.signal" style="margin-top: 12px; padding: 12px; background: rgba(0,217,255,0.1); border-radius: 8px; text-align: center;">
+                                    <span style="font-weight: 600;" :class="indicators.signal === 'buy' ? 'up' : 'down'">
+                                        {{ indicators.signal === 'buy' ? '🟢 建议买入' : indicators.signal === 'sell' ? '🔴 建议卖出' : '⚪ 观望' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 策略页面 -->
+                <div v-if="currentView === 'strategy'">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">🎯 策略管理</span>
+                            <button class="btn btn-primary btn-sm" @click="showCreateStrategy = true">创建策略</button>
+                        </div>
+                        <div v-if="strategies.length === 0" style="text-align: center; padding: 60px; color: #888;">
+                            <div style="font-size: 48px; margin-bottom: 16px;">📝</div>
+                            <div>暂无策略</div>
+                            <div style="font-size: 13px; margin-top: 8px;">点击上方按钮创建您的第一个交易策略</div>
+                        </div>
+                        <div v-else>
+                            <div v-for="strategy in strategies" :key="strategy.id" 
+                                 style="display: flex; justify-content: space-between; align-items: center; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 12px; margin-bottom: 12px;">
+                                <div>
+                                    <div style="font-weight: 600; font-size: 16px;">{{ strategy.name }}</div>
+                                    <div style="font-size: 13px; color: #888; margin-top: 4px;">{{ strategy.description }}</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 20px; font-weight: 700;" :class="strategy.last_return >= 0 ? 'up' : 'down'">
+                                        {{ strategy.last_return >= 0 ? '+' : '' }}{{ strategy.last_return }}%
+                                    </div>
+                                    <div style="font-size: 12px; color: #888;">最近收益</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 策略模板 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">📚 策略模板</span>
+                        </div>
+                        <div class="grid-3">
+                            <div style="padding: 20px; background: rgba(255,255,255,0.03); border-radius: 12px; cursor: pointer;" @click="createStrategy('ma_cross', '均线交叉策略')">
+                                <div style="font-weight: 600; margin-bottom: 8px;">📈 均线交叉</div>
+                                <div style="font-size: 13px; color: #888; margin-bottom: 12px;">当短期均线上穿长期均线时买入，下穿时卖出</div>
+                                <div style="font-size: 12px; color: var(--success);">适合趋势行情</div>
+                            </div>
+                            <div style="padding: 20px; background: rgba(255,255,255,0.03); border-radius: 12px; cursor: pointer;" @click="createStrategy('macd', 'MACD策略')">
+                                <div style="font-weight: 600; margin-bottom: 8px;">📊 MACD策略</div>
+                                <div style="font-size: 13px; color: #888; margin-bottom: 12px;">基于MACD指标的买卖信号策略</div>
+                                <div style="font-size: 12px; color: var(--primary);">适合震荡行情</div>
+                            </div>
+                            <div style="padding: 20px; background: rgba(255,255,255,0.03); border-radius: 12px; cursor: pointer;" @click="createStrategy('grid', '网格交易')">
+                                <div style="font-weight: 600; margin-bottom: 8px;">🔲 网格交易</div>
+                                <div style="font-size: 13px; color: #888; margin-bottom: 12px;">在设定的价格区间内进行低买高卖</div>
+                                <div style="font-size: 12px; color: var(--warning);">适合横盘行情</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 回测页面 -->
+                <div v-if="currentView === 'backtest'">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">🔬 策略回测</span>
+                        </div>
+                        <div class="grid-2">
+                            <div>
+                                <div class="form-group">
+                                    <label class="form-label">选择策略</label>
+                                    <select v-model="backtestStrategy" class="input">
+                                        <option value="">请选择策略</option>
+                                        <option v-for="s in strategies" :key="s.id" :value="s.id">{{ s.name }}</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">选择股票</label>
+                                    <input type="text" v-model="backtestStock" class="input" placeholder="输入股票代码">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">开始日期</label>
+                                    <input type="date" v-model="backtestStart" class="input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">结束日期</label>
+                                    <input type="date" v-model="backtestEnd" class="input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">初始资金</label>
+                                    <input type="number" v-model="backtestCapital" class="input" placeholder="初始资金">
+                                </div>
+                                <button class="btn btn-primary" style="width: 100%;" @click="runBacktest">开始回测</button>
+                            </div>
+                            <div>
+                                <div style="padding: 20px; background: rgba(255,255,255,0.03); border-radius: 12px;">
+                                    <div style="font-weight: 600; margin-bottom: 16px;">回测结果</div>
+                                    <div v-if="backtestResult">
+                                        <div class="grid-2" style="margin-bottom: 16px;">
+                                            <div style="text-align: center; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                                                <div style="font-size: 12px; color: #888;">总收益</div>
+                                                <div style="font-size: 24px; font-weight: 700;" :class="backtestResult.total_return >= 0 ? 'up' : 'down'">
+                                                    {{ backtestResult.total_return >= 0 ? '+' : '' }}{{ backtestResult.total_return }}%
+                                                </div>
+                                            </div>
+                                            <div style="text-align: center; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                                                <div style="font-size: 12px; color: #888;">年化收益</div>
+                                                <div style="font-size: 24px; font-weight: 700;" :class="backtestResult.annual_return >= 0 ? 'up' : 'down'">
+                                                    {{ backtestResult.annual_return >= 0 ? '+' : '' }}{{ backtestResult.annual_return }}%
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                                            <span style="color: #888;">最大回撤</span>
+                                            <span>{{ backtestResult.max_drawdown }}%</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                                            <span style="color: #888;">夏普比率</span>
+                                            <span>{{ backtestResult.sharpe_ratio }}</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                                            <span style="color: #888;">交易次数</span>
+                                            <span>{{ backtestResult.trades }} 次</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                                            <span style="color: #888;">胜率</span>
+                                            <span>{{ backtestResult.win_rate }}%</span>
+                                        </div>
+                                    </div>
+                                    <div v-else style="text-align: center; color: #888; padding: 40px;">
+                                        选择策略和参数后开始回测
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 实盘交易页面 -->
+                <div v-if="currentView === 'broker'">
+                    <!-- 券商选择 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">🏦 券商账户</span>
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <select v-model="currentBroker.id" @change="switchBroker()" class="input" style="width: auto; padding: 6px 12px;">
+                                    <option v-for="b in brokerList" :key="b.id" :value="b.id">{{ b.name }}</option>
+                                </select>
+                                <span style="background: rgba(0,217,255,0.1); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                    {{ currentBroker.name }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="grid-4">
+                            <div class="stat-card">
+                                <div class="stat-icon">💵</div>
+                                <div class="stat-value" style="color: var(--primary);">¥{{ formatMoney(brokerAccount.balance) }}</div>
+                                <div class="stat-label">可用资金</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📊</div>
+                                <div class="stat-value" style="color: var(--success);">¥{{ formatMoney(brokerAccount.market_value) }}</div>
+                                <div class="stat-label">持仓市值</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">💰</div>
+                                <div class="stat-value">¥{{ formatMoney(brokerAccount.total_asset) }}</div>
+                                <div class="stat-label">总资产</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📈</div>
+                                <div class="stat-value" :class="brokerAccount.profit >= 0 ? 'up' : 'down'">
+                                    {{ brokerAccount.profit >= 0 ? '+' : '' }}¥{{ formatMoney(Math.abs(brokerAccount.profit)) }}
+                                </div>
+                                <div class="stat-label">总盈亏</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 持仓列表 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">📊 实盘持仓</span>
+                            <button class="btn btn-outline btn-sm" @click="loadBrokerData()">刷新</button>
+                        </div>
+                        <table v-if="brokerPositions.length > 0">
+                            <thead>
+                                <tr>
+                                    <th>股票</th>
+                                    <th>持仓</th>
+                                    <th>成本价</th>
+                                    <th>现价</th>
+                                    <th>市值</th>
+                                    <th>盈亏</th>
+                                    <th>收益率</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="pos in brokerPositions" :key="pos.stock_code">
+                                    <td>
+                                        <div style="font-weight: 600;">{{ pos.stock_name }}</div>
+                                        <div style="font-size: 12px; color: #888;">{{ pos.stock_code }}</div>
+                                    </td>
+                                    <td>{{ pos.volume }}股</td>
+                                    <td>¥{{ pos.cost_price.toFixed(2) }}</td>
+                                    <td :class="pos.current_price >= pos.cost_price ? 'up' : 'down'">¥{{ pos.current_price.toFixed(2) }}</td>
+                                    <td>¥{{ formatMoney(pos.market_value) }}</td>
+                                    <td :class="pos.profit >= 0 ? 'up' : 'down'">{{ pos.profit >= 0 ? '+' : '' }}¥{{ formatMoney(Math.abs(pos.profit)) }}</td>
+                                    <td :class="pos.profit_percent >= 0 ? 'up' : 'down'">{{ pos.profit_percent >= 0 ? '+' : '' }}{{ pos.profit_percent.toFixed(2) }}%</td>
+                                    <td>
+                                        <button class="btn btn-danger btn-sm" @click="openBrokerSell(pos)">卖出</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div v-else style="text-align: center; padding: 40px; color: #888;">暂无持仓</div>
+                    </div>
+                    
+                    <!-- 订单记录 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">📜 成交记录</span>
+                        </div>
+                        <table v-if="brokerOrders.length > 0">
+                            <thead>
+                                <tr>
+                                    <th>时间</th>
+                                    <th>股票</th>
+                                    <th>类型</th>
+                                    <th>数量</th>
+                                    <th>价格</th>
+                                    <th>金额</th>
+                                    <th>手续费</th>
+                                    <th>状态</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="order in brokerOrders" :key="order.order_id">
+                                    <td style="font-size: 12px; color: #888;">{{ order.created_at?.substring(0, 19).replace('T', ' ') || '--' }}</td>
+                                    <td>
+                                        <div style="font-weight: 600;">{{ order.stock_name }}</div>
+                                        <div style="font-size: 11px; color: #888;">{{ order.stock_code }}</div>
+                                    </td>
+                                    <td :class="order.direction === 'buy' ? 'up' : 'down'">{{ order.direction === 'buy' ? '买入' : '卖出' }}</td>
+                                    <td>{{ order.filled_volume }}股</td>
+                                    <td>¥{{ order.filled_price.toFixed(2) }}</td>
+                                    <td>¥{{ formatMoney(order.filled_volume * order.filled_price) }}</td>
+                                    <td>¥{{ order.commission?.toFixed(2) || '0.00' }}</td>
+                                    <td><span class="status-success">{{ order.status === 'filled' ? '成交' : order.status }}</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div v-else style="text-align: center; padding: 40px; color: #888;">暂无成交记录</div>
+                    </div>
+                    
+                    <!-- 快速买入 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">⚡ 快速交易</span>
+                        </div>
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <input type="text" v-model="brokerTradeStock.code" class="input" style="width: 120px;" placeholder="股票代码">
+                            <input type="number" v-model="brokerTradeVolume" class="input" style="width: 100px;" placeholder="数量" min="100" step="100">
+                            <input type="number" v-model="brokerTradePrice" class="input" style="width: 100px;" placeholder="价格（可选）">
+                            <button class="btn btn-success" @click="placeBrokerOrder('buy')">买入</button>
+                            <button class="btn btn-danger" @click="placeBrokerOrder('sell')">卖出</button>
+                        </div>
+                        <div style="margin-top: 12px; font-size: 13px; color: #888;">
+                            提示：数量必须是100的整数倍，价格留空则使用市价
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 账户页面 -->
+                <div v-if="currentView === 'account'">
+                    <!-- 账户信息 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">👤 账户信息</span>
+                        </div>
+                        <div class="grid-4">
+                            <div class="stat-card">
+                                <div class="stat-icon">💵</div>
+                                <div class="stat-value" style="color: var(--primary);">¥{{ formatMoney(account.balance) }}</div>
+                                <div class="stat-label">可用资金</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📊</div>
+                                <div class="stat-value" style="color: var(--success);">¥{{ formatMoney(account.market_value) }}</div>
+                                <div class="stat-label">持仓市值</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">💰</div>
+                                <div class="stat-value">¥{{ formatMoney(account.total_asset) }}</div>
+                                <div class="stat-label">总资产</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📈</div>
+                                <div class="stat-value" :class="account.total_profit >= 0 ? 'up' : 'down'">
+                                    {{ account.total_profit >= 0 ? '+' : '' }}¥{{ formatMoney(Math.abs(account.total_profit)) }}
+                                </div>
+                                <div class="stat-label">总盈亏</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 持仓明细 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">📊 持仓明细</span>
+                            <span style="font-size: 13px; color: #888;">共 {{ positions.length }} 只股票</span>
+                        </div>
+                        <table v-if="positions.length > 0">
+                            <thead>
+                                <tr>
+                                    <th>股票</th>
+                                    <th>持仓</th>
+                                    <th>成本价</th>
+                                    <th>现价</th>
+                                    <th>市值</th>
+                                    <th>盈亏</th>
+                                    <th>收益率</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="pos in positions" :key="pos.stock_code">
+                                    <td>
+                                        <div style="font-weight: 600;">{{ pos.stock_name }}</div>
+                                        <div style="font-size: 12px; color: #888;">{{ pos.stock_code }}</div>
+                                    </td>
+                                    <td>{{ pos.volume }}股</td>
+                                    <td>¥{{ pos.cost_price.toFixed(2) }}</td>
+                                    <td :class="pos.current_price >= pos.cost_price ? 'up' : 'down'">¥{{ pos.current_price.toFixed(2) }}</td>
+                                    <td>¥{{ formatMoney(pos.market_value) }}</td>
+                                    <td :class="pos.profit >= 0 ? 'up' : 'down'">{{ pos.profit >= 0 ? '+' : '' }}¥{{ formatMoney(Math.abs(pos.profit)) }}</td>
+                                    <td :class="pos.profit_percent >= 0 ? 'up' : 'down'">{{ pos.profit_percent >= 0 ? '+' : '' }}{{ pos.profit_percent.toFixed(2) }}%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div v-else style="text-align: center; padding: 40px; color: #888;">暂无持仓</div>
+                    </div>
+                    
+                    <!-- 交易记录 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">📜 交易记录</span>
+                        </div>
+                        <table v-if="orders.length > 0">
+                            <thead>
+                                <tr>
+                                    <th>时间</th>
+                                    <th>股票</th>
+                                    <th>类型</th>
+                                    <th>数量</th>
+                                    <th>价格</th>
+                                    <th>金额</th>
+                                    <th>状态</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="order in orders" :key="order.id">
+                                    <td style="font-size: 12px; color: #888;">{{ order.created_at }}</td>
+                                    <td>
+                                        <div style="font-weight: 600;">{{ order.stock_name }}</div>
+                                        <div style="font-size: 11px; color: #888;">{{ order.stock_code }}</div>
+                                    </td>
+                                    <td :class="order.order_type === 'buy' ? 'up' : 'down'">{{ order.order_type === 'buy' ? '买入' : '卖出' }}</td>
+                                    <td>{{ order.order_volume }}股</td>
+                                    <td>¥{{ order.order_price.toFixed(2) }}</td>
+                                    <td>¥{{ formatMoney(order.order_volume * order.order_price) }}</td>
+                                    <td><span :class="'status-' + order.status">{{ order.status }}</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div v-else style="text-align: center; padding: 40px; color: #888;">暂无交易记录</div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        
+        <!-- 创建策略弹窗 -->
+        <div v-if="showCreateStrategy" class="modal-mask" @click.self="showCreateStrategy = false">
+            <div class="modal">
+                <div class="modal-header">
+                    <span class="modal-title">创建策略</span>
+                    <button class="modal-close" @click="showCreateStrategy = false">&times;</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">策略名称</label>
+                    <input type="text" v-model="newStrategy.name" class="input" placeholder="输入策略名称">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">策略描述</label>
+                    <textarea v-model="newStrategy.description" class="input" rows="3" placeholder="描述您的策略逻辑"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">策略代码</label>
+                    <textarea v-model="newStrategy.code" class="input" rows="6" placeholder="输入策略代码（Python）"></textarea>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn btn-outline" style="flex: 1;" @click="showCreateStrategy = false">取消</button>
+                    <button class="btn btn-primary" style="flex: 1;" @click="saveStrategy">保存</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 快速交易弹窗 -->
+        <div v-if="showQuickTrade" class="modal-mask" @click.self="showQuickTrade = false">
+            <div class="modal">
+                <div class="modal-header">
+                    <span class="modal-title">{{ quickTradeType === 'buy' ? '买入' : '卖出' }} {{ quickTradeStock?.name }}</span>
+                    <button class="modal-close" @click="showQuickTrade = false">&times;</button>
+                </div>
+                <div style="padding: 16px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 16px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #888;">现价</span>
+                        <span :class="quickTradeStock?.change_percent >= 0 ? 'up' : 'down'">¥{{ quickTradeStock?.price }}</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">数量（股）</label>
+                    <input type="number" v-model="quickTradeVolume" class="input" placeholder="输入数量">
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 16px;">
+                    <span style="color: #888;">预计金额</span>
+                    <span style="font-weight: 600;">¥{{ formatMoney(quickTradeVolume * quickTradeStock?.price) }}</span>
+                </div>
+                <button class="btn" :class="quickTradeType === 'buy' ? 'btn-success' : 'btn-danger'" style="width: 100%;" @click="executeQuickTrade">
+                    确认{{ quickTradeType === 'buy' ? '买入' : '卖出' }}
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const { createApp } = Vue;
+        
+        createApp({
+            data() {
+                return {
+                    // API基础URL - 根据环境自动检测
+                    apiBase: window.location.protocol === 'file:' ? 'http://localhost:8000' : '',
+                    isLoggedIn: false,
+                    currentView: 'home',
+                    user: {},
+                    token: '',
+                    loginForm: { username: '', password: '' },
+                    rememberMe: true,
+                    refreshCountdown: 30,
+                    refreshTimer: null,
+                    countdownTimer: null,
+                    account: { balance: 0, market_value: 0, total_asset: 0, total_profit: 0, total_profit_percent: 0 },
+                    positions: [],
+                    orders: [],
+                    strategies: [],
+                    hotStocks: [],
+                    stocks: [],
+                    marketType: 'all',
+                    marketSummary: {
+                        sh: { price: 3100, change: 0, change_percent: 0 },
+                        sz: { price: 10000, change: 0, change_percent: 0 },
+                        cy: { price: 2000, change: 0, change_percent: 0 }
+                    },
+                    currentTime: '',
+                    searchKeyword: '',
+                    tradeStock: { code: '', name: '', price: 0, change_percent: 0 },
+                    tradePrice: 0,
+                    tradeVolume: 100,
+                    tradeLoading: false,
+                    chartType: 'day',
+                    klineData: [],
+                    indicators: {},
+                    showCreateStrategy: false,
+                    newStrategy: { name: '', description: '', code: '' },
+                    showQuickTrade: false,
+                    quickTradeType: 'buy',
+                    quickTradeStock: null,
+                    quickTradeVolume: 100,
+                    backtestStrategy: '',
+                    backtestStock: '',
+                    backtestStart: '',
+                    backtestEnd: '',
+                    backtestCapital: 1000000,
+                    backtestResult: null,
+                    // 实盘交易
+                    brokerList: [],
+                    currentBroker: { id: 'simulator', name: '模拟交易' },
+                    brokerAccount: { balance: 1000000, frozen: 0, market_value: 0, total_asset: 1000000, profit: 0 },
+                    brokerPositions: [],
+                    brokerOrders: [],
+                    brokerTradeStock: { code: '', name: '', price: 0 },
+                    brokerTradeType: 'buy',
+                    brokerTradeVolume: 100,
+                    brokerTradePrice: 0,
+                    showBrokerTrade: false
+                }
+            },
+            computed: {
+                maxBuy() {
+                    if (!this.tradeStock.price) return 0;
+                    return Math.floor(this.account.balance / this.tradeStock.price / 100) * 100;
+                }
+            },
+            mounted() {
+                this.updateTime();
+                setInterval(() => this.updateTime(), 1000);
+                
+                // 自动填充记住的账号密码
+                const savedUsername = localStorage.getItem('saved_username');
+                const savedPassword = localStorage.getItem('saved_password');
+                if (savedUsername) {
+                    this.loginForm.username = savedUsername;
+                    this.loginForm.password = savedPassword || '';
+                }
+                
+                // 自动登录
+                const token = localStorage.getItem('token');
+                if (token) {
+                    this.token = token;
+                    this.isLoggedIn = true;
+                    this.user = JSON.parse(localStorage.getItem('user') || '{}');
+                    this.loadData();
+                }
+                
+                // 每30秒自动刷新数据
+                this.refreshTimer = setInterval(() => {
+                    if (this.isLoggedIn) {
+                        this.refreshCountdown = 30;
+                        this.loadData();
+                    }
+                }, 30000);
+                
+                // 倒计时
+                this.countdownTimer = setInterval(() => {
+                    if (this.isLoggedIn && this.refreshCountdown > 0) {
+                        this.refreshCountdown--;
+                    }
+                }, 1000);
+            },
+            beforeUnmount() {
+                if (this.refreshTimer) clearInterval(this.refreshTimer);
+                if (this.countdownTimer) clearInterval(this.countdownTimer);
+            },
+            methods: {
+                updateTime() {
+                    const now = new Date();
+                    this.currentTime = now.toLocaleString('zh-CN', { 
+                        year: 'numeric', month: '2-digit', day: '2-digit',
+                        hour: '2-digit', minute: '2-digit', second: '2-digit'
+                    });
+                },
+                async login() {
+                    try {
+                        const res = await axios.post(this.apiBase + '/api/auth/login', {
+                            username: this.loginForm.username,
+                            password: this.loginForm.password
+                        });
+                        if (res.data.code === 200) {
+                            this.token = res.data.data.token;
+                            this.user = res.data.data.user;
+                            localStorage.setItem('token', this.token);
+                            localStorage.setItem('user', JSON.stringify(this.user));
+                            
+                            // 记住账号密码
+                            if (this.rememberMe) {
+                                localStorage.setItem('saved_username', this.loginForm.username);
+                                localStorage.setItem('saved_password', this.loginForm.password);
+                            } else {
+                                localStorage.removeItem('saved_username');
+                                localStorage.removeItem('saved_password');
+                            }
+                            
+                            this.isLoggedIn = true;
+                            this.loadData();
+                        } else {
+                            alert(res.data.message || '登录失败');
+                        }
+                    } catch (e) {
+                        // 演示模式
+                        this.isLoggedIn = true;
+                        this.user = { username: this.loginForm.username || 'demo' };
+                        this.account = { balance: 1000000, market_value: 0, total_asset: 1000000, total_profit: 0, total_profit_percent: 0 };
+                        
+                        // 记住账号密码
+                        if (this.rememberMe) {
+                            localStorage.setItem('saved_username', this.loginForm.username);
+                            localStorage.setItem('saved_password', this.loginForm.password);
+                        }
+                        
+                        this.loadMockData();
+                    }
+                },
+                logout() {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    this.isLoggedIn = false;
+                    this.user = {};
+                    this.token = '';
+                },
+                async loadData() {
+                    this.refreshCountdown = 30;
+                    try {
+                        await Promise.all([this.getAccount(), this.loadStocks()]);
+                    } catch (e) {
+                        console.error('加载数据失败', e);
+                    }
+                },
+                loadMockData() {
+                    const stocks = [
+                        { code: '600519', name: '贵州茅台', industry: '白酒', price: 1688.00, change_percent: 1.25, volume: 2850000, amount: 4820000000 },
+                        { code: '000858', name: '五粮液', industry: '白酒', price: 158.50, change_percent: -0.85, volume: 8500000, amount: 1350000000 },
+                        { code: '000333', name: '美的集团', industry: '家电', price: 58.20, change_percent: 2.10, volume: 15600000, amount: 912000000 },
+                        { code: '002594', name: '比亚迪', industry: '汽车', price: 268.80, change_percent: 3.50, volume: 4500000, amount: 1210000000 },
+                        { code: '600036', name: '招商银行', industry: '银行', price: 35.60, change_percent: -0.30, volume: 28000000, amount: 1000000000 },
+                        { code: '601318', name: '中国平安', industry: '保险', price: 48.90, change_percent: 0.65, volume: 18500000, amount: 905000000 },
+                        { code: '000001', name: '平安银行', industry: '银行', price: 12.35, change_percent: -0.45, volume: 85000000, amount: 1050000000 },
+                        { code: '300059', name: '东方财富', industry: '金融', price: 18.70, change_percent: 2.80, volume: 32000000, amount: 600000000 },
+                        { code: '300750', name: '宁德时代', industry: '新能源', price: 181.00, change_percent: 1.50, volume: 8900000, amount: 1610000000 },
+                        { code: '601012', name: '隆基绿能', industry: '新能源', price: 35.80, change_percent: -0.80, volume: 28000000, amount: 1000000000 }
+                    ];
+                    this.hotStocks = stocks.slice(0, 8);
+                    this.stocks = stocks;
+                    this.marketSummary = {
+                        sh: { price: 3105.28, change: 15.32, change_percent: 0.50 },
+                        sz: { price: 10082.35, change: -25.67, change_percent: -0.25 },
+                        cy: { price: 2015.80, change: 8.45, change_percent: 0.42 }
+                    };
+                },
+                async getAccount() {
+                    try {
+                        const res = await axios.get(this.apiBase + '/api/account/info', { headers: { 'Authorization': `Bearer ${this.token}` } });
+                        if (res.data.code === 200) {
+                            this.account = res.data.data.account;
+                            this.positions = res.data.data.positions || [];
+                        }
+                    } catch (e) {
+                        console.error('获取账户失败', e);
+                    }
+                },
+                async loadStocks() {
+                    try {
+                        const res = await axios.get(this.apiBase + '/api/market/stocks');
+                        if (res.data.code === 200) {
+                            this.stocks = res.data.data.list;
+                            this.hotStocks = res.data.data.list.slice(0, 10);
+                        }
+                    } catch (e) {
+                        this.loadMockData();
+                    }
+                },
+                async searchStocks() {
+                    if (!this.searchKeyword) return;
+                    this.stocks = this.stocks.filter(s => 
+                        s.code.includes(this.searchKeyword) || s.name.includes(this.searchKeyword)
+                    );
+                },
+                async getStockInfo() {
+                    if (!this.tradeStock.code) return;
+                    const stock = this.stocks.find(s => s.code === this.tradeStock.code);
+                    if (stock) {
+                        this.tradeStock = { ...stock };
+                        this.tradePrice = stock.price;
+                    }
+                },
+                selectStock(stock) {
+                    this.tradeStock = { ...stock };
+                    this.tradePrice = stock.price;
+                    this.currentView = 'trade';
+                    this.loadKline();
+                },
+                selectPosition(pos) {
+                    this.tradeStock = { code: pos.stock_code, name: pos.stock_name, price: pos.current_price, change_percent: 0 };
+                    this.tradePrice = pos.current_price;
+                    this.loadKline();
+                },
+                async loadKline() {
+                    if (!this.tradeStock.code) return;
+                    try {
+                        const res = await axios.get(`${this.apiBase}/api/market/kline/${this.tradeStock.code}?type=${this.chartType}&count=60`);
+                        if (res.data.code === 200) {
+                            this.klineData = res.data.data.list;
+                            this.drawKline();
+                            this.loadIndicators();
+                        }
+                    } catch (e) {
+                        console.error('加载K线失败', e);
+                    }
+                },
+                async loadIndicators() {
+                    if (!this.tradeStock.code) return;
+                    try {
+                        const res = await axios.get(`${this.apiBase}/api/market/indicator/${this.tradeStock.code}?type=ma`);
+                        if (res.data.code === 200) {
+                            this.indicators = res.data.data;
+                        }
+                    } catch (e) {
+                        console.error('加载指标失败', e);
+                    }
+                },
+                drawKline() {
+                    if (!this.klineData || this.klineData.length === 0) return;
+                    
+                    const canvas = document.getElementById('klineChart');
+                    if (!canvas) return;
+                    
+                    const ctx = canvas.getContext('2d');
+                    const width = canvas.width;
+                    const height = canvas.height;
+                    
+                    ctx.clearRect(0, 0, width, height);
+                    
+                    const prices = this.klineData.map(d => [d.high, d.low]).flat();
+                    const maxPrice = Math.max(...prices);
+                    const minPrice = Math.min(...prices);
+                    const priceRange = maxPrice - minPrice;
+                    
+                    const barWidth = width / this.klineData.length - 2;
+                    const scaleY = (price) => (height - 20) * (1 - (price - minPrice) / priceRange) + 10;
+                    
+                    // 绘制K线
+                    this.klineData.forEach((bar, i) => {
+                        const x = i * (width / this.klineData.length) + barWidth / 2;
+                        const isUp = bar.close >= bar.open;
+                        
+                        ctx.strokeStyle = isUp ? '#2ed573' : '#ff4757';
+                        ctx.fillStyle = isUp ? '#2ed573' : '#ff4757';
+                        
+                        // 影线
+                        ctx.beginPath();
+                        ctx.moveTo(x, scaleY(bar.high));
+                        ctx.lineTo(x, scaleY(bar.low));
+                        ctx.stroke();
+                        
+                        // 实体
+                        const openY = scaleY(bar.open);
+                        const closeY = scaleY(bar.close);
+                        const bodyHeight = Math.abs(closeY - openY) || 1;
+                        
+                        if (isUp) {
+                            ctx.strokeRect(x - barWidth/2, Math.min(openY, closeY), barWidth, bodyHeight);
+                        } else {
+                            ctx.fillRect(x - barWidth/2, Math.min(openY, closeY), barWidth, bodyHeight);
+                        }
+                    });
+                    
+                    // 绘制价格标签
+                    ctx.fillStyle = '#888';
+                    ctx.font = '10px sans-serif';
+                    ctx.fillText(maxPrice.toFixed(2), 5, 15);
+                    ctx.fillText(minPrice.toFixed(2), 5, height - 5);
+                },
+                async buyStock() {
+                    if (!this.tradeStock.code || !this.tradeVolume) {
+                        alert('请选择股票并输入数量');
+                        return;
+                    }
+                    this.tradeLoading = true;
+                    try {
+                        const res = await axios.post(this.apiBase + '/api/trading/buy', {
+                            stock_code: this.tradeStock.code,
+                            volume: this.tradeVolume,
+                            price: this.tradePrice
+                        }, { headers: { 'Authorization': `Bearer ${this.token}` } });
+                        if (res.data.code === 200) {
+                            alert('买入成功');
+                            this.getAccount();
+                        } else {
+                            alert(res.data.message || '买入失败');
+                        }
+                    } catch (e) {
+                        alert('买入成功（演示模式）');
+                        this.account.balance -= this.tradeVolume * this.tradePrice;
+                    }
+                    this.tradeLoading = false;
+                },
+                async sellStock() {
+                    if (!this.tradeStock.code || !this.tradeVolume) {
+                        alert('请选择股票并输入数量');
+                        return;
+                    }
+                    this.tradeLoading = true;
+                    try {
+                        const res = await axios.post(this.apiBase + '/api/trading/sell', {
+                            stock_code: this.tradeStock.code,
+                            volume: this.tradeVolume,
+                            price: this.tradePrice
+                        }, { headers: { 'Authorization': `Bearer ${this.token}` } });
+                        if (res.data.code === 200) {
+                            alert('卖出成功');
+                            this.getAccount();
+                        } else {
+                            alert(res.data.message || '卖出失败');
+                        }
+                    } catch (e) {
+                        alert('卖出成功（演示模式）');
+                    }
+                    this.tradeLoading = false;
+                },
+                quickBuy(stock) {
+                    this.quickTradeStock = stock;
+                    this.quickTradeType = 'buy';
+                    this.quickTradeVolume = 100;
+                    this.showQuickTrade = true;
+                },
+                quickSell(pos) {
+                    this.quickTradeStock = { code: pos.stock_code, name: pos.stock_name, price: pos.current_price };
+                    this.quickTradeType = 'sell';
+                    this.quickTradeVolume = pos.volume;
+                    this.showQuickTrade = true;
+                },
+                async executeQuickTrade() {
+                    if (this.quickTradeType === 'buy') {
+                        this.tradeStock = this.quickTradeStock;
+                        this.tradePrice = this.quickTradeStock.price;
+                        this.tradeVolume = this.quickTradeVolume;
+                        await this.buyStock();
+                    } else {
+                        this.tradeStock = this.quickTradeStock;
+                        this.tradePrice = this.quickTradeStock.price;
+                        this.tradeVolume = this.quickTradeVolume;
+                        await this.sellStock();
+                    }
+                    this.showQuickTrade = false;
+                },
+                createStrategy(type, name) {
+                    this.newStrategy = {
+                        name: name,
+                        description: '基于技术指标的交易策略',
+                        code: this.getStrategyCode(type)
+                    };
+                    this.showCreateStrategy = true;
+                },
+                getStrategyCode(type) {
+                    const codes = {
+                        'ma_cross': `# 均线交叉策略
+def ma_cross_strategy(data, short_window=5, long_window=20):
+    signals = []
+    for i in range(len(data)):
+        if i >= long_window:
+            short_ma = sum(data[i-short_window:i]['close']) / short_window
+            long_ma = sum(data[i-long_window:i]['close']) / long_window
+            if short_ma > long_ma:
+                signals.append('buy')
+            else:
+                signals.append('sell')
+    return signals`,
+                        'macd': `# MACD策略
+def macd_strategy(data, fast=12, slow=26, signal=9):
+    # 计算MACD指标
+    # 返回买卖信号
+    pass`,
+                        'grid': `# 网格交易策略
+def grid_strategy(price, grid_size=0.01):
+    # 在价格区间内设置网格
+    # 低买高卖
+    pass`
+                    };
+                    return codes[type] || '';
+                },
+                async saveStrategy() {
+                    if (!this.newStrategy.name) {
+                        alert('请输入策略名称');
+                        return;
+                    }
+                    try {
+                        const res = await axios.post(this.apiBase + '/api/strategies', this.newStrategy, {
+                            headers: { 'Authorization': `Bearer ${this.token}` }
+                        });
+                        if (res.data.code === 200) {
+                            alert('策略创建成功');
+                            this.strategies.push({ ...this.newStrategy, id: Date.now(), last_return: 0 });
+                            this.showCreateStrategy = false;
+                        }
+                    } catch (e) {
+                        this.strategies.push({ ...this.newStrategy, id: Date.now(), last_return: 0 });
+                        this.showCreateStrategy = false;
+                    }
+                },
+                async runBacktest() {
+                    if (!this.backtestStrategy || !this.backtestStock) {
+                        alert('请选择策略和股票');
+                        return;
+                    }
+                    // 模拟回测结果
+                    this.backtestResult = {
+                        total_return: (Math.random() * 40 - 10).toFixed(2),
+                        annual_return: (Math.random() * 20 - 5).toFixed(2),
+                        max_drawdown: (Math.random() * 20).toFixed(2),
+                        sharpe_ratio: (Math.random() * 2).toFixed(2),
+                        trades: Math.floor(Math.random() * 100) + 10,
+                        win_rate: (Math.random() * 30 + 40).toFixed(1)
+                    };
+                },
+                refreshStocks() {
+                    this.loadStocks();
+                },
+                formatMoney(value) {
+                    if (value === undefined || value === null) return '0.00';
+                    return Number(value).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                },
+                formatVolume(value) {
+                    if (!value) return '--';
+                    if (value >= 100000000) return (value / 100000000).toFixed(2) + '亿';
+                    if (value >= 10000) return (value / 10000).toFixed(2) + '万';
+                    return value.toString();
+                },
+                // 实盘交易方法
+                async loadBrokerData() {
+                    try {
+                        // 加载券商列表
+                        const brokerRes = await axios.get(this.apiBase + '/api/broker/list');
+                        if (brokerRes.data.code === 200) {
+                            this.brokerList = brokerRes.data.data.brokers;
+                        }
+                        
+                        // 加载当前券商
+                        const currentRes = await axios.get(this.apiBase + '/api/broker/current');
+                        if (currentRes.data.code === 200) {
+                            this.currentBroker = currentRes.data.data;
+                        }
+                        
+                        // 加载账户信息
+                        const accountRes = await axios.get(this.apiBase + '/api/broker/account', {
+                            headers: { 'Authorization': `Bearer ${this.token}` }
+                        });
+                        if (accountRes.data.code === 200) {
+                            this.brokerAccount = accountRes.data.data;
+                        }
+                        
+                        // 加载持仓
+                        const posRes = await axios.get(this.apiBase + '/api/broker/positions', {
+                            headers: { 'Authorization': `Bearer ${this.token}` }
+                        });
+                        if (posRes.data.code === 200) {
+                            this.brokerPositions = posRes.data.data.list || [];
+                        }
+                        
+                        // 加载订单
+                        const orderRes = await axios.get(this.apiBase + '/api/broker/orders', {
+                            headers: { 'Authorization': `Bearer ${this.token}` }
+                        });
+                        if (orderRes.data.code === 200) {
+                            this.brokerOrders = orderRes.data.data.list || [];
+                        }
+                    } catch (e) {
+                        console.error('加载实盘数据失败', e);
+                    }
+                },
+                async switchBroker() {
+                    try {
+                        await axios.post(this.apiBase + '/api/broker/switch?broker_id=' + this.currentBroker.id);
+                        this.loadBrokerData();
+                    } catch (e) {
+                        console.error('切换券商失败', e);
+                    }
+                },
+                openBrokerSell(pos) {
+                    this.brokerTradeStock = { code: pos.stock_code, name: pos.stock_name, price: pos.current_price };
+                    this.brokerTradeVolume = pos.available_volume;
+                    this.brokerTradeType = 'sell';
+                    this.showBrokerTrade = true;
+                },
+                async placeBrokerOrder(direction) {
+                    if (!this.brokerTradeStock.code) {
+                        alert('请输入股票代码');
+                        return;
+                    }
+                    if (this.brokerTradeVolume <= 0 || this.brokerTradeVolume % 100 !== 0) {
+                        alert('数量必须是100的整数倍');
+                        return;
+                    }
+                    
+                    try {
+                        const res = await axios.post(this.apiBase + '/api/broker/order', {
+                            stock_code: this.brokerTradeStock.code,
+                            direction: direction,
+                            volume: this.brokerTradeVolume,
+                            price: this.brokerTradePrice || null
+                        }, {
+                            headers: { 'Authorization': `Bearer ${this.token}` }
+                        });
+                        
+                        if (res.data.code === 200) {
+                            alert(res.data.data.message || '委托成功');
+                            this.brokerTradeStock = { code: '', name: '', price: 0 };
+                            this.brokerTradeVolume = 100;
+                            this.brokerTradePrice = 0;
+                            this.loadBrokerData();
+                        } else {
+                            alert(res.data.message || '委托失败');
+                        }
+                    } catch (e) {
+                        alert('委托失败: ' + (e.response?.data?.message || e.message));
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+version: "3.8"
+
+# ==============================================================
+# ComputeHub — Docker Compose 部署
+# 服务:
+#   gateway → REST API + Dashboard (端口 8282)
+#   tui     → TUI 客户端 (交互式终端)
+#
+# 访问:
+#   Dashboard → http://localhost:8282/
+#   API       → http://localhost:8282/api/health
+# ==============================================================
+
+services:
+  # ---------------------------------------
+  # 1. Gateway — 核心 API + Dashboard
+  #    包含: Kernel / Pipeline / Executor / GeneStore / Scheduler
+  #          + v2 Visualizer (全球算力地图) + Dashboard 静态文件
+  # ---------------------------------------
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: computehub-gateway
+    ports:
+      - "8282:8282"
+    volumes:
+      - ./config.json:/app/config.json:ro
+      - ./genes.json:/app/genes.json
+      - computehub-sandbox:/tmp/opc-sandbox
+    environment:
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+    networks:
+      - computehub-net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8282/api/v2/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  # ---------------------------------------
+  # 2. TUI — 终端客户端 (按需启动)
+  # ---------------------------------------
+  tui:
+    build:
+      context: .
+      dockerfile: Dockerfile.tui
+    container_name: computehub-tui
+    stdin_open: true
+    tty: true
+    environment:
+      - GATEWAY_URL=http://gateway:8282
+      - TZ=Asia/Shanghai
+    depends_on:
+      gateway:
+        condition: service_healthy
+    networks:
+      - computehub-net
+    profiles:
+      - tui
+
+networks:
+  computehub-net:
+    driver: bridge
+
+volumes:
+  computehub-sandbox:

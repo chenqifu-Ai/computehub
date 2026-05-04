@@ -1,0 +1,99 @@
+{
+  "timestamp": "2026-03-24T08:20:24.260249",
+  "data": {
+    "a50": {
+      "success": false,
+      "data": {},
+      "source": "",
+      "error": null
+    },
+    "north_money": {
+      "success": true,
+      "data": {
+        "date": "2026-03-23",
+        "north_net_inflow": -57628332032.0,
+        "south_net_inflow": 40257294336.0
+      },
+      "source": "东方财富",
+      "error": null
+    },
+    "longhubang": {
+      "success": false,
+      "data": [],
+      "source": "",
+      "error": null
+    },
+    "holdings": [
+      {
+        "code": "600460",
+        "name": "士兰微",
+        "success": true,
+        "data": {
+          "name": "士兰微",
+          "open": 26.39,
+          "prev_close": 27.14,
+          "price": 25.85,
+          "high": 26.84,
+          "low": 25.66,
+          "bid": 25.85,
+          "ask": 25.86,
+          "volume": 34988829,
+          "amount": 917100220.0,
+          "date": "2026-03-23",
+          "time": "15:00:01",
+          "change": -1.29,
+          "change_pct": -4.75
+        },
+        "error": null
+      },
+      {
+        "code": "000882",
+        "name": "华联股份",
+        "success": true,
+        "data": {
+          "name": "华联股份",
+          "open": 1.67,
+          "prev_close": 1.69,
+          "price": 1.58,
+          "high": 1.67,
+          "low": 1.56,
+          "bid": 1.57,
+          "ask": 1.58,
+          "volume": 87467932,
+          "amount": 140926351.72,
+          "date": "2026-03-23",
+          "time": "15:00:00",
+          "change": -0.11,
+          "change_pct": -6.51
+        },
+        "error": null
+      }
+    ],
+    "analysis": {
+      "a50_signal": "⚠️ A50数据获取失败",
+      "north_signal": "🔴 北向资金大幅流出57628332032.00亿，外资看空A股",
+      "lhb_signal": "⚠️ 龙虎榜数据获取失败或暂无数据",
+      "holdings_impact": [
+        {
+          "code": "600460",
+          "name": "士兰微",
+          "price": 25.85,
+          "change_pct": -4.75,
+          "signal": "🟠 士兰微下跌-4.75%，关注支撑"
+        },
+        {
+          "code": "000882",
+          "name": "华联股份",
+          "price": 1.58,
+          "change_pct": -6.51,
+          "signal": "🔴 华联股份大跌-6.51%，注意止损"
+        }
+      ],
+      "suggestions": [
+        "⚠️ 北向资金大幅流出，控制仓位，关注蓝筹股",
+        "📉 士兰微跌幅较大，关注60日线支撑，跌破考虑止损",
+        "📉 华联股份跌幅较大，关注量能变化，缩量下跌可持有"
+      ]
+    }
+  }
+}

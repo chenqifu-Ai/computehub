@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>充电云科技 - 一人公司运营方案</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        
+        .slide {
+            width: 1200px;
+            height: 675px;
+            margin: 20px auto;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .slide-title {
+            font-size: 96px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .slide-subtitle {
+            font-size: 48px;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 40px;
+        }
+        
+        .content-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        .grid-5 {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+        }
+        
+        .card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-icon {
+            font-size: 100px;
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            font-size: 40px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #00d2ff;
+        }
+        
+        .card-desc {
+            font-size: 28px;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.6;
+        }
+        
+        .highlight {
+            color: #00d2ff;
+            font-weight: bold;
+        }
+        
+        .number {
+            font-size: 120px;
+            font-weight: bold;
+            color: #00d2ff;
+        }
+        
+        .unit {
+            font-size: 48px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #00d2ff, #3a7bd5);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding-left: 20px;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 5px;
+            width: 15px;
+            height: 15px;
+            background: #00d2ff;
+            border-radius: 50%;
+            border: 3px solid #1e3c72;
+        }
+        
+        .tag {
+            display: inline-block;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 28px;
+            margin: 5px;
+        }
+        
+        .logo {
+            font-size: 72px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .footer {
+            position: absolute;
+            bottom: 30px;
+            right: 50px;
+            font-size: 28px;
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .agent-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            margin: 0 auto 15px;
+        }
+        
+        .list-item {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 32px;
+        }
+        
+        .list-item:last-child {
+            border-bottom: none;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 封面 -->
+<div class="slide">
+    <div style="text-align: center; padding-top: 100px;">
+        <div style="font-size: 200px; margin-bottom: 30px;">⚡</div>
+        <h1 class="slide-title" style="font-size: 96px;">充电云科技</h1>
+        <div style="font-size: 64px; color: rgba(255,255,255,0.8); margin-bottom: 20px;">ChargeCloud Technology</div>
+        <div class="slide-subtitle" style="margin-top: 30px; font-size: 48px;">一人公司（OPC）智能运营方案</div>
+        <div style="margin-top: 50px;">
+            <span class="tag">AI驱动</span>
+            <span class="tag">智能协作</span>
+            <span class="tag">降本增效</span>
+        </div>
+    </div>
+    <div class="footer">2026年商业计划书</div>
+</div>
+
+<!-- 公司概念 -->
+<div class="slide">
+    <h1 class="slide-title" style="font-size: 56px;">一人公司（OPC）概念</h1>
+    <p class="slide-subtitle" style="font-size: 36px;">One Person Company - AI赋能的新型企业形态</p>
+    
+    <div class="grid-2">
+        <div class="content-box">
+            <h2 style="font-size: 48px; margin-bottom: 20px; color: #00d2ff;">🏛️ 传统公司 vs 一人公司</h2>
+            <div class="list-item">
+                <span style="color: #ff6b6b; font-size: 32px;">✗ 传统公司：</span>
+                <span style="font-size: 32px;">需要招聘团队、管理员工、支付薪酬</span>
+            </div>
+            <div class="list-item">
+                <span style="color: #51cf66; font-size: 32px;">✓ 一人公司：</span>
+                <span style="font-size: 32px;">AI智能体协作、按需调用、成本可控</span>
+            </div>
+            <div class="list-item">
+                <span style="color: #51cf66; font-size: 32px;">✓ 核心优势：</span>
+                <span style="font-size: 32px;">灵活、低成本、高效率、可扩展</span>
+            </div>
+        </div>
+        
+        <div class="content-box">
+            <h2 style="font-size: 48px; margin-bottom: 20px; color: #00d2ff;">🤖 充电云科技模式</h2>
+            <div class="list-item">
+                <span class="highlight" style="font-size: 32px;">唯一人类员工：</span>
+                <span style="font-size: 32px;">CEO - 小智（你）</span>
+            </div>
+            <div class="list-item">
+                <span class="highlight" style="font-size: 32px;">AI智能体团队：</span>
+                <span style="font-size: 32px;">5个专业智能体协作</span>
+            </div>
+            <div class="list-item">
+                <span class="highlight" style="font-size: 32px;">外包服务：</span>
+                <span style="font-size: 32px;">按需采购专业服务</span>
+            </div>
+            <div class="list-item">
+                <span class="highlight" style="font-size: 32px;">云基础设施：</span>
+                <span style="font-size: 32px;">SaaS化运营工具</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="content-box" style="text-align: center;">
+        <div style="font-size: 36px; color: rgba(255,255,255,0.8);">
+            一人公司 = 一个人 + AI智能体团队 + 云服务 + 外包协作网络
+        </div>
+    </div>
+</div>
+
+<!-- 组织架构 -->
+<div class="slide">
+    <h1 class="slide-title" style="font-size: 56px;">组织架构</h1>
+    <p class="slide-subtitle" style="font-size: 36px;">一人CEO + 五个智能体团队</p>
+    
+    <div style="text-align: center; margin-bottom: 30px;">
+        <div class="agent-avatar" style="width: 120px; height: 120px; font-size: 60px; margin: 0 auto;">
+            👨‍💼
+        </div>
+        <div style="font-size: 48px; font-weight: bold; color: #00d2ff;">CEO - 小智</div>
+        <div style="font-size: 32px; color: rgba(255,255,255,0.7);">战略决策 · 资源整合 · 对外代表</div>
+    </div>
+    
+    <div class="grid-5">
+        <div class="card">
+            <div class="agent-avatar" style="font-size: 50px;">💻</div>
+            <div class="card-title" style="font-size: 32px;">技术智能体</div>
+            <div class="card-desc" style="font-size: 26px;">
+                产品开发<br>
+                系统架构<br>
+                代码生成<br>
+                Bug修复
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="agent-avatar" style="font-size: 50px;">📊</div>
+            <div class="card-title" style="font-size: 32px;">运营智能体</div>
+            <div class="card-desc" style="font-size: 26px;">
+                数据分析<br>
+                用户运营<br>
+                活动策划<br>
+                内容生产
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="agent-avatar" style="font-size: 50px;">💰</div>
+            <div class="card-title" style="font-size: 32px;">财务智能体</div>
+            <div class="card-desc" style="font-size: 26px;">
+                财务报表<br>
+                成本控制<br>
+                税务筹划<br>
+                资金管理
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="agent-avatar" style="font-size: 50px;">📢</div>
+            <div class="card-title" style="font-size: 32px;">营销智能体</div>
+            <div class="card-desc" style="font-size: 26px;">
+                市场推广<br>
+                品牌建设<br>
+                SEO优化<br>
+                广告投放
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="agent-avatar" style="font-size: 50px;">🛠️</div>
+            <div class="card-title" style="font-size: 32px;">服务智能体</div>
+            <div class="card-desc" style="font-size: 26px;">
+                客户服务<br>
+                工单处理<br>
+                FAQ维护<br>
+                投诉处理
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 智能体详解 - 技术智能体 -->
+<div class="slide">
+    <h1 class="slide-title" style="font-size: 56px;">💻 技术智能体</h1>
+    <p class="slide-subtitle" style="font-size: 36px;">TechAgent - 产品研发与技术创新</p>
+    
+    <div class="grid-2">
+        <div class="content-box">
+            <h3 style="color: #00d2ff; margin-bottom: 20px; font-size: 40px;">核心能力</h3>
+            <div class="list-item" style="font-size: 32px;">✦ 产品设计：PRD文档、原型设计、UI/UX</div>
+            <div class="list-item" style="font-size: 32px;">✦ 架构设计：技术选型、系统架构、数据库设计</div>
+            <div class="list-item" style="font-size: 32px;">✦ 代码生成：后端API、前端页面、数据库脚本</div>
+            <div class="list-item" style="font-size: 32px;">✦ 测试保障：单元测试、集成测试、性能测试</div>
+            <div class="list-item" style="font-size: 32px;">✦ 运维支持：部署脚本、监控告警、故障排查</div>
+        </div>
+        
+        <div class="content-box">
+            <h3 style="color: #00d2ff; margin-bottom: 20px; font-size: 40px;">工作方式</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div style="font-weight: bold; font-size: 32px;">需求分析</div>
+                    <div style="color: rgba(255,255,255,0.7); font-size: 28px;">理解业务需求，生成技术方案</div>
+                </div>
+                <div class="timeline-item">
+                    <div style="font-weight: bold; font-size: 32px;">设计编码</div>
+                    <div style="color: rgba(255,255,255,0.7); font-size: 28px;">生成代码、编写文档</div>
+                </div>
+                <div class="timeline-item">
+                    <div style="font-weight: bold; font-size: 32px;">测试部署</div>
+                    <div style="color: rgba(255,255,255,0.7); font-size: 28px;">自动化测试、持续部署</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="content-box">
+        <h3 style="color: #00d2ff; margin-bottom: 15px; font-size: 40px;">产出示例</h3>
+        <div class="grid-3">
+            <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                <div style="font-size: 64px;">📝</div>
+                <div style="font-size: 32px;">PRD文档</div>
+                <div style="font-size: 24px; color: rgba(255,255,255,0.6);">产品需求规格</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                <div style="font-size: 64px;">🖥️</div>
+                <div style="font-size: 32px;">代码仓库</div>
+                <div style="font-size: 24px; color: rgba(255,255,255,0.6);">前后端代码</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                <div style="font-size: 64px;">📊</div>
+                <div style="font-size: 32px;">架构文档</div>
+                <div style="font-size: 24px; color: rgba(255,255,255,0.6);">技术架构说明</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 智能体详解 - 运营智能体 -->
+<div class="slide">
+    <h1 class="slide-title" style="font-size: 56px;">📊 运营智能体</h1>
+    <p class="slide-subtitle" style="font-size: 36px;">OpsAgent - 数据驱动精细化运营</p>
+    
+    <div class="grid-2">
+        <div class="content-box">
+            <h3 style="color: #00d2ff; margin-bottom: 20px; font-size: 40px;">核心能力</h3>
+            <div class="list-item" style="font-size: 32px;">✦ 数据分析：用户行为、运营指标、趋势预测</div>
+            <div class="list-item" style="font-size: 32px;">✦ 用户运营：用户画像、分层管理、生命周期</div>
+            <div class="list-item" style="font-size: 32px;">✦ 活动策划：活动方案、执行跟踪、效果评估</div>
+            <div class="list-item" style="font-size: 32px;">✦ 内容生产：文案撰写、图文设计、视频脚本</div>
+            <div class="list-item" style="font-size: 32px;">✦ 报表生成：日报、周报、月报、专项报告</div>
+        </div>
+        
+        <div class="content-box">
+            <h3 style="color: #00d2ff; margin-bottom: 20px; font-size: 40px;">数据看板</h3>
+            <div style="margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; font-size: 32px;">
+                    <span>用户增长</span>
+                    <span class="highlight">+23%</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 75%;"></div></div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; font-size: 32px;">
+                    <span>日活用户</span>
+                    <span class="highlight">1.2万</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 60%;"></div></div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; font-size: 32px;">
+                    <span>转化率</span>
+                    <span class="highlight">8.5%</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 85%;"></div></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="content-box">
+        <h3 style="color: #00d2ff; margin-bottom: 15px; font-size: 40px;">每日自动产出</h3>
+        <div class="grid-3">
+            <div style="text-align: center; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="font-size: 48px;">📈</div>
+                <div style="font-size: 28px;">运营日报</div>
+            </div>
+            <div style="text-align: center; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="font-size: 48px;">👥</div>
+                <div style="font-size: 28px;">用户分析</div>
+            </div>
+            <div style="text-align: center; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="font-size: 48px;">💡</div>
+                <div style="font-size: 28px;">优化建议</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 智能体详解 - 财务智能体 -->
+<div class="slide">
+    <h1 class="slide-title" style="font-size: 56px;">💰 财务智能体</h1>
+    <p class="slide-subtitle" style="font-size: 36px;">FinanceAgent - 财务管理与资金规划</p>
+    
+    <div class="grid-2">
+        <div class="content-box">
+            <h3 style="color: #00d2ff; margin-bottom: 20px; font-size: 40px;">核心能力</h3>
+            <div class="list-item" style="font-size: 32px;">✦ 账务处理：凭证生成、账簿管理、报表编制</div>
+            <div class="list-item" style="font-size: 32px;">✦ 成本控制：成本分析、预算管理、费用预警</div>
+            <div class="list-item" style="font-size: 32px;">✦ 税务筹划：税务计算、申报提醒、优惠政策</div>
+            <div class="list-item" style="font-size: 32px;">✦ 资金管理：现金流预测、资金调度、风险预警</div>
+            <div class="list-item" style="font-size: 32px;">✦ 发票管理：发票开具、验真、归档</div>
+        </div>
+        
+        <div class="content-box">
+            <h3 style="color: #00d2ff; margin-bottom: 20px; font-size: 40px;">财务概览</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div style="text-align: center; padding: 15px; background: rgba(0,210,255,0.1); border-radius: 10px;">
+                    <div style="font-size: 56px; font-weight: bold; color: #00d2ff;">¥85万</div>
+                    <div style="font-size: 28px; color: rgba(255,255,255,0.7);">本月收入</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: rgba(255,107,107,0.1); border-radius: 10px;">
+                    <div style="font-size: 56px; font-weight: bold; color: #ff6b6b;">¥32万</div>
+                    <div style="font-size: 28px; color: rgba(255,255,255,0.7);">本月支出</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: rgba(81,207,102,0.1); border-radius: 10px;">
+                    <div style="font-size: 56px; font-weight: bold; color: #51cf66;">¥53万</div>
+                    <div style="font-size: 28px; color: rgba(255,255,255,0.7);">本月盈利</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                    <div style="font-size: 56px; font-weight: bold;">62%</div>
+                    <div style="font-size: 28px; color: rgba(255,255,255,0.7);">毛利率</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="content-box">
+        <h3 style="color: #00d2ff; margin-bottom: 15px; font-size: 40px;">自动化产出</h3>
+        <div class="grid-3">
+            <div style="text-align: center; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="font-size: 48px;">📋</div>
+                <div style="font-size: 28px;">财务报表</div>
+            </div>
+            <div style="text-align: center; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="font-size: 48px;">💸</div>
+                <div style="font-size: 28px;">现金流预测</div>
+            </div>
+            <div style="text-align: center; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="font-size: 48px;">📊</div>
+                <div style="font-size: 28px;">成本分析</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 智能体详解 - 营销智能体 -->
+<div class="slide">
+    <h1 class="slide-title" style="font-size: 56px;">📢 营销智能体</h1>
+    <p class="slide-subtitle" style="font-size: 36px;">MarketingAgent - 品牌推广与获客增长</p>
+    
+    <div class="grid-2">
+        <div class="content-box">
+            <h3 style="color: #00d2ff; margin-bottom: 20px; font-size: 40px;">核心能力</h3>
+            <div class="list-item" style="font-size: 32px;">✦ 市场分析：行业趋势、竞品分析、机会识别</div>
+            <div class="list-item" style="font-size: 32px;">✦ 内容营销：文案创作、社交媒体、SEO优化</div>
+            <div class="list-item" style="font-size: 32px;">✦ 广告投放：渠道选择、预算分配、效果追踪</div>
+            <div class="list-item" style="font-size: 32px;">✦ 品牌建设：品牌定位、VI设计、传播策略</div>
+            <div class="list-item" style="font-size: 32px;">✦ 商务拓展：渠道合作、客户开发、谈判支持</div>
+        </div>
+        
+        <div class="content-box">
+            <h3 style="color: #00d2ff; margin-bottom: 20px; font-size: 40px;">营销渠道矩阵</h3>
+            <div style="margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; font-size: 32px;">
+                    <span>搜索引擎</span>
+                    <span>SEO优化</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 90%;"></div></div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; font-size: 32px;">
+                    <span>社交媒体</span>
+                    <span>内容运营</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 75%;"></div></div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; font-size: 32px;">
+                    <span>行业展会</span>
+                    <span>品牌曝光</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 60%;"></div></div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; font-size: 32px;">
+                    <span>口碑传播</span>
+                    <span>用户推荐</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 80%;"></div></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="content-box">
+        <h3 style="color: #00d2ff; margin-bottom: 15px; font-size: 40px;">内容产出能力</h3>
+        <div class="grid-3">
+            <div style="text-align: center; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="font-size: 48px;">📝</div>
+                <div style="font-size: 28px;">公众号文章</div>
+            </div>
+            <div style="text-align: center; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="font-size: 48px;">🎬</div>
+                <div style="font-size: 28px;">短视频脚本</div>
+            </div>
+            <div style="text-align: center; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="font-size: 48px;">🎨</div>
+                <div style="font-size: 28px;">海报设计</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 智能体详解 - 服务智能体 -->
+<div class="slide">
+    <h1 class="slide-title" style="font-size: 56px;">🛠️ 服务智能体</h1>
+    <p class="slide-subtitle" style="font-size: 36px;">ServiceAgent - 客户服务与问题处理</p>
+    
+    <div class="grid-2">
+        <div class="content-box">
+            <h3 style="color: #00d2ff; margin-bottom: 20px; font-size: 40px;">核心能力</h3>
+            <div class="list-item" style="font-size: 32px;">✦ 智能客服：7x24小时在线、多语言支持</div>
+            <div class="list-item" style="font-size: 32px;">✦ 工单处理：自动分类、智能派单、进度跟踪</div>
+            <div class="list-item" style="font-size: 32px;">✦ FAQ维护：知识库管理、答案优化、自动更新</div>
+            <div class="list-item" style="font-size: 32px;">✦ 投诉处理：情绪识别、升级机制、满意度跟踪</div>
+            <div class="list-item" style="font-size: 32px;">✦ 用户反馈：意见收集、分析报告、改进建议</div>
+        </div>
+        
+        <div class="content-box">
+            <h3 style="color: #00d2ff; margin-bottom: 20px; font-size: 40px;">服务指标</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div style="text-align: center; padding: 15px; background: rgba(81,207,102,0.1); border-radius: 10px;">
+                    <div style="font-size: 56px; font-weight: bold; color: #51cf66;">98%</div>
+                    <div style="font-size: 28px; color: rgba(255,255,255,0.7);">响应率</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: rgba(0,210,255,0.1); border-radius: 10px;">
+                    <div style="font-size: 56px; font-weight: bold; color: #00d2ff;">< 30s</div>
+                    <div style="font-size: 28px; color: rgba(255,255,255,0.7);">平均响应</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                    <div style="font-size: 56px; font-weight: bold;">85%</div>
+                    <div style="font-size: 28px; color: rgba(255,255,255,0.7);">自动解决率</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                    <div style="font-size: 56px; font-weight: bold;">4.8</div>
+                    <div style="font-size: 28px; color: rgba(255,255,255,0.7);">满意度评分</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="content-box">
+        <h3 style="color: #00d2ff; margin-bottom: 15px; font-size: 40px;">服务场景</h3>
+        <div class="grid-3">
+            <div style="text-align: center; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="font-size: 48px;">💬</div>
+                <div style="font-size: 28px;">在线咨询</div>
+            </div>
+            <div style="text-align: center; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="font-size: 48px;">📞</div>
+                <div style="font-size: 28px;">电话客服</div>
+            </div>
+            <div style="text-align: center; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="font-size: 48px;">📧</div>
+                <div style="font-size: 28px;">邮件处理</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 运营模式 -->
+<div class="slide">
+    <h1 class="slide-title" style="font-size: 56px;">运营模式</h1>
+    <p class="slide-subtitle" style="font-size: 36px;">AI驱动的高效协作流程</p>
+    
+    <div class="content-box" style="margin-bottom: 30px;">
+        <h3 style="color: #00d2ff; margin-bottom: 20px; text-align: center; font-size: 40px;">日常协作流程</h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 0;">
+            <div style="text-align: center; flex: 1;">
+                <div style="font-size: 80px; margin-bottom: 10px;">👨‍💼</div>
+                <div style="font-weight: bold; font-size: 32px;">CEO决策</div>
+                <div style="font-size: 24px; color: rgba(255,255,255,0.6);">设定目标</div>
+            </div>
+            <div style="font-size: 60px; color: #00d2ff;">→</div>
+            <div style="text-align: center; flex: 1;">
+                <div style="font-size: 80px; margin-bottom: 10px;">🤖</div>
+                <div style="font-weight: bold; font-size: 32px;">智能体执行</div>
+                <div style="font-size: 24px; color: rgba(255,255,255,0.6);">分工协作</div>
+            </div>
+            <div style="font-size: 60px; color: #00d2ff;">→</div>
+            <div style="text-align: center; flex: 1;">
+                <div style="font-size: 80px; margin-bottom: 10px;">📊</div>
+                <div style="font-weight: bold; font-size: 32px;">数据反馈</div>
+                <div style="font-size: 24px; color: rgba(255,255,255,0.6);">实时监控</div>
+            </div>
+            <div style="font-size: 60px; color: #00d2ff;">→</div>
+            <div style="text-align: center; flex: 1;">
+                <div style="font-size: 80px; margin-bottom: 10px;">🔄</div>
+                <div style="font-weight: bold; font-size: 32px;">持续优化</div>
+                <div style="font-size: 24px; color: rgba(255,255,255,0.6);">迭代改进</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid-2">
+        <div class="content-box">
+            <h3 style="color: #00d2ff; margin-bottom: 15px; font-size: 40px;">CEO职责</h3>
+            <div class="list-item" style="font-size: 32px;">◆ 战略规划与方向决策</div>
+            <div class="list-item" style="font-size: 32px;">◆ 核心客户关系维护</div>
+            <div class="list-item" style="font-size: 32px;">◆ 资源整合与融资</div>
+            <div class="list-item" style="font-size: 32px;">◆ 重大问题最终决策</div>
+        </div>
+        
+        <div class="content-box">
+            <h3 style="color: #00d2ff; margin-bottom: 15px; font-size: 40px;">智能体职责</h3>
+            <div class="list-item" style="font-size: 32px;">◆ 执行具体工作任务</div>
+            <div class="list-item" style="font-size: 32px;">◆ 提供专业建议方案</div>
+            <div class="list-item" style="font-size: 32px;">◆ 自动化日常运营</div>
+            <div class="list-item" style="font-size: 32px;">◆ 数据分析与报告</div>
+        </div>
+    </div>
+</div>
+
+<!-- 成本结构 -->
+<div class="slide">
+    <h1 class="slide-title" style="font-size: 56px;">成本结构对比</h1>
+    <p class="slide-subtitle" style="font-size: 36px;">一人公司 vs 传统团队</p>
+    
+    <div class="grid-2">
+        <div class="content-box">
+            <h3 style="color: #ff6b6b; margin-bottom: 20px; font-size: 40px;">传统团队成本（年）</h3>
+            <div class="list-item" style="font-size: 32px;">
+                <span>CEO</span>
+                <span style="float: right; color: #ff6b6b;">¥30-50万</span>
+            </div>
+            <div class="list-item" style="font-size: 32px;">
+                <span>CTO</span>
+                <span style="float: right; color: #ff6b6b;">¥25-40万</span>
+            </div>
+            <div class="list-item" style="font-size: 32px;">
+                <span>产品经理</span>
+                <span style="float: right; color: #ff6b6b;">¥15-25万</span>
+            </div>
+            <div class="list-item" style="font-size: 32px;">
+                <span>开发工程师 x3</span>
+                <span style="float: right; color: #ff6b6b;">¥36-60万</span>
+            </div>
+            <div class="list-item" style="font-size: 32px;">
+                <span>运营 x2</span>
+                <span style="float: right; color: #ff6b6b;">¥16-30万</span>
+            </div>
+            <div class="list-item" style="font-size: 32px;">
+                <span>财务/行政</span>
+                <span style="float: right; color: #ff6b6b;">¥10-15万</span>
+            </div>
+            <div style="border-top: 1px solid rgba(255,255,255,0.3); padding-top: 10px; margin-top: 10px;">
+                <span style="font-weight: bold; font-size: 32px;">合计</span>
+                <span style="float: right; font-weight: bold; color: #ff6b6b; font-size: 40px;">¥132-220万</span>
+            </div>
+        </div>
+        
+        <div class="content-box">
+            <h3 style="color: #51cf66; margin-bottom: 20px; font-size: 40px;">一人公司成本（年）</h3>
+            <div class="list-item" style="font-size: 32px;">
+                <span>AI服务订阅</span>
+                <span style="float: right; color: #51cf66;">¥2-5万</span>
+            </div>
+            <div class="list-item" style="font-size: 32px;">
+                <span>云服务器</span>
+                <span style="float: right; color: #51cf66;">¥1-3万</span>
+            </div>
+            <div class="list-item" style="font-size: 32px;">
+                <span>SaaS工具</span>
+                <span style="float: right; color: #51cf66;">¥1-2万</span>
+            </div>
+            <div class="list-item" style="font-size: 32px;">
+                <span>外包服务</span>
+                <span style="float: right; color: #51cf66;">¥5-10万</span>
+            </div>
+            <div class="list-item" style="font-size: 32px;">
+                <span>办公场地（远程）</span>
+                <span style="float: right; color: #51cf66;">¥0</span>
+            </div>
+            <div class="list-item" style="font-size: 32px;">
+                <span>社保公积金（自己）</span>
+                <span style="float: right; color: #51cf66;">¥3-5万</span>
+            </div>
+            <div style="border-top: 1px solid rgba(255,255,255,0.3); padding-top: 10px; margin-top: 10px;">
+                <span style="font-weight: bold; font-size: 32px;">合计</span>
+                <span style="float: right; font-weight: bold; color: #51cf66; font-size: 40px;">¥12-25万</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="content-box" style="text-align: center; background: linear-gradient(135deg, rgba(81,207,102,0.2), rgba(0,210,255,0.2));">
+        <div style="font-size: 72px; font-weight: bold; color: #51cf66;">
+            成本降低 90%+
+        </div>
+        <div style="font-size: 32px; color: rgba(255,255,255,0.8); margin-top: 10px;">
+            同样的事情，一人公司仅需传统团队的十分之一成本
+        </div>
+    </div>
+</div>
+
+<!-- 发展规划 -->
+<div class="slide">
+    <h1 class="slide-title" style="font-size: 56px;">发展规划</h1>
+    <p class="slide-subtitle" style="font-size: 36px;">三年发展路径</p>
+    
+    <div class="grid-3">
+        <div class="content-box" style="background: linear-gradient(135deg, rgba(0,210,255,0.2), rgba(58,123,213,0.2));">
+            <h3 style="color: #00d2ff; margin-bottom: 20px; font-size: 40px;">第一年</h3>
+            <div style="font-size: 32px; font-weight: bold; margin-bottom: 15px;">产品验证</div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div style="font-size: 28px;">Q1：公司注册</div>
+                </div>
+                <div class="timeline-item">
+                    <div style="font-size: 28px;">Q2：MVP上线</div>
+                </div>
+                <div class="timeline-item">
+                    <div style="font-size: 28px;">Q3：种子用户</div>
+                </div>
+                <div class="timeline-item">
+                    <div style="font-size: 28px;">Q4：V1.0发布</div>
+                </div>
+            </div>
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.2);">
+                <div style="font-size: 48px; font-weight: bold; color: #00d2ff;">10家商户</div>
+                <div style="font-size: 28px; color: rgba(255,255,255,0.7);">月活1万用户</div>
+            </div>
+        </div>
+        
+        <div class="content-box" style="background: linear-gradient(135deg, rgba(81,207,102,0.2), rgba(0,210,255,0.2));">
+            <h3 style="color: #51cf66; margin-bottom: 20px; font-size: 40px;">第二年</h3>
+            <div style="font-size: 32px; font-weight: bold; margin-bottom: 15px;">规模扩张</div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div style="font-size: 28px;">Q1：功能完善</div>
+                </div>
+                <div class="timeline-item">
+                    <div style="font-size: 28px;">Q2：市场推广</div>
+                </div>
+                <div class="timeline-item">
+                    <div style="font-size: 28px;">Q3：区域扩张</div>
+                </div>
+                <div class="timeline-item">
+                    <div style="font-size: 28px;">Q4：盈亏平衡</div>
+                </div>
+            </div>
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.2);">
+                <div style="font-size: 48px; font-weight: bold; color: #51cf66;">100家商户</div>
+                <div style="font-size: 28px; color: rgba(255,255,255,0.7);">月活10万用户</div>
+            </div>
+        </div>
+        
+        <div class="content-box" style="background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,107,107,0.2));">
+            <h3 style="color: #ffd700; margin-bottom: 20px; font-size: 40px;">第三年</h3>
+            <div style="font-size: 32px; font-weight: bold; margin-bottom: 15px;">生态建设</div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div style="font-size: 28px;">Q1：开放平台</div>
+                </div>
+                <div class="timeline-item">
+                    <div style="font-size: 28px;">Q2：生态合作</div>
+                </div>
+                <div class="timeline-item">
+                    <div style="font-size: 28px;">Q3：全国覆盖</div>
+                </div>
+                <div class="timeline-item">
+                    <div style="font-size: 28px;">Q4：融资/盈利</div>
+                </div>
+            </div>
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.2);">
+                <div style="font-size: 48px; font-weight: bold; color: #ffd700;">1000家商户</div>
+                <div style="font-size: 28px; color: rgba(255,255,255,0.7);">月活100万用户</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 财务预测 -->
+<div class="slide">
+    <h1 class="slide-title" style="font-size: 56px;">财务预测</h1>
+    <p class="slide-subtitle" style="font-size: 36px;">三年收入预测</p>
+    
+    <div class="content-box" style="margin-bottom: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; text-align: center;">
+            <div>
+                <div style="font-size: 28px; color: rgba(255,255,255,0.7);">项目</div>
+                <div style="font-weight: bold; margin-top: 10px; font-size: 32px;">Y1</div>
+            </div>
+            <div>
+                <div style="font-size: 28px; color: rgba(255,255,255,0.7);">SaaS订阅</div>
+                <div style="font-weight: bold; margin-top: 10px; color: #00d2ff; font-size: 32px;">¥50万</div>
+            </div>
+            <div>
+                <div style="font-size: 28px; color: rgba(255,255,255,0.7);">交易佣金</div>
+                <div style="font-weight: bold; margin-top: 10px; color: #00d2ff; font-size: 32px;">¥20万</div>
+            </div>
+            <div>
+                <div style="font-size: 28px; color: rgba(255,255,255,0.7);">增值服务</div>
+                <div style="font-weight: bold; margin-top: 10px; color: #00d2ff; font-size: 32px;">¥10万</div>
+            </div>
+            <div>
+                <div style="font-size: 28px; color: rgba(255,255,255,0.7);">合计</div>
+                <div style="font-weight: bold; margin-top: 10px; color: #51cf66; font-size: 32px;">¥80万</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid-2">
+        <div class="content-box">
+            <h3 style="color: #00d2ff; margin-bottom: 15px; font-size: 40px;">收入增长预测</h3>
+            <div style="height: 200px; display: flex; align-items: flex-end; justify-content: space-around; padding-top: 20px;">
+                <div style="text-align: center;">
+                    <div style="width: 80px; height: 50px; background: linear-gradient(180deg, #00d2ff, #3a7bd5); border-radius: 5px 5px 0 0;"></div>
+                    <div style="font-size: 28px; margin-top: 5px;">Y1</div>
+                    <div style="font-size: 24px; color: #00d2ff;">¥80万</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="width: 80px; height: 160px; background: linear-gradient(180deg, #00d2ff, #3a7bd5); border-radius: 5px 5px 0 0;"></div>
+                    <div style="font-size: 28px; margin-top: 5px;">Y2</div>
+                    <div style="font-size: 24px; color: #00d2ff;">¥520万</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="width: 80px; height: 250px; background: linear-gradient(180deg, #51cf66, #00d2ff); border-radius: 5px 5px 0 0;"></div>
+                    <div style="font-size: 28px; margin-top: 5px;">Y3</div>
+                    <div style="font-size: 24px; color: #51cf66;">¥1500万</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content-box">
+            <h3 style="color: #00d2ff; margin-bottom: 15px; font-size: 40px;">盈利预测</h3>
+            <div style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 32px;">
+                    <span>Y1 毛利率</span>
+                    <span style="color: #ff6b6b;">-50%</span>
+                </div>
+                <div style="font-size: 24px; color: rgba(255,255,255,0.6);">投入期，亏损正常</div>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 32px;">
+                    <span>Y2 毛利率</span>
+                    <span style="color: #ffd700;">15%</span>
+                </div>
+                <div style="font-size: 24px; color: rgba(255,255,255,0.6);">盈亏平衡点</div>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 32px;">
+                    <span>Y3 毛利率</span>
+                    <span style="color: #51cf66;">55%</span>
+                </div>
+                <div style="font-size: 24px; color: rgba(255,255,255,0.6);">规模效应显现</div>
+            </div>
+            <div style="background: rgba(81,207,102,0.2); padding: 15px; border-radius: 10px; text-align: center;">
+                <div style="font-size: 28px; color: rgba(255,255,255,0.8);">Y3净利润</div>
+                <div style="font-size: 56px; font-weight: bold; color: #51cf66;">¥500万+</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 核心优势 -->
+<div class="slide">
+    <h1 class="slide-title" style="font-size: 56px;">核心优势</h1>
+    <p class="slide-subtitle" style="font-size: 36px;">一人公司的独特竞争力</p>
+    
+    <div class="grid-3">
+        <div class="card" style="padding: 30px;">
+            <div class="card-icon" style="font-size: 80px;">💰</div>
+            <div class="card-title" style="font-size: 36px;">极低成本</div>
+            <div class="card-desc" style="font-size: 28px;">
+                无需招聘团队<br>
+                无需办公室<br>
+                成本降低90%<br>
+                轻资产运营
+            </div>
+        </div>
+        
+        <div class="card" style="padding: 30px;">
+            <div class="card-icon" style="font-size: 80px;">⚡</div>
+            <div class="card-title" style="font-size: 36px;">高效执行</div>
+            <div class="card-desc" style="font-size: 28px;">
+                AI 24/7工作<br>
+                即时响应<br>
+                无沟通成本<br>
+                快速迭代
+            </div>
+        </div>
+        
+        <div class="card" style="padding: 30px;">
+            <div class="card-icon" style="font-size: 80px;">🔄</div>
+            <div class="card-title" style="font-size: 36px;">灵活敏捷</div>
+            <div class="card-desc" style="font-size: 28px;">
+                快速决策<br>
+                方向调整<br>
+                按需扩展<br>
+                低试错成本
+            </div>
+        </div>
+        
+        <div class="card" style="padding: 30px;">
+            <div class="card-icon" style="font-size: 80px;">📊</div>
+            <div class="card-title" style="font-size: 36px;">数据驱动</div>
+            <div class="card-desc" style="font-size: 28px;">
+                全程数据化<br>
+                智能分析<br>
+                精准决策<br>
+                持续优化
+            </div>
+        </div>
+        
+        <div class="card" style="padding: 30px;">
+            <div class="card-icon" style="font-size: 80px;">🚀</div>
+            <div class="card-title" style="font-size: 36px;">快速启动</div>
+            <div class="card-desc" style="font-size: 28px;">
+                无团队搭建<br>
+                即时启动<br>
+                边做边学<br>
+                快速验证
+            </div>
+        </div>
+        
+        <div class="card" style="padding: 30px;">
+            <div class="card-icon" style="font-size: 80px;">🎯</div>
+            <div class="card-title" style="font-size: 36px;">专注核心</div>
+            <div class="card-desc" style="font-size: 28px;">
+                聚焦核心业务<br>
+                AI处理杂务<br>
+                战略优先<br>
+                价值最大化
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 结束页 -->
+<div class="slide">
+    <div style="text-align: center; padding-top: 100px;">
+        <div style="font-size: 160px; margin-bottom: 30px;">⚡</div>
+        <h1 class="slide-title" style="font-size: 96px;">充电云科技</h1>
+        <div style="font-size: 48px; color: rgba(255,255,255,0.8); margin-bottom: 20px;">
+            ChargeCloud Technology
+        </div>
+        <div style="font-size: 36px; color: rgba(255,255,255,0.6); margin-bottom: 50px;">
+            一人公司 · AI驱动 · 智能运营
+        </div>
+        
+        <div style="margin: 50px 0;">
+            <div style="font-size: 36px; color: rgba(255,255,255,0.8); margin-bottom: 15px;">
+                <span style="color: #00d2ff;">愿景：</span>让充电更智能、更高效、更便捷
+            </div>
+            <div style="font-size: 36px; color: rgba(255,255,255,0.8); margin-bottom: 15px;">
+                <span style="color: #00d2ff;">使命：</span>AI赋能，重新定义企业运营
+            </div>
+            <div style="font-size: 36px; color: rgba(255,255,255,0.8);">
+                <span style="color: #00d2ff;">价值观：</span>创新、高效、共赢
+            </div>
+        </div>
+        
+        <div style="margin-top: 80px;">
+            <div style="font-size: 32px; color: rgba(255,255,255,0.6);">
+                联系方式：xiaozhi@chargecloud.com
+            </div>
+        </div>
+    </div>
+    <div class="footer">2026年商业计划书 | 充电云科技</div>
+</div>
+
+</body>
+</html>

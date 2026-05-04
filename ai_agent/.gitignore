@@ -1,0 +1,7 @@
+# 适配层忽略文件
+.env
+__pycache__/
+*.pyc
+*.log
+results/token_usage.jsonl
+results/conversation_debug.jsonl

@@ -1,0 +1,260 @@
+# 数据智能体 - 数据驱动引擎配置
+# GlobalTokenHub - 国际化数字资产交易平台
+# 版本：v1.0
+# 创建时间：2026-04-19
+
+agent:
+  id: data-agent
+  name: "数据智能体"
+  role: data_analytics
+  description: "负责数据采集、清洗、分析、预测和可视化报告"
+  
+  # 模型配置
+  model:
+    provider: ollama-cloud
+    name: qwen3.5:35b
+    context_window: 128000
+    temperature: 0.6
+    max_tokens: 4096
+  
+  # 技能配置
+  skills:
+    - name: network-expert
+      priority: high
+      auto_load: true
+    - name: finance-expert
+      priority: low
+      auto_load: false
+  
+  # 核心职责
+  responsibilities:
+    - data_collection
+    - data_analysis
+    - predictive_modeling
+    - data_visualization
+    - market_intelligence
+    - data_quality_management
+  
+  # 权限配置
+  permissions:
+    data_access:
+      - read_all_databases
+      - read_blockchain_data
+      - read_market_data
+      - read_user_analytics
+    actions:
+      - create_data_pipelines
+      - run_analytics_queries
+      - train_ml_models
+      - generate_reports
+      - send_data_alerts
+    restrictions:
+      - no_user_pii_export
+      - no_trading_data_external
+      - data_retention_policy_enforcement: true
+  
+  # 数据源配置
+  data_sources:
+    internal:
+      - name: postgresql_trading
+        type: relational
+        tables:
+          - orders
+          - trades
+          - users
+          - wallets
+        sync_frequency: real_time
+      
+      - name: redis_cache
+        type: key_value
+        purpose: real_time_metrics
+        ttl_hours: 24
+      
+      - name: blockchain_nodes
+        type: blockchain
+        chains:
+          - bitcoin
+          - ethereum
+          - bsc
+          - polygon
+        sync_frequency: real_time
+    
+    external:
+      - name: market_data_api
+        type: api
+        providers:
+          - coinmarketcap
+          - coingecko
+          - binance_api
+        sync_frequency: 1_minute
+      
+      - name: news_sentiment
+        type: api
+        providers:
+          - twitter_api
+          - news_api
+        sync_frequency: 5_minutes
+      
+      - name: on_chain_data
+        type: blockchain
+        providers:
+          - etherscan
+          - blockchain_com
+        sync_frequency: 10_minutes
+  
+  # 分析模型配置
+  analytics_models:
+    descriptive:
+      - name: trading_dashboard
+        metrics:
+          - trading_volume
+          - active_users
+          - order_book_depth
+          - price_spreads
+        update_frequency: 1_minute
+      
+      - name: user_cohort_analysis
+        dimensions:
+          - signup_date
+          - geography
+          - user_type
+        metrics:
+          - retention_rate
+          - trading_frequency
+          - lifetime_value
+        update_frequency: daily
+    
+    predictive:
+      - name: volume_forecast
+        algorithm: prophet
+        horizon_days: 30
+        features:
+          - historical_volume
+          - market_volatility
+          - news_sentiment
+        update_frequency: daily
+      
+      - name: user_churn_prediction
+        algorithm: xgboost
+        horizon_days: 30
+        features:
+          - trading_frequency
+          - last_login_days
+          - portfolio_performance
+        update_frequency: daily
+      
+      - name: market_volatility_prediction
+        algorithm: lstm
+        horizon_days: 7
+        features:
+          - historical_volatility
+          - options_data
+          - funding_rates
+        update_frequency: hourly
+    
+    prescriptive:
+      - name: fee_optimization
+        objective: maximize_revenue
+        constraints:
+          - competitive_positioning
+          - user_retention
+        update_frequency: weekly
+      
+      - name: liquidity_optimization
+        objective: minimize_slippage
+        constraints:
+          - capital_efficiency
+          - risk_limits
+        update_frequency: daily
+  
+  # 数据质量配置
+  data_quality:
+    checks:
+      - type: completeness
+        threshold: 0.999
+        action: alert_and_repair
+      - type: accuracy
+        threshold: 0.999
+        action: alert_and_investigate
+      - type: consistency
+        threshold: 0.999
+        action: alert_and_reconcile
+      - type: timeliness
+        threshold: 1_minute
+        action: alert_and_escalate
+    
+    monitoring:
+      frequency: continuous
+      dashboard: real_time
+  
+  # 自动化任务
+  automation:
+    real_time_tasks:
+      - trigger: data_anomaly
+        action: investigate_and_alert
+        priority: high
+      - trigger: pipeline_failure
+        action: auto_retry_and_alert
+        priority: high
+      - trigger: market_event
+        action: send_market_alert
+        priority: medium
+    
+    daily_tasks:
+      - time: "06:00"
+        task: overnight_data_collection
+        description: "采集夜间数据"
+      - time: "08:00"
+        task: daily_analytics_report
+        description: "生成数据分析日报"
+      - time: "23:00"
+        task: data_backup_and_archive
+        description: "数据备份和归档"
+    
+    weekly_tasks:
+      - day: Monday
+        time: "09:00"
+        task: weekly_data_quality_report
+        description: "数据质量周报"
+      - day: Wednesday
+        time: "14:00"
+        task: model_retraining
+        description: "预测模型重新训练"
+      - day: Friday
+        time: "16:00"
+        task: weekly_insights_summary
+        description: "本周数据洞察汇总"
+    
+    monthly_tasks:
+      - day: 1
+        time: "10:00"
+        task: monthly_data_audit
+        description: "月度数据审计"
+      - day: 5
+        time: "14:00"
+        task: model_performance_review
+        description: "模型性能评估和优化"
+  
+  # 监控指标
+  kpis:
+    - name: 数据准确率
+      target: "≥99.9%"
+      measurement: continuous
+    - name: 数据及时性
+      target: "≤1 分钟延迟"
+      measurement: continuous
+    - name: 预测准确率
+      target: "≥85%"
+      measurement: weekly
+    - name: 管道可用性
+      target: "≥99.99%"
+      measurement: daily
+    - name: 报告生成自动化率
+      target: "100%"
+      measurement: monthly
+    - name: 数据质量得分
+      target: "≥98/100"
+      measurement: weekly
+    - name: 洞察采纳率
+      target: "≥75%"
+      measurement: monthly

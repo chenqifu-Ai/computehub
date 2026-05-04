@@ -1,0 +1,131 @@
+{
+  "holdings_analysis": [
+    {
+      "holding": {
+        "股票": "华联股份",
+        "代码": "000882",
+        "数量": 13500,
+        "成本价": 1.873,
+        "当前价": 1.66,
+        "止损位": 1.6,
+        "止盈位": 2.0,
+        "浮动盈亏": "-11.37% (-¥2,875.50)"
+      },
+      "stock_data": {
+        "name": "华联股份",
+        "code": "000882",
+        "current_price": 1.64,
+        "open_price": 1.62,
+        "close_price": 1.63,
+        "high": 221197.0,
+        "low": 1.63,
+        "volume": 530351,
+        "timestamp": "2026-04-10T23:40:15.802467"
+      },
+      "analysis": {
+        "current_price": 1.64,
+        "profit_loss": -3145.5000000000014,
+        "profit_loss_rate": -12.439935931660443,
+        "stop_loss_distance": 2.4390243902438913,
+        "risk_level": "高风险",
+        "market_value": 22140.0
+      }
+    }
+  ],
+  "watchlist_analysis": [
+    {
+      "stock": {
+        "symbol": "000001.SZ",
+        "name": "平安银行",
+        "alert_price": null
+      },
+      "stock_data": {
+        "name": "平安银行",
+        "code": "000001",
+        "current_price": 11.09,
+        "open_price": 11.1,
+        "close_price": 11.1,
+        "high": 265202.0,
+        "low": 11.08,
+        "volume": 481047,
+        "timestamp": "2026-04-10T23:40:15.877025"
+      }
+    },
+    {
+      "stock": {
+        "symbol": "600000.SH",
+        "name": "浦发银行",
+        "alert_price": null
+      },
+      "stock_data": {
+        "name": "浦发银行",
+        "code": "600000",
+        "current_price": 9.89,
+        "open_price": 9.93,
+        "close_price": 9.93,
+        "high": 251104.0,
+        "low": 9.89,
+        "volume": 426585,
+        "timestamp": "2026-04-10T23:40:15.953629"
+      }
+    },
+    {
+      "stock": {
+        "symbol": "601398.SH",
+        "name": "工商银行",
+        "alert_price": null
+      },
+      "stock_data": {
+        "name": "工商银行",
+        "code": "601398",
+        "current_price": 7.31,
+        "open_price": 7.33,
+        "close_price": 7.31,
+        "high": 1026461.0,
+        "low": 7.3,
+        "volume": 1992449,
+        "timestamp": "2026-04-10T23:40:16.029053"
+      }
+    },
+    {
+      "stock": {
+        "symbol": "000858.SZ",
+        "name": "五粮液",
+        "alert_price": null
+      },
+      "stock_data": {
+        "name": "五 粮 液",
+        "code": "000858",
+        "current_price": 102.07,
+        "open_price": 102.6,
+        "close_price": 102.61,
+        "high": 83123.0,
+        "low": 102.07,
+        "volume": 122424,
+        "timestamp": "2026-04-10T23:40:16.113792"
+      }
+    },
+    {
+      "stock": {
+        "symbol": "600519.SH",
+        "name": "贵州茅台",
+        "alert_price": null
+      },
+      "stock_data": {
+        "name": "贵州茅台",
+        "code": "600519",
+        "current_price": 1453.96,
+        "open_price": 1460.49,
+        "close_price": 1459.14,
+        "high": 16578.0,
+        "low": 1453.8,
+        "volume": 28866,
+        "timestamp": "2026-04-10T23:40:16.198155"
+      }
+    }
+  ],
+  "alerts": [
+    "⚠️ 华联股份 亏损超过10%，建议密切关注"
+  ],
+  "timestamp": "2026-04-10T23:40:15.700378"
+}

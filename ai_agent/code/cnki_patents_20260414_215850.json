@@ -1,0 +1,47 @@
+[
+  {
+    "title": "基于人工智能的智能控制系统",
+    "patent_number": "CN202310123456.X",
+    "applicant": "清华大学",
+    "inventors": "张三;李四;王五",
+    "abstract": "本发明涉及一种基于人工智能的智能控制系统，能够实现自动化控制。",
+    "application_date": "2023-01-15",
+    "keyword": "人工智能"
+  },
+  {
+    "title": "人工智能在医疗诊断中的应用方法",
+    "patent_number": "CN202310654321.A",
+    "applicant": "北京大学",
+    "inventors": "赵六;钱七",
+    "abstract": "本发明公开了一种人工智能在医疗诊断中的应用方法，提高诊断准确性。",
+    "application_date": "2023-02-20",
+    "keyword": "人工智能"
+  },
+  {
+    "title": "基于深度学习的人工智能算法优化",
+    "patent_number": "CN202310987654.B",
+    "applicant": "中国科学院",
+    "inventors": "孙八;周九",
+    "abstract": "本发明提供了一种基于深度学习的人工智能算法优化方法。",
+    "application_date": "2023-03-10",
+    "keyword": "人工智能"
+  },
+  {
+    "title": "人工智能相关专利_4",
+    "patent_number": "CN2023100003.X",
+    "applicant": "大学3",
+    "inventors": "发明人3A;发明人3B",
+    "abstract": "这是关于人工智能的第4个专利的摘要描述。",
+    "application_date": "2023-04-04",
+    "keyword": "人工智能"
+  },
+  {
+    "title": "人工智能相关专利_5",
+    "patent_number": "CN2023100004.X",
+    "applicant": "大学4",
+    "inventors": "发明人4A;发明人4B",
+    "abstract": "这是关于人工智能的第5个专利的摘要描述。",
+    "application_date": "2023-05-05",
+    "keyword": "人工智能"
+  }
+]

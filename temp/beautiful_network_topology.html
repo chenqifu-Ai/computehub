@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌐 网络拓扑结构图</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .header p {
+            margin: 10px 0 0;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 40px;
+        }
+        .network-diagram {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .device-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-left: 5px solid #4CAF50;
+        }
+        .device-card.problem {
+            border-left-color: #FF6B6B;
+        }
+        .device-card.restricted {
+            border-left-color: #FFD93D;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .status.ok {
+            background: #4CAF50;
+            color: white;
+        }
+        .status.problem {
+            background: #FF6B6B;
+            color: white;
+        }
+        .status.restricted {
+            background: #FFD93D;
+            color: #333;
+        }
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .section-title {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin: 40px 0 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 网络拓扑结构图</h1>
+            <p>专业网络设备关系可视化 | 生成时间: 2026-04-03 10:39</p>
+        </div>
+        
+        <div class="content">
+            <h2 class="section-title">网络环境概览</h2>
+            
+            <div class="network-diagram">
+                <pre>
+┌─────────────────────────────────────────────────────────────┐
+│                    🏠 本地网络环境 (LAN)                     │
+│                  📶 WiFi网络: 192.168.2.0/24                │
+└─────────────────────────────────────────────────────────────┘
+                            🌐
+             ┌──────────────┼──────────────┐
+             │              │              │
+┌────────────▼─────┐ ┌──────▼──────┐ ┌─────▼─────────┐
+│    📱 Redmi设备   │ │  📱 华为手机  │ │   🚫 其他设备   │
+│   (控制中心)     │ │  (目标设备)  │ │  (禁止扫描)    │
+├──────────────────┤ ├─────────────┤ ├───────────────┤
+│ IP: 192.168.2.134│ │IP:192.168.2.156││IP:192.168.2.7  │
+│ 状态: ✅ 正常    │ │ 状态: ❌ 问题 ││IP:192.168.2.29 │
+│ OpenClaw: ✅运行 │ │OpenClaw: LAN绑定││   (禁止访问)   │
+│ bind: 0.0.0.0    │ │bind: 127.0.0.1 ││               │
+└──────────────────┘ └─────────────┘ └───────────────┘
+                </pre>
+            </div>
+
+            <h2 class="section-title">设备详细信息</h2>
+            
+            <div class="grid">
+                <div class="device-card">
+                    <h3>📱 Redmi设备 (控制中心)</h3>
+                    <div class="status ok">✅ 正常运行</div>
+                    <p><strong>IP地址:</strong> 192.168.2.134</p>
+                    <p><strong>角色:</strong> OpenClaw TUI客户端</p>
+                    <p><strong>配置:</strong> bind: 0.0.0.0:18789</p>
+                    <p><strong>状态:</strong> 可网络访问 ✅</p>
+                </div>
+
+                <div class="device-card problem">
+                    <h3>📱 华为手机 (目标设备)</h3>
+                    <div class="status problem">❌ 需要修复</div>
+                    <p><strong>IP地址:</strong> 192.168.2.156</p>
+                    <p><strong>用户名:</strong> u0_a46</p>
+                    <p><strong>设备型号:</strong> HWI-AL00</p>
+                    <p><strong>问题:</strong> bind: 127.0.0.1:18789</p>
+                    <p><strong>状态:</strong> 只能本地访问 ❌</p>
+                </div>
+
+                <div class="device-card restricted">
+                    <h3>🚫 其他设备 (禁止访问)</h3>
+                    <div class="status restricted">⛔ 安全边界</div>
+                    <p><strong>IP地址:</strong> 192.168.2.7, 192.168.2.29</p>
+                    <p><strong>策略:</strong> 禁止扫描和访问</p>
+                    <p><strong>状态:</strong> 受保护 ⛔</p>
+                </div>
+            </div>
+
+            <h2 class="section-title">🔧 问题诊断</h2>
+            
+            <div class="device-card problem">
+                <h3>华为手机 LAN 绑定问题</h3>
+                <p><strong>根本原因:</strong> OpenClaw服务绑定到127.0.0.1而不是0.0.0.0</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+                    <div style="background: #4CAF50; color: white; padding: 15px; border-radius: 10px;">
+                        <h4>✅ 本地访问</h4>
+                        <p>127.0.0.1:18789</p>
+                        <p>状态: 正常</p>
+                    </div>
+                    <div style="background: #FF6B6B; color: white; padding: 15px; border-radius: 10px;">
+                        <h4>❌ 网络访问</h4>
+                        <p>192.168.2.156:18789</p>
+                        <p>状态: 失败</p>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="section-title">🛠️ 修复方案</h2>
+            
+            <div class="code-block">
+                <h4>在华为手机上执行以下命令：</h4>
+                <pre>
+# 1. 查看当前配置
+cat ~/.openclaw/config/gateway.conf
+
+# 2. 修改bind地址为0.0.0.0
+sed -i 's/127\.0\.0\.1/0.0.0.0/g' ~/.openclaw/config/gateway.conf
+sed -i 's/localhost/0.0.0.0/g' ~/.openclaw/config/gateway.conf
+
+# 3. 重启OpenClaw服务
+pkill -f openclaw
+cd ~/.openclaw && nohup openclaw gateway start > gateway.log 2>&1 &
+
+# 4. 验证修复
+curl http://192.168.2.156:18789/status
+                </pre>
+            </div>
+
+            <h2 class="section-title">🔒 安全策略</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="background: #4CAF50; color: white; padding: 20px; border-radius: 10px;">
+                    <h3>✅ 允许访问</h3>
+                    <ul>
+                        <li>192.168.2.134 (Redmi控制中心)</li>
+                        <li>192.168.2.156 (华为目标设备)</li>
+                    </ul>
+                </div>
+                <div style="background: #FFD93D; color: #333; padding: 20px; border-radius: 10px;">
+                    <h3>⛔ 禁止访问</h3>
+                    <ul>
+                        <li>192.168.2.7 (安全边界)</li>
+                        <li>192.168.2.29 (安全边界)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

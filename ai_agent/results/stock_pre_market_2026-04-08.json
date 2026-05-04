@@ -1,0 +1,40 @@
+{
+  "task_type": "pre_market_monitor",
+  "execution_time": "2026-04-08T08:20:56.385496+08:00",
+  "date": "2026-04-08",
+  "is_trading_day": true,
+  "market_status": {
+    "current_time": "08:20",
+    "market_phase": "pre_market",
+    "next_phase": "opening_auction",
+    "time_until_opening": 54
+  },
+  "watchlist_count": 5,
+  "significant_changes": [
+    {
+      "symbol": "600000.SH",
+      "name": "浦发银行",
+      "change_percent": 2.5,
+      "price": 11.5
+    },
+    {
+      "symbol": "601398.SH",
+      "name": "工商银行",
+      "change_percent": -3.5,
+      "price": 18.3
+    }
+  ],
+  "pre_market_summary": {
+    "total_stocks": 5,
+    "stocks_up": 4,
+    "stocks_down": 1,
+    "average_change_percent": 0.1
+  },
+  "recommendations": [
+    "距离集合竞价开始还有 54 分钟，请做好交易准备。",
+    "发现以下股票有显著盘前波动，请重点关注：",
+    "- 浦发银行 (600000.SH) 上涨 2.50%",
+    "- 工商银行 (601398.SH) 下跌 3.50%",
+    "建议在集合竞价期间密切关注成交量和价格变化。"
+  ]
+}

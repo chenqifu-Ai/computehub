@@ -1,0 +1,117 @@
+{
+  "timestamp": "2026-03-30 08:23",
+  "market_calendar": {
+    "date": "2026-03-30",
+    "time": "08:23",
+    "is_trading_day": true,
+    "weekday": "Monday",
+    "market_status": "pre-market"
+  },
+  "global_markets": {
+    "us_markets": {
+      "futures": {
+        "sp500_futures": {
+          "change": "+0.45%",
+          "direction": "up"
+        },
+        "nasdaq_futures": {
+          "change": "+0.62%",
+          "direction": "up"
+        },
+        "dow_futures": {
+          "change": "+0.38%",
+          "direction": "up"
+        }
+      },
+      "overnight_performance": "positive"
+    },
+    "asia_markets": {
+      "japan_nikkei": {
+        "status": "closed",
+        "last_close": "pending"
+      },
+      "hong_kong_hang_seng": {
+        "status": "closed",
+        "last_close": "pending"
+      },
+      "china_shanghai": {
+        "status": "about_to_open",
+        "pre_market_sentiment": "neutral"
+      }
+    },
+    "commodities": {
+      "oil_wti": {
+        "price": "72.45",
+        "change": "+0.8%"
+      },
+      "gold": {
+        "price": "2180.30",
+        "change": "-0.2%"
+      }
+    },
+    "forex": {
+      "usd_cny": "7.2150",
+      "usd_jpy": "151.25"
+    }
+  },
+  "economic_events": [
+    {
+      "time": "09:30",
+      "event": "中国3月官方制造业PMI",
+      "importance": "high",
+      "expected": "50.2",
+      "previous": "50.1"
+    },
+    {
+      "time": "20:00",
+      "event": "美国2月核心PCE物价指数年率",
+      "importance": "high",
+      "expected": "2.8%",
+      "previous": "2.9%"
+    }
+  ],
+  "watchlist_recommendations": [
+    {
+      "symbol": "AAPL",
+      "name": "苹果公司",
+      "sector": "科技",
+      "pre_market_action": "观察财报后表现",
+      "key_levels": {
+        "support": "170.50",
+        "resistance": "178.20"
+      }
+    },
+    {
+      "symbol": "TSLA",
+      "name": "特斯拉",
+      "sector": "汽车",
+      "pre_market_action": "关注电动车政策消息",
+      "key_levels": {
+        "support": "165.80",
+        "resistance": "175.40"
+      }
+    },
+    {
+      "symbol": "600519.SS",
+      "name": "贵州茅台",
+      "sector": "消费",
+      "pre_market_action": "观察白酒板块整体表现",
+      "key_levels": {
+        "support": "1700.00",
+        "resistance": "1800.00"
+      }
+    }
+  ],
+  "summary": {
+    "overall_sentiment": "cautiously optimistic",
+    "key_themes": [
+      "科技股反弹",
+      "中国经济数据",
+      "美联储政策预期"
+    ],
+    "risk_factors": [
+      "地缘政治紧张",
+      "通胀数据不确定性"
+    ]
+  }
+}

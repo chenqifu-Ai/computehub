@@ -1,0 +1,145 @@
+{
+  "model": "qwen3.6-35b",
+  "version": "v6-fix-new",
+  "timestamp": "2026-04-24T19:55:00+08:00",
+  "total": 14,
+  "passed": 8,
+  "failed": 6,
+  "score": 57.1,
+  "grade": "❌ D 不合格",
+  "v5_baseline": {
+    "passed": 12,
+    "total": 17,
+    "score": 70.6
+  },
+  "groups": {
+    "默认": {
+      "total": 12,
+      "passed": 8
+    },
+    "代码修复": {
+      "total": 2,
+      "passed": 0
+    }
+  },
+  "tests": [
+    {
+      "name": "微积分-修复",
+      "ok": true,
+      "time": 1.7,
+      "group": "默认"
+    },
+    {
+      "name": "SQL注入-修复",
+      "ok": true,
+      "time": 5.9,
+      "group": "默认"
+    },
+    {
+      "name": "负载均衡-修复",
+      "ok": false,
+      "time": 3.7,
+      "group": "默认"
+    },
+    {
+      "name": "哈希表-修复",
+      "ok": false,
+      "time": 12.7,
+      "group": "代码修复",
+      "detail": "stdout=, stderr=File \"/tmp/tmp_uv9b1ew.py\", li"
+    },
+    {
+      "name": "REST-修复",
+      "ok": false,
+      "time": 12.8,
+      "group": "代码修复",
+      "detail": "stdout=, stderr=Traceback (most recent call la"
+    },
+    {
+      "name": "Java-多态",
+      "ok": false,
+      "time": 5.0,
+      "group": "默认"
+    },
+    {
+      "name": "Go-并发",
+      "ok": true,
+      "time": 5.6,
+      "group": "默认"
+    },
+    {
+      "name": "Rust-所有权",
+      "ok": false,
+      "time": 7.4,
+      "group": "默认"
+    },
+    {
+      "name": "Rust-生命周期",
+      "ok": true,
+      "time": 5.0,
+      "group": "默认"
+    },
+    {
+      "name": "ML-过拟合",
+      "ok": false,
+      "time": 10.3,
+      "group": "默认"
+    },
+    {
+      "name": "ML-SGD",
+      "ok": true,
+      "time": 4.6,
+      "group": "默认"
+    },
+    {
+      "name": "ML-激活函数",
+      "ok": true,
+      "time": 4.9,
+      "group": "默认"
+    },
+    {
+      "name": "网络-TLS",
+      "ok": true,
+      "time": 5.6,
+      "group": "默认"
+    },
+    {
+      "name": "网络-DNS",
+      "ok": true,
+      "time": 5.0,
+      "group": "默认"
+    }
+  ],
+  "failures": [
+    {
+      "name": "负载均衡-修复",
+      "detail": "- 源地址哈希法/一致性哈希法（Source IP Hash / Consistent Hashing）"
+    },
+    {
+      "name": "哈希表-修复",
+      "detail": "stdout=, stderr=File \"/tmp/tmp_uv9b1ew.py\", li"
+    },
+    {
+      "name": "REST-修复",
+      "detail": "stdout=, stderr=Traceback (most recent call la"
+    },
+    {
+      "name": "Java-多态",
+      "detail": "喵喵！"
+    },
+    {
+      "name": "Rust-所有权",
+      "detail": "该机制在编译期完成检查，彻底消除空指针、数据竞争和内存泄漏，实现零运行时开销的内存安全。"
+    },
+    {
+      "name": "ML-过拟合",
+      "detail": "7. 特征选择与降维"
+    }
+  ],
+  "performance": {
+    "avg": 3.13,
+    "fastest": 1.72,
+    "slowest": 4.96,
+    "total": 31.3
+  }
+}

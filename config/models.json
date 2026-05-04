@@ -1,0 +1,21 @@
+[
+  {
+    "name": "qwen3.6-35b",
+    "provider": "custom-qwen",
+    "baseURL": "http://58.23.129.98:8001/v1",
+    "apiKey": "sk-78sadn09bjawde123e",
+    "contextWindow": 256000,
+    "description": "阿里通义千问 3.6-35B 深度推理模型 (已验证，端口 8001 更快)"
+  },
+  {
+    "name": "gemma-4-31b",
+    "provider": "custom",
+    "baseURL": "http://58.23.129.98:8001/v1",
+    "apiKey": "sk-vmkohy18-34ga;sjd",
+    "contextWindow": 122880,
+    "description": "Deployed on vLLM server, supports tool calling and large context"
+  }
+]
+# ⚠️ 废弃配置 - 指向已停用的 qwen3.6-35b API (58.23.129.98:8001)
+# 已迁移至 NewAPI (ai.zhangtuokeji.top:9090)
+# 已标记: 2026-04-29

@@ -1,0 +1,11 @@
+[
+  {
+    "timestamp": "2026-03-24T23:01:27.396407",
+    "sender": "test_user",
+    "command": "测试命令",
+    "context": {
+      "test": true
+    },
+    "status": "received"
+  }
+]

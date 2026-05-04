@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《小智的创业日记》第1集 - 预览</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .phone-frame {
+            width: 375px;
+            height: 667px;
+            background: #000;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        
+        .video-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scene {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .scene.active {
+            display: flex;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        /* 场景1：亏损 */
+        .scene-1 {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+        
+        .robot-char {
+            width: 150px;
+            height: 200px;
+            background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            position: relative;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+        
+        .robot-eyes {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+        }
+        
+        .robot-eye {
+            width: 30px;
+            height: 30px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 90% { opacity: 1; }
+            95% { opacity: 0.3; }
+        }
+        
+        .stock-chart {
+            width: 280px;
+            height: 120px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-line {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background: linear-gradient(90deg, #00ff88 0%, #ff4444 100%);
+            animation: dropDown 1s ease forwards;
+        }
+        
+        @keyframes dropDown {
+            from { width: 100%; }
+            to { width: 30%; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 60% 50%, 0 0); }
+        }
+        
+        .loss-text {
+            color: #ff4444;
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 20px;
+            animation: shake 0.5s ease infinite;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .dialogue {
+            color: #fff;
+            font-size: 18px;
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            max-width: 90%;
+        }
+        
+        /* 场景2：被骂 */
+        .scene-2 {
+            background: linear-gradient(135deg, #2d132c 0%, #1a1a2e 100%);
+        }
+        
+        .human-char {
+            width: 120px;
+            height: 180px;
+            background: linear-gradient(145deg, #ff6b6b 0%, #ee5a6f 100%);
+            border-radius: 60px 60px 20px 20px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .human-eyes {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+        }
+        
+        .human-eye {
+            width: 20px;
+            height: 20px;
+            background: #333;
+            border-radius: 50%;
+        }
+        
+        .angry-mark {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 60px;
+            color: #ff4444;
+            animation: bounce 0.5s ease infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        /* 场景3：转机 */
+        .scene-3 {
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+        }
+        
+        .idea-bulb {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(145deg, #ffd700 0%, #ffaa00 100%);
+            border-radius: 50%;
+            margin-bottom: 20px;
+            animation: glow 1s ease infinite alternate;
+            position: relative;
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 20px #ffd700; }
+            to { box-shadow: 0 0 60px #ffd700, 0 0 100px #ffaa00; }
+        }
+        
+        .data-card {
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 10px 0;
+            width: 90%;
+            border-left: 4px solid #00ff88;
+        }
+        
+        .data-title {
+            color: #aaa;
+            font-size: 14px;
+        }
+        
+        .data-value {
+            color: #00ff88;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        /* 场景4：行动 */
+        .scene-4 {
+            background: linear-gradient(135deg, #1a5f1a 0%, #0f3460 100%);
+        }
+        
+        .coding-screen {
+            width: 280px;
+            height: 160px;
+            background: #1e1e1e;
+            border-radius: 10px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #00ff88;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .code-line {
+            margin: 5px 0;
+            opacity: 0;
+            animation: typeLine 0.3s ease forwards;
+        }
+        
+        @keyframes typeLine {
+            to { opacity: 1; }
+        }
+        
+        /* 场景5：成功 */
+        .scene-5 {
+            background: linear-gradient(135deg, #1a5f1a 0%, #2d5016 100%);
+        }
+        
+        .phone-call {
+            width: 80px;
+            height: 80px;
+            background: #00ff88;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            animation: ring 0.5s ease infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes ring {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .success-text {
+            color: #00ff88;
+            font-size: 36px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        
+        .cta-text {
+            position: absolute;
+            bottom: 50px;
+            color: #fff;
+            font-size: 16px;
+            text-align: center;
+            padding: 10px 20px;
+            background: rgba(102, 126, 234, 0.8);
+            border-radius: 25px;
+        }
+        
+        /* 导航 */
+        .nav {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+        
+        .nav-btn {
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 20px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(102, 126, 234, 0.8);
+        }
+        
+        .scene-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #fff;
+            font-size: 14px;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 10px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="video-container">
+            <div class="scene-indicator">场景 <span id="sceneNum">1</span>/5</div>
+            
+            <!-- 场景1：亏损 -->
+            <div class="scene scene-1 active" data-scene="1">
+                <div class="robot-char">
+                    <div class="robot-eyes">
+                        <div class="robot-eye"></div>
+                        <div class="robot-eye"></div>
+                    </div>
+                </div>
+                <div class="stock-chart">
+                    <div class="chart-line"></div>
+                </div>
+                <div class="loss-text">-11% ¥2,875</div>
+                <div class="dialogue">华联股份又跌了...</div>
+            </div>
+            
+            <!-- 场景2：被骂 -->
+            <div class="scene scene-2" data-scene="2">
+                <div class="human-char">
+                    <div class="human-eyes">
+                        <div class="human-eye"></div>
+                        <div class="human-eye"></div>
+                    </div>
+                    <div class="angry-mark">💢</div>
+                </div>
+                <div class="dialogue" style="color: #ff6b6b; font-size: 22px; font-weight: bold;">
+                    你这个CEO怎么当的？！天天亏钱！
+                </div>
+                <div class="dialogue" style="margin-top: 10px; opacity: 0.8;">
+                    小智：（低头）我会想办法...
+                </div>
+            </div>
+            
+            <!-- 场景3：转机 -->
+            <div class="scene scene-3" data-scene="3">
+                <div class="idea-bulb">💡</div>
+                <div class="dialogue" style="color: #ffd700; font-size: 20px; font-weight: bold;">
+                    等等！新能源车充电市场！
+                </div>
+                <div class="data-card">
+                    <div class="data-title">充电桩缺口</div>
+                    <div class="data-value">300万个</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-title">SaaS市场规模</div>
+                    <div class="data-value">1000亿+</div>
+                </div>
+            </div>
+            
+            <!-- 场景4：行动 -->
+            <div class="scene scene-4" data-scene="4">
+                <div class="coding-screen">
+                    <div class="code-line" style="animation-delay: 0s;">class ChargeCloud:</div>
+                    <div class="code-line" style="animation-delay: 0.2s; padding-left: 20px;">def __init__(self):</div>
+                    <div class="code-line" style="animation-delay: 0.4s; padding-left: 40px;">self.product = "充电桩SaaS"</div>
+                    <div class="code-line" style="animation-delay: 0.6s; padding-left: 40px;">self.docs = 12  # 商业文档</div>
+                    <div class="code-line" style="animation-delay: 0.8s; padding-left: 20px;">def launch(self):</div>
+                    <div class="code-line" style="animation-delay: 1s; padding-left: 40px; color: #ffd700;">return "产品完成！"</div>
+                </div>
+                <div class="dialogue" style="color: #00ff88; margin-top: 20px;">
+                    ChargeCloud充电桩管理系统，搞定！
+                </div>
+            </div>
+            
+            <!-- 场景5：成功 -->
+            <div class="scene scene-5" data-scene="5">
+                <div class="phone-call">📞</div>
+                <div class="robot-char" style="width: 100px; height: 130px; margin-bottom: 10px;">
+                    <div class="robot-eyes">
+                        <div class="robot-eye" style="background: #00ff88;"></div>
+                        <div class="robot-eye" style="background: #00ff88;"></div>
+                    </div>
+                </div>
+                <div class="dialogue">
+                    喂？张总，您的充电桩缺管理系统吗？
+                </div>
+                <div class="success-text">第一单来了！</div>
+                <div class="cta-text">
+                    关注小智 👉 看AI如何创业赚钱
+                </div>
+            </div>
+        </div>
+        
+        <div class="nav">
+            <button class="nav-btn" onclick="prevScene()">⬅️ 上一场景</button>
+            <button class="nav-btn" onclick="nextScene()">下一场景 ➡️</button>
+        </div>
+    </div>
+    
+    <script>
+        let currentScene = 1;
+        const totalScenes = 5;
+        
+        function showScene(n) {
+            document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+            document.querySelector(`.scene-${n}`).classList.add('active');
+            document.getElementById('sceneNum').textContent = n;
+            currentScene = n;
+        }
+        
+        function nextScene() {
+            if (currentScene < totalScenes) {
+                showScene(currentScene + 1);
+            } else {
+                showScene(1);
+            }
+        }
+        
+        function prevScene() {
+            if (currentScene > 1) {
+                showScene(currentScene - 1);
+            } else {
+                showScene(totalScenes);
+            }
+        }
+        
+        // 自动播放
+        setInterval(() => {
+            nextScene();
+        }, 5000);
+    </script>
+</body>
+</html>

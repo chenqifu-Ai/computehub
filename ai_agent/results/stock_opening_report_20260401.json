@@ -1,0 +1,38 @@
+{
+  "timestamp": "2026-04-01 10:04:50",
+  "market_status": "上午交易时段",
+  "monitored_stocks": 5,
+  "stocks_data": [
+    {
+      "code": "000001",
+      "name": "上证指数",
+      "price": 3250.45,
+      "change": 0.65
+    },
+    {
+      "code": "399001",
+      "name": "深证成指",
+      "price": 11850.23,
+      "change": 0.82
+    },
+    {
+      "code": "600519",
+      "name": "贵州茅台",
+      "price": 1850.0,
+      "change": -0.35
+    },
+    {
+      "code": "000858",
+      "name": "五粮液",
+      "price": 158.5,
+      "change": 0.25
+    },
+    {
+      "code": "601318",
+      "name": "中国平安",
+      "price": 48.75,
+      "change": 1.2
+    }
+  ],
+  "summary": "当前为上午交易时段，共监控5只关键股票"
+}

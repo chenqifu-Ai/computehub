@@ -1,0 +1,51 @@
+# 🔧 WinRM 管理员快速配置命令
+# 在 192.168.2.134 上以管理员身份运行
+
+# 1. 首先以管理员身份打开PowerShell:
+#    - 右键点击"开始"菜单
+#    - 选择"Windows PowerShell (管理员)"
+
+# 2. 执行以下命令:
+
+# 启用WinRM服务
+Enable-PSRemoting -Force
+
+# 启用基本身份验证
+Set-Item -Path "WSMan:\localhost\Service\Auth\Basic" -Value $true
+
+# 信任所有主机（部署完成后可改为具体IP）
+Set-Item -Path "WSMan:\localhost\Client\TrustedHosts" -Value "*" -Force
+
+# 设置服务自动启动
+Set-Service -Name "WinRM" -StartupType Automatic
+Start-Service -Name "WinRM"
+
+# 配置防火墙
+netsh advfirewall firewall add rule name="WinRM HTTP" dir=in action=allow protocol=TCP localport=5985
+
+# 设置执行策略
+Set-ExecutionPolicy RemoteSigned -Force
+
+# 验证用户权限（确保chen是管理员）
+Add-LocalGroupMember -Group "Administrators" -Member "chen"
+
+# 验证配置
+Test-WSMan -ComputerName localhost
+
+# 3. 验证成功后，可以从其他设备远程连接:
+# $cred = Get-Credential -UserName "chen" -Message "输入密码"
+# Enter-PSSession -ComputerName 192.168.2.134 -Credential $cred
+
+# 4. 在远程会话中安装OpenClaw:
+# npm install -g openclaw
+# openclaw --version
+
+# ⚠️ 注意事项:
+# - 必须以管理员身份运行
+# - 配置完成后建议重启WinRM服务
+# - 生产环境中应限制信任主机范围
+
+# 📞 如遇问题检查:
+# - 事件查看器 → Windows日志 → Microsoft-Windows-WinRM/Operational
+# - 服务状态: Get-Service WinRM
+# - 防火墙规则: netsh advfirewall firewall show rule name="WinRM HTTP"

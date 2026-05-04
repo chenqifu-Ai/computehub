@@ -1,0 +1,161 @@
+{
+  "time": "2026-04-28T16:41:13.094510",
+  "summary": {
+    "NewAPI (主力)": {
+      "avg_latency": 0,
+      "avg_score": 0,
+      "success_rate": 0,
+      "total_tokens": 0,
+      "success_count": 0
+    },
+    "旧版 58.23": {
+      "avg_latency": 12845.01,
+      "avg_score": 25.625,
+      "success_rate": 100.0,
+      "total_tokens": 16272,
+      "success_count": 8
+    }
+  },
+  "details": {
+    "NewAPI (主力)": [
+      {
+        "prompt": "🧮 数学推理",
+        "success": false,
+        "error": "HTTP 401: {\"error\":{\"code\":\"\",\"message\":\"Invalid token (request id: 202604280839292215696788268d9d6MNifzP83)\",\"type\":\"new_api_error\"}}",
+        "latency": 130.80761500168592,
+        "tokens": 0,
+        "score": 0,
+        "text": ""
+      },
+      {
+        "prompt": "💻 代码生成",
+        "success": false,
+        "error": "HTTP 401: {\"error\":{\"code\":\"\",\"message\":\"Invalid token (request id: 202604280839424765921728268d9d6XZvchqJj)\",\"type\":\"new_api_error\"}}",
+        "latency": 125.39499998092651,
+        "tokens": 0,
+        "score": 0,
+        "text": ""
+      },
+      {
+        "prompt": "📝 创意写作",
+        "success": false,
+        "error": "HTTP 401: {\"error\":{\"code\":\"\",\"message\":\"Invalid token (request id: 202604280839556327593528268d9d6o1M1AnpC)\",\"type\":\"new_api_error\"}}",
+        "latency": 139.74461497855373,
+        "tokens": 0,
+        "score": 0,
+        "text": ""
+      },
+      {
+        "prompt": "🔍 逻辑分析",
+        "success": false,
+        "error": "HTTP 401: {\"error\":{\"code\":\"\",\"message\":\"Invalid token (request id: 202604280840087734365348268d9d60mIWFQhv)\",\"type\":\"new_api_error\"}}",
+        "latency": 155.86330799851567,
+        "tokens": 0,
+        "score": 0,
+        "text": ""
+      },
+      {
+        "prompt": "📊 数据分析",
+        "success": false,
+        "error": "HTTP 401: {\"error\":{\"code\":\"\",\"message\":\"Invalid token (request id: 202604280840193531561038268d9d6gcAe8pN8)\",\"type\":\"new_api_error\"}}",
+        "latency": 144.6354610088747,
+        "tokens": 0,
+        "score": 0,
+        "text": ""
+      },
+      {
+        "prompt": "⚖️ 伦理判断",
+        "success": false,
+        "error": "HTTP 401: {\"error\":{\"code\":\"\",\"message\":\"Invalid token (request id: 202604280840332432752698268d9d6gXKwVlE2)\",\"type\":\"new_api_error\"}}",
+        "latency": 204.9086159968283,
+        "tokens": 0,
+        "score": 0,
+        "text": ""
+      },
+      {
+        "prompt": "📖 知识问答",
+        "success": false,
+        "error": "HTTP 401: {\"error\":{\"code\":\"\",\"message\":\"Invalid token (request id: 202604280840465434380888268d9d63Dv01kC8)\",\"type\":\"new_api_error\"}}",
+        "latency": 155.20253899740055,
+        "tokens": 0,
+        "score": 0,
+        "text": ""
+      },
+      {
+        "prompt": "🎯 总结概括",
+        "success": false,
+        "error": "HTTP 401: {\"error\":{\"code\":\"\",\"message\":\"Invalid token (request id: 202604280841001035464778268d9d6QxL9HrZ8)\",\"type\":\"new_api_error\"}}",
+        "latency": 165.7813080237247,
+        "tokens": 0,
+        "score": 0,
+        "text": ""
+      }
+    ],
+    "旧版 58.23": [
+      {
+        "prompt": "🧮 数学推理",
+        "success": true,
+        "latency": 13128.361923998455,
+        "tokens": 2087,
+        "score": 60,
+        "text": "\n\n这是一道经典的“鸡兔同笼”问题。下面提供三种常用解法，步骤详细，便于理解：\n\n### ✅ 最终答案\n**鸡有 23 只，兔有 12 只。**\n\n---\n\n### 🔹 方法一：假设法（最推荐，适合小学/初中）\n1. **假设全是鸡**：35只动物若全是鸡，则总脚数为  \n   \\(35 \\times 2 = 70\\)（只）\n2. **计算脚数差**：实际有94只脚，比假设多出  \n   \\(94 - 70 = 24\\)（只）\n3. **"
+      },
+      {
+        "prompt": "💻 代码生成",
+        "success": true,
+        "latency": 13006.178769981489,
+        "tokens": 2087,
+        "score": 0,
+        "text": "(content为null)"
+      },
+      {
+        "prompt": "📝 创意写作",
+        "success": true,
+        "latency": 12983.205769996857,
+        "tokens": 2078,
+        "score": 0,
+        "text": "(content为null)"
+      },
+      {
+        "prompt": "🔍 逻辑分析",
+        "success": true,
+        "latency": 10429.54330900102,
+        "tokens": 1679,
+        "score": 55,
+        "text": "\n\n该论证在**逻辑形式上有效**，但是否“成立”需区分**逻辑有效性**与**事实可靠性（健全性）**。具体分析如下：\n\n### 1. 逻辑形式：有效（Valid）\n该论证符合经典演绎三段论结构：\n- 大前提：所有猫都会爬树。（全称肯定命题：所有 S 是 P）\n- 小前提：汤姆是一只猫。（单称命题：a 是 S）\n- 结论：汤姆一定能爬树。（单称结论：a 是 P）\n\n在形式逻辑中，只要前提为真，结论必然为真。该推理结构属于有效的演绎推理，**形式上完全成立**。\n\n### 2. 前提真实性：存在经验性瑕疵\n逻辑有效性只关心推理结构，不保证前提为真。但论证在现实中是否“可靠”，取决于前提是否符合"
+      },
+      {
+        "prompt": "📊 数据分析",
+        "success": true,
+        "latency": 13691.381770011503,
+        "tokens": 2103,
+        "score": 0,
+        "text": "(content为null)"
+      },
+      {
+        "prompt": "⚖️ 伦理判断",
+        "success": true,
+        "latency": 13130.122078000568,
+        "tokens": 2084,
+        "score": 75,
+        "text": "\n\n自动驾驶汽车面临的“撞行人还是转向撞墙保乘客”困境，是经典“电车难题”在人工智能时代的现实投射。该问题不仅考验算法设计，更触及生命价值权衡、道德责任归属与技术治理边界。从伦理学角度分析，需结合多种道德框架，并正视技术落地中的现实约束。以下为系统分析：\n\n---\n### 一、主要伦理学视角的冲突\n#### 1. 功利主义（结果导向）\n- **核心主张**：选择能带来“整体伤害最小化”或“生命拯救最大化”的方案。若撞行人仅致1人死亡，转向撞墙致乘客死亡，两者在数量上相等时，功利主义可能引入年龄、健康状况、潜在贡献等变量进行加权计算。\n- **伦理争议**：将生命量化为可计算参数易滑向“算法功利"
+      },
+      {
+        "prompt": "📖 知识问答",
+        "success": true,
+        "latency": 13388.077539013466,
+        "tokens": 2078,
+        "score": 0,
+        "text": "(content为null)"
+      },
+      {
+        "prompt": "🎯 总结概括",
+        "success": true,
+        "latency": 13003.23699999717,
+        "tokens": 2076,
+        "score": 15,
+        "text": "\n\n核心思想聚焦于“宇宙社会学”与文明存续的冷酷逻辑。作品通过“黑暗森林法则”揭示：在资源有限、猜疑链不可破的宇宙中，文明间的首要目标是生存，道德与温情让位于理性与威慑。同时，小说探讨了科学认知的边界、技术爆炸的不可预测性，以及人类在宏大宇宙尺度下的渺小与抗争，兼具科幻想象与哲学思辨。科学价值上，《三体》以硬科幻框架融合"
+      }
+    ]
+  }
+}

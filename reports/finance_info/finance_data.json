@@ -1,0 +1,27 @@
+{
+  "date": "2026-04-01",
+  "timestamp": "2026-04-01T09:20:11.830099",
+  "costs": {
+    "daily_operating_cost": 15.0,
+    "investment_cost": 0.0,
+    "total_cost": 15.0
+  },
+  "revenue": {
+    "investment_income": -4361.0,
+    "total_revenue": -4361.0
+  },
+  "investment": {
+    "total_invested": 69569.0,
+    "current_value": 65208.0,
+    "profit_loss": -4361.0,
+    "roi": -0.06269999999999999
+  },
+  "risk_alerts": [
+    {
+      "type": "ROI过低",
+      "level": "中风险",
+      "message": "投资回报率 -6.27% 低于预期",
+      "suggestion": "重新评估投资组合"
+    }
+  ]
+}

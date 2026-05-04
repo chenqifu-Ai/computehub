@@ -1,0 +1,30 @@
+{
+  "monitor_time": "2026-04-08 15:00:39",
+  "market_status": "closing",
+  "stocks": {
+    "000882": {
+      "name": "华联股份",
+      "current_price": 1.65,
+      "cost": 1.779,
+      "stop_loss": 1.6,
+      "stop_profit": 2.0,
+      "quantity": 22600,
+      "status": "very_near_stop_loss",
+      "distance_to_stop_loss": 0.05,
+      "pnl_percentage": -7.2,
+      "change_since_afternoon": -0.01
+    },
+    "601866": {
+      "name": "中远海发",
+      "current_price": 2.98,
+      "buy_range": [2.5, 2.7],
+      "status": "above_target_range",
+      "distance_from_target": 0.28,
+      "change_since_afternoon": 0.0
+    }
+  },
+  "alerts": [
+    "华联股份距离止损位仅0.05元，需密切关注明日开盘"
+  ],
+  "next_monitor": "2026-04-09 09:30:00"
+}

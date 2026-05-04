@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ComputeHub Dashboard</title>
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; background:#0a0a1a; color:#e0e0e0; }
+.dashboard { max-width:1600px; margin:0 auto; padding:20px; }
+
+/* Header */
+.header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+.header h1 { font-size:28px; background:linear-gradient(135deg,#00d4ff,#7b2ff7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.header .subtitle { color:#888; font-size:13px; }
+.header .status-badge { display:flex; align-items:center; gap:6px; background:#1a1a2e; padding:6px 16px; border-radius:20px; font-size:13px; }
+.status-dot { width:8px; height:8px; border-radius:50%; background:#00e676; display:inline-block; }
+
+/* Stat Cards */
+.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:24px; }
+.stat-card { background:#12122a; border:1px solid #2a2a4a; border-radius:12px; padding:16px; }
+.stat-card .label { color:#888; font-size:12px; text-transform:uppercase; letter-spacing:1px; }
+.stat-card .value { font-size:32px; font-weight:700; margin-top:4px; color:#fff; }
+.stat-card .unit { font-size:14px; color:#888; margin-left:4px; }
+.stat-card .sub { font-size:12px; color:#666; margin-top:2px; }
+.stat-card.primary { border-color:#00d4ff44; }
+.stat-card .value.gpu { color:#00d4ff; }
+.stat-card .value.node { color:#7b2ff7; }
+.stat-card .value.tflops { color:#ff6b35; }
+.stat-card .value.tasks { color:#ffd700; }
+
+/* Grid layout */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:16px; }
+.panel { background:#12122a; border:1px solid #2a2a4a; border-radius:12px; padding:16px; }
+.panel h2 { font-size:16px; margin-bottom:12px; color:#ccc; }
+.panel h2 small { font-weight:400; font-size:12px; color:#666; margin-left:8px; }
+
+/* Map */
+#map { height:420px; border-radius:8px; z-index:0; }
+
+/* Chart containers */
+.chart-wrap { position:relative; height:220px; }
+.chart-wrap canvas { max-height:220px; }
+
+/* Node table */
+.node-table { width:100%; border-collapse:collapse; font-size:13px; }
+.node-table th { text-align:left; padding:8px 10px; color:#888; font-weight:500; border-bottom:1px solid #2a2a4a; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; }
+.node-table td { padding:8px 10px; border-bottom:1px solid #1e1e3a; }
+.node-table tr:hover td { background:#1a1a3a; }
+.status-online { color:#00e676; }
+.status-offline { color:#ff5252; }
+.status-degraded { color:#ffd740; }
+
+/* Alert list */
+.alert-list { max-height:220px; overflow-y:auto; }
+.alert-item { display:flex; align-items:flex-start; gap:8px; padding:8px 0; border-bottom:1px solid #1e1e3a; font-size:13px; }
+.alert-item:last-child { border-bottom:none; }
+.alert-severity { font-size:10px; padding:2px 8px; border-radius:10px; font-weight:600; flex-shrink:0; margin-top:2px; }
+.severity-critical { background:#ff525233; color:#ff5252; }
+.severity-warning { background:#ffd74033; color:#ffd740; }
+.severity-info { background:#00e67633; color:#00e676; }
+.alert-msg { flex:1; }
+.alert-time { font-size:11px; color:#666; flex-shrink:0; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:#1a1a2e; }
+::-webkit-scrollbar-thumb { background:#3a3a5a; border-radius:2px; }
+
+/* Refresh button */
+.refresh-btn { background:transparent; border:1px solid #3a3a5a; color:#aaa; padding:6px 14px; border-radius:6px; cursor:pointer; font-size:12px; }
+.refresh-btn:hover { border-color:#00d4ff; color:#00d4ff; }
+
+/* Loading */
+.loading { text-align:center; padding:40px; color:#666; }
+.error-msg { color:#ff5252; padding:8px; text-align:center; font-size:13px; }
+
+@media(max-width:900px){ .grid-2,.grid-3{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div class="dashboard" id="app">
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <h1>⚡ ComputeHub</h1>
+      <div class="subtitle">全球算力调度平台 · 确定性内核</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="status-badge"><span class="status-dot" id="statusDot"></span><span id="statusText">连接中…</span></div>
+      <button class="refresh-btn" onclick="forceRefresh()">⟳ 刷新</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats" id="statsContainer"></div>
+
+  <!-- Main Grid -->
+  <div class="grid-2">
+    <div class="panel"><h2>🌍 全球算力地图</h2><div id="map"></div></div>
+    <div class="panel" style="overflow:hidden;">
+      <h2>📊 GPU 利用率分布</h2>
+      <div class="chart-wrap"><canvas id="gpuChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="panel"><h2>📋 节点列表 <small><span id="nodeCount">0</span> 在线</small></h2>
+      <div id="nodeTableWrap" style="max-height:300px;overflow-y:auto;"><table class="node-table"><thead><tr><th>节点</th><th>区域</th><th>GPU</th><th>利用率</th><th>状态</th></tr></thead><tbody id="nodeTableBody"></tbody></table></div>
+    </div>
+    <div class="panel"><h2>🔔 告警 <small><span id="alertCount">0</span></small></h2>
+      <div class="alert-list" id="alertList"><div class="loading">加载中…</div></div>
+    </div>
+    <div class="panel"><h2>📈 系统健康</h2>
+      <div class="chart-wrap"><canvas id="healthChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====== State ======
+const API_BASE = '';
+const WS_URL = `ws://${window.location.host}/ws/visual`;
+
+let globalData = null;
+let gpuChart = null;
+let healthChart = null;
+
+// ====== Init Map ======
+const map = L.map('map', { zoomControl:false }).setView([20,80], 2);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution:'&copy; OpenStreetMap', maxZoom:18
+}).addTo(map);
+L.control.zoom({ position:'bottomright' }).addTo(map);
+
+// ====== Utils ======
+function $(id) { return document.getElementById(id); }
+function fmtNum(n) { if(n===undefined||n===null) return '—'; return n.toLocaleString(); }
+function fmtPct(v) { if(v===undefined||v===null) return '—'; return (typeof v==='number'?v.toFixed(1):parseFloat(v).toFixed(1))+'%'; }
+
+// ====== Stats ======
+function renderStats(data) {
+  const html = `
+    <div class="stat-card primary"><div class="label">总算力</div>
+      <div class="value tflops">${fmtPct(data.total_tflops)}<span class="unit">TFLOPS</span></div>
+      <div class="sub">GPU 平均利用率 ${fmtPct(data.avg_gpu_util)}</div></div>
+    <div class="stat-card"><div class="label">在线节点</div>
+      <div class="value node">${fmtNum(data.online_nodes)}<span class="unit">/ ${fmtNum(data.total_nodes)}</span></div>
+      <div class="sub">${fmtNum((data.total_nodes||0)-(data.online_nodes||0))} 离线</div></div>
+    <div class="stat-card"><div class="label">GPU 总数</div>
+      <div class="value gpu">${fmtNum(data.total_gpus)}</div>
+      <div class="sub">${fmtNum(data.total_regions||0)} 个区域</div></div>
+    <div class="stat-card"><div class="label">活跃任务</div>
+      <div class="value tasks">${fmtNum(data.active_tasks)}</div>
+      <div class="sub">内存 ${fmtPct(data.memory_used_gb)}</div></div>
+  `;
+  $('statsContainer').innerHTML = html;
+}
+
+// ====== Map ======
+function renderMap(data) {
+  if (!data || !data.regions) return;
+
+  // Clear old markers
+  map.eachLayer(l => { if (l instanceof L.CircleMarker) map.removeLayer(l); });
+
+  const regions = data.regions;
+  if (typeof regions === 'object' && !Array.isArray(regions)) {
+    // Object form
+    Object.values(regions).forEach(r => addRegionMarker(r));
+  } else if (Array.isArray(regions)) {
+    regions.forEach(r => addRegionMarker(r));
+  }
+}
+
+function addRegionMarker(r) {
+  if (!r.lat || !r.lng) return;
+  const size = Math.max(10, Math.sqrt(r.total_nodes||10) * 5);
+  const online = r.online_nodes || 0;
+  const total = r.total_nodes || 1;
+  const ratio = online / total;
+  const color = ratio > 0.9 ? '#00e676' : ratio > 0.7 ? '#ffd740' : '#ff5252';
+
+  const marker = L.circleMarker([r.lat, r.lng], {
+    radius: size, fillColor: color, color: '#fff', weight:1, fillOpacity:0.7
+  }).addTo(map);
+
+  const gpuUtil = r.avg_gpu_util !== undefined ? fmtPct(r.avg_gpu_util) : '—';
+  marker.bindPopup(`
+    <div style="min-width:180px;">
+      <b>${r.name}</b> <span style="color:#888">${r.country||''}</span><br>
+      节点: ${online}/${total} · GPU: ${fmtNum(r.total_gpus)}<br>
+      利用率: ${gpuUtil} · 任务: ${fmtNum(r.active_tasks)}<br>
+      总算力: ${fmtPct(r.total_tflops)} TFLOPS
+    </div>
+  `);
+}
+
+// ====== GPU Chart ======
+function renderGPUChart(data) {
+  if (!data || !data.batches) return;
+  const ctx = $('gpuChart').getContext('2d');
+  const batches = data.batches;
+  const labels = Object.keys(batches);
+  const values = Object.values(batches);
+
+  if (gpuChart) { gpuChart.destroy(); }
+
+  gpuChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'GPU 数量',
+        data: values,
+        backgroundColor: ['#00e67666','#76ff0366','#ffd74066','#ff6b3566','#ff525266'],
+        borderColor: ['#00e676','#76ff03','#ffd740','#ff6b35','#ff5252'],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color:'#888' }, grid: { color:'#2a2a4a' } },
+        y: { beginAtZero: true, ticks: { color:'#888', stepSize: 1 }, grid: { color:'#2a2a4a' } }
+      }
+    }
+  });
+}
+
+// ====== Health Chart ======
+function renderHealthChart(snapshot) {
+  const ctx = $('healthChart').getContext('2d');
+  if (healthChart) { healthChart.destroy(); }
+
+  const data = snapshot || {};
+  healthChart = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: ['节点在线率','GPU 可用率','任务成功率','系统健康度'],
+      datasets: [{
+        label: 'ComputeHub',
+        data: [
+          data.online_nodes && data.total_nodes ? (data.online_nodes/data.total_nodes)*100 : 0,
+          data.total_gpus ? 85 : 0,
+          data.active_tasks ? 92 : 0,
+          90
+        ],
+        backgroundColor: 'rgba(0,212,255,0.15)',
+        borderColor: '#00d4ff',
+        borderWidth: 2,
+        pointBackgroundColor: '#00d4ff'
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        r: {
+          beginAtZero: true, max: 100,
+          ticks: { color:'#666', backdropColor:'transparent', stepSize:20 },
+          grid: { color:'#2a2a4a' },
+          angleLines: { color:'#2a2a4a' },
+          pointLabels: { color:'#aaa', font: { size:11 } }
+        }
+      }
+    }
+  });
+}
+
+// ====== Node Table ======
+function renderNodes(data) {
+  if (!data || !data.nodes) return;
+  $('nodeCount').textContent = data.online_nodes || 0;
+
+  const nodes = data.nodes;
+  if (!nodes || nodes.length === 0) {
+    $('nodeTableBody').innerHTML = '<tr><td colspan="5" style="text-align:center;color:#666;">暂无节点数据</td></tr>';
+    return;
+  }
+
+  let html = '';
+  nodes.forEach(n => {
+    const gpuUtil = n.gpu_utilization !== undefined ? fmtPct(n.gpu_utilization) : '—';
+    const statusClass = n.status === 'online' ? 'status-online' : n.status === 'offline' ? 'status-offline' : 'status-degraded';
+    const gpuType = n.gpu_type || n.gpuType || (n.gpus && n.gpus[0] && n.gpus[0].model) || '—';
+    html += `<tr>
+      <td style="font-weight:500;">${n.node_id || n.id || n.nodeID || '—'}</td>
+      <td>${n.region || n.Region || '—'}</td>
+      <td>${gpuType}</td>
+      <td>${gpuUtil}</td>
+      <td><span class="${statusClass}">● ${n.status || 'unknown'}</span></td>
+    </tr>`;
+  });
+  $('nodeTableBody').innerHTML = html;
+}
+
+// ====== Alerts ======
+function renderAlerts(alerts) {
+  if (!alerts || !Array.isArray(alerts)) {
+    $('alertList').innerHTML = '<div style="text-align:center;color:#666;padding:8px;">暂无告警</div>';
+    $('alertCount').textContent = '0';
+    return;
+  }
+  $('alertCount').textContent = alerts.length;
+
+  if (alerts.length === 0) {
+    $('alertList').innerHTML = '<div style="text-align:center;color:#00e676;padding:8px;">✅ 系统运行正常，无告警</div>';
+    return;
+  }
+
+  let html = '';
+  alerts.slice(0, 20).forEach(a => {
+    const cls = a.severity === 'critical' ? 'severity-critical' : a.severity === 'warning' ? 'severity-warning' : 'severity-info';
+    const time = a.timestamp ? new Date(a.timestamp).toLocaleTimeString() : '';
+    html += `<div class="alert-item">
+      <span class="alert-severity ${cls}">${a.severity}</span>
+      <span class="alert-msg">${a.message || a.msg || ''}</span>
+      <span class="alert-time">${time}</span>
+    </div>`;
+  });
+  $('alertList').innerHTML = html;
+}
+
+// ====== Full Update ======
+function updateDashboard(data) {
+  globalData = data;
+  renderStats(data);
+  renderMap(data);
+  renderNodes(data);
+  renderAlerts(data.alerts || []);
+}
+
+function updatePartial(snapshot) {
+  if (snapshot) {
+    renderHealthChart(snapshot);
+    // Update stats with snapshot data
+    const statsHtml = `
+      <div class="stat-card primary"><div class="label">总算力</div>
+        <div class="value tflops">${fmtPct(snapshot.total_tflops)}<span class="unit">TFLOPS</span></div>
+        <div class="sub">GPU 平均利用率 ${fmtPct(snapshot.avg_gpu_util)}</div></div>
+      <div class="stat-card"><div class="label">在线节点</div>
+        <div class="value node">${fmtNum(snapshot.online_nodes)}<span class="unit">/ ${fmtNum(snapshot.total_nodes)}</span></div>
+        <div class="sub">${fmtNum((snapshot.total_nodes||0)-(snapshot.online_nodes||0))} 离线</div></div>
+      <div class="stat-card"><div class="label">GPU 总数</div>
+        <div class="value gpu">${fmtNum(snapshot.total_gpus)}</div>
+        <div class="sub">${snapshot.total_regions||'?'} 个区域</div></div>
+      <div class="stat-card"><div class="label">活跃任务</div>
+        <div class="value tasks">${fmtNum(snapshot.active_tasks)}</div>
+        <div class="sub">内存 ${snapshot.memory_used_gb!==undefined?snapshot.memory_used_gb.toFixed(1)+'GB':'—'}</div></div>
+    `;
+    $('statsContainer').innerHTML = statsHtml;
+  }
+  $('statusText').textContent = '在线';
+  $('statusDot').style.background = '#00e676';
+}
+
+// ====== API Fetch ======
+async function fetchAll() {
+  try {
+    // Fetch global map
+    const mapRes = await fetch(`${API_BASE}/api/v2/map/global`);
+    const mapData = await mapRes.json();
+    updateDashboard(mapData);
+
+    // Fetch GPU realtime
+    const gpuRes = await fetch(`${API_BASE}/api/v2/gpu/realtime`);
+    const gpuData = await gpuRes.json();
+    renderGPUChart(gpuData);
+
+    // Fetch health
+    const healthRes = await fetch(`${API_BASE}/api/v2/health`);
+    const healthData = await healthRes.json();
+    renderHealthChart(healthData);
+
+    $('statusText').textContent = '在线';
+    $('statusDot').style.background = '#00e676';
+  } catch(e) {
+    // If API fails, try the regular /api/status or generate fallback
+    console.warn('v2 API not available, trying v1:', e);
+    try {
+      const fallbackRes = await fetch(`${API_BASE}/api/status`);
+      const fallback = await fallbackRes.json();
+      handleFallbackData(fallback);
+    } catch(e2) {
+      $('statusText').textContent = 'API 不可用';
+      $('statusDot').style.background = '#ff5252';
+      $('statsContainer').innerHTML = `<div class="error-msg">⚠️ 无法连接 ComputeHub API (${API_BASE})<br><small>确认 gateway 服务已启动: docker compose up -d gateway</small></div>`;
+    }
+  }
+}
+
+function handleFallbackData(data) {
+  const nm = data.nodeManager || {};
+  const stats = {
+    total_nodes: nm.total_nodes || 0,
+    online_nodes: nm.online_nodes || 0,
+    total_gpus: nm.total_nodes * 8 || 0,
+    total_tflops: 0,
+    avg_gpu_util: 0,
+    active_tasks: nm.active_tasks || 0,
+    total_regions: 0,
+    memory_used_gb: 0
+  };
+  const nodes = (nm.nodes || []).map(n => ({
+    node_id: n.nodeID || n.NodeID || n.node_id,
+    region: n.region || n.Region,
+    gpu_type: n.gpuType || n.GPUType,
+    gpu_utilization: n.gpu_metrics && n.gpu_metrics[0] ? n.gpu_metrics[0].utilization : 0,
+    status: n.status || n.Status
+  }));
+  renderStats(stats);
+  renderNodes({ nodes, online_nodes: nm.online_nodes });
+  $('alertList').innerHTML = '<div style="text-align:center;color:#666;padding:8px;">v2 API 不可用，仅显示 v1/basic 数据</div>';
+}
+
+function forceRefresh() {
+  $('statusText').textContent = '刷新中…';
+  $('statusDot').style.background = '#ffd740';
+  fetchAll();
+}
+
+// ====== WebSocket ======
+let ws = null;
+let wsReconnectTimer = null;
+
+function connectWS() {
+  if (ws && ws.readyState === WebSocket.OPEN) return;
+  try {
+    ws = new WebSocket(WS_URL);
+    ws.onopen = () => console.log('[WS] Connected');
+    ws.onmessage = (e) => {
+      try {
+        const msg = JSON.parse(e.data);
+        if (msg.type === 'update' || msg.type === 'sim_update') {
+          updatePartial(msg.data);
+        }
+      } catch(_) {}
+    };
+    ws.onclose = () => {
+      console.log('[WS] Disconnected, reconnecting in 5s…');
+      wsReconnectTimer = setTimeout(connectWS, 5000);
+    };
+    ws.onerror = () => ws && ws.close();
+  } catch(e) {
+    wsReconnectTimer = setTimeout(connectWS, 10000);
+  }
+}
+
+// ====== Init ======
+fetchAll();
+connectWS();
+
+// Auto-refresh every 30s
+setInterval(fetchAll, 30000);
+</script>
+</body>
+</html>

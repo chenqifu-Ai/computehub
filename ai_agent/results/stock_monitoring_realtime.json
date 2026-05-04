@@ -1,0 +1,14 @@
+{
+  "name": "华联股份",
+  "code": "000882",
+  "current_price": 1.67,
+  "cost_price": 1.779,
+  "stop_loss": 1.6,
+  "take_profit": 2.0,
+  "position": 13500,
+  "floating_loss": -1471.5,
+  "loss_percentage": -6.12,
+  "timestamp": "2026-03-25 15:05:00",
+  "status": "monitoring",
+  "action": "continue_holding"
+}

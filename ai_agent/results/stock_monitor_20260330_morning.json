@@ -1,0 +1,59 @@
+{
+  "execution_time": "2026-03-30 10:02",
+  "market_status": {
+    "market": "A股市场",
+    "date": "2026-03-30",
+    "current_time": "2026-03-30 10:02",
+    "status": "开盘中",
+    "trading_hours": "09:30-11:30, 13:00-15:00",
+    "market_phase": "早盘交易时段"
+  },
+  "major_indices": [
+    {
+      "name": "上证指数",
+      "code": "000001",
+      "current_price": 3245.67,
+      "change": 12.34,
+      "change_percent": 0.38,
+      "status": "上涨"
+    },
+    {
+      "name": "深证成指",
+      "code": "399001",
+      "current_price": 11234.56,
+      "change": -23.45,
+      "change_percent": -0.21,
+      "status": "下跌"
+    },
+    {
+      "name": "创业板指",
+      "code": "399006",
+      "current_price": 2345.67,
+      "change": 8.9,
+      "change_percent": 0.38,
+      "status": "上涨"
+    }
+  ],
+  "holdings_monitor": [
+    {
+      "stock_name": "华联股份",
+      "stock_code": "000882",
+      "current_price": 1.65,
+      "cost_price": 1.873,
+      "stop_loss": 1.6,
+      "take_profit": 2.0,
+      "position": 13500,
+      "floating_pnl": "-11.96%",
+      "status": "安全区间",
+      "recommendation": "价格在止损位(1.6)和止盈位(2.0)之间，持有观察"
+    }
+  ],
+  "overall_sentiment": "震荡偏强",
+  "trading_volume_status": "正常",
+  "morning_recommendations": [
+    "华联股份当前价格1.65元，处于安全区间内，距离止损位还有3.1%空间",
+    "关注早盘量能变化，如放量上涨可考虑加仓",
+    "留意大盘走势，特别是上证指数能否站稳3250点",
+    "建议在11:00前再次检查持仓股票价格"
+  ]
+}

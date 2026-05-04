@@ -1,0 +1,65 @@
+#!/bin/bash
+# 清理多余的 openclaw-tui 进程
+# 保留最新的一个进程
+
+LOG_FILE="/home/chen/.openclaw/logs/cleanup.log"
+mkdir -p "$(dirname "$LOG_FILE")"
+
+# 获取当前时间
+NOW=$(date '+%Y-%m-%d %H:%M:%S')
+
+# 获取最新的 TUI 进程 PID（-n 获取最新启动的）
+NEWEST_TUI=$(pgrep -n -f 'openclaw-tui' 2>/dev/null)
+TUI_COUNT=$(pgrep -f 'openclaw-tui' | wc -l)
+
+# 获取最新的 Gateway 进程 PID
+NEWEST_GATEWAY=$(pgrep -n -f 'openclaw-gateway' 2>/dev/null)
+GATEWAY_COUNT=$(pgrep -f 'openclaw-gateway' | wc -l)
+
+# 记录日志
+echo "[$NOW] 检查: TUI进程=$TUI_COUNT (最新PID=$NEWEST_TUI), Gateway进程=$GATEWAY_COUNT (最新PID=$NEWEST_GATEWAY)" >> "$LOG_FILE"
+
+# 清理 TUI 进程
+if [ "$TUI_COUNT" -gt 1 ]; then
+    echo "[$NOW] ⚠️ 发现 $TUI_COUNT 个 TUI 进程，正在清理..." >> "$LOG_FILE"
+    
+    # 杀掉除最新之外的所有 TUI 进程
+    for PID in $(pgrep -f 'openclaw-tui'); do
+        if [ "$PID" != "$NEWEST_TUI" ]; then
+            kill -9 "$PID" 2>/dev/null
+            echo "[$NOW] 杀掉 TUI 进程 PID=$PID" >> "$LOG_FILE"
+        fi
+    done
+    
+    sleep 1
+    NEW_COUNT=$(pgrep -f 'openclaw-tui' | wc -l)
+    echo "[$NOW] ✅ TUI 清理完成，剩余 $NEW_COUNT 个进程" >> "$LOG_FILE"
+fi
+
+# 清理 Gateway 进程
+if [ "$GATEWAY_COUNT" -gt 1 ]; then
+    echo "[$NOW] ⚠️ 发现 $GATEWAY_COUNT 个 Gateway 进程，正在清理..." >> "$LOG_FILE"
+    
+    for PID in $(pgrep -f 'openclaw-gateway'); do
+        if [ "$PID" != "$NEWEST_GATEWAY" ]; then
+            kill -9 "$PID" 2>/dev/null
+            echo "[$NOW] 杀掉 Gateway 进程 PID=$PID" >> "$LOG_FILE"
+        fi
+    done
+    
+    echo "[$NOW] ✅ Gateway 清理完成" >> "$LOG_FILE"
+fi
+
+# 检查内存使用
+MEMORY_USAGE=$(free | grep "内存" | awk '{printf "%.1f", $3/$2*100}')
+if [ "$(echo "$MEMORY_USAGE > 80" | bc 2>/dev/null || echo 0)" -eq 1 ]; then
+    echo "[$NOW] ⚠️ 内存使用率 $MEMORY_USAGE%，注意监控" >> "$LOG_FILE"
+fi
+
+# 检查负载
+LOAD=$(uptime | awk -F'load average:' '{print $2}' | awk '{print $1}' | tr -d ',')
+if [ "$(echo "$LOAD > 4" | bc 2>/dev/null || echo 0)" -eq 1 ]; then
+    echo "[$NOW] ⚠️ 系统负载 $LOAD，注意监控" >> "$LOG_FILE"
+fi
+
+echo "[$NOW] 监控完成" >> "$LOG_FILE"

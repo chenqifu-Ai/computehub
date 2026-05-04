@@ -1,0 +1,50 @@
+{
+  "model": "ministral-3:3B",
+  "server": "192.168.2.165:11434",
+  "timestamp": "2026-04-24T10:43:02.145790",
+  "tests": [
+    {
+      "name": "基础问候",
+      "response": "ERROR: HTTP Error 500: Internal Server Error",
+      "elapsed": 0,
+      "timestamp": "2026-04-24T10:42:22.516696"
+    },
+    {
+      "name": "基础数学",
+      "response": "ERROR: HTTP Error 500: Internal Server Error",
+      "elapsed": 0,
+      "timestamp": "2026-04-24T10:42:29.582268"
+    },
+    {
+      "name": "中文理解",
+      "response": "ERROR: HTTP Error 500: Internal Server Error",
+      "elapsed": 0,
+      "timestamp": "2026-04-24T10:42:37.467589"
+    },
+    {
+      "name": "简单代码",
+      "response": "ERROR: HTTP Error 500: Internal Server Error",
+      "elapsed": 0,
+      "timestamp": "2026-04-24T10:42:46.882821"
+    },
+    {
+      "name": "逻辑推理",
+      "response": "ERROR: HTTP Error 500: Internal Server Error",
+      "elapsed": 0,
+      "timestamp": "2026-04-24T10:42:55.183106"
+    },
+    {
+      "name": "上下文理解",
+      "response": "ERROR: HTTP Error 500: Internal Server Error",
+      "elapsed": 0,
+      "timestamp": "2026-04-24T10:43:02.145720"
+    }
+  ],
+  "summary": {
+    "total_tests": 6,
+    "total_time": 0,
+    "avg_time": 0.0,
+    "best_test": "基础问候",
+    "worst_test": "基础问候"
+  }
+}

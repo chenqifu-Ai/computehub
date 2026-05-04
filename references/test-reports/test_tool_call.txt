@@ -1,0 +1,19 @@
+工具调用功能测试文件
+测试时间: 2026-04-19 23:17
+测试目的: 验证 OpenClaw 工具调用功能是否正常
+
+测试项目:
+✅ read - 读取文件 (已测试 SOUL.md)
+✅ write - 写入文件 (已测试)
+✅ exec - 执行命令 (已测试)
+⚠️ web_search - 网络搜索 (需要配置 Brave API Key)
+✅ session_status - 会话状态 (已测试)
+
+测试结果:
+- read: ✅ 成功读取 SOUL.md
+- write: ✅ 成功写入测试文件
+- exec: ✅ 成功执行命令，显示系统负载 21.38
+- web_search: ⚠️ 需要配置 BRAVE_API_KEY
+- session_status: ✅ 成功获取会话状态
+
+测试状态: ✅ 完成 (2026-04-19 23:18)

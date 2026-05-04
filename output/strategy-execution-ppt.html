@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业战略执行与落地</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; background: #1a1a2e; }
+        .slide {
+            width: 100%;
+            min-height: 100vh;
+            padding: 60px 80px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            page-break-after: always;
+        }
+        .slide:nth-child(odd) { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
+        .slide:nth-child(even) { background: linear-gradient(135deg, #0f3460 0%, #16213e 100%); }
+        
+        .title-slide { justify-content: center; align-items: center; text-align: center; }
+        .title-slide h1 { font-size: 56px; color: #e94560; margin-bottom: 30px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .title-slide .subtitle { font-size: 28px; color: #a2d2ff; margin-bottom: 20px; }
+        .title-slide .author { font-size: 20px; color: #888; }
+        
+        h2 { font-size: 40px; color: #e94560; margin-bottom: 40px; border-bottom: 3px solid #e94560; padding-bottom: 15px; }
+        h3 { font-size: 28px; color: #a2d2ff; margin: 30px 0 20px; }
+        
+        .content { color: #eee; font-size: 22px; line-height: 1.8; }
+        .content ul { list-style: none; margin-left: 20px; }
+        .content li { margin: 15px 0; position: relative; padding-left: 30px; }
+        .content li:before { content: "▸"; color: #e94560; position: absolute; left: 0; font-size: 24px; }
+        
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+            border-left: 4px solid #e94560;
+        }
+        .card-title { color: #e94560; font-size: 24px; margin-bottom: 15px; font-weight: bold; }
+        .card-content { color: #ccc; font-size: 18px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin: 20px 0; }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        
+        .highlight { color: #e94560; font-weight: bold; }
+        .blue { color: #a2d2ff; }
+        .green { color: #4ade80; }
+        
+        .number { 
+            display: inline-block; 
+            width: 40px; height: 40px; 
+            background: #e94560; 
+            color: white; 
+            border-radius: 50%; 
+            text-align: center; 
+            line-height: 40px; 
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .footer {
+            position: absolute;
+            bottom: 30px;
+            right: 50px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .page-number {
+            position: absolute;
+            bottom: 30px;
+            left: 50px;
+            color: #e94560;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        @media print {
+            .slide { page-break-after: always; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 封面 -->
+<div class="slide title-slide">
+    <h1>企业战略执行与落地</h1>
+    <div class="subtitle">战略管理核心实践指南</div>
+    <div class="author">CEO战略顾问智能体</div>
+    <div class="footer">2026年3月21日</div>
+</div>
+
+<!-- 目录 -->
+<div class="slide">
+    <h2>目录</h2>
+    <div class="content">
+        <div class="grid">
+            <div class="card">
+                <div class="card-title">一、战略执行概述</div>
+                <div class="card-content">定义、挑战与要素</div>
+            </div>
+            <div class="card">
+                <div class="card-title">二、战略解码与分解</div>
+                <div class="card-content">解码方法与目标分解</div>
+            </div>
+            <div class="card">
+                <div class="card-title">三、组织保障</div>
+                <div class="card-content">组织结构与资源配置</div>
+            </div>
+            <div class="card">
+                <div class="card-title">四、执行机制建设</div>
+                <div class="card-content">决策、激励与监控</div>
+            </div>
+            <div class="card">
+                <div class="card-title">五、过程管理</div>
+                <div class="card-content">项目管理与偏差控制</div>
+            </div>
+            <div class="card">
+                <div class="card-title">六、评估与改进</div>
+                <div class="card-content">复盘与持续优化</div>
+            </div>
+        </div>
+    </div>
+    <div class="page-number">2</div>
+</div>
+
+<!-- 第一章：战略执行概述 -->
+<div class="slide">
+    <h2>一、战略执行概述</h2>
+    <div class="content">
+        <h3>战略执行定义</h3>
+        <p>战略执行是将战略规划转化为具体行动，确保战略目标得以实现的<span class="highlight">关键过程</span>。</p>
+        
+        <div class="card" style="margin-top: 30px;">
+            <div class="card-title">核心观点</div>
+            <div class="card-content">
+                <p style="font-size: 24px; line-height: 2;">再好的战略如果不能有效执行，<br>也只是一纸空文。</p>
+            </div>
+        </div>
+    </div>
+    <div class="page-number">3</div>
+</div>
+
+<div class="slide">
+    <h2>战略执行挑战</h2>
+    <div class="content">
+        <div class="grid grid-3">
+            <div class="card">
+                <div class="card-title">战略共识缺失</div>
+                <div class="card-content">
+                    <ul>
+                        <li>高层理解不一</li>
+                        <li>中层不清楚意图</li>
+                        <li>员工不了解内容</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">组织能力不足</div>
+                <div class="card-content">
+                    <ul>
+                        <li>资源配置不匹配</li>
+                        <li>组织结构阻碍</li>
+                        <li>人才能力跟不上</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">执行动力不足</div>
+                <div class="card-content">
+                    <ul>
+                        <li>激励机制缺失</li>
+                        <li>目标脱节</li>
+                        <li>认同度低</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="grid grid-3" style="margin-top: 20px;">
+            <div class="card">
+                <div class="card-title">监控反馈缺失</div>
+                <div class="card-content">
+                    <ul>
+                        <li>缺乏监控机制</li>
+                        <li>执行不透明</li>
+                        <li>问题发现不及时</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">战略调整困难</div>
+                <div class="card-content">
+                    <ul>
+                        <li>战略僵化</li>
+                        <li>响应变化慢</li>
+                        <li>执行与战略脱节</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-number">4</div>
+</div>
+
+<div class="slide">
+    <h2>战略执行要素</h2>
+    <div class="content">
+        <div class="grid">
+            <div class="card">
+                <div class="card-title"><span class="number">1</span>战略清晰</div>
+                <div class="card-content">
+                    <ul>
+                        <li>战略目标明确</li>
+                        <li>战略路径清晰</li>
+                        <li>战略重点突出</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title"><span class="number">2</span>组织保障</div>
+                <div class="card-content">
+                    <ul>
+                        <li>组织结构匹配</li>
+                        <li>资源配置到位</li>
+                        <li>人才队伍支撑</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title"><span class="number">3</span>机制支撑</div>
+                <div class="card-content">
+                    <ul>
+                        <li>决策机制高效</li>
+                        <li>激励机制有效</li>
+                        <li>监控机制完善</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title"><span class="number">4</span>文化引领</div>
+                <div class="card-content">
+                    <ul>
+                        <li>战略意识深入</li>
+                        <li>执行文化浓厚</li>
+                        <li>变革意识强</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-number">5</div>
+</div>
+
+<!-- 第二章：战略解码与分解 -->
+<div class="slide">
+    <h2>二、战略解码与分解</h2>
+    <div class="content">
+        <h3>战略解码含义</h3>
+        <div class="card">
+            <div class="card-content" style="font-size: 20px;">
+                <p><span class="highlight">战略解码</span>是将战略转化为可执行目标的过程：</p>
+                <ul style="margin-top: 15px;">
+                    <li>让战略从<span class="blue">抽象到具体</span></li>
+                    <li>让员工<span class="blue">理解战略意图</span></li>
+                    <li>明确<span class="blue">战略重点和路径</span></li>
+                </ul>
+            </div>
+        </div>
+        
+        <h3 style="margin-top: 40px;">战略解码内容</h3>
+        <div class="grid grid-3">
+            <div class="card">
+                <div class="card-title">战略意图解读</div>
+                <div class="card-content">目标是什么、为什么、意味着什么</div>
+            </div>
+            <div class="card">
+                <div class="card-title">战略重点识别</div>
+                <div class="card-content">关键成功因素、优先级、资源重点</div>
+            </div>
+            <div class="card">
+                <div class="card-title">战略路径明确</div>
+                <div class="card-content">主要路径、里程碑、阶段性目标</div>
+            </div>
+        </div>
+    </div>
+    <div class="page-number">6</div>
+</div>
+
+<div class="slide">
+    <h2>平衡计分卡分解</h2>
+    <div class="content">
+        <div class="grid grid-3">
+            <div class="card" style="background: rgba(233,69,96,0.1); border-left-color: #e94560;">
+                <div class="card-title" style="color: #e94560;">财务维度</div>
+                <div class="card-content">
+                    <ul>
+                        <li>营业收入目标</li>
+                        <li>利润率目标</li>
+                        <li>投资回报率</li>
+                        <li>成本控制目标</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card" style="background: rgba(162,210,255,0.1); border-left-color: #a2d2ff;">
+                <div class="card-title" style="color: #a2d2ff;">客户维度</div>
+                <div class="card-content">
+                    <ul>
+                        <li>客户满意度</li>
+                        <li>市场份额</li>
+                        <li>客户增长率</li>
+                        <li>品牌认知度</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card" style="background: rgba(74,222,128,0.1); border-left-color: #4ade80;">
+                <div class="card-title" style="color: #4ade80;">内部流程维度</div>
+                <div class="card-content">
+                    <ul>
+                        <li>运营效率</li>
+                        <li>产品质量</li>
+                        <li>创新能力</li>
+                        <li>供应链效率</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="card" style="margin-top: 30px;">
+            <div class="card-title">学习成长维度</div>
+            <div class="card-content grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                <div>人才培养目标</div>
+                <div>组织能力目标</div>
+                <div>信息化目标</div>
+            </div>
+        </div>
+    </div>
+    <div class="page-number">7</div>
+</div>
+
+<div class="slide">
+    <h2>SMART目标原则</h2>
+    <div class="content">
+        <div class="grid">
+            <div class="card">
+                <div class="card-title"><span class="highlight">S</span>pecific - 具体的</div>
+                <div class="card-content">目标清晰明确，不含糊</div>
+            </div>
+            <div class="card">
+                <div class="card-title"><span class="highlight">M</span>easurable - 可衡量的</div>
+                <div class="card-content">可以量化评估，有明确指标</div>
+            </div>
+            <div class="card">
+                <div class="card-title"><span class="highlight">A</span>chievable - 可实现的</div>
+                <div class="card-content">具有挑战但可以达成</div>
+            </div>
+            <div class="card">
+                <div class="card-title"><span class="highlight">R</span>elevant - 相关的</div>
+                <div class="card-content">与战略目标相关联</div>
+            </div>
+            <div class="card" style="grid-column: span 2;">
+                <div class="card-title"><span class="highlight">T</span>ime-bound - 有时限的</div>
+                <div class="card-content">有明确的完成时间节点</div>
+            </div>
+        </div>
+    </div>
+    <div class="page-number">8</div>
+</div>
+
+<div class="slide">
+    <h2>战略地图</h2>
+    <div class="content">
+        <div style="text-align: center; padding: 20px;">
+            <div style="background: linear-gradient(135deg, #e94560, #ff6b6b); padding: 25px; border-radius: 15px; margin-bottom: 15px;">
+                <div style="color: white; font-size: 24px; font-weight: bold;">财务层面（顶层）</div>
+                <div style="color: rgba(255,255,255,0.9); font-size: 16px;">股东价值 · 收入增长 · 生产率</div>
+            </div>
+            <div style="font-size: 30px; color: #e94560;">↓</div>
+            <div style="background: linear-gradient(135deg, #a2d2ff, #60a5fa); padding: 25px; border-radius: 15px; margin-bottom: 15px;">
+                <div style="color: white; font-size: 24px; font-weight: bold;">客户层面</div>
+                <div style="color: rgba(255,255,255,0.9); font-size: 16px;">客户价值 · 客户体验 · 客户成果</div>
+            </div>
+            <div style="font-size: 30px; color: #a2d2ff;">↓</div>
+            <div style="background: linear-gradient(135deg, #4ade80, #22c55e); padding: 25px; border-radius: 15px; margin-bottom: 15px;">
+                <div style="color: white; font-size: 24px; font-weight: bold;">内部流程层面</div>
+                <div style="color: rgba(255,255,255,0.9); font-size: 16px;">运营管理 · 客户管理 · 创新流程</div>
+            </div>
+            <div style="font-size: 30px; color: #4ade80;">↓</div>
+            <div style="background: linear-gradient(135deg, #8b5cf6, #a78bfa); padding: 25px; border-radius: 15px;">
+                <div style="color: white; font-size: 24px; font-weight: bold;">学习成长层面（底层）</div>
+                <div style="color: rgba(255,255,255,0.9); font-size: 16px;">人力资本 · 信息资本 · 组织资本</div>
+            </div>
+        </div>
+    </div>
+    <div class="page-number">9</div>
+</div>
+
+<!-- 第三章：组织保障 -->
+<div class="slide">
+    <h2>三、战略执行组织保障</h2>
+    <div class="content">
+        <h3>组织结构类型</h3>
+        <div class="grid grid-3">
+            <div class="card">
+                <div class="card-title">职能型组织</div>
+                <div class="card-content">
+                    <ul>
+                        <li>按专业分工</li>
+                        <li>效率高</li>
+                        <li>跨部门协作困难</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">事业部组织</div>
+                <div class="card-content">
+                    <ul>
+                        <li>按产品/地区划分</li>
+                        <li>响应市场灵活</li>
+                        <li>资源配置分散</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">矩阵组织</div>
+                <div class="card-content">
+                    <ul>
+                        <li>职能与项目结合</li>
+                        <li>资源共享</li>
+                        <li>双重汇报关系</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="card" style="margin-top: 30px;">
+            <div class="card-title">组织设计原则</div>
+            <div class="card-content grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+                <div style="text-align: center;"><span class="highlight">支撑战略</span></div>
+                <div style="text-align: center;"><span class="blue">明确权责</span></div>
+                <div style="text-align: center;"><span class="green">促进流动</span></div>
+                <div style="text-align: center;"><span class="highlight">适应变化</span></div>
+            </div>
+        </div>
+    </div>
+    <div class="page-number">10</div>
+</div>
+
+<div class="slide">
+    <h2>资源配置</h2>
+    <div class="content">
+        <div class="card">
+            <div class="card-title">资源配置原则</div>
+            <div class="card-content grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
+                <div style="text-align: center; padding: 20px; background: rgba(233,69,96,0.1); border-radius: 10px;">
+                    <div style="font-size: 36px; color: #e94560;">战略优先</div>
+                    <div style="margin-top: 10px; color: #888;">资源向战略重点倾斜</div>
+                </div>
+                <div style="text-align: center; padding: 20px; background: rgba(162,210,255,0.1); border-radius: 10px;">
+                    <div style="font-size: 36px; color: #a2d2ff;">效益优先</div>
+                    <div style="margin-top: 10px; color: #888;">高效益领域多投入</div>
+                </div>
+                <div style="text-align: center; padding: 20px; background: rgba(74,222,128,0.1); border-radius: 10px;">
+                    <div style="font-size: 36px; color: #4ade80;">平衡兼顾</div>
+                    <div style="margin-top: 10px; color: #888;">长期短期平衡</div>
+                </div>
+            </div>
+        </div>
+        <h3 style="margin-top: 40px;">资源配置内容</h3>
+        <div class="grid grid-3">
+            <div class="card">
+                <div class="card-title">人力资源</div>
+                <div class="card-content">战略项目优先配人<br>关键岗位人才保障<br>培训发展投入</div>
+            </div>
+            <div class="card">
+                <div class="card-title">财务资源</div>
+                <div class="card-content">战略投资优先<br>研发投入保障<br>市场开发投入</div>
+            </div>
+            <div class="card">
+                <div class="card-title">资产资源</div>
+                <div class="card-content">关键资产优先配置<br>闲置资产处置<br>资产利用效率</div>
+            </div>
+        </div>
+    </div>
+    <div class="page-number">11</div>
+</div>
+
+<!-- 第四章：执行机制建设 -->
+<div class="slide">
+    <h2>四、战略执行机制建设</h2>
+    <div class="content">
+        <div class="grid">
+            <div class="card">
+                <div class="card-title">决策机制</div>
+                <div class="card-content">
+                    <ul>
+                        <li>明确决策层级</li>
+                        <li>规范决策流程</li>
+                        <li>建立决策支持系统</li>
+                        <li>决策责任追究</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">激励机制</div>
+                <div class="card-content">
+                    <ul>
+                        <li>激励与战略目标挂钩</li>
+                        <li>物质激励与精神激励结合</li>
+                        <li>短期激励与长期激励结合</li>
+                        <li>公平公正透明</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">监控机制</div>
+                <div class="card-content">
+                    <ul>
+                        <li>战略目标进展监控</li>
+                        <li>战略项目进展监控</li>
+                        <li>战略环境变化监控</li>
+                        <li>预警机制建立</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">沟通机制</div>
+                <div class="card-content">
+                    <ul>
+                        <li>战略宣讲</li>
+                        <li>执行沟通</li>
+                        <li>反馈沟通</li>
+                        <li>全员沟通</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-number">12</div>
+</div>
+
+<!-- 第五章：过程管理 -->
+<div class="slide">
+    <h2>五、战略执行过程管理</h2>
+    <div class="content">
+        <h3>战略项目化管理</h3>
+        <div class="grid grid-3">
+            <div class="card">
+                <div class="card-title">项目立项</div>
+                <div class="card-content">明确目标<br>制定计划<br>配置资源</div>
+            </div>
+            <div class="card">
+                <div class="card-title">项目执行</div>
+                <div class="card-content">按计划推进<br>过程监控<br>问题解决</div>
+            </div>
+            <div class="card">
+                <div class="card-title">项目收尾</div>
+                <div class="card-content">成果验收<br>经验总结<br>知识沉淀</div>
+            </div>
+        </div>
+        
+        <h3 style="margin-top: 40px;">偏差管理</h3>
+        <div class="grid">
+            <div class="card">
+                <div class="card-title">偏差识别</div>
+                <div class="card-content">实际与目标对比<br>进度与计划对比<br>资源与预算对比</div>
+            </div>
+            <div class="card">
+                <div class="card-title">偏差纠正</div>
+                <div class="card-content">制定纠正措施<br>调整执行方案<br>追踪纠正效果</div>
+            </div>
+        </div>
+    </div>
+    <div class="page-number">13</div>
+</div>
+
+<!-- 第六章：评估与改进 -->
+<div class="slide">
+    <h2>六、战略执行评估与改进</h2>
+    <div class="content">
+        <h3>战略复盘四步法</h3>
+        <div class="grid grid-3" style="grid-template-columns: repeat(4, 1fr);">
+            <div style="text-align: center; padding: 25px; background: linear-gradient(135deg, #e94560, #ff6b6b); border-radius: 15px;">
+                <div style="font-size: 48px; color: white; font-weight: bold;">1</div>
+                <div style="color: white; font-size: 20px; margin-top: 10px;">回顾目标</div>
+                <div style="color: rgba(255,255,255,0.8); font-size: 14px; margin-top: 5px;">原定目标是什么</div>
+            </div>
+            <div style="text-align: center; padding: 25px; background: linear-gradient(135deg, #a2d2ff, #60a5fa); border-radius: 15px;">
+                <div style="font-size: 48px; color: white; font-weight: bold;">2</div>
+                <div style="color: white; font-size: 20px; margin-top: 10px;">评估结果</div>
+                <div style="color: rgba(255,255,255,0.8); font-size: 14px; margin-top: 5px;">实际结果如何</div>
+            </div>
+            <div style="text-align: center; padding: 25px; background: linear-gradient(135deg, #4ade80, #22c55e); border-radius: 15px;">
+                <div style="font-size: 48px; color: white; font-weight: bold;">3</div>
+                <div style="color: white; font-size: 20px; margin-top: 10px;">分析原因</div>
+                <div style="color: rgba(255,255,255,0.8); font-size: 14px; margin-top: 5px;">成败原因分析</div>
+            </div>
+            <div style="text-align: center; padding: 25px; background: linear-gradient(135deg, #8b5cf6, #a78bfa); border-radius: 15px;">
+                <div style="font-size: 48px; color: white; font-weight: bold;">4</div>
+                <div style="color: white; font-size: 20px; margin-top: 10px;">总结规律</div>
+                <div style="color: rgba(255,255,255,0.8); font-size: 14px; margin-top: 5px;">经验教训沉淀</div>
+            </div>
+        </div>
+    </div>
+    <div class="page-number">14</div>
+</div>
+
+<!-- 第七章：成功要素 -->
+<div class="slide">
+    <h2>七、战略执行成功要素</h2>
+    <div class="content">
+        <div class="grid">
+            <div class="card" style="background: linear-gradient(135deg, rgba(233,69,96,0.2), rgba(233,69,96,0.05));">
+                <div class="card-title"><span class="number" style="background: #e94560;">1</span>领导力</div>
+                <div class="card-content">
+                    <ul>
+                        <li>战略愿景塑造者</li>
+                        <li>战略执行推动者</li>
+                        <li>组织变革引领者</li>
+                        <li>排除执行障碍</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card" style="background: linear-gradient(135deg, rgba(162,210,255,0.2), rgba(162,210,255,0.05));">
+                <div class="card-title"><span class="number" style="background: #a2d2ff;">2</span>执行文化</div>
+                <div class="card-content">
+                    <ul>
+                        <li>目标导向</li>
+                        <li>结果导向</li>
+                        <li>高效执行</li>
+                        <li>团队协作</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card" style="background: linear-gradient(135deg, rgba(74,222,128,0.2), rgba(74,222,128,0.05));">
+                <div class="card-title"><span class="number" style="background: #4ade80;">3</span>组织能力</div>
+                <div class="card-content">
+                    <ul>
+                        <li>战略理解能力</li>
+                        <li>执行规划能力</li>
+                        <li>资源整合能力</li>
+                        <li>问题解决能力</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card" style="background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(139,92,246,0.05));">
+                <div class="card-title"><span class="number" style="background: #8b5cf6;">4</span>持续学习</div>
+                <div class="card-content">
+                    <ul>
+                        <li>环境洞察能力</li>
+                        <li>知识吸收能力</li>
+                        <li>经验总结能力</li>
+                        <li>创新应用能力</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-number">15</div>
+</div>
+
+<!-- 结束页 -->
+<div class="slide title-slide" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #e94560 150%);">
+    <h1 style="color: white;">谢谢观看</h1>
+    <div class="subtitle" style="color: #a2d2ff;">战略执行是战略管理的关键环节</div>
+    <div class="content" style="margin-top: 40px; color: #888;">
+        <p>再好的战略，如果不能有效执行，也只是一纸空文。</p>
+        <p style="margin-top: 20px;">战略执行需要：<span class="highlight">战略清晰 + 组织保障 + 机制支撑 + 文化引领</span></p>
+    </div>
+    <div class="footer">CEO战略顾问智能体 · 2026年3月21日</div>
+</div>
+
+</body>
+</html>

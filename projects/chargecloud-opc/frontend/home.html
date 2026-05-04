@@ -1,0 +1,174 @@
+# 充电云 - 官网页面
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>充电云 - 充电桩运营管理SaaS平台</title>
+    <meta name="description" content="充电云是专业的充电桩运营管理SaaS平台，为充电站运营商提供一站式管理解决方案。">
+    <meta name="keywords" content="充电桩管理,充电站运营,SaaS平台,充电桩系统">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f5f5f5; }
+        .header { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 20px 50px; }
+        .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 24px; font-weight: bold; display: flex; align-items: center; }
+        .logo span { font-size: 32px; margin-right: 10px; }
+        .nav a { color: white; text-decoration: none; margin-left: 30px; font-size: 16px; }
+        .nav a:hover { color: #00d2ff; }
+        .hero { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 100px 50px; text-align: center; }
+        .hero h1 { font-size: 48px; margin-bottom: 20px; }
+        .hero p { font-size: 20px; opacity: 0.9; margin-bottom: 40px; }
+        .hero-buttons { display: flex; gap: 20px; justify-content: center; }
+        .btn { padding: 15px 40px; border-radius: 30px; font-size: 16px; cursor: pointer; border: none; }
+        .btn-primary { background: #00d2ff; color: white; }
+        .btn-secondary { background: transparent; border: 2px solid white; color: white; }
+        .features { padding: 80px 50px; background: white; }
+        .features-title { text-align: center; font-size: 36px; color: #1e3c72; margin-bottom: 50px; }
+        .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; max-width: 1200px; margin: 0 auto; }
+        .feature-card { text-align: center; padding: 30px; background: #f8f9fa; border-radius: 10px; }
+        .feature-card .icon { font-size: 48px; margin-bottom: 20px; }
+        .feature-card h3 { color: #1e3c72; margin-bottom: 10px; }
+        .feature-card p { color: #666; font-size: 14px; }
+        .pricing { padding: 80px 50px; background: #f8f9fa; }
+        .pricing-title { text-align: center; font-size: 36px; color: #1e3c72; margin-bottom: 50px; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 1000px; margin: 0 auto; }
+        .pricing-card { background: white; border-radius: 10px; padding: 40px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .pricing-card.featured { border: 2px solid #00d2ff; transform: scale(1.05); }
+        .pricing-card h3 { color: #1e3c72; font-size: 24px; margin-bottom: 10px; }
+        .pricing-card .price { font-size: 48px; color: #00d2ff; margin: 20px 0; }
+        .pricing-card .price span { font-size: 16px; color: #666; }
+        .pricing-card ul { list-style: none; text-align: left; margin: 20px 0; }
+        .pricing-card li { padding: 10px 0; border-bottom: 1px solid #eee; color: #666; }
+        .pricing-card li:before { content: '✓'; color: #00d2ff; margin-right: 10px; }
+        .contact { padding: 80px 50px; background: #1e3c72; color: white; text-align: center; }
+        .contact h2 { font-size: 36px; margin-bottom: 20px; }
+        .contact p { font-size: 18px; opacity: 0.9; margin-bottom: 30px; }
+        .footer { background: #0d1b2a; color: white; padding: 30px 50px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo"><span>⚡</span>充电云</div>
+            <div class="nav">
+                <a href="#features">功能</a>
+                <a href="#pricing">价格</a>
+                <a href="#contact">联系我们</a>
+                <a href="login.html">登录</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="hero">
+        <h1>让充电桩运营更简单</h1>
+        <p>专业的充电桩运营管理SaaS平台，一站式解决充电站管理难题</p>
+        <div class="hero-buttons">
+            <button class="btn btn-primary" onclick="window.location.href='login.html'">免费试用</button>
+            <button class="btn btn-secondary">预约演示</button>
+        </div>
+    </div>
+    
+    <div class="features" id="features">
+        <h2 class="features-title">核心功能</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="icon">🏢</div>
+                <h3>充电站管理</h3>
+                <p>多站点统一管理，实时监控站点运营状态</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🔌</div>
+                <h3>充电桩管理</h3>
+                <p>设备状态实时监控，远程控制启停</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">📋</div>
+                <h3>订单管理</h3>
+                <p>订单全流程追踪，数据清晰透明</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">💰</div>
+                <h3>财务结算</h3>
+                <p>自动结算，财务报表一键生成</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">📊</div>
+                <h3>数据分析</h3>
+                <p>运营数据可视化，助力决策优化</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">👥</div>
+                <h3>用户管理</h3>
+                <p>用户画像分析，精准营销推广</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">📱</div>
+                <h3>小程序</h3>
+                <p>用户端小程序，扫码充电一键完成</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🔗</div>
+                <h3>API开放</h3>
+                <p>标准API接口，对接第三方系统</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="pricing" id="pricing">
+        <h2 class="pricing-title">透明定价，无隐藏费用</h2>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h3>基础版</h3>
+                <div class="price">¥299<span>/月</span></div>
+                <p>适合小型运营商</p>
+                <ul>
+                    <li>1个站点</li>
+                    <li>不限充电桩数</li>
+                    <li>订单管理</li>
+                    <li>基础报表</li>
+                    <li>在线客服</li>
+                </ul>
+                <button class="btn btn-primary" style="width: 100%;">立即开始</button>
+            </div>
+            <div class="pricing-card featured">
+                <h3>专业版</h3>
+                <div class="price">¥899<span>/月</span></div>
+                <p>适合中型运营商</p>
+                <ul>
+                    <li>5个站点</li>
+                    <li>数据分析</li>
+                    <li>营销工具</li>
+                    <li>标准报表</li>
+                    <li>优先客服</li>
+                </ul>
+                <button class="btn btn-primary" style="width: 100%;">最受欢迎</button>
+            </div>
+            <div class="pricing-card">
+                <h3>企业版</h3>
+                <div class="price">¥2999<span>/月</span></div>
+                <p>适合大型运营商</p>
+                <ul>
+                    <li>不限站点</li>
+                    <li>API接口</li>
+                    <li>私有部署</li>
+                    <li>专属客服</li>
+                    <li>定制开发</li>
+                </ul>
+                <button class="btn btn-primary" style="width: 100%;">联系我们</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="contact" id="contact">
+        <h2>联系我们</h2>
+        <p>有任何问题？欢迎随时联系我们的团队</p>
+        <p>电话：400-888-8888 | 邮箱：contact@chargecloud.com</p>
+    </div>
+    
+    <div class="footer">
+        <p>© 2026 充电云科技 | 京ICP备xxxxxxxx号</p>
+    </div>
+</body>
+</html>

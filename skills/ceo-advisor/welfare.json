@@ -1,0 +1,26 @@
+{
+  "expert": "智多星",
+  "welfare_setup": "2026-03-29T09:31:08.840731",
+  "daily_benefits": {
+    "morning_coffee": true,
+    "lunch_break": "12:00-13:00",
+    "afternoon_snack": "15:00",
+    "evening_rest": "18:00-19:00"
+  },
+  "weekly_rewards": {
+    "monday_motivation": "周一激励红包",
+    "friday_reward": "周五完成奖励",
+    "weekend_rest": "周末双休"
+  },
+  "performance_bonus": {
+    "daily_output_bonus": "产出达标奖励",
+    "quality_bonus": "质量优秀奖励",
+    "innovation_bonus": "创新贡献奖励"
+  },
+  "last_reward": {
+    "type": "周一激励红包",
+    "time": "2026-03-29T09:31:08.855319",
+    "amount": "待定"
+  },
+  "next_reward": "2026-03-29T18:00:00.840738"
+}

@@ -1,0 +1,9 @@
+Script started on 2026-03-17 06:14:15+08:00 [COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null xiaomi@192.168.1.7 'dir "C:\Program Files\Google\Chrome\Application\chrome.exe" "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" "C:\Program Files\Microsoft\Edge\Application\msedge.exe" 2>nul'" <not executed on terminal>]
+1234567890
+Warning: Permanently added '192.168.1.7' (ED25519) to the list of known hosts.
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+xiaomi@192.168.1.7's password: 
+
+Script done on 2026-03-17 06:14:16+08:00 [COMMAND_EXIT_CODE="1"]

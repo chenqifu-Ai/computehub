@@ -1,0 +1,173 @@
+[
+  {
+    "university": "北京中医药大学",
+    "award_name": "国家级教学成果奖",
+    "year": "2018",
+    "project": "中医药人才培养模式的创新与实践",
+    "level": "一等奖",
+    "category": "高等教育",
+    "details": "在中医药教育领域取得重大突破，建立了创新人才培养体系"
+  },
+  {
+    "university": "北京中医药大学",
+    "award_name": "国家级教学成果奖",
+    "year": "2014",
+    "project": "中医经典课程教学改革与实践",
+    "level": "二等奖",
+    "category": "课程建设",
+    "details": "经典课程教学创新成果显著，提升教学质量"
+  },
+  {
+    "university": "北京中医药大学",
+    "award_name": "国家级教学成果奖",
+    "year": "2009",
+    "project": "中医药实验教学体系创新",
+    "level": "二等奖",
+    "category": "实验教学",
+    "details": "建立现代化中医药实验教学平台"
+  },
+  {
+    "university": "上海中医药大学",
+    "award_name": "国家级教学成果奖",
+    "year": "2018",
+    "project": "中西医结合人才培养模式的创新与实践",
+    "level": "特等奖",
+    "category": "人才培养",
+    "details": "开创中西医结合教育新模式，获得国家高度认可"
+  },
+  {
+    "university": "上海中医药大学",
+    "award_name": "国家级教学成果奖",
+    "year": "2014",
+    "project": "中医临床技能培训体系构建",
+    "level": "一等奖",
+    "category": "临床教学",
+    "details": "建立完善的临床技能培训体系"
+  },
+  {
+    "university": "广州中医药大学",
+    "award_name": "国家级教学成果奖",
+    "year": "2018",
+    "project": "岭南中医药特色人才培养",
+    "level": "一等奖",
+    "category": "特色教育",
+    "details": "结合岭南地区特色，培养特色中医药人才"
+  },
+  {
+    "university": "广州中医药大学",
+    "award_name": "国家级教学成果奖",
+    "year": "2014",
+    "project": "中医药国际化教育模式探索",
+    "level": "二等奖",
+    "category": "国际教育",
+    "details": "推动中医药教育的国际化发展"
+  },
+  {
+    "university": "南京中医药大学",
+    "award_name": "国家级教学成果奖",
+    "year": "2018",
+    "project": "中医临床教学体系创新与实践",
+    "level": "一等奖",
+    "category": "临床教学",
+    "details": "临床教学体系改革成效显著"
+  },
+  {
+    "university": "南京中医药大学",
+    "award_name": "国家级教学成果奖",
+    "year": "2014",
+    "project": "中医药传承创新人才培养",
+    "level": "二等奖",
+    "category": "人才培养",
+    "details": "培养具有创新能力的中医药人才"
+  },
+  {
+    "university": "成都中医药大学",
+    "award_name": "国家级教学成果奖",
+    "year": "2018",
+    "project": "西部中医药人才培养模式创新",
+    "level": "一等奖",
+    "category": "区域教育",
+    "details": "针对西部地区特点创新人才培养模式"
+  },
+  {
+    "university": "北京中医药大学",
+    "award_name": "国家科技进步奖",
+    "year": "2020",
+    "project": "中医药防治新冠肺炎关键技术研究",
+    "level": "二等奖",
+    "category": "医疗卫生",
+    "details": "在疫情防控中发挥重要作用"
+  },
+  {
+    "university": "上海中医药大学",
+    "award_name": "国家科技进步奖",
+    "year": "2019",
+    "project": "中西医结合治疗肿瘤研究",
+    "level": "一等奖",
+    "category": "肿瘤治疗",
+    "details": "在中西医结合治疗肿瘤方面取得突破"
+  },
+  {
+    "university": "广州中医药大学",
+    "award_name": "国家科技进步奖",
+    "year": "2020",
+    "project": "岭南中医药防治常见病研究",
+    "level": "二等奖",
+    "category": "疾病防治",
+    "details": "结合岭南特色开展疾病防治研究"
+  },
+  {
+    "university": "南京中医药大学",
+    "award_name": "国家科技进步奖",
+    "year": "2018",
+    "project": "中药现代化关键技术研究",
+    "level": "二等奖",
+    "category": "中药研发",
+    "details": "推动中药现代化发展"
+  },
+  {
+    "university": "北京中医药大学",
+    "award_name": "国家技术发明奖",
+    "year": "2017",
+    "project": "中药提取新技术发明",
+    "level": "二等奖",
+    "category": "技术发明",
+    "details": "创新中药提取技术"
+  },
+  {
+    "university": "上海中医药大学",
+    "award_name": "国家自然科学奖",
+    "year": "2016",
+    "project": "中医药基础理论研究",
+    "level": "二等奖",
+    "category": "基础研究",
+    "details": "深化中医药基础理论研究"
+  },
+  {
+    "university": "北京中医药大学",
+    "award_name": "教育部科技进步奖",
+    "year": "2021",
+    "project": "智能中医药诊断系统",
+    "level": "一等奖",
+    "category": "智能医疗",
+    "details": "开发智能中医药诊断技术"
+  },
+  {
+    "university": "上海中医药大学",
+    "award_name": "中医药管理局科技进步奖",
+    "year": "2020",
+    "project": "中医标准化研究",
+    "level": "特等奖",
+    "category": "标准化",
+    "details": "推动中医标准化进程"
+  },
+  {
+    "university": "广州中医药大学",
+    "award_name": "省级教学成果奖",
+    "year": "2021",
+    "project": "中医药在线教育平台",
+    "level": "特等奖",
+    "category": "在线教育",
+    "details": "建设中医药在线教育体系"
+  }
+]

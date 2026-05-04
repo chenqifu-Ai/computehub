@@ -1,0 +1,35 @@
+{
+  "timestamp": "2026-03-26T18:50:35.203021",
+  "files": {
+    "bailian_config_backup_2026-03-23.json": {
+      "path": "/root/.openclaw/workspace/config/bailian_config_backup_2026-03-23.json",
+      "hash": "4e7e8b89de08ca867a490b533c10afb2",
+      "size": 919,
+      "modified": "2026-03-23T18:55:50.078259"
+    },
+    "company_account.json": {
+      "path": "/root/.openclaw/workspace/config/company_account.json",
+      "hash": "a2d459e060c9dee13d12cdc84b76cb9a",
+      "size": 503,
+      "modified": "2026-03-23T16:35:02.608283"
+    },
+    "model.conf": {
+      "path": "/root/.openclaw/workspace/config/model.conf",
+      "hash": "a7dab0edb41320eacd61763b035723fc",
+      "size": 375,
+      "modified": "2026-03-25T10:04:33.480135"
+    },
+    "163_email.conf": {
+      "path": "/root/.openclaw/workspace/config/163_email.conf",
+      "hash": "1c25ed7e8564eec0199cb5bde6969a7c",
+      "size": 225,
+      "modified": "2026-03-26T15:03:28.808635"
+    },
+    "email.conf": {
+      "path": "/root/.openclaw/workspace/config/email.conf",
+      "hash": "2821c0b11af7fce2eb46738ab573a5af",
+      "size": 191,
+      "modified": "2026-03-17T06:48:01.380508"
+    }
+  }
+}

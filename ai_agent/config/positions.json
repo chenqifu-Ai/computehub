@@ -1,0 +1,25 @@
+{
+  "stocks": [
+    {
+      "code": "000882",
+      "name": "华联股份",
+      "quantity": 22600,
+      "cost": 1.779,
+      "stop_loss": 1.6,
+      "stop_profit": 2.0
+    }
+  ],
+  "watching": [
+    {
+      "code": "601866",
+      "name": "中远海发",
+      "buy_range": [
+        2.5,
+        2.7
+      ],
+      "quantity": 0
+    }
+  ],
+  "last_update": "2026-03-24 14:41:40",
+  "note": "士兰微已于2026-03-24 清仓"
+}

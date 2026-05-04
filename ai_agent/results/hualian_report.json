@@ -1,0 +1,24 @@
+{
+  "stock_info": {
+    "code": "000882",
+    "name": "华联股份",
+    "price": 1.65,
+    "change": -0.0487,
+    "change_percent": -2.86,
+    "timestamp": "2026-04-07 09:57:57"
+  },
+  "trend_analysis": {
+    "trend": "大幅下跌",
+    "signal": "警惕",
+    "risk_level": "中"
+  },
+  "risk_management": {
+    "stop_loss_triggered": false,
+    "current_price": 1.65,
+    "stop_loss_price": 1.6,
+    "safe_distance": 0.05,
+    "safe_percent": 3.12,
+    "recommendation": "密切关注"
+  },
+  "monitor_time": "2026-04-07 09:57:57"
+}

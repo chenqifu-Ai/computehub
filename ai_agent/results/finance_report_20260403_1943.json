@@ -1,0 +1,23 @@
+{
+  "report_id": "finance_analysis_20260403_1943",
+  "time": "2026-04-03T19:43:35.742419",
+  "expert": "\u8d22\u52a1\u4e13\u5bb6",
+  "stock_analysis": {
+    "stock": "\u534e\u8054\u80a1\u4efd",
+    "shares": 13500,
+    "cost": 1.873,
+    "current": 1.57,
+    "loss": -16.18,
+    "stop_loss_breached": true
+  },
+  "financial_status": {
+    "daily_cost": 7.0,
+    "daily_revenue": 0.0,
+    "net_loss": -7.0
+  },
+  "recommendations": [
+    "\u7acb\u5373\u51cf\u4ed370%",
+    "\u4e25\u683c\u6267\u884c\u6b62\u635f",
+    "\u63a7\u5236\u8fd0\u8425\u6210\u672c"
+  ]
+}

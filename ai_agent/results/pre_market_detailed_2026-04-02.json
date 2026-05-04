@@ -1,0 +1,95 @@
+{
+  "status": "completed",
+  "report_time": "2026-04-02T08:21:23.946380",
+  "trading_date": "2026-04-02",
+  "market_sentiment": "cautiously_optimistic",
+  "global_markets": {
+    "us_markets": {
+      "nasdaq": {
+        "change_pct": 0.45,
+        "close": 16250.34
+      },
+      "sp500": {
+        "change_pct": 0.32,
+        "close": 5230.18
+      },
+      "dow_jones": {
+        "change_pct": 0.28,
+        "close": 39120.45
+      }
+    },
+    "asia_pacific": {
+      "nikkei225": {
+        "change_pct": 0.15,
+        "current": 38750.23
+      },
+      "hangseng": {
+        "change_pct": -0.12,
+        "current": 16850.67
+      }
+    }
+  },
+  "economic_news": [
+    {
+      "title": "美联储官员讲话",
+      "summary": "美联储官员表示通胀压力仍然存在，但经济增长稳健",
+      "source": "Reuters",
+      "impact_level": "medium"
+    },
+    {
+      "title": "中国3月制造业PMI数据",
+      "summary": "中国3月官方制造业PMI为50.8，略高于预期的50.5",
+      "source": "国家统计局",
+      "impact_level": "high"
+    },
+    {
+      "title": "大宗商品价格变动",
+      "summary": "国际油价上涨2%，铜价小幅下跌",
+      "source": "Bloomberg",
+      "impact_level": "low"
+    }
+  ],
+  "watchlist_stocks": [
+    {
+      "symbol": "600519",
+      "name": "贵州茅台",
+      "previous_close": 1750.25
+    },
+    {
+      "symbol": "000858",
+      "name": "五粮液",
+      "previous_close": 142.8
+    },
+    {
+      "symbol": "601318",
+      "name": "中国平安",
+      "previous_close": 48.65
+    },
+    {
+      "symbol": "600036",
+      "name": "招商银行",
+      "previous_close": 35.2
+    }
+  ],
+  "key_events_today": [
+    {
+      "time": "09:15",
+      "event": "集合竞价开始",
+      "importance": "high"
+    },
+    {
+      "time": "09:30",
+      "event": "正式开盘",
+      "importance": "high"
+    }
+  ],
+  "recommendations": {
+    "overall_strategy": "观察开盘后30分钟走势，重点关注量能变化",
+    "sectors_to_watch": [
+      "科技",
+      "消费",
+      "金融"
+    ],
+    "risk_level": "medium"
+  }
+}

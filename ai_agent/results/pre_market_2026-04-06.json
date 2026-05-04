@@ -1,0 +1,41 @@
+{
+  "status": "completed",
+  "execution_time": "2026-04-06 08:20:16",
+  "market_summary": {
+    "pre_market_trend": "neutral",
+    "key_indices": {
+      "shanghai_composite": {
+        "pre_market": "pending",
+        "previous_close": 3050.25
+      },
+      "shenzhen_component": {
+        "pre_market": "pending",
+        "previous_close": 10200.78
+      },
+      "csi_300": {
+        "pre_market": "pending",
+        "previous_close": 3520.45
+      }
+    },
+    "sector_performance": {
+      "technology": "neutral",
+      "finance": "neutral",
+      "energy": "neutral",
+      "healthcare": "neutral",
+      "consumer": "neutral"
+    }
+  },
+  "overnight_news": [
+    {
+      "title": "全球市场隔夜表现",
+      "summary": "美股三大指数小幅上涨，亚太市场早盘表现平稳",
+      "impact": "neutral"
+    },
+    {
+      "title": "政策消息",
+      "summary": "央行维持利率不变，符合市场预期",
+      "impact": "neutral"
+    }
+  ],
+  "watchlist_alerts": []
+}

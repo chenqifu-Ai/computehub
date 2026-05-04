@@ -1,0 +1,59 @@
+{
+  "devices": {
+    "xiaomi-openclaw": {
+      "name": "小米小龙虾",
+      "hostname": "openclaw.local",
+      "ip": "192.168.1.19",
+      "port": 18789,
+      "type": "OpenClaw Gateway",
+      "brand": "Xiaomi",
+      "status": "online",
+      "last_check": "2026-04-03T08:22:00+08:00",
+      "services": ["OpenClaw Web UI", "API Gateway"],
+      "tags": ["gateway", "automation", "xiaomi"]
+    },
+    "xiaomi-tablet": {
+      "name": "小米平板",
+      "ip": "192.168.2.134",
+      "type": "Android Termux",
+      "brand": "Xiaomi",
+      "purpose": "OpenClaw TUI客户端",
+      "tags": ["android", "termux", "client", "xiaomi"]
+    },
+    "xiaomi-laptop": {
+      "name": "小米笔记本",
+      "ip": "192.168.1.7",
+      "username": "xiaomi",
+      "password": "1234567890",
+      "type": "Windows 10/11",
+      "brand": "Xiaomi",
+      "purpose": "开发/部署",
+      "tags": ["windows", "development", "deployment", "xiaomi"]
+    },
+    "huawei-phone": {
+      "name": "华为手机",
+      "username": "u0_a46",
+      "password": "123",
+      "model": "HWI-AL00",
+      "build_fingerprint": "Huawei/generic_a15/generic_a15:9/PPR1.180610.011/root202005281627:user/test-keys",
+      "type": "Android Termux",
+      "brand": "Huawei",
+      "status": "移动设备（IP动态变化）",
+      "purpose": "移动部署",
+      "unique_identifiers": [
+        "用户名: u0_a46",
+        "密码: 123", 
+        "设备型号: HWI-AL00",
+        "构建指纹: Huawei/generic_a15/generic_a15:9/PPR1.180610.011/root202005281627:user/test-keys"
+      ],
+      "tags": ["android", "termux", "huawei", "phone", "mobile", "dynamic-ip"],
+      "last_updated": "2026-04-03T08:52:00+08:00"
+    }
+  },
+  "network_segments": {
+    "main": "192.168.1.0/24",
+    "secondary": "192.168.2.0/24"
+  },
+  "last_updated": "2026-04-03T08:22:00+08:00",
+  "version": "1.0"
+}

@@ -1,0 +1,31 @@
+{
+  "model": "qwen3.6-35b",
+  "version": "v9-fix",
+  "timestamp": "2026-04-24T20:15:00+08:00",
+  "total": 4,
+  "passed": 0,
+  "score": 0.0,
+  "methods": [
+    "extract_code_blocks",
+    "unescape_quotes",
+    "unify_indent"
+  ],
+  "tests": [
+    {
+      "name": "HashMap",
+      "result": "failed"
+    },
+    {
+      "name": "REST-API",
+      "result": "failed"
+    },
+    {
+      "name": "线程池",
+      "result": "failed"
+    },
+    {
+      "name": "事件循环",
+      "result": "failed"
+    }
+  ]
+}

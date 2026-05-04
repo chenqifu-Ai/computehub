@@ -1,0 +1,34 @@
+{
+  "timestamp": "2026-03-23T14:52:00",
+  "strategy": "士兰微 + 华联股份为主",
+  "status": "待确认",
+  "orders": [
+    {
+      "priority": 1,
+      "code": "600460",
+      "name": "士兰微",
+      "volume": 1000,
+      "price": 29.00,
+      "amount": 29000,
+      "stop_loss": 26.00,
+      "target": 35.00,
+      "risk_percent": 10.3,
+      "target_percent": 20.7
+    },
+    {
+      "priority": 2,
+      "code": "600361",
+      "name": "华联股份",
+      "volume": 22600,
+      "price": 2.90,
+      "amount": 65540,
+      "stop_loss": 2.50,
+      "target": 3.50,
+      "risk_percent": 13.8,
+      "target_percent": 20.7
+    }
+  ],
+  "total_amount": 94540,
+  "cash_reserve": 905460,
+  "total_capital": 1000000
+}

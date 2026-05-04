@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>通用决策可视化库 - 基础示例</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .demo-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+    <!-- 引入决策可视化库 -->
+    <script src="../dist/decision-viz.min.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../src/styles/decision-viz.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 通用决策可视化库 - 基础示例</h1>
+            <p>展示决策可视化组件的基本用法</p>
+        </div>
+
+        <div class="demo-section">
+            <h2>示例1: ChargeCloud技术架构决策</h2>
+            <div id="chargecloud-demo"></div>
+        </div>
+
+        <div class="demo-section">
+            <h2>示例2: OpenRemoteAI传输协议决策</h2>
+            <div id="openremoteai-demo"></div>
+        </div>
+
+        <div class="demo-section">
+            <h2>示例3: 投资系统数据库选型决策</h2>
+            <div id="investment-demo"></div>
+        </div>
+    </div>
+
+    <script>
+        // 示例1: ChargeCloud技术架构决策数据
+        const chargecloudData = {
+            dimensions: ['性能', '成本', '可维护性', '扩展性', '安全性'],
+            schemes: [
+                {
+                    name: '微服务架构',
+                    scores: {
+                        性能: 85,
+                        成本: 65,
+                        可维护性: 90,
+                        扩展性: 95,
+                        安全性: 80
+                    }
+                },
+                {
+                    name: '单体架构',
+                    scores: {
+                        性能: 75,
+                        成本: 85,
+                        可维护性: 70,
+                        扩展性: 60,
+                        安全性: 75
+                    }
+                },
+                {
+                    name: '混合架构',
+                    scores: {
+                        性能: 80,
+                        成本: 75,
+                        可维护性: 80,
+                        扩展性: 85,
+                        安全性: 85
+                    }
+                }
+            ],
+            experts: [
+                {
+                    name: '技术专家',
+                    preferences: {
+                        '微服务架构': 90,
+                        '单体架构': 40,
+                        '混合架构': 75
+                    }
+                },
+                {
+                    name: '财务专家',
+                    preferences: {
+                        '微服务架构': 50,
+                        '单体架构': 85,
+                        '混合架构': 70
+                    }
+                },
+                {
+                    name: '产品专家',
+                    preferences: {
+                        '微服务架构': 80,
+                        '单体架构': 60,
+                        '混合架构': 85
+                    }
+                }
+            ]
+        };
+
+        // 示例2: OpenRemoteAI传输协议决策数据
+        const openremoteaiData = {
+            dimensions: ['延迟', '带宽效率', '安全性', '兼容性', '开发成本'],
+            schemes: [
+                {
+                    name: 'QUIC协议',
+                    scores: {
+                        延迟: 95,
+                        带宽效率: 90,
+                        安全性: 85,
+                        兼容性: 70,
+                        开发成本: 65
+                    }
+                },
+                {
+                    name: 'WebSocket',
+                    scores: {
+                        延迟: 75,
+                        带宽效率: 80,
+                        安全性: 80,
+                        兼容性: 95,
+                        开发成本: 85
+                    }
+                },
+                {
+                    name: 'gRPC',
+                    scores: {
+                        延迟: 85,
+                        带宽效率: 85,
+                        安全性: 90,
+                        兼容性: 80,
+                        开发成本: 70
+                    }
+                }
+            ],
+            experts: [
+                {
+                    name: '网络专家',
+                    preferences: {
+                        'QUIC协议': 95,
+                        'WebSocket': 60,
+                        'gRPC': 75
+                    }
+                },
+                {
+                    name: '安全专家',
+                    preferences: {
+                        'QUIC协议': 80,
+                        'WebSocket': 75,
+                        'gRPC': 90
+                    }
+                },
+                {
+                    name: '移动专家',
+                    preferences: {
+                        'QUIC协议': 90,
+                        'WebSocket': 70,
+                        'gRPC': 80
+                    }
+                }
+            ]
+        };
+
+        // 示例3: 投资系统数据库选型决策数据
+        const investmentData = {
+            dimensions: ['性能', '成本', '可靠性', '扩展性', '团队熟悉度'],
+            schemes: [
+                {
+                    name: 'PostgreSQL',
+                    scores: {
+                        性能: 85,
+                        成本: 80,
+                        可靠性: 95,
+                        扩展性: 90,
+                        团队熟悉度: 70
+                    }
+                },
+                {
+                    name: 'MySQL',
+                    scores: {
+                        性能: 80,
+                        成本: 85,
+                        可靠性: 90,
+                        扩展性: 80,
+                        团队熟悉度: 90
+                    }
+                },
+                {
+                    name: 'MongoDB',
+                    scores: {
+                        性能: 75,
+                        成本: 70,
+                        可靠性: 80,
+                        扩展性: 95,
+                        团队熟悉度: 60
+                    }
+                }
+            ],
+            experts: [
+                {
+                    name: '数据库专家',
+                    preferences: {
+                        'PostgreSQL': 90,
+                        'MySQL': 75,
+                        'MongoDB': 65
+                    }
+                },
+                {
+                    name: '性能专家',
+                    preferences: {
+                        'PostgreSQL': 85,
+                        'MySQL': 80,
+                        'MongoDB': 70
+                    }
+                },
+                {
+                    name: '开发专家',
+                    preferences: {
+                        'PostgreSQL': 70,
+                        'MySQL': 90,
+                        'MongoDB': 75
+                    }
+                }
+            ]
+        };
+
+        // 初始化决策面板
+        document.addEventListener('DOMContentLoaded', function() {
+            // ChargeCloud示例
+            if (window.DecisionViz && window.DecisionViz.DecisionPanel) {
+                ReactDOM.render(
+                    React.createElement(DecisionViz.DecisionPanel, {
+                        decisionData: chargecloudData,
+                        onWeightsChange: (weights) => console.log('权重变化:', weights),
+                        onDecisionSelect: (decision) => console.log('选中决策:', decision)
+                    }),
+                    document.getElementById('chargecloud-demo')
+                );
+
+                // OpenRemoteAI示例
+                ReactDOM.render(
+                    React.createElement(DecisionViz.DecisionPanel, {
+                        decisionData: openremoteaiData,
+                        theme: 'dark',
+                        onWeightsChange: (weights) => console.log('权重变化:', weights),
+                        onDecisionSelect: (decision) => console.log('选中决策:', decision)
+                    }),
+                    document.getElementById('openremoteai-demo')
+                );
+
+                // 投资系统示例
+                ReactDOM.render(
+                    React.createElement(DecisionViz.DecisionPanel, {
+                        decisionData: investmentData,
+                        layout: 'compact',
+                        onWeightsChange: (weights) => console.log('权重变化:', weights),
+                        onDecisionSelect: (decision) => console.log('选中决策:', decision)
+                    }),
+                    document.getElementById('investment-demo')
+                );
+            } else {
+                console.error('决策可视化库未正确加载');
+            }
+        });
+    </script>
+</body>
+</html>

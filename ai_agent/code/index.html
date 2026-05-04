@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token算力出海方案 - 版本索引</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .versions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+        
+        .version-card {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e0e7ff;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .version-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+        
+        .version-card.recommended {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+        }
+        
+        .version-card.recommended .btn {
+            background: white;
+            color: #667eea;
+        }
+        
+        .version-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .version-card h3 {
+            margin: 15px 0;
+            font-size: 1.4em;
+        }
+        
+        .version-card p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .version-card.recommended p {
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        .features {
+            margin-top: 40px;
+            padding: 30px;
+            background: #f8f9ff;
+            border-radius: 15px;
+        }
+        
+        .features h3 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .feature-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            padding-top: 20px;
+            border-top: 1px solid #e0e7ff;
+        }
+        
+        @media (max-width: 768px) {
+            .versions {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌍 Token算力出海方案</h1>
+            <p>多版本HTML方案预览索引</p>
+        </div>
+        
+        <div class="versions">
+            <div class="version-card recommended">
+                <span class="version-icon">🎨</span>
+                <h3>图文并茂版</h3>
+                <p>带图片占位符的专业视觉版本，推荐使用</p>
+                <a href="token_compute_visual.html" class="btn" target="_blank">查看方案</a>
+            </div>
+            
+            <div class="version-card">
+                <span class="version-icon">🏢</span>
+                <h3>完整企业版</h3>
+                <p>详细的企业级解决方案，包含完整市场分析</p>
+                <a href="token_compute_overseas.html" class="btn" target="_blank">查看方案</a>
+            </div>
+            
+            <div class="version-card">
+                <span class="version-icon">🚀</span>
+                <h3>简洁传播版</h3>
+                <p>极简设计，适合快速传播和移动端查看</p>
+                <a href="token_compute_simple.html" class="btn" target="_blank">查看方案</a>
+            </div>
+            
+            <div class="version-card">
+                <span class="version-icon">📄</span>
+                <h3>PDF模板版</h3>
+                <p>专为打印和正式场合设计的版本</p>
+                <a href="token_compute_pdf_template.html" class="btn" target="_blank">查看方案</a>
+            </div>
+        </div>
+        
+        <div class="features">
+            <h3>✨ 方案特色</h3>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <strong>🎯 目标明确</strong>
+                    <p>面向企业老板，简单易懂</p>
+                </div>
+                
+                <div class="feature-item">
+                    <strong>🎨 专业设计</strong>
+                    <p>现代视觉，响应式布局</p>
+                </div>
+                
+                <div class="feature-item">
+                    <strong>📊 数据支撑</strong>
+                    <p>市场分析和收益预测</p>
+                </div>
+                
+                <div class="feature-item">
+                    <strong>🚀 易于传播</strong>
+                    <p>多版本适配不同场景</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><strong>📖 图片替换指南: </strong> <a href="image_guidance.md" target="_blank">image_guidance.md</a></p>
+            <p><strong>📧 邮件发送: </strong> 所有文件已发送到 19525456@qq.com</p>
+            <p><strong>🕐 生成时间: </strong> 2026-04-07 07:52</p>
+        </div>
+    </div>
+</body>
+</html>

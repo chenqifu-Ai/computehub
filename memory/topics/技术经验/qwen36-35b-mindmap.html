@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>qwen3.6-35b 适配全过程思维导图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0f172a;
+    color: #e2e8f0;
+    font-family: 'Microsoft YaHei', 'PingFang SC', 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px;
+  }
+  h1 {
+    color: #22d3ee;
+    font-size: 24px;
+    margin-bottom: 6px;
+    text-align: center;
+  }
+  .subtitle {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  .legend {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #94a3b8;
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .mindmap {
+    width: 100%;
+    max-width: 1400px;
+    position: relative;
+  }
+  .center-node {
+    text-align: center;
+    margin: 0 auto 20px;
+    position: relative;
+    z-index: 10;
+  }
+  .center-node .node {
+    display: inline-block;
+    background: linear-gradient(135deg, #0ea5e9, #6366f1);
+    color: #fff;
+    padding: 16px 32px;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 0 30px rgba(99,102,241,0.4);
+    position: relative;
+  }
+  .center-node .node::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    width: 2px;
+    height: 20px;
+    background: #334155;
+    transform: translateX(-50%);
+  }
+  .branches {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .branches::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: calc((100% - calc(6 * 22.5% - 16px)) / 2);
+    right: calc((100% - calc(6 * 22.5% - 16px)) / 2);
+    height: 2px;
+    background: #334155;
+  }
+  .branch {
+    width: 22.5%;
+    min-width: 200px;
+    max-width: 280px;
+    position: relative;
+  }
+  .branch::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    width: 2px;
+    height: 20px;
+    background: #334155;
+  }
+  .branch-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 14px;
+    position: relative;
+  }
+  .branch-header::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 18px;
+    width: 2px;
+    height: 12px;
+    background: #334155;
+  }
+  .branch-header .emoji { font-size: 18px; }
+  .branch-1 .branch-header { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+  .branch-2 .branch-header { background: rgba(59,130,246,0.2); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+  .branch-3 .branch-header { background: rgba(245,158,11,0.2); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+  .branch-4 .branch-header { background: rgba(34,197,94,0.2); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+  .branch-5 .branch-header { background: rgba(168,85,247,0.2); color: #c084fc; border: 1px solid rgba(168,85,247,0.3); }
+  .branch-6 .branch-header { background: rgba(236,72,153,0.2); color: #f472b6; border: 1px solid rgba(236,72,153,0.3); }
+
+  .items {
+    position: relative;
+    padding-left: 16px;
+  }
+  .item {
+    padding: 6px 10px;
+    margin-bottom: 4px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    background: rgba(30,41,59,0.5);
+    border-left: 3px solid;
+    position: relative;
+  }
+  .item::before {
+    content: '';
+    position: absolute;
+    left: -16px;
+    top: 50%;
+    width: 13px;
+    height: 2px;
+  }
+  .branch-1 .item { border-left-color: #ef4444; }
+  .branch-1 .item::before { background: #ef4444; }
+  .branch-2 .item { border-left-color: #3b82f6; }
+  .branch-2 .item::before { background: #3b82f6; }
+  .branch-3 .item { border-left-color: #f59e0b; }
+  .branch-3 .item::before { background: #f59e0b; }
+  .branch-4 .item { border-left-color: #22c55e; }
+  .branch-4 .item::before { background: #22c55e; }
+  .branch-5 .item { border-left-color: #a855f7; }
+  .branch-5 .item::before { background: #a855f7; }
+  .branch-6 .item { border-left-color: #ec4899; }
+  .branch-6 .item::before { background: #ec4899; }
+
+  .item .score {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    margin-left: 4px;
+  }
+  .score-high { background: rgba(34,197,94,0.2); color: #4ade80; }
+  .score-mid { background: rgba(245,158,11,0.2); color: #fbbf24; }
+  .score-low { background: rgba(239,68,68,0.2); color: #f87171; }
+  .score-top { background: rgba(255,255,255,0.15); color: #fff; }
+
+  .item strong { color: #e2e8f0; }
+  .item em { color: #94a3b8; font-style: normal; }
+
+  .test-history {
+    margin-top: 30px;
+    width: 100%;
+    max-width: 1400px;
+  }
+  .test-history h2 {
+    color: #22d3ee;
+    font-size: 18px;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  .timeline {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    padding: 10px 0;
+  }
+  .timeline-item {
+    flex-shrink: 0;
+    width: 130px;
+    text-align: center;
+    position: relative;
+    padding: 10px 8px;
+    border-radius: 12px;
+    margin-right: 10px;
+  }
+  .timeline-item::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -5px;
+    width: 10px;
+    height: 2px;
+    background: #334155;
+  }
+  .timeline-item:last-child::after { display: none; }
+  .timeline-item .ver {
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 4px;
+  }
+  .timeline-item .score-display {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  .timeline-item .bar-bg {
+    height: 6px;
+    background: #1e293b;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .timeline-item .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+  }
+  .timeline-item .time {
+    font-size: 10px;
+    color: #475569;
+    margin-top: 4px;
+  }
+  .timeline-item .tag {
+    font-size: 10px;
+    margin-top: 4px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .t-v1 { background: rgba(239,68,68,0.15); }
+  .t-v1 .score-display { color: #f87171; }
+  .t-v1 .bar-fill { background: #f87171; }
+  .t-v1 .tag { background: rgba(239,68,68,0.2); color: #f87171; }
+  .t-v3 { background: rgba(34,197,94,0.1); }
+  .t-v3 .score-display { color: #4ade80; }
+  .t-v3 .bar-fill { background: #4ade80; }
+  .t-v3 .tag { background: rgba(34,197,94,0.2); color: #4ade80; }
+  .t-v4 { background: rgba(250,204,21,0.1); }
+  .t-v4 .score-display { color: #fde68a; }
+  .t-v4 .bar-fill { background: linear-gradient(90deg, #fde68a, #f59e0b); }
+  .t-v4 .tag { background: rgba(250,204,21,0.2); color: #fde68a; }
+  .t-v10 { background: rgba(59,130,246,0.1); }
+  .t-v10 .score-display { color: #60a5fa; }
+  .t-v10 .bar-fill { background: #60a5fa; }
+  .t-v10 .tag { background: rgba(59,130,246,0.2); color: #60a5fa; }
+  .t-mid { background: rgba(100,116,139,0.05); }
+  .t-mid .score-display { color: #94a3b8; }
+  .t-mid .bar-fill { background: #64748b; }
+  .t-mid .tag { background: rgba(100,116,139,0.2); color: #94a3b8; }
+
+  .footer {
+    margin-top: 30px;
+    text-align: center;
+    color: #475569;
+    font-size: 12px;
+  }
+
+  @media (max-width: 1200px) {
+    .branch { width: 45%; }
+  }
+  @media (max-width: 768px) {
+    .branch { width: 100%; max-width: 100%; }
+    .branches::before { display: none; }
+    .branch::before { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<h1>🧠 qwen3.6-35b 适配全过程思维导图</h1>
+<p class="subtitle">2026-04-24 完整适配链路 · 发现问题 → 修复 → 测试 → 沉淀</p>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div>问题</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>方案</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>测试</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div>能力</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#a855f7"></div>沉淀</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ec4899"></div>经验</div>
+</div>
+
+<div class="mindmap">
+  <!-- Center Node -->
+  <div class="center-node">
+    <div class="node">🤖 qwen3.6-35b 适配全流程</div>
+  </div>
+
+  <!-- 6 Branches -->
+  <div class="branches">
+    <!-- Branch 1: 问题发现 -->
+    <div class="branch branch-1">
+      <div class="branch-header"><span class="emoji">🔴</span> 问题发现</div>
+      <div class="items">
+        <div class="item"><strong>16:15 首次测试</strong></div>
+        <div class="item">🔍 调用 API 直接测试</div>
+        <div class="item">❌ <strong>content 字段 = null</strong></div>
+        <div class="item">❌ 全部输出在 <em>reasoning</em> 字段</div>
+        <div class="item">🔎 原因: vLLM 非标准 OpenAI 响应</div>
+        <div class="item">📉 v1 测试仅 <strong>43%</strong></div>
+      </div>
+    </div>
+
+    <!-- Branch 2: 解决方案 -->
+    <div class="branch branch-2">
+      <div class="branch-header"><span class="emoji">🔧</span> 解决方案</div>
+      <div class="items">
+        <div class="item"><strong>创建适配层</strong><br><em>qwen36_adapter.py</em></div>
+        <div class="item">核心: <strong>reasoning > content</strong></div>
+        <div class="item">4步输出清洗:</div>
+        <div class="item">  ① 提取代码块</div>
+        <div class="item">  ② 找引号内容</div>
+        <div class="item">  ③ 找 Final Output</div>
+        <div class="item">  ④ 最后一行非空</div>
+        <div class="item">3个接口: ask / detailed / code</div>
+      </div>
+    </div>
+
+    <!-- Branch 3: 测试历程 -->
+    <div class="branch branch-3">
+      <div class="branch-header"><span class="emoji">📊</span> 测试历程</div>
+      <div class="items">
+        <div class="item">v3: <span class="score score-top">81%</span> 🥇 A (content优先)</div>
+        <div class="item">v4: <span class="score score-top">86%</span> 🥇 A 巅峰 (文件执行)</div>
+        <div class="item">v5: <span class="score score-mid">71%</span> 🥈 B (深度专项)</div>
+        <div class="item">v6: <span class="score score-low">57%</span> ❌ (多语言+ML)</div>
+        <div class="item">v7: <span class="score score-low">53%</span> ❌ (UTF8/安全)</div>
+        <div class="item">v8: <span class="score score-mid">68%</span> 🥉 C (跳过代码)</div>
+        <div class="item">v10: <span class="score score-top">82.6%</span> 🥈 B (全面回归)</div>
+      </div>
+    </div>
+
+    <!-- Branch 4: 核心能力 -->
+    <div class="branch branch-4">
+      <div class="branch-header"><span class="emoji">💪</span> 模型能力</div>
+      <div class="items">
+        <div class="item"><strong>100% 完美</strong></div>
+        <div class="item">  ✅ 数学推理</div>
+        <div class="item">  ✅ 代码生成</div>
+        <div class="item"><strong>90%+</strong></div>
+        <div class="item">  ✅ 语言常识</div>
+        <div class="item">  ✅ 网络知识</div>
+        <div class="item"><strong>75%</strong></div>
+        <div class="item">  ✅ 数据库/系统/架构</div>
+        <div class="item"><strong>75%</strong></div>
+        <div class="item">  ✅ 编程概念</div>
+      </div>
+    </div>
+
+    <!-- Branch 5: 知识沉淀 -->
+    <div class="branch branch-5">
+      <div class="branch-header"><span class="emoji">📁</span> 知识沉淀</div>
+      <div class="items">
+        <div class="item"><strong>6份文件</strong></div>
+        <div class="item">  api-format-fix.md (适配方案)</div>
+        <div class="item">  adaptation-experience.md (经验总结)</div>
+        <div class="item">  test-report.md (性能测试)</div>
+        <div class="item">  test-v10-comprehensive.json</div>
+        <div class="item">  flowchart.md (流程图)</div>
+        <div class="item">  SOP.md 规则更新</div>
+        <div class="item">  MEMORY.md 长期记忆</div>
+      </div>
+    </div>
+
+    <!-- Branch 6: 踩坑经验 -->
+    <div class="branch branch-6">
+      <div class="branch-header"><span class="emoji">⚠️</span> 关键教训</div>
+      <div class="items">
+        <div class="item"><strong>adapter 提取有缺陷</strong></div>
+        <div class="item">  7个"失败"模型实际答了</div>
+        <div class="item">  H₂O 下标匹配不到</div>
+        <div class="item">  只保留最后一行</div>
+        <div class="item"><strong>代码执行=环境问题</strong></div>
+        <div class="item">  不是模型能力问题</div>
+        <div class="item"><strong>必须用适配层</strong></div>
+        <div class="item">  禁止直接读 content</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Test History Timeline -->
+<div class="test-history">
+  <h2>📈 测试演进时间线</h2>
+  <div class="timeline">
+    <div class="timeline-item t-v1">
+      <div class="ver">v1</div>
+      <div class="score-display">43%</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:43%"></div></div>
+      <div class="time">16:15</div>
+      <div class="tag">content=null</div>
+    </div>
+    <div class="timeline-item t-mid">
+      <div class="ver">v2</div>
+      <div class="score-display">43%</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:43%"></div></div>
+      <div class="time">-</div>
+      <div class="tag">中间</div>
+    </div>
+    <div class="timeline-item t-v3">
+      <div class="ver">v3 🥇</div>
+      <div class="score-display">81%</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:81%"></div></div>
+      <div class="time">18:20</div>
+      <div class="tag">content优先</div>
+    </div>
+    <div class="timeline-item t-v4">
+      <div class="ver">v4 🥇🏆</div>
+      <div class="score-display">86%</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:86%"></div></div>
+      <div class="time">19:26</div>
+      <div class="tag">文件执行</div>
+    </div>
+    <div class="timeline-item t-mid">
+      <div class="ver">v5 🥈</div>
+      <div class="score-display">71%</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:71%"></div></div>
+      <div class="time">19:52</div>
+      <div class="tag">深度专项</div>
+    </div>
+    <div class="timeline-item t-mid">
+      <div class="ver">v6 ❌</div>
+      <div class="score-display">57%</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:57%"></div></div>
+      <div class="time">19:57</div>
+      <div class="tag">多语言ML</div>
+    </div>
+    <div class="timeline-item t-mid">
+      <div class="ver">v7 ❌</div>
+      <div class="score-display">53%</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:53%"></div></div>
+      <div class="time">20:04</div>
+      <div class="tag">UTF8安全</div>
+    </div>
+    <div class="timeline-item t-mid">
+      <div class="ver">v8 🥉</div>
+      <div class="score-display">68%</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:68%"></div></div>
+      <div class="time">20:09</div>
+      <div class="tag">跳过代码</div>
+    </div>
+    <div class="timeline-item t-v10">
+      <div class="ver">v10 🥈</div>
+      <div class="score-display">82.6%</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:82.6%"></div></div>
+      <div class="time">22:35</div>
+      <div class="tag">全面回归</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>小智 AI 助手 · 2026-04-24 22:42 · qwen3.6-35b 适配全过程</p>
+  <p>文档: memory/topics/技术经验/qwen36-35b-flowchart.md</p>
+</div>
+
+</body>
+</html>

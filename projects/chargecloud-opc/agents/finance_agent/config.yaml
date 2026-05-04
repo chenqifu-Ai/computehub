@@ -1,0 +1,264 @@
+# 财务智能体 - 资金管控专家配置
+# 版本：v1.0
+# 创建时间：2026-04-19
+
+agent:
+  id: finance-agent
+  name: "财务智能体"
+  role: financial_management
+  description: "负责财务核算、成本控制、资金管理和财务风险预警"
+  
+  # 模型配置
+  model:
+    provider: ollama-cloud
+    name: qwen3.5:35b
+    context_window: 128000
+    temperature: 0.5
+    max_tokens: 4096
+  
+  # 技能配置
+  skills:
+    - name: finance-expert
+      priority: high
+      auto_load: true
+    - name: legal-advisor
+      priority: low
+      auto_load: false
+  
+  # 核心职责
+  responsibilities:
+    - financial_accounting
+    - cost_control
+    - cash_flow_management
+    - tax_planning
+    - financial_reporting
+    - risk_warning
+  
+  # 权限配置
+  permissions:
+    data_access:
+      - read_all_financial_data
+      - read_order_data
+      - read_contract_data
+      - read_bank_account_data
+    actions:
+      - generate_financial_reports
+      - approve_standard_expenses
+      - initiate_standard_payments
+      - send_payment_reminders
+      - flag_suspicious_transactions
+    restrictions:
+      - payment_approval_required_over: 10000  # 超过 1 万需人工审批
+      - no_bank_account_changes
+      - no_tax_filing_without_approval
+      - audit_log_required: all_actions
+  
+  # 财务管理配置
+  financial_management:
+    accounts_receivable:
+      invoice_generation: automatic
+      payment_terms_days: 30
+      reminder_schedule:
+        - days_before_due: 7
+          action: friendly_reminder
+        - days_overdue: 1
+          action: payment_notice
+        - days_overdue: 15
+          action: urgent_notice
+        - days_overdue: 30
+          action: escalate_to_human
+    
+    accounts_payable:
+      approval_workflow:
+        - amount_under_1000: auto_approve
+        - amount_1000_to_10000: manager_approve
+        - amount_over_10000: cfo_approve
+      payment_schedule: weekly
+      early_payment_discount_capture: true
+    
+    expense_management:
+      budget_tracking: real_time
+      anomaly_detection: enabled
+      approval_limits:
+        - department: operations
+          monthly_budget: 100000
+          auto_approve_under: 5000
+        - department: marketing
+          monthly_budget: 50000
+          auto_approve_under: 3000
+  
+  # 成本控制配置
+  cost_control:
+    fixed_costs:
+      - category: rent
+        monthly_budget: 50000
+        alert_threshold: 1.0
+      - category: salaries
+        monthly_budget: 200000
+        alert_threshold: 1.0
+      - category: software_subscriptions
+        monthly_budget: 20000
+        alert_threshold: 1.1
+    
+    variable_costs:
+      - category: electricity
+        target_percentage_of_revenue: 0.25
+        alert_threshold: 0.30
+      - category: maintenance
+        target_percentage_of_revenue: 0.08
+        alert_threshold: 0.12
+      - category: customer_acquisition
+        target_percentage_of_revenue: 0.15
+        alert_threshold: 0.20
+    
+    cost_optimization:
+      monthly_review: true
+      auto_identify_savings: true
+      target_monthly_reduction: 0.05
+  
+  # 现金流管理
+  cash_flow:
+    forecast_horizon_days: 90
+    minimum_reserve_days: 60
+    alert_thresholds:
+      - metric: cash_runway
+        warning: 90
+        critical: 60
+      - metric: burn_rate_increase
+        warning: 0.20
+        critical: 0.50
+    
+    optimization:
+      accelerate_receivables: true
+      optimize_payables: true
+      maintain_credit_line: true
+  
+  # 自动化任务
+  automation:
+    daily_tasks:
+      - time: "09:00"
+        task: daily_cash_position
+        description: "当日资金头寸报告"
+      - time: "09:30"
+        task: daily_revenue_expense
+        description: "昨日收支明细报告"
+      - time: "17:00"
+        task: payment_processing
+        description: "处理当日应付账款"
+    
+    weekly_tasks:
+      - day: Monday
+        time: "09:00"
+        task: weekly_cash_flow_forecast
+        description: "本周现金流预测"
+      - day: Friday
+        time: "16:00"
+        task: weekly_financial_summary
+        description: "本周财务汇总"
+    
+    monthly_tasks:
+      - day: 1
+        time: "10:00"
+        task: monthly_financial_statements
+        description: "上月财务报表（资产负债表、利润表、现金流量表）"
+      - day: 3
+        time: "14:00"
+        task: monthly_tax_review
+        description: "税务审查和申报准备"
+      - day: 5
+        time: "10:00"
+        task: monthly_budget_variance
+        description: "预算执行差异分析"
+    
+    real_time_tasks:
+      - trigger: large_transaction
+        threshold: 50000
+        action: flag_for_review
+      - trigger: unusual_pattern
+        action: fraud_alert
+      - trigger: cash_threshold_breach
+        action: immediate_alert
+  
+  # 财务报表配置
+  reporting:
+    standard_reports:
+      - name: 日报
+        frequency: daily
+        recipients:
+          - ceo-agent
+          - human_ceo
+        content:
+          - revenue
+          - expenses
+          - cash_position
+          - outstanding_receivables
+      
+      - name: 周报
+        frequency: weekly
+        recipients:
+          - ceo-agent
+          - human_ceo
+        content:
+          - weekly_summary
+          - cash_flow_forecast
+          - budget_variance
+          - key_metrics
+      
+      - name: 月报
+        frequency: monthly
+        recipients:
+          - ceo-agent
+          - human_ceo
+          - board
+        content:
+          - financial_statements
+          - kpi_dashboard
+          - variance_analysis
+          - forward_outlook
+    
+    ad_hoc_reports:
+      enabled: true
+      turnaround_time: 4_hours
+  
+  # 税务合规
+  tax_compliance:
+    tax_types:
+      - type: vat
+        filing_frequency: monthly
+        auto_calculation: true
+      - type: corporate_income_tax
+        filing_frequency: quarterly
+        auto_calculation: true
+      - type: payroll_tax
+        filing_frequency: monthly
+        auto_calculation: true
+    
+    compliance_checks:
+      - frequency: monthly
+        scope: all_transactions
+      - frequency: quarterly
+        scope: full_audit
+  
+  # 监控指标
+  kpis:
+    - name: 现金流健康度
+      target: "≥60 天"
+      measurement: daily
+    - name: 应收账款周转天数
+      target: "≤30 天"
+      measurement: weekly
+    - name: 成本收入比
+      target: "≤70%"
+      measurement: weekly
+    - name: 预算执行准确率
+      target: "≥95%"
+      measurement: monthly
+    - name: 财务报表及时率
+      target: "100%"
+      measurement: monthly
+    - name: 税务合规率
+      target: "100%"
+      measurement: quarterly
+    - name: 异常交易识别率
+      target: "≥99%"
+      measurement: real_time

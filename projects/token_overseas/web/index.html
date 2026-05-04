@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlobalTokenHub - 连接全球数字资产，赋能跨境价值流通</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Navigation */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #667eea;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 160px 0 100px;
+            text-align: center;
+            color: white;
+        }
+        
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 24px;
+            margin-bottom: 40px;
+            opacity: 0.95;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 60px;
+        }
+        
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+        
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .stat-number {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        /* Features */
+        .features {
+            background: white;
+            padding: 100px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 60px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        
+        .feature-card {
+            background: #f8f9fa;
+            padding: 40px;
+            border-radius: 16px;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .feature-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .feature-desc {
+            color: #666;
+            line-height: 1.8;
+        }
+        
+        /* Market */
+        .market {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 100px 0;
+        }
+        
+        .market-table {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .market-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .market-table th {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .market-table td {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .market-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .price-up {
+            color: #10b981;
+            font-weight: 600;
+        }
+        
+        .price-down {
+            color: #ef4444;
+            font-weight: 600;
+        }
+        
+        /* Pricing */
+        .pricing {
+            background: white;
+            padding: 100px 0;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .pricing-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .pricing-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+        }
+        
+        .pricing-card.featured {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .pricing-card.featured .pricing-price,
+        .pricing-card.featured .pricing-features li {
+            color: white;
+        }
+        
+        .pricing-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .pricing-price {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+        
+        .pricing-price span {
+            font-size: 16px;
+            font-weight: 400;
+            color: #666;
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        .pricing-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+        
+        /* CTA */
+        .cta {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 100px 0;
+            text-align: center;
+            color: white;
+        }
+        
+        .cta h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+        
+        .cta p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.95;
+        }
+        
+        /* Footer */
+        footer {
+            background: #1a202c;
+            color: white;
+            padding: 60px 0 30px;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-section h4 {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-section a {
+            color: #a0aec0;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-section a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #2d3748;
+            color: #a0aec0;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container nav-container">
+            <a href="#" class="logo">🌍 GlobalTokenHub</a>
+            <ul class="nav-links">
+                <li><a href="#features">产品</a></li>
+                <li><a href="#market">行情</a></li>
+                <li><a href="#pricing">费率</a></li>
+                <li><a href="#about">关于</a></li>
+            </ul>
+            <a href="#" class="btn btn-primary">开始交易</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>连接全球数字资产<br>赋能跨境价值流通</h1>
+            <p>专业、安全、合规的国际化数字资产基础设施</p>
+            <div class="hero-buttons">
+                <a href="#" class="btn btn-primary" style="background: white; color: #667eea;">开始交易</a>
+                <a href="#market" class="btn btn-secondary">查看行情</a>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">$2.5T+</div>
+                    <div class="stat-label">全球市场规模</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">$150B+</div>
+                    <div class="stat-label">日交易量</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">99.99%</div>
+                    <div class="stat-label">系统可用性</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">0.1%</div>
+                    <div class="stat-label">超低手续费</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">为什么选择 GlobalTokenHub</h2>
+            <p class="section-subtitle">机构级交易基础设施，为您的数字资产保驾护航</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3 class="feature-title">安全合规第一</h3>
+                    <p class="feature-desc">多区域监管牌照，AML/KYC 合规体系，冷热钱包分离，多重签名保护，为您的资产提供机构级安全保障。</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3 class="feature-title">极速交易引擎</h3>
+                    <p class="feature-desc">10 万+ TPS 处理能力，<100ms 延迟，支持现货、合约、OTC 多种交易模式，满足您的所有交易需求。</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3 class="feature-title">全球化架构</h3>
+                    <p class="feature-desc">支持多语言、多法币通道，跨链资产互通，服务全球 100+ 国家和地区的用户。</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">💼</div>
+                    <h3 class="feature-title">机构级服务</h3>
+                    <p class="feature-desc">专业 API 接口，大宗交易服务，资产托管解决方案，为机构客户提供定制化服务。</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">智能风控系统</h3>
+                    <p class="feature-desc">AI 驱动的风险监控，实时异常检测，自动风险预警，7×24 小时保护您的交易安全。</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3 class="feature-title">用户体验至上</h3>
+                    <p class="feature-desc">简洁直观的界面，30 秒内客服响应，多语言支持，让交易变得简单高效。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Market -->
+    <section class="market" id="market">
+        <div class="container">
+            <h2 class="section-title">实时行情</h2>
+            <p class="section-subtitle">追踪全球主流数字资产价格</p>
+            
+            <div class="market-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>交易对</th>
+                            <th>最新价</th>
+                            <th>24h 涨跌</th>
+                            <th>24h 成交量</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>BTC/USDT</strong></td>
+                            <td>$50,125.00</td>
+                            <td class="price-up">▲ +2.5%</td>
+                            <td>125,430 BTC</td>
+                            <td><a href="#" class="btn btn-primary" style="padding: 8px 16px;">交易</a></td>
+                        </tr>
+                        <tr>
+                            <td><strong>ETH/USDT</strong></td>
+                            <td>$3,520.00</td>
+                            <td class="price-up">▲ +1.8%</td>
+                            <td>845,230 ETH</td>
+                            <td><a href="#" class="btn btn-primary" style="padding: 8px 16px;">交易</a></td>
+                        </tr>
+                        <tr>
+                            <td><strong>BNB/USDT</strong></td>
+                            <td>$450.00</td>
+                            <td class="price-down">▼ -0.5%</td>
+                            <td>234,567 BNB</td>
+                            <td><a href="#" class="btn btn-primary" style="padding: 8px 16px;">交易</a></td>
+                        </tr>
+                        <tr>
+                            <td><strong>SOL/USDT</strong></td>
+                            <td>$125.00</td>
+                            <td class="price-up">▲ +5.2%</td>
+                            <td>567,890 SOL</td>
+                            <td><a href="#" class="btn btn-primary" style="padding: 8px 16px;">交易</a></td>
+                        </tr>
+                        <tr>
+                            <td><strong>XRP/USDT</strong></td>
+                            <td>$0.65</td>
+                            <td class="price-down">▼ -1.2%</td>
+                            <td>12,345,678 XRP</td>
+                            <td><a href="#" class="btn btn-primary" style="padding: 8px 16px;">交易</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <h2 class="section-title">透明费率</h2>
+            <p class="section-subtitle">极具竞争力的交易手续费，VIP 用户享受更低费率</p>
+            
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-name">Free</div>
+                    <div class="pricing-price">$0<span>/月</span></div>
+                    <ul class="pricing-features">
+                        <li>✅ 基础交易功能</li>
+                        <li>✅ 标准手续费 0.1%</li>
+                        <li>✅ 基础客服支持</li>
+                        <li>✅ 基础安全保护</li>
+                        <li>❌ API 访问</li>
+                        <li>❌ 专属客户经理</li>
+                    </ul>
+                    <a href="#" class="btn btn-secondary" style="width: 100%;">免费注册</a>
+                </div>
+                
+                <div class="pricing-card featured">
+                    <div class="pricing-name">Pro</div>
+                    <div class="pricing-price">$99<span>/月</span></div>
+                    <ul class="pricing-features">
+                        <li>✅ 所有 Free 功能</li>
+                        <li>✅ VIP 手续费 0.05%</li>
+                        <li>✅ 优先客服支持</li>
+                        <li>✅ 增强安全保护</li>
+                        <li>✅ API 访问</li>
+                        <li>❌ 专属客户经理</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary" style="width: 100%; background: white; color: #667eea;">升级 Pro</a>
+                </div>
+                
+                <div class="pricing-card">
+                    <div class="pricing-name">VIP</div>
+                    <div class="pricing-price">$999<span>/月</span></div>
+                    <ul class="pricing-features">
+                        <li>✅ 所有 Pro 功能</li>
+                        <li>✅ 超低手续费 0.02%</li>
+                        <li>✅ 24/7 专属客服</li>
+                        <li>✅ 机构级安全</li>
+                        <li>✅ 高级 API</li>
+                        <li>✅ 专属客户经理</li>
+                    </ul>
+                    <a href="#" class="btn btn-secondary" style="width: 100%;">联系销售</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <h2>准备好开始交易了吗？</h2>
+            <p>立即注册，享受新手福利和超低手续费</p>
+            <div class="hero-buttons" style="margin-bottom: 0;">
+                <a href="#" class="btn btn-primary" style="background: white; color: #667eea;">立即注册</a>
+                <a href="#" class="btn btn-secondary">联系客服</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="about">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h4>🌍 GlobalTokenHub</h4>
+                    <p style="color: #a0aec0; line-height: 1.8;">连接全球数字资产，赋能跨境价值流通。专业、安全、合规的国际化数字资产基础设施。</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>产品</h4>
+                    <ul>
+                        <li><a href="#">现货交易</a></li>
+                        <li><a href="#">合约交易</a></li>
+                        <li><a href="#">OTC 交易</a></li>
+                        <li><a href="#">资产托管</a></li>
+                        <li><a href="#">借贷服务</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>支持</h4>
+                    <ul>
+                        <li><a href="#">帮助中心</a></li>
+                        <li><a href="#">API 文档</a></li>
+                        <li><a href="#">费率说明</a></li>
+                        <li><a href="#">联系我们</a></li>
+                        <li><a href="#">社区论坛</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>公司</h4>
+                    <ul>
+                        <li><a href="#">关于我们</a></li>
+                        <li><a href="#">加入我们</a></li>
+                        <li><a href="#">新闻动态</a></li>
+                        <li><a href="#">合作伙伴</a></li>
+                        <li><a href="#">法律条款</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2026 GlobalTokenHub. All rights reserved. | 隐私政策 | 服务条款 | 风险提示</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 简单行情更新模拟
+        function updatePrices() {
+            const prices = document.querySelectorAll('.market-table tbody tr');
+            prices.forEach(row => {
+                const changeCell = row.querySelector('.price-up, .price-down');
+                if (changeCell) {
+                    const isUp = Math.random() > 0.5;
+                    changeCell.className = isUp ? 'price-up' : 'price-down';
+                    changeCell.innerHTML = isUp ? '▲ +' + (Math.random() * 5).toFixed(1) + '%' : '▼ -' + (Math.random() * 3).toFixed(1) + '%';
+                }
+            });
+        }
+
+        // 每 5 秒更新一次价格
+        setInterval(updatePrices, 5000);
+    </script>
+</body>
+</html>

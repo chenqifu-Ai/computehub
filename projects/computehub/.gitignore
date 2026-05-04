@@ -1,0 +1,58 @@
+# Binaries
+opc-gateway
+opc-tui
+opc-gateway-*
+opc-tui-*
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Logs
+*.log
+gateway.log
+tui.log
+
+# PIDs
+*.pid
+
+# Config backups
+*.backup
+*.bak
+*.backup_*
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+bin/
+obj/
+build/
+dist/
+
+# Test artifacts
+coverage/
+*.out
+*.test
+
+# Sensitive
+*.key
+*.pem
+.env
+.env.local
+
+# Go specific
+go.work
+go.work.sum

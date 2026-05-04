@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw开发实录 - 崩溃与修复过程</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; background: #0f172a; }
+        .slide {
+            width: 100%;
+            min-height: 100vh;
+            padding: 50px 70px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            page-break-after: always;
+        }
+        .slide:nth-child(odd) { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
+        .slide:nth-child(even) { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+        
+        .title-slide { justify-content: center; align-items: center; text-align: center; }
+        .title-slide h1 { font-size: 44px; color: #ef4444; margin-bottom: 25px; }
+        .title-slide .subtitle { font-size: 22px; color: #94a3b8; margin-bottom: 15px; }
+        .title-slide .meta { font-size: 14px; color: #64748b; }
+        
+        h2 { font-size: 28px; color: #ef4444; margin-bottom: 20px; border-bottom: 2px solid #ef4444; padding-bottom: 8px; }
+        h3 { font-size: 20px; color: #fbbf24; margin: 15px 0 10px; }
+        
+        .content { color: #e2e8f0; font-size: 16px; line-height: 1.6; }
+        .content ul { list-style: none; margin-left: 15px; }
+        .content li { margin: 8px 0; position: relative; padding-left: 20px; }
+        .content li:before { content: "▸"; color: #22d3ee; position: absolute; left: 0; }
+        
+        .terminal {
+            background: #0c0c0c;
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin: 12px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+            color: #e2e8f0;
+            overflow-x: auto;
+        }
+        .terminal .prompt { color: #22d3ee; }
+        .terminal .cmd { color: #fbbf24; }
+        .terminal .output { color: #94a3b8; }
+        .terminal .success { color: #22c55e; }
+        .terminal .error { color: #ef4444; }
+        .terminal .warn { color: #f59e0b; }
+        .terminal .comment { color: #64748b; }
+        .terminal .time { color: #64748b; font-size: 11px; }
+        
+        .card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 12px 0;
+            border-left: 3px solid #ef4444;
+        }
+        .card-title { color: #ef4444; font-size: 16px; margin-bottom: 8px; font-weight: bold; }
+        .card-content { color: #94a3b8; font-size: 14px; }
+        
+        .error-card { border-left-color: #ef4444; background: rgba(239,68,68,0.05); }
+        .error-card .card-title { color: #ef4444; }
+        
+        .success-card { border-left-color: #22c55e; background: rgba(34,197,94,0.05); }
+        .success-card .card-title { color: #22c55e; }
+        
+        .warn-card { border-left-color: #f59e0b; background: rgba(245,158,11,0.05); }
+        .warn-card .card-title { color: #f59e0b; }
+        
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #ef4444;
+        }
+        .timeline-item {
+            position: relative;
+            margin: 15px 0;
+            padding: 10px 15px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 15px;
+            width: 10px;
+            height: 10px;
+            background: #ef4444;
+            border-radius: 50%;
+        }
+        .timeline-time {
+            color: #f59e0b;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .timeline-event {
+            color: #e2e8f0;
+            font-size: 15px;
+            margin: 5px 0;
+        }
+        .timeline-detail {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+        
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 15px 0; }
+        
+        .highlight { color: #22d3ee; font-weight: bold; }
+        .green { color: #22c55e; }
+        .red { color: #ef4444; }
+        .yellow { color: #f59e0b; }
+        
+        .page-number {
+            position: absolute;
+            bottom: 25px;
+            left: 40px;
+            color: #ef4444;
+            font-size: 14px;
+        }
+        .footer {
+            position: absolute;
+            bottom: 25px;
+            right: 40px;
+            color: #475569;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 封面 -->
+<div class="slide title-slide">
+    <h1>OpenClaw 开发实录</h1>
+    <div class="subtitle" style="color: #ef4444;">崩溃与修复的真实过程</div>
+    <div class="meta">
+        时间：2026-03-20 ~ 2026-03-21<br>
+        环境：Termux on Android (arm64)<br>
+        开发者：小智 · AI助手
+    </div>
+    <div class="footer">真实开发教程</div>
+</div>
+
+<!-- 问题总览 -->
+<div class="slide">
+    <h2>问题总览</h2>
+    <div class="content">
+        <div class="card error-card">
+            <div class="card-title">开发过程中遇到的所有问题</div>
+            <div class="card-content">
+                <ul>
+                    <li><span class="red">1. 配置文件格式错误</span> - gateway.bind格式过时</li>
+                    <li><span class="red">2. Gateway重启超时</span> - 90秒超时强制重启</li>
+                    <li><span class="red">3. LLM请求超时</span> - 模型请求超时</li>
+                    <li><span class="red">4. 上下文窗口溢出</span> - prompt太长超出限制</li>
+                    <li><span class="red">5. 端口占用</span> - Gateway启动失败</li>
+                    <li><span class="red">6. systemd不可用</span> - Termux环境限制</li>
+                    <li><span class="red">7. 模型上下文窗口太小</span> - 8192 < 16000</li>
+                    <li><span class="red">8. MEMORY.md不存在</span> - 记忆文件缺失</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="page-number">2</div>
+</div>
+
+<!-- 时间线 -->
+<div class="slide">
+    <h2>问题时间线</h2>
+    <div class="content">
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-time">02:20:32</div>
+                <div class="timeline-event">cron任务重启后运行</div>
+                <div class="timeline-detail">系统启动，开始加载定时任务</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-time">02:21:44</div>
+                <div class="timeline-event"><span class="red">ERROR: MEMORY.md不存在</span></div>
+                <div class="timeline-detail">read failed: ENOENT: no such file or directory</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-time">02:57:30</div>
+                <div class="timeline-event"><span class="red">ERROR: 配置文件无效</span></div>
+                <div class="timeline-detail">gateway.bind格式过时，需要使用新模式</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-time">02:59:59</div>
+                <div class="timeline-event"><span class="red">WARN: 重启超时</span></div>
+                <div class="timeline-detail">90秒后强制重启Gateway</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-time">05:40:34</div>
+                <div class="timeline-event"><span class="red">WARN: LLM请求超时</span></div>
+                <div class="timeline-detail">LLM request timed out</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-time">05:40:51</div>
+                <div class="timeline-event"><span class="red">ERROR: 提示太长</span></div>
+                <div class="timeline-detail">prompt too long; exceeded max context length by 3 tokens</div>
+            </div>
+        </div>
+    </div>
+    <div class="page-number">3</div>
+</div>
+
+<div class="slide">
+    <h2>问题时间线（续）</h2>
+    <div class="content">
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-time">05:49:18</div>
+                <div class="timeline-event"><span class="red">ERROR: Gateway启动失败</span></div>
+                <div class="timeline-detail">gateway already running (pid 28837); lock timeout after 5000ms</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-time">05:49:19</div>
+                <div class="timeline-event"><span class="red">ERROR: 端口占用</span></div>
+                <div class="timeline-detail">Port 18789 is already in use</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-time">05:54:05</div>
+                <div class="timeline-event"><span class="red">ERROR: PATH未设置</span></div>
+                <div class="timeline-detail">Gateway service PATH is not set</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-time">05:54:06</div>
+                <div class="timeline-event"><span class="red">ERROR: systemd不可用</span></div>
+                <div class="timeline-detail">systemd user services unavailable</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-time">06:15:18</div>
+                <div class="timeline-event"><span class="red">ERROR: 模型上下文窗口太小</span></div>
+                <div class="timeline-detail">Model context window too small (8192 tokens). Minimum is 16000.</div>
+            </div>
+        </div>
+    </div>
+    <div class="page-number">4</div>
+</div>
+
+<!-- 问题1：配置文件错误 -->
+<div class="slide">
+    <h2>问题1：配置文件格式错误</h2>
+    <div class="content">
+        <h3>错误日志</h3>
+        <div class="terminal">
+<span class="time">[02:57:30]</span> <span class="error">ERROR Config invalid</span>
+<span class="output">File: ~/.openclaw/openclaw.json</span>
+<span class="output">Problem:</span>
+<span class="output">  - gateway.bind: gateway.bind host aliases (for example 0.0.0.0/localhost) are legacy; 
+    use bind modes (lan/loopback/custom/tailnet/auto) instead (auto-migrated on load).</span>
+<span class="error">Gateway aborted: config is invalid.</span>
+<span class="output">Fix the config and retry, or run "openclaw doctor" to repair.</span>
+        </div>
+        
+        <h3>问题分析</h3>
+        <div class="card error-card">
+            <div class="card-title">根本原因</div>
+            <div class="card-content">
+                <ul>
+                    <li>gateway.bind使用了旧格式（如 "0.0.0.0" 或 "localhost"）</li>
+                    <li>新版本要求使用bind modes：<span class="highlight">lan/loopback/custom/tailnet/auto</span></li>
+                    <li>配置文件编辑时没有正确更新格式</li>
+                </ul>
+            </div>
+        </div>
+        
+        <h3>解决方案</h3>
+        <div class="terminal">
+<span class="comment"># 方法1：运行自动修复</span>
+<span class="cmd">openclaw doctor --fix</span>
+
+<span class="comment"># 方法2：手动修改配置</span>
+<span class="comment"># 旧格式（错误）</span>
+<span class="error">"gateway": { "bind": "0.0.0.0" }</span>
+
+<span class="comment"># 新格式（正确）</span>
+<span class="success">"gateway": { "bind": "lan" }</span>
+        </div>
+    </div>
+    <div class="page-number">5</div>
+</div>
+
+<!-- 问题2：Gateway重启超时 -->
+<div class="slide">
+    <h2>问题2：Gateway重启超时</h2>
+    <div class="content">
+        <h3>错误日志</h3>
+        <div class="terminal">
+<span class="time">[02:58:29]</span> <span class="warn">WARN config change requires gateway restart</span>
+<span class="output">deferring until 2 operation(s), 1 embedded run(s) complete</span>
+
+<span class="time">[02:59:59]</span> <span class="warn">WARN restart timeout after 90210ms</span>
+<span class="output">with 2 operation(s), 1 active embedded run(s) still active; restarting anyway</span>
+
+<span class="time">[02:59:59]</span> <span class="output">received SIGUSR1; restarting</span>
+<span class="output">draining 2 active task(s) and 1 active embedded run(s) before restart</span>
+        </div>
+        
+        <h3>问题分析</h3>
+        <div class="card error-card">
+            <div class="card-title">发生了什么</div>
+            <div class="card-content">
+                <ul>
+                    <li>配置更改后需要重启Gateway</li>
+                    <li>但还有活跃任务在运行（2个任务+1个嵌入运行）</li>
+                    <li>等待90秒后强制重启</li>
+                    <li>这可能导致数据丢失或任务中断</li>
+                </ul>
+            </div>
+        </div>
+        
+        <h3>解决方案</h3>
+        <div class="terminal">
+<span class="comment"># 修改配置前，先确保没有活跃任务</span>
+<span class="cmd">openclaw gateway status</span>
+
+<span class="comment"># 如果有活跃任务，等待完成后再修改</span>
+<span class="comment"># 或者手动重启</span>
+<span class="cmd">openclaw gateway restart</span>
+        </div>
+    </div>
+    <div class="page-number">6</div>
+</div>
+
+<!-- 问题3：LLM请求超时 -->
+<div class="slide">
+    <h2>问题3：LLM请求超时</h2>
+    <div class="content">
+        <h3>错误日志</h3>
+        <div class="terminal">
+<span class="time">[05:40:34]</span> <span class="warn">WARN embedded_run_agent_end</span>
+<span class="error">"error":"LLM request timed out."</span>
+<span class="output">"failoverReason":"timeout"</span>
+<span class="output">"model":"glm-5:cloud"</span>
+<span class="output">"provider":"ollama"</span>
+
+<span class="time">[05:40:46]</span> <span class="warn">WARN embedded_run_agent_end</span>
+<span class="error">"error":"Ollama API error 400"</span>
+<span class="output">{"error":"prompt too long; exceeded max context length by 3 tokens"}</span>
+        </div>
+        
+        <h3>问题分析</h3>
+        <div class="card error-card">
+            <div class="card-title">两个相关问题</div>
+            <div class="card-content">
+                <ul>
+                    <li><span class="highlight">超时：</span>模型请求时间过长，可能是网络问题或模型负载高</li>
+                    <li><span class="highlight">上下文溢出：</span>prompt太长，超出模型上下文窗口限制</li>
+                    <li>这两个问题可能同时发生</li>
+                </ul>
+            </div>
+        </div>
+        
+        <h3>解决方案</h3>
+        <div class="terminal">
+<span class="comment"># 解决超时：检查网络连接</span>
+<span class="cmd">curl -s http://192.168.1.7:11434/api/version</span>
+
+<span class="comment"># 解决上下文溢出：压缩会话历史</span>
+<span class="comment"># 会话太长时，考虑重启会话或压缩历史</span>
+
+<span class="comment"># 切换到更大的模型</span>
+<span class="cmd">vim ~/.openclaw/openclaw.json</span>
+<span class="comment"># 使用context window更大的模型</span>
+        </div>
+    </div>
+    <div class="page-number">7</div>
+</div>
+
+<!-- 问题4：端口占用 -->
+<div class="slide">
+    <h2>问题4：Gateway启动失败 - 端口占用</h2>
+    <div class="content">
+        <h3>错误日志</h3>
+        <div class="terminal">
+<span class="time">[05:49:18]</span> <span class="error">ERROR Gateway failed to start</span>
+<span class="output">gateway already running (pid 28837); lock timeout after 5000ms</span>
+<span class="output">If the gateway is supervised, stop it with: openclaw gateway stop</span>
+
+<span class="time">[05:49:19]</span> <span class="error">ERROR Port 18789 is already in use.</span>
+<span class="output">- Port is in use but process details are unavailable</span>
+<span class="output">  (install lsof or run as an admin user).</span>
+
+<span class="time">[06:01:12]</span> <span class="error">ERROR Gateway failed to start</span>
+<span class="output">gateway already running (pid 28837); lock timeout after 5000ms</span>
+
+<span class="time">[06:01:18]</span> <span class="error">ERROR Gateway install failed</span>
+<span class="output">Error: systemctl not available; systemd user services are required on Linux.</span>
+        </div>
+        
+        <h3>问题分析</h3>
+        <div class="card error-card">
+            <div class="card-title">发生了什么</div>
+            <div class="card-content">
+                <ul>
+                    <li>Gateway进程已在运行（PID 28837）</li>
+                    <li>端口18789被占用</li>
+                    <li>尝试启动新实例失败</li>
+                    <li>Termux环境没有systemd</li>
+                </ul>
+            </div>
+        </div>
+        
+        <h3>解决方案</h3>
+        <div class="terminal">
+<span class="comment"># 方法1：停止现有Gateway</span>
+<span class="cmd">openclaw gateway stop</span>
+
+<span class="comment"># 方法2：强制杀死进程</span>
+<span class="cmd">kill -9 28837</span>
+
+<span class="comment"># 方法3：检查端口占用</span>
+<span class="cmd">netstat -tlnp | grep 18789</span>
+<span class="cmd">ss -tlnp | grep 18789</span>
+
+<span class="comment"># Termux环境：使用前台模式运行</span>
+<span class="output"># 不要用systemd，直接前台运行</span>
+        </div>
+    </div>
+    <div class="page-number">8</div>
+</div>
+
+<!-- 问题5：systemd不可用 -->
+<div class="slide">
+    <h2>问题5：systemd不可用</h2>
+    <div class="content">
+        <h3>错误日志</h3>
+        <div class="terminal">
+<span class="time">[05:54:06]</span> <span class="error">ERROR systemd user services unavailable.</span>
+<span class="output">systemd user services are unavailable;</span>
+<span class="output">install/enable systemd or run the gateway under your supervisor.</span>
+<span class="output">If you're in a container, run the gateway in the foreground</span>
+<span class="output">instead of `openclaw gateway`.</span>
+
+<span class="time">[06:01:18]</span> <span class="error">ERROR Gateway install failed</span>
+<span class="output">Error: systemctl not available;</span>
+<span class="output">systemd user services are required on Linux.</span>
+        </div>
+        
+        <h3>问题分析</h3>
+        <div class="card error-card">
+            <div class="card-title">环境限制</div>
+            <div class="card-content">
+                <ul>
+                    <li>OpenClaw默认使用systemd管理Gateway服务</li>
+                    <li>但Termux/Android环境没有systemd</li>
+                    <li>这导致无法安装为系统服务</li>
+                </ul>
+            </div>
+        </div>
+        
+        <h3>解决方案</h3>
+        <div class="terminal">
+<span class="comment"># Termux环境下，使用前台模式运行</span>
+<span class="comment"># 不要尝试用systemd</span>
+
+<span class="comment"># 方法1：直接运行Gateway</span>
+<span class="cmd">openclaw gateway start</span>
+
+<span class="comment"># 方法2：前台模式（推荐）</span>
+<span class="cmd">openclaw</span>
+<span class="output"># 这会在前台运行，适合Termux</span>
+
+<span class="comment"># 检查Gateway状态</span>
+<span class="cmd">openclaw gateway status</span>
+        </div>
+        
+        <div class="card success-card">
+            <div class="card-title">✅ 注意事项</div>
+            <div class="card-content">
+                Termux环境下，Gateway会在前台运行。如果关闭终端，Gateway也会停止。
+            </div>
+        </div>
+    </div>
+    <div class="page-number">9</div>
+</div>
+
+<!-- 问题6：模型上下文窗口太小 -->
+<div class="slide">
+    <h2>问题6：模型上下文窗口太小</h2>
+    <div class="content">
+        <h3>错误日志</h3>
+        <div class="terminal">
+<span class="time">[06:15:18]</span> <span class="error">ERROR blocked model (context window too small)</span>
+<span class="output">ollama/glm-5:cloud ctx=8192 (min=16000) source=model</span>
+
+<span class="time">[06:15:18]</span> <span class="error">ERROR lane task error</span>
+<span class="output">"error":"FailoverError: Model context window too small (8192 tokens). 
+Minimum is 16000."</span>
+
+<span class="time">[06:15:18]</span> <span class="error">ERROR Embedded agent failed before reply</span>
+<span class="output">Model context window too small (8192 tokens). Minimum is 16000.</span>
+        </div>
+        
+        <h3>问题分析</h3>
+        <div class="card error-card">
+            <div class="card-title">核心问题</div>
+            <div class="card-content">
+                <ul>
+                    <li>模型 <span class="highlight">glm-5:cloud</span> 配置的上下文窗口是8192</li>
+                    <li>但系统要求最小16000 tokens</li>
+                    <li>这是模型配置问题，不是会话问题</li>
+                    <li>连续多次失败，任务无法执行</li>
+                </ul>
+            </div>
+        </div>
+        
+        <h3>解决方案</h3>
+        <div class="terminal">
+<span class="comment"># 方案1：修改模型配置，增加context window</span>
+<span class="cmd">vim ~/.openclaw/openclaw.json</span>
+
+<span class="comment"># 在models配置中设置更大的context window</span>
+<span class="output">"models": {</span>
+<span class="output">  "providers": {</span>
+<span class="output">    "ollama": {</span>
+<span class="output">      "models": [</span>
+<span class="output">        { "id": "glm-5:cloud", "contextWindow": 127000 }</span>
+<span class="output">      ]</span>
+<span class="output">    }</span>
+<span class="output">  }</span>
+<span class="output">}</span>
+
+<span class="comment"># 方案2：切换到其他模型</span>
+<span class="cmd">"primary": "ollama/deepseek-coder:latest"</span>
+        </div>
+    </div>
+    <div class="page-number">10</div>
+</div>
+
+<!-- 问题7：MEMORY.md不存在 -->
+<div class="slide">
+    <h2>问题7：MEMORY.md文件缺失</h2>
+    <div class="content">
+        <h3>错误日志</h3>
+        <div class="terminal">
+<span class="time">[02:21:44]</span> <span class="error">ERROR [tools] read failed: ENOENT</span>
+<span class="output">no such file or directory, access '/root/.openclaw/workspace/MEMORY.md'</span>
+
+<span class="time">[02:45:22]</span> <span class="error">ERROR [tools] read failed: ENOENT</span>
+<span class="output">no such file or directory, access '/root/.openclaw/workspace/MEMORY.md'</span>
+        </div>
+        
+        <h3>问题分析</h3>
+        <div class="card error-card">
+            <div class="card-title">发生了什么</div>
+            <div class="card-content">
+                <ul>
+                    <li>系统启动时尝试读取MEMORY.md</li>
+                    <li>但文件不存在</li>
+                    <li>导致记忆系统无法正常工作</li>
+                </ul>
+            </div>
+        </div>
+        
+        <h3>解决方案</h3>
+        <div class="terminal">
+<span class="comment"># 创建MEMORY.md文件</span>
+<span class="cmd">touch ~/.openclaw/workspace/MEMORY.md</span>
+
+<span class="comment"># 添加基础内容</span>
+<span class="cmd">echo "# MEMORY.md - Long Term Memory" > ~/.openclaw/workspace/MEMORY.md</span>
+
+<span class="comment"># 确保memory目录存在</span>
+<span class="cmd">mkdir -p ~/.openclaw/workspace/memory</span>
+        </div>
+        
+        <div class="card success-card">
+            <div class="card-title">✅ 最佳实践</div>
+            <div class="card-content">
+                每次会话结束后，系统会自动更新memory/日期.md文件。MEMORY.md用于长期记忆。
+            </div>
+        </div>
+    </div>
+    <div class="page-number">11</div>
+</div>
+
+<!-- 问题8：配置编辑失败 -->
+<div class="slide">
+    <h2>问题8：配置编辑无变化</h2>
+    <div class="content">
+        <h3>错误日志</h3>
+        <div class="terminal">
+<span class="time">[06:10:29]</span> <span class="error">ERROR [tools] edit failed</span>
+<span class="output">No changes made to /root/.openclaw/openclaw.json.</span>
+<span class="output">The replacement produced identical content.</span>
+<span class="output">This might indicate an issue with special characters</span>
+<span class="output">or the text not existing as expected.</span>
+        </div>
+        
+        <h3>问题分析</h3>
+        <div class="card error-card">
+            <div class="card-title">可能原因</div>
+            <div class="card-content">
+                <ul>
+                    <li>查找的文本不存在（大小写、空格、特殊字符问题）</li>
+                    <li>替换的内容和原内容相同</li>
+                    <li>文件已被修改，找不到原始文本</li>
+                </ul>
+            </div>
+        </div>
+        
+        <h3>解决方案</h3>
+        <div class="terminal">
+<span class="comment"># 方法1：先查看当前配置</span>
+<span class="cmd">cat ~/.openclaw/openclaw.json | head -50</span>
+
+<span class="comment"># 方法2：使用精确匹配（注意大小写、空格）</span>
+<span class="comment"># 确保oldText完全匹配文件中的内容</span>
+
+<span class="comment"># 方法3：直接写入新配置</span>
+<span class="cmd">vim ~/.openclaw/openclaw.json</span>
+<span class="comment"># 或使用write工具完全重写</span>
+        </div>
+    </div>
+    <div class="page-number">12</div>
+</div>
+
+<!-- 修复总结 -->
+<div class="slide">
+    <h2>修复总结</h2>
+    <div class="content">
+        <div class="grid">
+            <div class="card error-card">
+                <div class="card-title">问题列表</div>
+                <div class="card-content">
+                    <ol style="margin-left: 20px; line-height: 1.8;">
+                        <li>配置文件格式错误</li>
+                        <li>Gateway重启超时</li>
+                        <li>LLM请求超时</li>
+                        <li>上下文窗口溢出</li>
+                        <li>端口占用</li>
+                        <li>systemd不可用</li>
+                        <li>模型上下文窗口太小</li>
+                        <li>MEMORY.md缺失</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="card success-card">
+                <div class="card-title">解决方案</div>
+                <div class="card-content">
+                    <ol style="margin-left: 20px; line-height: 1.8;">
+                        <li>使用 openclaw doctor --fix</li>
+                        <li>等待任务完成再重启</li>
+                        <li>检查网络、压缩会话</li>
+                        <li>压缩历史、重启会话</li>
+                        <li>openclaw gateway stop</li>
+                        <li>使用前台模式运行</li>
+                        <li>配置contextWindow: 127000</li>
+                        <li>创建MEMORY.md文件</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <h3>关键命令</h3>
+        <div class="terminal">
+<span class="comment"># 诊断问题</span>
+<span class="cmd">openclaw doctor</span>
+<span class="cmd">openclaw gateway status</span>
+
+<span class="comment"># 修复配置</span>
+<span class="cmd">openclaw doctor --fix</span>
+
+<span class="comment"># 重启Gateway</span>
+<span class="cmd">openclaw gateway restart</span>
+
+<span class="comment"># 查看日志</span>
+<span class="cmd">cat /tmp/openclaw/openclaw-*.log | grep ERROR</span>
+        </div>
+    </div>
+    <div class="page-number">13</div>
+</div>
+
+<!-- 教训总结 -->
+<div class="slide">
+    <h2>开发教训</h2>
+    <div class="content">
+        <div class="card warn-card">
+            <div class="card-title">⚠️ 关键教训</div>
+            <div class="card-content">
+                <ul>
+                    <li><span class="highlight">配置修改要谨慎：</span>修改前备份，修改后验证</li>
+                    <li><span class="highlight">了解环境限制：</span>Termux没有systemd，使用前台模式</li>
+                    <li><span class="highlight">监控资源使用：</span>上下文窗口限制会导致任务失败</li>
+                    <li><span class="highlight">日志是朋友：</span>/tmp/openclaw/openclaw-*.log 包含所有错误</li>
+                    <li><span class="highlight">等待任务完成：</span>不要在任务运行时强制重启</li>
+                </ul>
+            </div>
+        </div>
+        
+        <h3>常用诊断流程</h3>
+        <div class="terminal">
+<span class="comment"># 1. 检查Gateway状态</span>
+<span class="cmd">openclaw status</span>
+
+<span class="comment"># 2. 查看错误日志</span>
+<span class="cmd">grep ERROR /tmp/openclaw/openclaw-$(date +%Y-%m-%d).log | tail -20</span>
+
+<span class="comment"># 3. 检查配置</span>
+<span class="cmd">cat ~/.openclaw/openclaw.json</span>
+
+<span class="comment"># 4. 运行诊断</span>
+<span class="cmd">openclaw doctor</span>
+
+<span class="comment"># 5. 如有需要，修复并重启</span>
+<span class="cmd">openclaw doctor --fix && openclaw gateway restart</span>
+        </div>
+    </div>
+    <div class="page-number">14</div>
+</div>
+
+<!-- 结束页 -->
+<div class="slide title-slide" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #ef4444 200%);">
+    <h1 style="color: white;">开发完成</h1>
+    <div class="subtitle" style="color: #fca5a5;">从崩溃到修复的完整过程</div>
+    <div class="content" style="margin-top: 30px; color: #94a3b8; text-align: left; max-width: 500px; margin-left: auto; margin-right: auto;">
+        <h3 style="color: #ef4444; margin-bottom: 15px;">遇到的问题</h3>
+        <ul>
+            <li>8个主要问题</li>
+            <li>多次Gateway崩溃</li>
+            <li>模型配置错误</li>
+            <li>环境限制</li>
+        </ul>
+        <h3 style="color: #22c55e; margin: 15px 0;">最终解决</h3>
+        <ul>
+            <li>配置格式修复</li>
+            <li>模型上下文窗口增大</li>
+            <li>使用前台模式运行</li>
+            <li>系统恢复正常</li>
+        </ul>
+    </div>
+    <div class="footer" style="color: #64748b;">小智 · 开发教程 · 2026-03-21</div>
+</div>
+
+</body>
+</html>

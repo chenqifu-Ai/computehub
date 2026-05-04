@@ -1,0 +1,46 @@
+{
+  "metadata": {
+    "generated_at": "2026-04-08T04:45:07.741708",
+    "tool": "Ollama Crawler",
+    "version": "1.0"
+  },
+  "raw_data": {
+    "title": "Ollama",
+    "description": "Ollama is the easiest way to automate your work using open models, while keeping your data safe.",
+    "models": [
+      "No model information found"
+    ],
+    "features": [
+      "No feature information found"
+    ],
+    "download_info": {
+      "Download": "/download",
+      "download Ollama": "/download/windows"
+    },
+    "community": {
+      "GitHub": "https://github.com/ollama/ollama",
+      "X (Twitter)": "https://twitter.com/ollama"
+    },
+    "timestamp": "2026-04-08T04:45:07.739781",
+    "url": "https://ollama.com",
+    "status_code": 200
+  },
+  "analysis": {
+    "summary": "成功爬取: Ollama",
+    "key_insights": [
+      "✅ 网站主题确认: Ollama AI平台",
+      "📊 发现 1 个模型相关信息",
+      "⭐ 发现 1 个特性功能",
+      "📥 发现 2 个下载选项"
+    ],
+    "recommendations": [
+      "🔧 建议: 定期监控Ollama版本更新",
+      "📈 建议: 分析模型发布频率和趋势",
+      "🤝 建议: 关注社区活跃度和开发者动态"
+    ],
+    "technical_analysis": {
+      "website_status": "状态码: 200",
+      "response_time": "2026-04-08T04:45:07.741646"
+    }
+  }
+}

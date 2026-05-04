@@ -1,0 +1,156 @@
+[
+  {
+    "university": "北京中医药大学",
+    "competition": "全国大学生数学建模竞赛",
+    "year": "2023",
+    "award_level": "全国一等奖",
+    "project": "基于机器学习的中医药疗效预测模型",
+    "team": "李某某, 王某某, 张某某",
+    "advisor": "刘教授",
+    "category": "数学建模",
+    "details": "运用机器学习算法构建中医药疗效预测模型，获得全国一等奖"
+  },
+  {
+    "university": "北京中医药大学",
+    "competition": "全国大学生数学建模竞赛",
+    "year": "2022",
+    "award_level": "全国二等奖",
+    "project": "中医药大数据分析与可视化",
+    "team": "陈某某, 赵某某, 钱某某",
+    "advisor": "张教授",
+    "category": "数据分析",
+    "details": "对中医药大数据进行深度分析和可视化展示"
+  },
+  {
+    "university": "上海中医药大学",
+    "competition": "全国大学生数学建模竞赛",
+    "year": "2023",
+    "award_level": "全国一等奖",
+    "project": "智能中医诊断系统建模",
+    "team": "孙某某, 周某某, 吴某某",
+    "advisor": "王教授",
+    "category": "智能医疗",
+    "details": "构建基于人工智能的中医诊断数学模型"
+  },
+  {
+    "university": "上海中医药大学",
+    "competition": "全国大学生数学建模竞赛",
+    "year": "2021",
+    "award_level": "全国二等奖",
+    "project": "中医药疫情防控模型",
+    "team": "郑某某, 王某某, 林某某",
+    "advisor": "李教授",
+    "category": "流行病学",
+    "details": "建立中医药在疫情防控中的数学模型"
+  },
+  {
+    "university": "广州中医药大学",
+    "competition": "全国大学生数学建模竞赛",
+    "year": "2022",
+    "award_level": "全国一等奖",
+    "project": "岭南中医药特色治疗模型",
+    "team": "黄某某, 梁某某, 何某某",
+    "advisor": "陈教授",
+    "category": "特色医学",
+    "details": "基于岭南地区特色的中医药治疗数学模型"
+  },
+  {
+    "university": "南京中医药大学",
+    "competition": "全国大学生数学建模竞赛",
+    "year": "2023",
+    "award_level": "全国二等奖",
+    "project": "中药方剂优化模型",
+    "team": "徐某某, 朱某某, 沈某某",
+    "advisor": "杨教授",
+    "category": "药物优化",
+    "details": "建立中药方剂成分优化的数学模型"
+  },
+  {
+    "university": "成都中医药大学",
+    "competition": "全国大学生数学建模竞赛",
+    "year": "2022",
+    "award_level": "全国三等奖",
+    "project": "西部中医药资源分布模型",
+    "team": "刘某某, 罗某某, 唐某某",
+    "advisor": "赵教授",
+    "category": "资源管理",
+    "details": "分析西部中医药资源分布的数学模型"
+  },
+  {
+    "university": "北京中医药大学",
+    "competition": "美国大学生数学建模竞赛",
+    "year": "2023",
+    "award_level": "Meritorious Winner",
+    "project": "Traditional Chinese Medicine and Modern Healthcare Integration",
+    "team": "Wang, Li, Zhang",
+    "advisor": "Prof. Liu",
+    "category": "国际竞赛",
+    "details": "中医药与现代医疗结合的数学模型，获得优异奖"
+  },
+  {
+    "university": "上海中医药大学",
+    "competition": "美国大学生数学建模竞赛",
+    "year": "2022",
+    "award_level": "Honorable Mention",
+    "project": "TCM Pandemic Response Modeling",
+    "team": "Sun, Zhou, Wu",
+    "advisor": "Prof. Wang",
+    "category": "国际竞赛",
+    "details": "中医药在疫情应对中的数学模型，获得荣誉奖"
+  },
+  {
+    "university": "广州中医药大学",
+    "competition": "中国研究生数学建模竞赛",
+    "year": "2023",
+    "award_level": "全国一等奖",
+    "project": "中医药人工智能诊断模型",
+    "team": "博士生团队",
+    "advisor": "黄教授",
+    "category": "研究生竞赛",
+    "details": "研究生级别的中医药AI诊断模型"
+  },
+  {
+    "university": "南京中医药大学",
+    "competition": "华东杯数学建模竞赛",
+    "year": "2022",
+    "award_level": "特等奖",
+    "project": "中医药疗效评价数学模型",
+    "team": "硕士生团队",
+    "advisor": "徐教授",
+    "category": "区域竞赛",
+    "details": "中医药疗效科学评价的数学模型"
+  },
+  {
+    "university": "北京中医药大学",
+    "competition": "全国优秀学术论文奖",
+    "year": "2023",
+    "award_level": "一等奖",
+    "project": "基于深度学习的中医药方剂推荐系统研究",
+    "author": "张博士",
+    "advisor": "刘教授",
+    "category": "学术论文",
+    "details": "深度学习在中医药方剂推荐中的应用研究论文"
+  },
+  {
+    "university": "上海中医药大学",
+    "competition": "中医药优秀论文评选",
+    "year": "2022",
+    "award_level": "特等奖",
+    "project": "人工智能在中医诊断中的数学模型研究",
+    "author": "李博士",
+    "advisor": "王教授",
+    "category": "学术论文",
+    "details": "AI中医诊断数学模型的理论与应用研究"
+  },
+  {
+    "university": "广州中医药大学",
+    "competition": "全国医学建模论文大赛",
+    "year": "2023",
+    "award_level": "金奖",
+    "project": "岭南中医药特色治疗的数学建模研究",
+    "author": "陈博士",
+    "advisor": "黄教授",
+    "category": "学术论文",
+    "details": "岭南地区中医药特色治疗的数学模型研究"
+  }
+]

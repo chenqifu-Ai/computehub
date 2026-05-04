@@ -1,0 +1,155 @@
+# 中医药疗效预测项目 - 主配置文件
+
+# 数据配置
+data:
+  directory: "data/"
+  raw_data:
+    patient_records: "raw/patient_records.csv"
+    tcm_diagnosis: "raw/tcm_diagnosis.csv"
+    treatment_plans: "raw/treatment_plans.csv"
+    efficacy_assessment: "raw/efficacy_assessment.csv"
+  processed_data: "processed/processed_data.csv"
+  target_column: "efficacy_score"  # 目标变量列名
+  test_size: 0.2                   # 测试集比例
+  random_state: 42                 # 随机种子
+  
+  # 数据预处理配置
+  preprocessing:
+    missing_value_strategy: "mice"     # 缺失值处理策略: mice/mean/median
+    outlier_detection_strategy: "3sigma" # 异常值检测策略: 3sigma/iqr
+    standardization_method: "zscore"   # 标准化方法: zscore/minmax
+    encoding_strategy: "onehot"        # 编码策略: onehot/label
+
+# 特征工程配置
+features:
+  # 人口统计学特征
+  demographic_features:
+    - "age"
+    - "gender"
+    - "bmi"
+    - "blood_type"
+  
+  # 中医四诊特征
+  tcm_features:
+    - "tongue_color"
+    - "tongue_coating"
+    - "pulse_type"
+    - "symptom_score"
+    - "qi_deficiency"
+    - "blood_stasis"
+    - "dampness"
+    - "heat"
+  
+  # 治疗方案特征
+  treatment_features:
+    - "treatment_type"
+    - "herbal_formula"
+    - "acupuncture_points"
+    - "treatment_duration"
+    - "treatment_frequency"
+    - "dosage"
+  
+  # 交互特征
+  interaction_features: true
+  polynomial_features: true
+  degree: 2
+
+# 模型配置
+model:
+  # XGBoost参数
+  n_estimators: 300
+  max_depth: 6
+  learning_rate: 0.1
+  subsample: 0.8
+  colsample_bytree: 0.8
+  reg_alpha: 0.1
+  reg_lambda: 1.0
+  random_state: 42
+  
+  # 训练配置
+  early_stopping_rounds: 50
+  optimize_hyperparameters: true
+  n_trials: 100
+  cv_folds: 5
+  
+  # 其他模型
+  use_random_forest: true
+  use_neural_network: true
+  use_ensemble: true
+
+# 评估配置
+evaluation:
+  metrics:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1_score"
+    - "roc_auc"
+    - "pr_auc"
+  
+  cross_validation:
+    n_splits: 5
+    shuffle: true
+    random_state: 42
+  
+  statistical_tests: true
+  learning_curves: true
+  feature_importance: true
+  shap_analysis: true
+
+# 部署配置
+deployment:
+  api:
+    host: "0.0.0.0"
+    port: 8000
+    debug: true
+    workers: 4
+  
+  database:
+    type: "postgresql"
+    host: "localhost"
+    port: 5432
+    name: "tcm_ml"
+    user: "tcm_user"
+    password: "tcm_password"
+  
+  redis:
+    host: "localhost"
+    port: 6379
+    db: 0
+
+# 监控配置
+monitoring:
+  prometheus:
+    enabled: true
+    port: 9090
+  
+  grafana:
+    enabled: true
+    port: 3000
+  
+  logging:
+    level: "INFO"
+    file: "logs/app.log"
+    max_size: 10485760  # 10MB
+    backup_count: 5
+
+# 路径配置
+paths:
+  models: "models/"
+  results: "results/"
+  logs: "logs/"
+  reports: "reports/"
+  visualizations: "visualizations/"
+
+# 项目信息
+project_info:
+  name: "中医药疗效预测机器学习项目"
+  version: "1.0.0"
+  description: "基于机器学习的中医药临床疗效预测系统"
+  authors:
+    - "北京中医药大学 - 机器学习团队"
+  contact: "ml-team@bucm.edu.cn"
+  license: "MIT"
+  created_date: "2023-11-15"
+  last_updated: "2023-12-01"

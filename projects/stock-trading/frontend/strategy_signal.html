@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>策略信号 - 股票交易系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f7fa; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        h1 { color: #1a1a2e; margin-bottom: 20px; }
+        
+        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .card h2 { color: #2d3436; margin-bottom: 15px; font-size: 18px; }
+        
+        .stock-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .stock-item { padding: 15px; background: #f8f9fa; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+        .stock-item:hover { background: #e9ecef; transform: translateY(-2px); }
+        .stock-item.selected { background: #0984e3; color: white; }
+        .stock-code { font-weight: bold; font-size: 16px; }
+        .stock-name { color: #636e72; font-size: 14px; }
+        .stock-item.selected .stock-name { color: #dfe6e9; }
+        
+        .signal-card { padding: 20px; border-radius: 8px; margin-top: 15px; }
+        .signal-buy { background: #d4edda; border-left: 4px solid #28a745; }
+        .signal-sell { background: #f8d7da; border-left: 4px solid #dc3545; }
+        .signal-hold { background: #fff3cd; border-left: 4px solid #ffc107; }
+        
+        .signal-item { display: flex; justify-content: space-between; padding: 10px; margin-bottom: 8px; background: white; border-radius: 6px; }
+        .signal-name { font-weight: 500; }
+        .signal-value { font-weight: bold; }
+        .signal-value.buy { color: #28a745; }
+        .signal-value.sell { color: #dc3545; }
+        .signal-value.hold { color: #ffc107; }
+        
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; }
+        .btn-primary { background: #0984e3; color: white; }
+        .btn-primary:hover { background: #0773c7; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📈 策略信号</h1>
+        
+        <!-- 股票选择 -->
+        <div class="card">
+            <h2>选择股票</h2>
+            <div class="stock-grid" id="stockList"></div>
+        </div>
+        
+        <!-- 策略信号 -->
+        <div class="card">
+            <h2>策略信号</h2>
+            <div id="signalContent">
+                <p style="color: #636e72;">请选择股票后点击"获取信号"</p>
+            </div>
+            <div style="margin-top: 15px;">
+                <button class="btn btn-primary" onclick="getSignal()">获取信号</button>
+            </div>
+        </div>
+        
+        <!-- 信号说明 -->
+        <div class="card">
+            <h2>信号说明</h2>
+            <ul style="color: #636e72; line-height: 2;">
+                <li><strong>MA 均线</strong>: 金叉买入，死叉卖出</li>
+                <li><strong>RSI</strong>: 超卖 (&lt;30) 买入，超买 (&gt;70) 卖出</li>
+                <li><strong>MACD</strong>: 正值为买入，负值为卖出</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = window.location.origin;
+        const token = localStorage.getItem('token');
+        let selectedStock = null;
+        
+        const stocks = [
+            {code: '000001', name: '平安银行'},
+            {code: '600519', name: '贵州茅台'},
+            {code: '002594', name: '比亚迪'},
+            {code: '300750', name: '宁德时代'},
+            {code: '601318', name: '中国平安'},
+            {code: '000002', name: '万科 A'},
+            {code: '300059', name: '东方财富'},
+            {code: '600036', name: '招商银行'},
+            {code: '000858', name: '五粮液'}
+        ];
+        
+        // 渲染股票列表
+        function renderStocks() {
+            const html = stocks.map(s => `
+                <div class="stock-item" onclick="selectStock('${s.code}', '${s.name}')">
+                    <div class="stock-code">${s.code}</div>
+                    <div class="stock-name">${s.name}</div>
+                </div>
+            `).join('');
+            document.getElementById('stockList').innerHTML = html;
+        }
+        
+        // 选择股票
+        function selectStock(code, name) {
+            selectedStock = {code, name};
+            document.querySelectorAll('.stock-item').forEach(el => {
+                el.classList.remove('selected');
+                if (el.querySelector('.stock-code').textContent === code) {
+                    el.classList.add('selected');
+                }
+            });
+        }
+        
+        // 获取信号
+        async function getSignal() {
+            if (!selectedStock) {
+                alert('请先选择股票');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_BASE}/api/strategy/signal`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({stock_code: selectedStock.code})
+                });
+                
+                const data = await res.json();
+                if (data.code === 200) {
+                    renderSignals(data.data);
+                } else {
+                    alert('获取信号失败');
+                }
+            } catch (e) {
+                alert('请求失败');
+            }
+        }
+        
+        // 渲染信号
+        function renderSignals(signals) {
+            const getSignalClass = (signal) => {
+                if (signal === 'buy') return 'buy';
+                if (signal === 'sell') return 'sell';
+                return 'hold';
+            };
+            
+            const getSignalText = (signal) => {
+                if (signal === 'buy') return '买入';
+                if (signal === 'sell') return '卖出';
+                return '持有';
+            };
+            
+            const html = `
+                <div class="signal-card signal-${getSignalClass(signals.ma_cross)}">
+                    <div style="margin-bottom: 15px;">
+                        <strong>${selectedStock.code} ${selectedStock.name}</strong>
+                    </div>
+                    <div class="signal-item">
+                        <span class="signal-name">MA 均线</span>
+                        <span class="signal-value ${getSignalClass(signals.ma_cross)}">${getSignalText(signals.ma_cross)}</span>
+                    </div>
+                    <div class="signal-item">
+                        <span class="signal-name">RSI</span>
+                        <span class="signal-value ${getSignalClass(signals.rsi)}">${getSignalText(signals.rsi)}</span>
+                    </div>
+                    <div class="signal-item">
+                        <span class="signal-name">MACD</span>
+                        <span class="signal-value ${getSignalClass(signals.macd)}">${getSignalText(signals.macd)}</span>
+                    </div>
+                </div>
+            `;
+            document.getElementById('signalContent').innerHTML = html;
+        }
+        
+        // 初始化
+        renderStocks();
+    </script>
+</body>
+</html>

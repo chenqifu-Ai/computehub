@@ -1,0 +1,49 @@
+{
+  "daily": {
+    "2026-03-23": {
+      "input": 100,
+      "output": 200,
+      "total": 300,
+      "calls": 1,
+      "tasks": {
+        "test": {
+          "input": 100,
+          "output": 200,
+          "total": 300,
+          "calls": 1
+        }
+      }
+    },
+    "2026-04-03": {
+      "input": 4300,
+      "output": 2500,
+      "total": 6800,
+      "calls": 3,
+      "tasks": {
+        "脉搏检查": {
+          "input": 1500,
+          "output": 800,
+          "total": 2300,
+          "calls": 1
+        },
+        "专家分析": {
+          "input": 2000,
+          "output": 1200,
+          "total": 3200,
+          "calls": 1
+        },
+        "股票监控": {
+          "input": 800,
+          "output": 500,
+          "total": 1300,
+          "calls": 1
+        }
+      }
+    }
+  },
+  "total": {
+    "input": 4400,
+    "output": 2700,
+    "total": 7100
+  }
+}

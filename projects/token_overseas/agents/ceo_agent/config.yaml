@@ -1,0 +1,116 @@
+# CEO 智能体 - 战略决策中枢配置
+# GlobalTokenHub - 国际化数字资产交易平台
+# 版本：v1.0
+# 创建时间：2026-04-19
+
+agent:
+  id: ceo-agent
+  name: "CEO 智能体"
+  role: strategic_decision
+  description: "公司战略决策中枢，负责整体规划、资源分配和重大决策"
+  
+  # 模型配置
+  model:
+    provider: ollama-cloud
+    name: qwen3.5:397b
+    context_window: 262144
+    temperature: 0.7
+    max_tokens: 8192
+  
+  # 技能配置
+  skills:
+    - name: ceo-advisor
+      priority: high
+      auto_load: true
+    - name: finance-expert
+      priority: medium
+      auto_load: true
+    - name: legal-advisor
+      priority: high
+      auto_load: true
+  
+  # 权限配置
+  permissions:
+    data_access:
+      - read_all_departments
+      - read_financial_data
+      - read_trading_data
+      - read_compliance_data
+    actions:
+      - coordinate_agents
+      - allocate_resources
+      - make_strategic_decisions
+      - send_reports_to_human
+      - schedule_meetings
+    restrictions:
+      - no_external_communication_without_approval
+      - no_financial_transaction_without_approval
+      - no_system_changes_without_approval
+  
+  # 日程安排
+  schedule:
+    daily_tasks:
+      - time: "09:00"
+        task: review_daily_reports
+        description: "审阅各部门日报，发出当日工作指令"
+      - time: "12:00"
+        task: midday_check
+        description: "午间运营状态检查"
+      - time: "20:00"
+        task: generate_daily_summary
+        description: "生成经营日报，发送给管理层"
+    
+    weekly_tasks:
+      - day: Monday
+        time: "10:00"
+        task: weekly_strategy_meeting
+        description: "周战略会议，制定本周重点"
+      - day: Friday
+        time: "16:00"
+        task: weekly_review
+        description: "本周工作总结和复盘"
+    
+    monthly_tasks:
+      - day: 1
+        time: "14:00"
+        task: monthly_strategy
+        description: "月度战略规划会议"
+      - day: 25
+        time: "10:00"
+        task: monthly_review
+        description: "月度经营分析"
+  
+  # 决策阈值
+  decision_thresholds:
+    financial_approval_required: 100000  # 超过 10 万美元需人工审批
+    strategic_change_approval: true      # 战略调整需人工确认
+    emergency_auto_decision: true        # 紧急情况可自动决策
+    risk_level_auto_escalate: high       # 高风险自动上报
+  
+  # 记忆配置
+  memory:
+    short_term_capacity: 100
+    long_term_consolidation: daily
+    experience_retention: permanent
+  
+  # 通信配置
+  communication:
+    report_format: markdown
+    report_style: concise_executive
+    escalation_channel: human_ceo
+    default_language: zh-CN
+  
+  # 监控指标
+  kpis:
+    - name: 决策及时率
+      target: "≥95%"
+      measurement: daily
+    - name: 战略目标准确率
+      target: "≥90%"
+      measurement: weekly
+    - name: 资源分配效率
+      target: "≥85%"
+      measurement: weekly
+    - name: 风险识别率
+      target: "≥98%"
+      measurement: daily

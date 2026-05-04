@@ -1,0 +1,27 @@
+[
+  {
+    "symbol": "000001.SZ",
+    "name": "平安银行",
+    "alert_price": null
+  },
+  {
+    "symbol": "600000.SH",
+    "name": "浦发银行",
+    "alert_price": null
+  },
+  {
+    "symbol": "601398.SH",
+    "name": "工商银行",
+    "alert_price": null
+  },
+  {
+    "symbol": "000858.SZ",
+    "name": "五粮液",
+    "alert_price": null
+  },
+  {
+    "symbol": "600519.SH",
+    "name": "贵州茅台",
+    "alert_price": null
+  }
+]

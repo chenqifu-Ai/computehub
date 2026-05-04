@@ -1,0 +1,36 @@
+{
+  "test": "qwen36_adapter_v5_comprehensive",
+  "timestamp": "2026-04-24T17:08:00+08:00",
+  "results": {
+    "简单算术": {
+      "success": true,
+      "time": 1.38,
+      "length": 1
+    },
+    "数学推理": {
+      "success": true,
+      "time": 2.8,
+      "length": 1008
+    },
+    "代码生成-斐波那契": {
+      "success": true,
+      "time": 10.05,
+      "length": 162
+    },
+    "代码生成-冒泡排序": {
+      "success": true,
+      "time": 5.65,
+      "length": 333
+    },
+    "中文问答": {
+      "success": true,
+      "time": 3.48,
+      "length": 3
+    },
+    "JSON生成": {
+      "success": true,
+      "time": 2.25,
+      "length": 3
+    }
+  }
+}

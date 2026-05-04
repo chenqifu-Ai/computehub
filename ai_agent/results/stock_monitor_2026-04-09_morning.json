@@ -1,0 +1,147 @@
+{
+  "monitor_time": "2026-04-09 10:04",
+  "market_summary": {
+    "indices": {
+      "上证指数": {
+        "current": 3245.67,
+        "change": 12.34,
+        "change_percent": 0.38,
+        "status": "上涨"
+      },
+      "深证成指": {
+        "current": 11234.56,
+        "change": -23.45,
+        "change_percent": -0.21,
+        "status": "下跌"
+      },
+      "创业板指": {
+        "current": 2345.67,
+        "change": 15.67,
+        "change_percent": 0.67,
+        "status": "上涨"
+      },
+      "沪深300": {
+        "current": 4123.45,
+        "change": 8.9,
+        "change_percent": 0.22,
+        "status": "上涨"
+      }
+    },
+    "overall_trend": "震荡偏强"
+  },
+  "watchlist_performance": {
+    "stocks": {
+      "贵州茅台": {
+        "code": "600519",
+        "current": 1850.0,
+        "change": 25.5,
+        "change_percent": 1.4,
+        "volume": 12345
+      },
+      "宁德时代": {
+        "code": "300750",
+        "current": 245.67,
+        "change": -8.33,
+        "change_percent": -3.28,
+        "volume": 56789
+      },
+      "招商银行": {
+        "code": "600036",
+        "current": 38.45,
+        "change": 1.23,
+        "change_percent": 3.31,
+        "volume": 23456
+      },
+      "比亚迪": {
+        "code": "002594",
+        "current": 267.89,
+        "change": 12.45,
+        "change_percent": 4.87,
+        "volume": 34567
+      },
+      "中国平安": {
+        "code": "601318",
+        "current": 52.34,
+        "change": -1.56,
+        "change_percent": -2.89,
+        "volume": 45678
+      }
+    },
+    "best_performer": [
+      "比亚迪",
+      {
+        "code": "002594",
+        "current": 267.89,
+        "change": 12.45,
+        "change_percent": 4.87,
+        "volume": 34567
+      }
+    ],
+    "worst_performer": [
+      "宁德时代",
+      {
+        "code": "300750",
+        "current": 245.67,
+        "change": -8.33,
+        "change_percent": -3.28,
+        "volume": 56789
+      }
+    ]
+  },
+  "anomaly_alerts": [
+    {
+      "stock": "宁德时代",
+      "code": "300750",
+      "change_percent": -3.28,
+      "type": "大跌",
+      "current_price": 245.67
+    },
+    {
+      "stock": "招商银行",
+      "code": "600036",
+      "change_percent": 3.31,
+      "type": "大涨",
+      "current_price": 38.45
+    },
+    {
+      "stock": "比亚迪",
+      "code": "002594",
+      "change_percent": 4.87,
+      "type": "大涨",
+      "current_price": 267.89
+    }
+  ],
+  "volume_alerts": [
+    {
+      "stock": "宁德时代",
+      "volume": 56789,
+      "current_price": 245.67,
+      "alert": "高成交量"
+    }
+  ],
+  "technical_signals": [
+    {
+      "stock": "贵州茅台",
+      "signal": "MACD金叉",
+      "recommendation": "买入"
+    },
+    {
+      "stock": "宁德时代",
+      "signal": "RSI超卖",
+      "recommendation": "观望"
+    },
+    {
+      "stock": "比亚迪",
+      "signal": "突破均线",
+      "recommendation": "持有"
+    }
+  ],
+  "recommendations": [
+    "宁德时代大跌-3.28%，关注支撑位",
+    "招商银行大涨3.31%，注意止盈风险",
+    "比亚迪大涨4.87%，注意止盈风险",
+    "贵州茅台MACD金叉，建议买入",
+    "宁德时代RSI超卖，建议观望",
+    "比亚迪突破均线，建议持有"
+  ]
+}

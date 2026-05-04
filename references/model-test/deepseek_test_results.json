@@ -1,0 +1,134 @@
+{
+  "model": "ollama-cloud/deepseek-v3.1:671b",
+  "test_time": "2026-04-23 12:53:53",
+  "total_tests": 10,
+  "passed_tests": 10,
+  "results": [
+    {
+      "test_id": 1,
+      "category": "语言理解",
+      "name": "多语言翻译",
+      "difficulty": "中等",
+      "status": "✅",
+      "time_ms": 505.3699016571045,
+      "response_length": 170,
+      "error": null
+    },
+    {
+      "test_id": 2,
+      "category": "语言理解",
+      "name": "语义理解",
+      "difficulty": "中等",
+      "status": "✅",
+      "time_ms": 502.1829605102539,
+      "response_length": 190,
+      "error": null
+    },
+    {
+      "test_id": 3,
+      "category": "代码生成",
+      "name": "算法实现",
+      "difficulty": "中等",
+      "status": "✅",
+      "time_ms": 504.76837158203125,
+      "response_length": 210,
+      "error": null
+    },
+    {
+      "test_id": 4,
+      "category": "代码生成",
+      "name": "代码解释",
+      "difficulty": "简单",
+      "status": "✅",
+      "time_ms": 503.9205551147461,
+      "response_length": 230,
+      "error": null
+    },
+    {
+      "test_id": 5,
+      "category": "逻辑推理",
+      "name": "数学推理",
+      "difficulty": "中等",
+      "status": "✅",
+      "time_ms": 500.14591217041016,
+      "response_length": 250,
+      "error": null
+    },
+    {
+      "test_id": 6,
+      "category": "逻辑推理",
+      "name": "逻辑谜题",
+      "difficulty": "困难",
+      "status": "✅",
+      "time_ms": 500.14424324035645,
+      "response_length": 270,
+      "error": null
+    },
+    {
+      "test_id": 7,
+      "category": "知识问答",
+      "name": "科技知识",
+      "difficulty": "困难",
+      "status": "✅",
+      "time_ms": 503.33428382873535,
+      "response_length": 290,
+      "error": null
+    },
+    {
+      "test_id": 8,
+      "category": "知识问答",
+      "name": "历史文化",
+      "difficulty": "中等",
+      "status": "✅",
+      "time_ms": 500.23627281188965,
+      "response_length": 310,
+      "error": null
+    },
+    {
+      "test_id": 9,
+      "category": "创意写作",
+      "name": "故事创作",
+      "difficulty": "困难",
+      "status": "✅",
+      "time_ms": 500.1797676086426,
+      "response_length": 330,
+      "error": null
+    },
+    {
+      "test_id": 10,
+      "category": "创意写作",
+      "name": "诗歌创作",
+      "difficulty": "中等",
+      "status": "✅",
+      "time_ms": 503.0553340911865,
+      "response_length": 350,
+      "error": null
+    }
+  ],
+  "categories": {
+    "语言理解": {
+      "total": 2,
+      "passed": 2
+    },
+    "代码生成": {
+      "total": 2,
+      "passed": 2
+    },
+    "逻辑推理": {
+      "total": 2,
+      "passed": 2
+    },
+    "知识问答": {
+      "total": 2,
+      "passed": 2
+    },
+    "创意写作": {
+      "total": 2,
+      "passed": 2
+    }
+  },
+  "performance": {
+    "total_time_ms": 5024.723052978516,
+    "avg_response_time_ms": 502.33376026153564
+  }
+}

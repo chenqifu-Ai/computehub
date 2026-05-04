@@ -1,0 +1,11 @@
+[
+  {
+    "skill_name": "TUI分析邮件发送技能",
+    "execution_time": "2026-03-26T22:31:56.784530",
+    "document_path": "/root/.openclaw/workspace/TUI_连续流技能实战报告.md",
+    "email_recipient": "19525456@qq.com",
+    "email_status": "success",
+    "interaction_count": 0,
+    "total_steps": 4
+  }
+]

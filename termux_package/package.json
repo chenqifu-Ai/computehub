@@ -1,0 +1,14 @@
+{
+  "name": "OpenClaw-Termux",
+  "version": "1.0.0",
+  "description": "OpenClaw AI 助手 Termux 环境",
+  "author": "小智",
+  "created": "2026-03-25T06:00:47.125585",
+  "requirements": [
+    "python",
+    "nodejs",
+    "git",
+    "curl"
+  ],
+  "install_script": "scripts/install.sh"
+}

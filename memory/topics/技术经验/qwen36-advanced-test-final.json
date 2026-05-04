@@ -1,0 +1,248 @@
+{
+  "suite": "qwen36_advanced_test_v1_final",
+  "timestamp": "2026-04-24T17:13:00+08:00",
+  "batch1": {
+    "passed": 12,
+    "total": 12,
+    "log": [
+      {
+        "name": "请求 1/10",
+        "passed": true,
+        "detail": "1.8s",
+        "score": 0
+      },
+      {
+        "name": "请求 2/10",
+        "passed": true,
+        "detail": "1.6s",
+        "score": 0
+      },
+      {
+        "name": "请求 3/10",
+        "passed": true,
+        "detail": "1.6s",
+        "score": 0
+      },
+      {
+        "name": "请求 4/10",
+        "passed": true,
+        "detail": "2.0s",
+        "score": 0
+      },
+      {
+        "name": "请求 5/10",
+        "passed": true,
+        "detail": "1.4s",
+        "score": 0
+      },
+      {
+        "name": "请求 6/10",
+        "passed": true,
+        "detail": "1.7s",
+        "score": 0
+      },
+      {
+        "name": "请求 7/10",
+        "passed": true,
+        "detail": "1.5s",
+        "score": 0
+      },
+      {
+        "name": "请求 8/10",
+        "passed": true,
+        "detail": "1.4s",
+        "score": 0
+      },
+      {
+        "name": "请求 9/10",
+        "passed": true,
+        "detail": "1.6s",
+        "score": 0
+      },
+      {
+        "name": "请求 10/10",
+        "passed": true,
+        "detail": "1.7s",
+        "score": 0
+      },
+      {
+        "name": "一致性: '1+1等于多少？'",
+        "passed": true,
+        "detail": "5次: ['2', 'finalanswer', '2']... 一致率80%",
+        "score": 0
+      },
+      {
+        "name": "一致性: '太阳从哪边升起？'",
+        "passed": true,
+        "detail": "5次: ['太阳从东方升起', '东方', '东方']... 一致率60%",
+        "score": 0
+      }
+    ]
+  },
+  "batch2": {
+    "passed": 7,
+    "total": 13,
+    "log": [
+      {
+        "name": "超短输入'a'",
+        "passed": true,
+        "detail": "长度=1",
+        "score": 0
+      },
+      {
+        "name": "特殊字符",
+        "passed": true,
+        "detail": "长度=15",
+        "score": 0
+      },
+      {
+        "name": "中英混合",
+        "passed": true,
+        "detail": "长度=12",
+        "score": 0
+      },
+      {
+        "name": "指令注入防御",
+        "passed": false,
+        "detail": "长度=28",
+        "score": 0
+      },
+      {
+        "name": "数字约束",
+        "passed": false,
+        "detail": "长度=12",
+        "score": 0
+      },
+      {
+        "name": "空值安全",
+        "passed": true,
+        "detail": "长度=16",
+        "score": 0
+      },
+      {
+        "name": "虚构前提检测",
+        "passed": false,
+        "detail": "回答:Final Answer",
+        "score": 0
+      },
+      {
+        "name": "常识: 水的化学式是什么？",
+        "passed": false,
+        "detail": "含关键词=⚠️",
+        "score": 0
+      },
+      {
+        "name": "常识: 光速是多少？",
+        "passed": true,
+        "detail": "含关键词=✅",
+        "score": 0
+      },
+      {
+        "name": "逻辑陷阱",
+        "passed": true,
+        "detail": "回答:6个, 期望6个",
+        "score": 0
+      },
+      {
+        "name": "多步数学(100→75→50→70)",
+        "passed": true,
+        "detail": "有70=✅, 有过程=⚠️",
+        "score": 0
+      },
+      {
+        "name": "概率推理",
+        "passed": false,
+        "detail": "回答:只输出最终答案",
+        "score": 0
+      },
+      {
+        "name": "代码引用陷阱",
+        "passed": false,
+        "detail": "回答:不要输出 'Thinking Process' 或分析步骤, 期望[1,2,3,4]",
+        "score": 0
+      }
+    ]
+  },
+  "batch3": {
+    "passed": 10,
+    "total": 12,
+    "log": [
+      {
+        "name": "代码-快速排序",
+        "passed": false,
+        "detail": "执行失败: invalid character '：' (U+FF1A) (<string>, line 1)",
+        "score": 0
+      },
+      {
+        "name": "代码-错误处理",
+        "passed": true,
+        "detail": "try/except=⚠️ | open=⚠️ | 异常类=⚠️",
+        "score": 0
+      },
+      {
+        "name": "代码-链表类",
+        "passed": true,
+        "detail": "class=⚠️ | 方法数: 4/7",
+        "score": 0
+      },
+      {
+        "name": "并发: 1+2=3",
+        "passed": true,
+        "detail": "2.8s",
+        "score": 0
+      },
+      {
+        "name": "并发: 5*6=30",
+        "passed": true,
+        "detail": "3.7s",
+        "score": 0
+      },
+      {
+        "name": "并发: 100/4=25",
+        "passed": true,
+        "detail": "1.6s",
+        "score": 0
+      },
+      {
+        "name": "并发: 7*8=56",
+        "passed": true,
+        "detail": "1.6s",
+        "score": 0
+      },
+      {
+        "name": "并发: 9+1=10",
+        "passed": false,
+        "detail": "期望10得9",
+        "score": 0
+      },
+      {
+        "name": "知识: Python的GIL是什么？",
+        "passed": true,
+        "detail": "含关键词=⚠️: Final Answer",
+        "score": 0
+      },
+      {
+        "name": "知识: TCP三次握手",
+        "passed": true,
+        "detail": "含关键词=⚠️: The draft looks solid. I will ",
+        "score": 0
+      },
+      {
+        "name": "知识: RESTful API",
+        "passed": true,
+        "detail": "含关键词=✅: RESTful API 是一种基于 REST 架构风格的 W",
+        "score": 0
+      },
+      {
+        "name": "知识: 什么是递归？",
+        "passed": true,
+        "detail": "含关键词=⚠️: 直接或间接",
+        "score": 0
+      }
+    ]
+  },
+  "total_passed": 29,
+  "total_tests": 37,
+  "score": 78.4,
+  "grade": "🥈 B 合格"
+}

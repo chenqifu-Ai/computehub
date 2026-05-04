@@ -1,0 +1,3 @@
+#!/bin/bash
+# 简化命令：oc-config
+exec /root/.openclaw/workspace/scripts/openclaw-config-manager.sh "$@"

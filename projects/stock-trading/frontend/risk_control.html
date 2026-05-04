@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>风控管理 - 股票交易系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f7fa; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        h1 { color: #1a1a2e; margin-bottom: 20px; }
+        
+        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .card h2 { color: #2d3436; margin-bottom: 15px; font-size: 18px; }
+        
+        .config-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .config-item { padding: 15px; background: #f8f9fa; border-radius: 8px; }
+        .config-item label { display: block; color: #636e72; margin-bottom: 8px; font-size: 14px; }
+        .config-item input { width: 100%; padding: 10px; border: 1px solid #dfe6e9; border-radius: 6px; font-size: 16px; }
+        
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; }
+        .btn-primary { background: #0984e3; color: white; }
+        .btn-danger { background: #d63031; color: white; }
+        .btn-success { background: #00b894; color: white; }
+        
+        .status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; }
+        .status-active { background: #d4edda; color: #155724; }
+        .status-warning { background: #fff3cd; color: #856404; }
+        .status-danger { background: #f8d7da; color: #721c24; }
+        
+        .warning-list { list-style: none; }
+        .warning-list li { padding: 10px; margin-bottom: 8px; border-radius: 6px; }
+        .warning-high { background: #f8d7da; color: #721c24; }
+        .warning-medium { background: #fff3cd; color: #856404; }
+        .warning-low { background: #d4edda; color: #155724; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ 风控管理</h1>
+        
+        <!-- 风控配置 -->
+        <div class="card">
+            <h2>风控参数配置</h2>
+            <div class="config-grid">
+                <div class="config-item">
+                    <label>止损比例 (%)</label>
+                    <input type="number" id="stopLoss" value="5" step="0.1">
+                </div>
+                <div class="config-item">
+                    <label>止盈比例 (%)</label>
+                    <input type="number" id="stopProfit" value="10" step="0.1">
+                </div>
+                <div class="config-item">
+                    <label>单只股票最大仓位 (%)</label>
+                    <input type="number" id="maxPosition" value="30" step="1">
+                </div>
+                <div class="config-item">
+                    <label>总仓位上限 (%)</label>
+                    <input type="number" id="maxTotalPosition" value="80" step="1">
+                </div>
+            </div>
+            <div style="margin-top: 20px;">
+                <button class="btn btn-primary" onclick="saveConfig()">保存配置</button>
+            </div>
+        </div>
+        
+        <!-- 风控报告 -->
+        <div class="card">
+            <h2>风险监控</h2>
+            <div id="riskReport">
+                <p style="color: #636e72;">点击刷新获取最新风控报告</p>
+            </div>
+            <div style="margin-top: 15px;">
+                <button class="btn btn-primary" onclick="refreshReport()">刷新报告</button>
+            </div>
+        </div>
+        
+        <!-- 警告列表 -->
+        <div class="card">
+            <h2>风险警告</h2>
+            <ul class="warning-list" id="warningList">
+                <li class="warning-low">✅ 暂无风险警告</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = window.location.origin;
+        let token = localStorage.getItem('token');
+        
+        async function loadConfig() {
+            try {
+                const res = await fetch(`${API_BASE}/api/risk/config`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.code === 200) {
+                    document.getElementById('stopLoss').value = (data.data.stop_loss_percent * 100).toFixed(1);
+                    document.getElementById('stopProfit').value = (data.data.stop_profit_percent * 100).toFixed(1);
+                    document.getElementById('maxPosition').value = (data.data.max_position_percent * 100).toFixed(0);
+                    document.getElementById('maxTotalPosition').value = (data.data.max_total_position * 100).toFixed(0);
+                }
+            } catch (e) {
+                console.error('加载配置失败', e);
+            }
+        }
+        
+        async function saveConfig() {
+            const config = {
+                stop_loss_percent: parseFloat(document.getElementById('stopLoss').value) / 100,
+                stop_profit_percent: parseFloat(document.getElementById('stopProfit').value) / 100,
+                max_position_percent: parseFloat(document.getElementById('maxPosition').value) / 100,
+                max_total_position: parseFloat(document.getElementById('maxTotalPosition').value) / 100
+            };
+            
+            try {
+                const res = await fetch(`${API_BASE}/api/risk/config`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ config })
+                });
+                const data = await res.json();
+                alert(data.message || '保存成功');
+            } catch (e) {
+                alert('保存失败');
+            }
+        }
+        
+        async function refreshReport() {
+            try {
+                const res = await fetch(`${API_BASE}/api/risk/report`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.code === 200) {
+                    renderReport(data.data);
+                }
+            } catch (e) {
+                console.error('获取报告失败', e);
+            }
+        }
+        
+        function renderReport(report) {
+            const html = `
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: bold; color: #2d3436;">${report.total_positions}</div>
+                        <div style="color: #636e72; font-size: 14px;">持仓数量</div>
+                    </div>
+                    <div style="background: ${report.total_profit >= 0 ? '#d4edda' : '#f8d7da'}; padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: bold;">¥${report.total_profit.toFixed(2)}</div>
+                        <div style="color: #636e72; font-size: 14px;">总盈亏</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: bold; color: ${report.warnings.length > 0 ? '#d63031' : '#00b894'};">${report.warnings.length}</div>
+                        <div style="color: #636e72; font-size: 14px;">风险警告</div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('riskReport').innerHTML = html;
+            
+            // 更新警告列表
+            const warningList = document.getElementById('warningList');
+            if (report.warnings.length > 0) {
+                warningList.innerHTML = report.warnings.map(w => 
+                    `<li class="warning-medium">${w}</li>`
+                ).join('');
+            } else {
+                warningList.innerHTML = '<li class="warning-low">✅ 暂无风险警告</li>';
+            }
+        }
+        
+        // 页面加载时获取配置
+        loadConfig();
+    </script>
+</body>
+</html>
