@@ -687,11 +687,82 @@ func printHelp() {
 }
 
 // ═══════════════════════════════════════════
-// DASHBOARD — 集群总览
+// DASHBOARD — 集群总览（每秒自动刷新）
 // ═══════════════════════════════════════════
 
 func screenDashboard(state *AppState) {
+	fd := int(os.Stdin.Fd())
+	old, err := term.MakeRaw(fd)
+	if err != nil {
+		// Fallback: 单次显示
+		renderDashboard(state)
+		printPrompt()
+		readLine("")
+		return
+	}
+	defer term.Restore(fd, old)
+
+	// 启动键盘监听 goroutine（检测 q / Enter / Ctrl+C）
+	quit := make(chan struct{})
+	keyPressed := make(chan byte, 4)
+	go func() {
+		defer close(quit)
+		for {
+			var b [1]byte
+			n, _ := os.Stdin.Read(b[:])
+			if n > 0 {
+				ch := b[0]
+				if ch == 'q' || ch == 'Q' || ch == 27 { // q / ESC
+					// Drain keyPressed to unblock select
+					select {
+					case keyPressed <- ch:
+					default:
+					}
+					return
+				}
+				if ch == 13 || ch == 10 { // Enter → 退出自动刷新
+					select {
+					case keyPressed <- ch:
+					default:
+					}
+					return
+				}
+				if ch == 3 { // Ctrl+C → 直接退出程序
+					term.Restore(fd, old)
+					os.Exit(0)
+				}
+			}
+		}
+	}()
+
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
+
+	// 初始渲染
 	clearScreen()
+	renderDashboard(state)
+
+	// 主循环：1 秒刷新 or 按键退出
+	running := true
+	for running {
+		select {
+		case <-ticker.C:
+			// 光标回到顶部 + 清空往下内容，避免闪烁
+			fmt.Print("\033[H")
+			renderDashboard(state)
+		case k := <-keyPressed:
+			_ = k
+			running = false
+		case <-quit:
+			running = false
+		}
+	}
+
+	clearScreen()
+}
+
+// renderDashboard — 绘制单帧仪表板内容（不含清屏和循环控制）
+func renderDashboard(state *AppState) {
 	s := fetchStatus()
 	h := fetchV2Health()
 	nodes := fetchV2Nodes()
