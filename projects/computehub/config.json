@@ -17,5 +17,13 @@
     "enabled": true,
     "simulate": true,
     "port": 8282
+  },
+  "composer": {
+    "api_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "api_key": "sk-65ca99f6fd55437fba47dc7ba7973242",
+    "model": "qwen-turbo",
+    "execute_models": ["qwen-turbo", "qwen-turbo", "qwen-turbo"],
+    "max_concurrency": 8,
+    "timeout_seconds": 120
   }
 }

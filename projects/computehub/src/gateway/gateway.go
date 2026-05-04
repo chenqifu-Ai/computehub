@@ -9,10 +9,12 @@ import (
 	"sync"
 	"time"
 
+	"github.com/computehub/opc/src/composer"
 	"github.com/computehub/opc/src/executor"
 	"github.com/computehub/opc/src/gene"
 	"github.com/computehub/opc/src/kernel"
 	"github.com/computehub/opc/src/pure"
+	"github.com/computehub/opc/src/visualizer"
 )
 
 // logWithTimestamp 添加时间戳的日志函数
@@ -107,6 +109,7 @@ type OpcGateway struct {
 	Pipeline               *pure.PurePipeline
 	Executor               *executor.OpcExecutor
 	GeneStore              *gene.GeneStore
+	Composer               *composer.TaskComposer
 	startTime              time.Time
 	mu                     sync.Mutex
 	unregisterSimFallback  func(nodeID string) error
@@ -152,11 +155,31 @@ func NewOpcGateway(port int, config *GatewayConfig) *OpcGateway {
 	ex := executor.NewOpcExecutor(sandboxPath)
 	gs := gene.NewGeneStore(geneStorePath)
 
+	// Initialize TaskComposer with default config
+	composerCfg := composer.DefaultConfig()
+	if config != nil && config.ComposerModel != "" {
+		composerCfg.DecomposeModel = config.ComposerModel
+	}
+	if config != nil && len(config.ComposerExecModels) > 0 {
+		composerCfg.ExecuteModels = config.ComposerExecModels
+	}
+	if config != nil && config.ComposerMaxConcurrency > 0 {
+		composerCfg.MaxConcurrency = config.ComposerMaxConcurrency
+	}
+	composerAPI := ""
+	composerKey := ""
+	if config != nil {
+		composerAPI = config.ComposerAPIURL
+		composerKey = config.ComposerAPIKey
+	}
+	composerObj := composer.NewTaskComposer(composerCfg, composerAPI, composerKey)
+
 	return &OpcGateway{
 		Kernel:    kernelObj,
 		Pipeline:  p,
 		Executor:  ex,
 		GeneStore: gs,
+		Composer:  composerObj,
 		startTime: time.Now(),
 	}
 }
@@ -168,6 +191,11 @@ type GatewayConfig struct {
 	BufferSize    int
 	MaxStates     int
 	MaxNodes      int
+	ComposerAPIURL    string
+	ComposerAPIKey    string
+	ComposerModel     string
+	ComposerExecModels   []string
+	ComposerMaxConcurrency int
 }
 
 func (g *OpcGateway) Serve(port int, dashboardDir ...string) {
@@ -183,9 +211,13 @@ func (g *OpcGateway) Serve(port int, dashboardDir ...string) {
 	http.HandleFunc("/api/v1/nodes/list", g.handleNodeList)
 	http.HandleFunc("/api/v1/nodes/metrics", g.handleNodeMetrics)
 	http.HandleFunc("/api/v1/tasks/submit", g.handleTaskSubmit)
+	http.HandleFunc("/api/v1/tasks/compose", g.handleTaskCompose)
 	http.HandleFunc("/api/v1/tasks/result", g.handleTaskResult)
 	http.HandleFunc("/api/v1/tasks/list", g.handleTaskList)
 	http.HandleFunc("/api/v1/tasks/detail", g.handleTaskDetail)
+
+	// Prometheus metrics
+	http.HandleFunc("/metrics", g.handlePrometheusMetrics)
 
 	// Dashboard static files (if directory provided)
 	if len(dashboardDir) > 0 && dashboardDir[0] != "" {
@@ -228,6 +260,8 @@ func (g *OpcGateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		g.handleNodeMetrics(w, r)
 	case "/api/v1/tasks/submit":
 		g.handleTaskSubmit(w, r)
+	case "/api/v1/tasks/compose":
+		g.handleTaskCompose(w, r)
 	case "/api/v1/tasks/result":
 		g.handleTaskResult(w, r)
 	case "/api/v1/tasks/list":
@@ -595,6 +629,75 @@ func (g *OpcGateway) handleTaskSubmit(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// handleTaskCompose — 大模型驱动的任务编排
+// POST /api/v1/tasks/compose
+// {
+//   "task": "分析今天A股大盘走势并生成交易建议",
+//   "context": "可选补充上下文",
+//   "priority": 5
+// }
+func (g *OpcGateway) handleTaskCompose(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, `{"error":"Only POST allowed"}`, http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req struct {
+		Task    string `json:"task"`
+		Context string `json:"context,omitempty"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		g.sendResponse(w, Response{Success: false, Error: "Invalid JSON"})
+		return
+	}
+
+	if req.Task == "" {
+		g.sendResponse(w, Response{Success: false, Error: "task is required"})
+		return
+	}
+
+	if g.Composer == nil {
+		g.sendResponse(w, Response{Success: false, Error: "TaskComposer not initialized"})
+		return
+	}
+
+	// Generate task ID
+	taskID := fmt.Sprintf("compose-%d", time.Now().UnixNano())
+
+	input := composer.TaskComposerInput{
+		TaskID:       taskID,
+		OriginalTask: req.Task,
+		ExtraContext: req.Context,
+	}
+
+	// Run the full compose pipeline in background
+	start := time.Now()
+	output, err := g.Composer.Run(input)
+	duration := time.Since(start)
+
+	if err != nil {
+		g.sendResponse(w, Response{
+			Success:  false,
+			Error:    fmt.Sprintf("compose failed: %v", err),
+			Duration: duration.String(),
+		})
+		return
+	}
+
+	g.sendResponse(w, Response{
+		Success:  output.Success,
+		Data: map[string]interface{}{
+			"task_id":       output.TaskID,
+			"subtasks":      output.Subtasks,
+			"results":       output.Results,
+			"final_result":  output.FinalResult,
+			"total_duration": output.TotalDuration.String(),
+			"composed_at":   output.ComposedAt,
+		},
+		Duration: duration.String(),
+	})
+}
+
 func (g *OpcGateway) handleTaskResult(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, `{"error":"Only POST allowed"}`, http.StatusMethodNotAllowed)
@@ -698,4 +801,11 @@ func (g *OpcGateway) handleTaskDetail(w http.ResponseWriter, r *http.Request) {
 		Success: true,
 		Data:    taskDetail,
 	})
+}
+
+// handlePrometheusMetrics exposes Prometheus-format metrics
+func (g *OpcGateway) handlePrometheusMetrics(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(visualizer.GeneratePrometheusMetrics(g.Kernel)))
 }

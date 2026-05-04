@@ -489,6 +489,46 @@ func fetchV2History() []V2HistoryEntry {
 	return resp.History
 }
 
+// ── Task list (v1) ──
+
+type TaskListInfo struct {
+	TaskID    string `json:"task_id"`
+	Source    string `json:"source"`
+	Priority  int    `json:"priority"`
+	Status    string `json:"status"`
+	Retries   int    `json:"retries"`
+	CreatedAt string `json:"created_at"`
+}
+
+func fetchTaskList() map[string][]TaskListInfo {
+	url := gw + "/api/v1/tasks/list"
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil
+	}
+	defer resp.Body.Close()
+	// The response is wrapped in a TUIResponse envelope
+	var wrapper struct {
+		Success bool                      `json:"success"`
+		Data    map[string][]TaskListInfo `json:"data"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&wrapper); err != nil {
+		return nil
+	}
+	if !wrapper.Success {
+		return nil
+	}
+	return wrapper.Data
+}
+
+func fetchQueueDepth() int {
+	s := fetchStatus()
+	if s == nil {
+		return -1
+	}
+	return s.Kernel.QueueDepth
+}
+
 // ── Node management helpers ──
 
 type addNodeResponse struct {
@@ -1162,8 +1202,35 @@ func screenRegions(state *AppState) {
 // TASKS — 任务管理器
 // ═══════════════════════════════════════════
 
+func priorityColor(p int) string {
+	switch {
+	case p >= 9:
+		return Red + Bold
+	case p >= 7:
+		return Magenta + Bold
+	case p >= 5:
+		return Yellow
+	default:
+		return Green
+	}
+}
+
+func priorityLabel(p int) string {
+	switch {
+	case p >= 9:
+		return "CRITICAL"
+	case p >= 7:
+		return "HIGH"
+	case p >= 5:
+		return "MEDIUM"
+	default:
+		return "LOW"
+	}
+}
+
 func screenTasks(state *AppState) {
 	clearScreen()
+
 	nodes := fetchV2Nodes()
 	if nodes == nil {
 		printf(Red+Bold, " ⚠ 无法获取节点数据\n")
@@ -1172,45 +1239,114 @@ func screenTasks(state *AppState) {
 	}
 	state.v2Nodes = nodes
 
-	printHeader("📋 任务管理器", "节点任务分布")
+	// Fetch task details and queue depth
+	taskMap := fetchTaskList()
+	queueDepth := fetchQueueDepth()
 
-	// Aggregate
+	printHeader("📋 任务管理器", "优先级调度")
+
+	// ── 全局统计 ──
 	totalTasks := 0
+	prioCount := map[string]int{"critical": 0, "high": 0, "medium": 0, "low": 0}
+	var allTasks []TaskListInfo
+
+	for _, tasks := range taskMap {
+		for _, t := range tasks {
+			totalTasks++
+			allTasks = append(allTasks, t)
+			switch {
+			case t.Priority >= 9:
+				prioCount["critical"]++
+			case t.Priority >= 7:
+				prioCount["high"]++
+			case t.Priority >= 5:
+				prioCount["medium"]++
+			default:
+				prioCount["low"]++
+			}
+		}
+	}
+
+	fmt.Printf("\n %s━━━ 任务概览 ━━━%s\n", Cyan+Bold, Reset)
+	fmt.Printf("  活跃任务: %s%3d%s", Yellow+Bold, totalTasks, Reset)
+
+	if queueDepth >= 0 {
+		fmt.Printf("  等待队列: %s%3d%s", Dim, queueDepth, Reset)
+	} else {
+		fmt.Printf("  等待队列: %s N/A%s", Dim, Reset)
+	}
+
+	// 优先级分布条
+	fmt.Printf("\n")
+	fmt.Printf("  优先级: ")
+	if prioCount["critical"] > 0 {
+		fmt.Printf("%s⬛ Critical:%d%s ", Red+Bold, prioCount["critical"], Reset)
+	}
+	if prioCount["high"] > 0 {
+		fmt.Printf("%s⬛ High:%d%s ", Magenta+Bold, prioCount["high"], Reset)
+	}
+	if prioCount["medium"] > 0 {
+		fmt.Printf("%s⬛ Medium:%d%s ", Yellow, prioCount["medium"], Reset)
+	}
+	if prioCount["low"] > 0 {
+		fmt.Printf("%s⬛ Low:%d%s ", Green, prioCount["low"], Reset)
+	}
+	if totalTasks == 0 {
+		fmt.Printf("%s(无活跃任务)%s", Dim, Reset)
+	}
+	fmt.Println()
+
+	// ── 节点任务分布 ──
+	fmt.Printf("\n %s━━━ 节点任务分布 ━━━%s\n", Cyan+Bold, Reset)
+
 	type nodeTaskInfo struct {
 		id, region, gpu string
 		active, max     int
-		util, temp      float64
-		successRate     float64
 	}
 	var list []nodeTaskInfo
 	for _, n := range nodes {
-		if n.ActiveTasks == 0 && n.MaxTasks == 0 { continue }
-		avgU, avgT := 0.0, 0.0
-		for _, g := range n.GPUs {
-			avgU += g.Utilization
-			avgT += g.Temperature
-		}
-		if len(n.GPUs) > 0 { avgU /= float64(len(n.GPUs)); avgT /= float64(len(n.GPUs)) }
-		totalTasks += n.ActiveTasks
-		list = append(list, nodeTaskInfo{n.ID, n.Region, n.GPUType, n.ActiveTasks, n.MaxTasks, avgU, avgT, n.SuccessRate})
+		list = append(list, nodeTaskInfo{n.ID, n.Region, n.GPUType, n.ActiveTasks, n.MaxTasks})
 	}
 	sort.Slice(list, func(i, j int) bool { return list[i].active > list[j].active })
 
-	fmt.Printf(" %sTotal Tasks: %s%d%s\n\n", Yellow+Bold, Reset, totalTasks, Reset)
-
-	fmt.Printf(" %s%-24s │ %-10s │ %-8s │ %-6s │ %-8s │ %-8s │ %-8s │ %s\n",
-		White+Bold, "Node", "Region", "GPU", "Active", "Max", "Util", "Temp", "Success"+Reset)
-	fmt.Printf(" %s%s\n", Dim, strings.Repeat("─", 100))
+	fmt.Printf("  %-24s │ %-10s │ %-8s │ %-9s │ %s\n",
+		White+Bold, "Node", "Region", "GPU", "Load", Reset)
+	fmt.Printf("  %s%s\n", Dim, strings.Repeat("─", 62))
 
 	for _, li := range list {
-		loadBar := renderBar(float64(li.active), float64(li.max), 10)
-		fmt.Printf(" %s%-24s%s │ %-10s │ %-8s │ %s%3d%s /%-3d %s │ %s │ %s │ %s\n",
-			White, truncate(li.id, 24), Reset,
+		loadBar := renderBar(float64(li.active), float64(li.max), 16)
+		fmt.Printf("  %-24s │ %-10s │ %-8s │ %3d/%-3d %s\n",
+			White+truncate(li.id, 24)+Reset,
 			li.region, li.gpu,
-			Yellow+Bold, li.active, Reset, li.max, loadBar,
-			pctColor(li.util),
-			tempColor(li.temp),
-			pctColor(li.successRate*100))
+			li.active, li.max, loadBar)
+	}
+
+	// ── 按节点展示任务详情（含优先级） ──
+	if len(allTasks) > 0 {
+		fmt.Printf("\n %s━━━ 任务明细（优先级）━━━%s\n", Cyan+Bold, Reset)
+		fmt.Printf("  %-24s │ %-14s │ %-6s │ %-10s │ %-8s\n",
+			"Task ID", "Node", "Priority", "Status", "Source")
+		fmt.Printf("  %s%s\n", Dim, strings.Repeat("─", 72))
+
+		sort.Slice(allTasks, func(i, j int) bool {
+			if allTasks[i].Priority != allTasks[j].Priority {
+				return allTasks[i].Priority > allTasks[j].Priority
+			}
+			return allTasks[i].TaskID < allTasks[j].TaskID
+		})
+
+		for _, t := range allTasks {
+			pc := priorityColor(t.Priority)
+			sc := statusColor(t.Status)
+			fmt.Printf("  %s%-24s%s │ %s%-14s%s │ %s%2d(%s)%-6s │ %s │ %-8s\n",
+				Dim, truncate(t.TaskID, 24), Reset,
+				Dim, truncate(findNodeIDForTask(taskMap, t.TaskID), 14), Reset,
+				pc, t.Priority, priorityLabel(t.Priority), Reset,
+				sc,
+				t.Source)
+		}
+		fmt.Println()
+		fmt.Printf("  %s↑ 按优先级降序排列 | 数值 1-10, 10=Critical%s\n", Dim, Reset)
 	}
 
 	fmt.Println()
@@ -1220,6 +1356,18 @@ func screenTasks(state *AppState) {
 	fmt.Printf("  %-25s %s\n", "list", "刷新任务列表")
 	fmt.Println()
 	fmt.Printf(" task> ")
+}
+
+// findNodeIDForTask 从 taskMap 中查找任务所在的节点
+func findNodeIDForTask(taskMap map[string][]TaskListInfo, targetID string) string {
+	for nodeID, tasks := range taskMap {
+		for _, t := range tasks {
+			if t.TaskID == targetID {
+				return nodeID
+			}
+		}
+	}
+	return "—"
 }
 
 // ═══════════════════════════════════════════

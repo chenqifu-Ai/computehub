@@ -12,9 +12,11 @@ package composer
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"math/rand"
+	"strings"
 	"sync"
 	"time"
 )
@@ -241,6 +243,10 @@ type DispatchEngine struct {
 	// 可用模型列表
 	Models []string
 
+	// LLM API 配置
+	APIURL string
+	APIKey string
+
 	// 节点池 (实际项目中从 discover 获取)
 	NodePool []string
 
@@ -258,9 +264,11 @@ type DispatchEngine struct {
 }
 
 // NewDispatchEngine 创建分发引擎
-func NewDispatchEngine(models []string, maxConcurrency int, timeout time.Duration) *DispatchEngine {
+func NewDispatchEngine(models []string, maxConcurrency int, timeout time.Duration, apiURL, apiKey string) *DispatchEngine {
 	return &DispatchEngine{
 		Models:         models,
+		APIURL:         apiURL,
+		APIKey:         apiKey,
 		MaxConcurrency: maxConcurrency,
 		Timeout:        timeout,
 		MaxRetries:     3,
@@ -333,7 +341,7 @@ func (e *DispatchEngine) executeSubtask(ctx context.Context, task DecomposedTask
 		}
 
 		// 调用小模型执行
-		result, err := callSmallModel(ctx, model, task)
+		result, err := callSmallModel(ctx, model, task, e.APIURL, e.APIKey)
 		if err == nil {
 			return SubtaskExecution{
 				SubtaskID:    task.ID,
@@ -373,7 +381,7 @@ func (e *DispatchEngine) selectModel() string {
 // ====== TaskComposer 核心方法 ======
 
 // NewTaskComposer 创建 TaskComposer
-func NewTaskComposer(cfg Config) *TaskComposer {
+func NewTaskComposer(cfg Config, apiURL, apiKey string) *TaskComposer {
 	// 默认 Decomposer
 	if cfg.DecomposePrompt == "" {
 		cfg.DecomposePrompt = DefaultConfig().DecomposePrompt
@@ -386,15 +394,16 @@ func NewTaskComposer(cfg Config) *TaskComposer {
 	dec := &LLMDecomposer{
 		Model:    cfg.DecomposeModel,
 		Prompt:   cfg.DecomposePrompt,
-		APIURL:   "http://localhost:11434/v1", // 默认本地 Ollama
-		APIKey:   "",
+		APIURL:   apiURL,
+		APIKey:   apiKey,
 	}
 
 	// 初始化 Compositor
 	com := &LLMCompositor{
 		Model:  cfg.DecomposeModel, // 汇总也用大模型
 		Prompt: cfg.ComposePrompt,
-		APIURL: "http://localhost:11434/v1",
+		APIURL: apiURL,
+		APIKey: apiKey,
 	}
 
 	// 初始化 DispatchEngine
@@ -402,6 +411,8 @@ func NewTaskComposer(cfg Config) *TaskComposer {
 		cfg.ExecuteModels,
 		cfg.MaxConcurrency,
 		cfg.Timeout,
+		apiURL,
+		apiKey,
 	)
 
 	return &TaskComposer{
@@ -486,32 +497,78 @@ func (tc *TaskComposer) Run(input TaskComposerInput) (*TaskComposerOutput, error
 
 // ====== 工具函数 ======
 
-// callLLM 调用大模型 API (实际实现应通过 HTTP 调用)
+// callLLM 调用大模型 API
 func callLLM(model, apiURL, apiKey, prompt string, maxTokens int) (string, error) {
-	// TODO: 实际通过 HTTP 调用 LLM API
-	// 这里返回模拟结果用于测试
-	return fmt.Sprintf("[LLM Response] Model: %s\nPrompt: %s\nMaxTokens: %d\n", model, prompt[:min(len(prompt), 50)], maxTokens), nil
+	client := NewLLMClient(apiURL, apiKey, model)
+	// 使用 system 角色给指令，user 角色给任务
+	return client.CallWithPrompt(
+		"你是一个严谨的 AI 助手，请严格按照要求的格式输出。",
+		prompt,
+		maxTokens,
+	)
 }
 
-// callSmallModel 调用小模型执行子任务
-func callSmallModel(ctx context.Context, model string, task DecomposedTask) (string, error) {
-	// TODO: 实际通过 HTTP/gRPC 调用小模型
-	// 这里返回模拟结果用于测试
-	time.Sleep(100 * time.Millisecond) // 模拟执行延迟
-	return fmt.Sprintf("Subtask %s executed by model %s.\nDescription: %s", task.ID, model, task.Description), nil
+// callSmallModel 在 worker 上执行子任务
+func callSmallModel(ctx context.Context, model string, task DecomposedTask, apiURL, apiKey string) (string, error) {
+	client := NewLLMClient(apiURL, apiKey, model)
+	prompt := fmt.Sprintf("请执行以下任务:\n描述: %s\n预期输入: %s\n预期输出: %s",
+		task.Description, task.ExpectedInput, task.ExpectedOutput)
+	return client.CallWithPrompt("你是一个专注的任务执行者。", prompt, 1024)
 }
 
-// parseDecomposeResult 解析分解结果
+// parseDecomposeResult 解析 LLM 返回的 JSON 分解结果
 func parseDecomposeResult(taskID, result string) (*DecomposedResult, error) {
-	// TODO: 实际应解析 JSON
-	// 这里返回模拟结果用于测试
+	// 尝试从 ```json ... ``` 代码块中提取
+	cleaned := result
+	if idx := strings.Index(cleaned, "```json"); idx >= 0 {
+		end := strings.Index(cleaned[idx+7:], "```")
+		if end >= 0 {
+			cleaned = cleaned[idx+7 : idx+7+end]
+		}
+	} else if idx := strings.Index(cleaned, "```"); idx >= 0 {
+		end := strings.Index(cleaned[idx+3:], "```")
+		if end >= 0 {
+			cleaned = cleaned[idx+3 : idx+3+end]
+		}
+	}
+	cleaned = strings.TrimSpace(cleaned)
+
+	var parsed struct {
+		Subtasks []DecomposedTask `json:"subtasks"`
+		Thinking string           `json:"thinking,omitempty"`
+	}
+	if err := json.Unmarshal([]byte(cleaned), &parsed); err != nil {
+		// 解析失败时 fallback：把整段文本当单个子任务
+		return &DecomposedResult{
+			TaskID: taskID,
+			Subtasks: []DecomposedTask{
+				{
+					ID:             "sub_1",
+					Description:    result[:min(len(result), 200)],
+					ExpectedOutput: "文本结果",
+					Priority:       5,
+				},
+			},
+		}, nil
+	}
+
+	if len(parsed.Subtasks) == 0 {
+		return nil, fmt.Errorf("decomposition produced 0 subtasks")
+	}
+
+	// 补全默认值
+	for i := range parsed.Subtasks {
+		if parsed.Subtasks[i].ID == "" {
+			parsed.Subtasks[i].ID = fmt.Sprintf("sub_%d", i+1)
+		}
+		if parsed.Subtasks[i].Priority == 0 {
+			parsed.Subtasks[i].Priority = 5
+		}
+	}
+
 	return &DecomposedResult{
-		TaskID: taskID,
-		Subtasks: []DecomposedTask{
-			{ID: "sub_1", Description: "分析任务数据", ExpectedOutput: "分析结果"},
-			{ID: "sub_2", Description: "生成报告内容", ExpectedOutput: "报告文本"},
-			{ID: "sub_3", Description: "格式化最终输出", ExpectedOutput: "格式化的文档"},
-		},
+		TaskID:   taskID,
+		Subtasks: parsed.Subtasks,
 	}, nil
 }
 

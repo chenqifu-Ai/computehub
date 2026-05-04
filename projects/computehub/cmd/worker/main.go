@@ -158,13 +158,19 @@ func main() {
 	}
 	state.nodeID = cfg.NodeID
 
-	fmt.Printf("%s ComputeHub Worker Agent v0.1%s\n", green(bold("╔══════════════════════════════════════╗")), reset())
-	fmt.Printf("%s  Node:     %s%s%s\n", green(bold("║")), cyan(cfg.NodeID), reset())
-	fmt.Printf("%s  Gateway:  %s%s%s\n", green(bold("║")), cyan(cfg.GatewayURL), reset())
-	fmt.Printf("%s  GPU:      %s%s%s\n", green(bold("║")), cyan(fmt.Sprintf("%s (%dx)", cfg.GPUType, state.lastGPUStats.Count)), reset())
-	fmt.Printf("%s  Region:   %s%s%s\n", green(bold("║")), cyan(cfg.Region), reset())
-	fmt.Printf("%s  CPU:      %s%s%s\n", green(bold("║")), cyan(fmt.Sprintf("%d cores", cfg.CPUCores)), reset())
-	fmt.Printf("%s  Memory:   %s%s%s\n", green(bold("║")), cyan(fmt.Sprintf("%.0f GB", cfg.MemoryGB)), reset())
+	fmt.Printf("%s ComputeHub Worker Agent v0.7.0%s\n", green(bold("╔══════════════════════════════════════╗")), reset())
+	fmt.Printf("%s  Node:     %s%s", green(bold("║")), cyan(cfg.NodeID), reset())
+	fmt.Println()
+	fmt.Printf("%s  Gateway:  %s%s", green(bold("║")), cyan(cfg.GatewayURL), reset())
+	fmt.Println()
+	fmt.Printf("%s  GPU:      %s%s", green(bold("║")), cyan(fmt.Sprintf("%s (%dx)", cfg.GPUType, state.lastGPUStats.Count)), reset())
+	fmt.Println()
+	fmt.Printf("%s  Region:   %s%s", green(bold("║")), cyan(cfg.Region), reset())
+	fmt.Println()
+	fmt.Printf("%s  CPU:      %s%s", green(bold("║")), cyan(fmt.Sprintf("%d cores", cfg.CPUCores)), reset())
+	fmt.Println()
+	fmt.Printf("%s  Memory:   %s%s", green(bold("║")), cyan(fmt.Sprintf("%.0f GB", cfg.MemoryGB)), reset())
+	fmt.Println()
 	fmt.Printf("%s╚══════════════════════════════════════╝%s\n", green(bold("")), reset())
 
 	// Step 1: Register

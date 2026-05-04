@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sync"
 	"time"
+
+	"github.com/computehub/opc/src/scheduler"
 )
 
 // ====== 算力调度 Action 定义 ======
@@ -92,9 +94,12 @@ type NodeMetrics struct {
 
 // NodeManager 管理算力节点
 type NodeManager struct {
-	mu       sync.RWMutex
-	nodes    map[string]*NodeManagerState
-	maxNodes int
+	mu          sync.RWMutex
+	nodes       map[string]*NodeManagerState
+	maxNodes    int
+	prioSched   *scheduler.PriorityScheduler
+	preemptMgr  *scheduler.PreemptManager
+	prioQueue   *scheduler.PriorityQueue
 }
 
 type NodeManagerState struct {
@@ -115,9 +120,13 @@ type TaskState struct {
 
 // NewNodeManager creates a new node manager
 func NewNodeManager(maxNodes int) *NodeManager {
+	prioQueue := scheduler.NewPriorityQueue()
 	return &NodeManager{
-		nodes:    make(map[string]*NodeManagerState),
-		maxNodes: maxNodes,
+		nodes:       make(map[string]*NodeManagerState),
+		maxNodes:    maxNodes,
+		prioQueue:   prioQueue,
+		prioSched:   scheduler.NewPriorityScheduler(scheduler.DefaultConfig()),
+		preemptMgr:  scheduler.NewPreemptManager(prioQueue),
 	}
 }
 
@@ -188,40 +197,109 @@ func (nm *NodeManager) Heartbeat(nodeID string, metrics *GPUMetrics) error {
 	return nil
 }
 
-// SubmitTask submits a task and assigns it to a node
+// SubmitTask submits a task with priority-aware scheduling
 func (nm *NodeManager) SubmitTask(task *TaskSubmit) error {
 	nm.mu.Lock()
 	defer nm.mu.Unlock()
 
-	// Find best node (simple: first available with lowest load)
+	// 0. 没有任何节点注册
+	if len(nm.nodes) == 0 {
+		return fmt.Errorf("no nodes registered")
+	}
+
+	// 1. Convert priority from 1-10 scale to scheduler priority
+	schedPriority := scheduler.TaskPriority(task.Priority)
+	if schedPriority < 1 {
+		schedPriority = scheduler.PriorityMedium
+	}
+
+	// 2. Check if any node has capacity
+	hasCapacity := false
 	var bestNodeID string
 	var bestLoad int = 999999
 
 	for nid, state := range nm.nodes {
+		if state.Register.Status != "online" {
+			continue
+		}
 		load := state.Metrics.ActiveTasks
-		if load < bestLoad && state.Register.Status == "online" {
-			bestLoad = load
-			bestNodeID = nid
+		if load < state.Metrics.MaxTasks {
+			hasCapacity = true
+			if load < bestLoad {
+				bestLoad = load
+				bestNodeID = nid
+			}
 		}
 	}
 
-	if bestNodeID == "" {
-		return fmt.Errorf("no available nodes")
+	// 3. No capacity at all → push to queue or try preempt
+	if !hasCapacity {
+		// 尝试抢占低优先级任务
+		result, _ := nm.preemptMgr.TryPreempt(task.TaskID, schedPriority, task)
+
+		if result != nil && result.NodeID != "" {
+			// 找到可被抢占的节点
+			for nid, state := range nm.nodes {
+				if nid == result.NodeID {
+					if tid, ok := nm.findLowestPriorityTask(state); ok {
+						if ts, exists := state.Tasks[tid]; exists {
+							logWithTimestamp("[NodeMgr] Preempting task %s (prio=%d) for %s (prio=%d)",
+								tid, ts.Task.Priority, task.TaskID, task.Priority)
+							ts.Status = "preempted"
+							state.Metrics.ActiveTasks--
+							bestNodeID = nid
+							hasCapacity = true
+							break
+						}
+					}
+				}
+			}
+		}
+
+		if !hasCapacity {
+			// 所有人都在忙，入队列等待
+			logWithTimestamp("[NodeMgr] All nodes busy, queuing task %s (prio=%d)", task.TaskID, schedPriority)
+			nm.prioQueue.PushTask(task.TaskID, schedPriority, task)
+			return nil // 不返回错误，任务在队列中等
+		}
 	}
 
-	state := nm.nodes[bestNodeID]
-	state.Tasks[task.TaskID] = &TaskState{
-		Task:    task,
-		Status:  "pending",
-		Assigned: bestNodeID,
-		Created: time.Now(),
+	// 4. Have capacity (or freed by preemption), assign directly
+	if hasCapacity && bestNodeID != "" {
+		state := nm.nodes[bestNodeID]
+		state.Tasks[task.TaskID] = &TaskState{
+			Task:     task,
+			Status:   "running",
+			Assigned: bestNodeID,
+			Created:  time.Now(),
+		}
+		state.Metrics.ActiveTasks++
+		logWithTimestamp("[NodeMgr] Assigned task %s (prio=%d) → node %s", task.TaskID, task.Priority, bestNodeID)
+		return nil
 	}
-	state.Metrics.ActiveTasks++
 
+	// 5. Fall through → push to queue
+	nm.prioQueue.PushTask(task.TaskID, schedPriority, task)
 	return nil
 }
 
-// CompleteTask marks a task as completed
+// findLowestPriorityTask 找到节点上最低优先级的任务ID
+func (nm *NodeManager) findLowestPriorityTask(state *NodeManagerState) (string, bool) {
+	var lowestTaskID string
+	lowestPriority := 999
+	for tid, ts := range state.Tasks {
+		if ts.Status == "running" && ts.Task.Priority < lowestPriority {
+			lowestPriority = ts.Task.Priority
+			lowestTaskID = tid
+		}
+	}
+	if lowestTaskID != "" {
+		return lowestTaskID, true
+	}
+	return "", false
+}
+
+// CompleteTask marks a task as completed and schedules next from queue
 func (nm *NodeManager) CompleteTask(taskID, nodeID string, result *TaskResult) error {
 	nm.mu.Lock()
 	defer nm.mu.Unlock()
@@ -240,7 +318,57 @@ func (nm *NodeManager) CompleteTask(taskID, nodeID string, result *TaskResult) e
 	ts.Result = result
 	state.Metrics.ActiveTasks--
 
+	// 任务完成后，检查优先级队列是否有等待的任务
+	nm.dispatchFromQueue()
+
 	return nil
+}
+
+// dispatchFromQueue 从优先级队列调度等待中的任务
+func (nm *NodeManager) dispatchFromQueue() {
+	for {
+		nextTask, ok := nm.prioQueue.PeekTask()
+		if !ok {
+			return // 队列为空
+		}
+
+		// 找个可用节点
+		var bestNodeID string
+		var bestLoad int = 999999
+		for nid, nodeState := range nm.nodes {
+			if nodeState.Register.Status != "online" {
+				continue
+			}
+			load := nodeState.Metrics.ActiveTasks
+			if load < nodeState.Metrics.MaxTasks && load < bestLoad {
+				bestLoad = load
+				bestNodeID = nid
+			}
+		}
+
+		if bestNodeID == "" {
+			return // 没有可用节点，等待下次
+		}
+
+		// 出队并分配
+		nm.prioQueue.PopTask()
+		taskPayload, ok := nextTask.Payload.(*TaskSubmit)
+		if !ok {
+			continue
+		}
+
+		nodeState := nm.nodes[bestNodeID]
+		nodeState.Tasks[nextTask.TaskID] = &TaskState{
+			Task:     taskPayload,
+			Status:   "running",
+			Assigned: bestNodeID,
+			Created:  time.Now(),
+		}
+		nodeState.Metrics.ActiveTasks++
+
+		logWithTimestamp("[NodeMgr] Dispatched queued task %s (prio=%d) → node %s",
+			nextTask.TaskID, nextTask.Priority, bestNodeID)
+	}
 }
 
 // GetNodeMetrics returns metrics for a node
