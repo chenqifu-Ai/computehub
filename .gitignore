@@ -62,6 +62,9 @@ package.json
 projects/computehub/code/bin/
 projects/computehub/opc-gateway
 projects/computehub/opc-tui
+projects/computehub/computehub-gateway
+projects/computehub/computehub-tui
+/tmp/computehub-build/
 
 # 专家系统日志 (JSON)
 expert_work_logs/
