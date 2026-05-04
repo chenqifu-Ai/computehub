@@ -57,7 +57,7 @@ const (
 const termW = 80
 
 // ── Version ──
-const version = "0.6.0"
+const version = "0.6.1"
 
 // ── History (for arrow-key recall) ──
 var cmdHistory []string
