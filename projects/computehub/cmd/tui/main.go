@@ -1383,9 +1383,8 @@ func screenTasks(state *AppState) {
 	fmt.Printf("  %-25s %s\n", "cancel <task_id>", "取消任务")
 	fmt.Printf("  %-25s %s\n", "list", "刷新任务列表")
 	fmt.Println()
-	fmt.Printf(" task> ")
 	
-	// Task command loop
+	// Task command loop — help text and prompt handled inside taskCommandLoop
 	taskCommandLoop(state)
 	
 	// After command loop, return to main menu
