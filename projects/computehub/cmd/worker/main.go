@@ -290,15 +290,12 @@ func (s *WorkerState) heartbeatLoop() {
 
 		// Log GPU status
 		if stats.Count > 0 {
-			fmt.Printf("\r %s[心跳] GPU: %s%.1f%%%s  %s%.0f°C%s  Mem: %s%.0f/%.0fGB%s   ",
-				dim(""), reset(),
+			fmt.Printf("\r %s[心跳] GPU: %s%%  %s°C  Mem: %s%s%s   ",
+				dim(""),
 				pctColor(stats.Utilization),
-				reset(),
 				tempColor(stats.Temperature),
-				reset(),
 				cyan(fmt.Sprintf("%.0f", stats.MemoryUsedGB)),
-				reset(),
-				cyan(fmt.Sprintf("%.0f", stats.MemoryTotalGB)),
+				cyan(fmt.Sprintf("/%.0fGB", stats.MemoryTotalGB)),
 				reset(),
 			)
 		}
@@ -556,7 +553,7 @@ func (s *WorkerState) executeTask(task *TaskDetail) {
 	fmt.Printf(" %s%s 任务 %s 完成 [%s] %s (%s)%s\n",
 		statusColor(bold("")), statusIcon, cyan(task.TaskID),
 		statusColor(fmt.Sprintf("exit=%d", exitCode)),
-		duration.Round(time.Millisecond), reset())
+		duration.Round(time.Millisecond), reset(), reset())
 
 	// Save report
 	s.saveTaskReport(task.TaskID, result)
@@ -756,7 +753,7 @@ func printWorkerHelp() {
 		fmt.Sprintf("--interval <sec>     %s", dim("任务轮询间隔秒 (默认: 5)")),
 		fmt.Sprintf("--heartbeat <sec>    %s", dim("心跳间隔秒 (默认: 10)")),
 		fmt.Sprintf("--concurrent <n>     %s", dim("最大并发任务数 (默认: 4)")),
-		green(bold("")), reset())
+		green(bold("")), reset(), reset())
 }
 
 // ── ANSI 颜色 ──

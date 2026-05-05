@@ -16,7 +16,6 @@ import (
 	"github.com/computehub/opc/src/prometheus"
 	"github.com/computehub/opc/src/pure"
 	"github.com/computehub/opc/src/scheduler"
-	"github.com/computehub/opc/src/visualizer"
 )
 
 // logWithTimestamp 添加时间戳的日志函数
@@ -104,7 +103,6 @@ type OpcGateway struct {
 	startTime              time.Time
 	mu                     sync.Mutex
 	unregisterSimFallback  func(nodeID string) error
-	SimRegistrar           *SimNodeRegistrar
 	TaskDispatcher         *kernel.TaskDispatcher
 	Metrics                *prometheus.Metrics
 	MetricsCollector       *prometheus.Collector
@@ -193,11 +191,7 @@ func NewOpcGateway(port int, config *GatewayConfig) *OpcGateway {
 	gw.MetricsCollector.Start(5 * time.Second)
 	logWithTimestamp("✅ Prometheus metrics collector started (interval=5s)")
 
-	// Register simulated nodes for testing/demo
-	simReg := NewSimNodeRegistrar()
-	registered := simReg.RegisterSimNodes(kernelObj)
-	gw.SimRegistrar = simReg
-	logWithTimestamp("✅ Registered %d simulated nodes", registered)
+	logWithTimestamp("✅ Gateway initialized, ready to serve")
 
 	// Start task dispatcher (picks up pending tasks from kernel queue)
 	runner := &kernel.LocalTaskRunner{SandboxPath: sandboxPath}
@@ -421,13 +415,23 @@ func (g *OpcGateway) handleDispatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Pure Layer 1-3: Input Validation
-	filtered := g.Pipeline.Process(dispatchReq.Command)
-	if !g.Pipeline.IsValid() {
-		g.sendResponse(w, Response{Success: false, Error: "Input failed Pure pipeline validation"})
+	filtered, err := g.Pipeline.Process(dispatchReq.Command)
+	if err != nil {
+		g.sendResponse(w, Response{Success: false, Error: fmt.Sprintf("Input failed Pure pipeline validation: %v", err)})
 		return
 	}
 
-	respChan := g.Kernel.DispatchExtended(dispatchReq.ID, filtered.Action, filtered.Payload)
+	// Type assert the filtered result to map[string]interface{}
+	filteredMap, ok := filtered.(map[string]interface{})
+	if !ok {
+		g.sendResponse(w, Response{Success: false, Error: "Invalid command format after purification"})
+		return
+	}
+
+	action, _ := filteredMap["action"].(string)
+	payload, _ := filteredMap["payload"]
+
+	respChan := g.Kernel.DispatchExtended(dispatchReq.ID, action, payload)
 	resp := <-respChan
 
 	g.sendResponse(w, Response{

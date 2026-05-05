@@ -1353,7 +1353,7 @@ func screenTasks(state *AppState) {
 	sort.Slice(list, func(i, j int) bool { return list[i].active > list[j].active })
 
 	fmt.Printf("  %-24s │ %-10s │ %-8s │ %-9s │ %s\n",
-		White+Bold, "Node", "Region", "GPU", "Load", Reset)
+		White+Bold, "Node", "Region", "GPU", "Load")
 	fmt.Printf("  %s%s\n", Dim, strings.Repeat("─", 62))
 
 	for _, li := range list {

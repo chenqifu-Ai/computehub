@@ -86,6 +86,9 @@ type NodeMetrics struct {
 	ActiveTasks    int        `json:"active_tasks"`
 	MaxTasks       int        `json:"max_tasks"`
 	SuccessRate    float64    `json:"success_rate"` // last 100 tasks
+	TotalTasks     int        `json:"total_tasks"`
+	GPUUtilization float64    `json:"gpu_utilization"`
+	Temperature    float64    `json:"temperature"`
 	Region         string     `json:"region"`
 	LastHeartbeat  time.Time  `json:"last_heartbeat"`
 }
@@ -438,3 +441,40 @@ func NewExtendedKernel(bufferSize, maxStates, maxNodes int) *ExtendedKernel {
 func (ek *ExtendedKernel) DispatchExtended(id, action string, payload interface{}) chan Response {
 	return ek.OpcKernel.Dispatch(id, action, payload)
 }
+
+// ====== Task Runner & Dispatcher ======
+
+// LocalTaskRunner executes tasks locally
+type LocalTaskRunner struct {
+	SandboxPath string
+}
+
+// NewTaskDispatcher creates a new task dispatcher
+func NewTaskDispatcher(kernel *ExtendedKernel, runner *LocalTaskRunner) *TaskDispatcher {
+	return &TaskDispatcher{
+		kernel: kernel,
+		runner: runner,
+	}
+}
+
+// TaskDispatcher dispatches tasks to nodes
+type TaskDispatcher struct {
+	kernel *ExtendedKernel
+	runner *LocalTaskRunner
+}
+
+// Start begins the task dispatcher loop
+func (td *TaskDispatcher) Start(interval time.Duration) {
+	go func() {
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
+		for range ticker.C {
+			td.dispatch()
+		}
+	}()
+}
+
+func (td *TaskDispatcher) dispatch() {
+	// Placeholder: dispatch pending tasks
+}
+

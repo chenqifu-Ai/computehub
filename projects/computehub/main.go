@@ -114,7 +114,7 @@ func main() {
 		BufferSize:           config.Kernel.BufferSize,
 		MaxStates:            config.Kernel.MaxStates,
 		ComposerAPIURL:       composerAPI,
-		ComposerAPIKey:       composerKey,
+		ComposerKey:          composerKey,
 		ComposerModel:        composerModel,
 		ComposerExecModels:   composerExecModels,
 		ComposerMaxConcurrency: composerConcurrency,
