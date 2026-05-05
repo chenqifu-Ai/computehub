@@ -57,7 +57,7 @@ const (
 const termW = 80
 
 // ── Version ──
-const version = "0.6.2"
+const version = "0.7.2"
 
 // ── History (for arrow-key recall) ──
 var cmdHistory []string
@@ -109,16 +109,17 @@ func readLine(prompt string) string {
 			}
 			return line
 		case 27: // ESC sequence (arrows, etc.)
-			var seq [2]byte
-			if n2, _ := os.Stdin.Read(seq[:]); n2 < 2 {
-				buf = append(buf, ch)
+			// Arrow key sequence: ESC [ A/B/C/D (3 bytes total)
+			// Read byte-by-byte to avoid partial-read issues
+			var b2 [1]byte
+			if n2, _ := os.Stdin.Read(b2[:]); n2 == 0 || b2[0] != '[' {
 				continue
 			}
-			if seq[0] != '[' {
-				buf = append(buf, ch, seq[0])
+			var b3 [1]byte
+			if n3, _ := os.Stdin.Read(b3[:]); n3 == 0 {
 				continue
 			}
-			switch seq[1] {
+			switch b3[0] {
 			case 'A': // Up
 				if histIdx <= 0 {
 					histIdx = 0
@@ -155,9 +156,9 @@ func readLine(prompt string) string {
 					fmt.Print("\033[K")
 				}
 			case 'C': // Right
-				fmt.Print(string(ch) + string(seq[:]))
+				// ignore
 			case 'D': // Left
-				fmt.Print(string(ch) + string(seq[:]))
+				// ignore
 			case 'H': // Home
 				// ignore
 			case 'F': // End
@@ -695,36 +696,15 @@ func printHelp() {
 func screenDashboard(state *AppState) {
 	renderDashboard(state)
 
-	// 启动输入监听 goroutine
-	inputCh := make(chan string, 1)
-	go func() {
-		reader := bufio.NewReader(os.Stdin)
-		for {
-			s, err := reader.ReadString('\n')
-			if err != nil {
-				close(inputCh)
-				return
-			}
-			select {
-			case inputCh <- strings.TrimSpace(s):
-			default:
-			}
-		}
-	}()
-
 	for {
-		select {
-		case input, ok := <-inputCh:
-			if !ok {
-				return
-			}
-			cmd := strings.ToLower(input)
-			if cmd == "q" || cmd == "quit" || cmd == "exit" || cmd == "" {
-				return
-			} else if cmd == "r" || cmd == "refresh" || cmd == "dashboard" || cmd == "d" {
-				fmt.Print("\n" + Dim + strings.Repeat("─", 80) + Reset + "\n")
-				renderDashboard(state)
-			}
+		input := readLine("\r> ")
+		if input == "" { return }
+		cmd := strings.ToLower(input)
+		if cmd == "q" || cmd == "quit" || cmd == "exit" {
+			return
+		} else if cmd == "r" || cmd == "refresh" || cmd == "dashboard" || cmd == "d" {
+			fmt.Print("\n" + Dim + strings.Repeat("─", 80) + Reset + "\n")
+			renderDashboard(state)
 		}
 	}
 }
