@@ -58,7 +58,15 @@ const (
 const termW = 80
 
 // ── Version ──
-const version = "0.0.1"
+var version = "dev"
+
+func init() {
+	if data, err := os.ReadFile("../VERSION"); err == nil {
+		version = strings.TrimSpace(string(data))
+	} else if data, err = os.ReadFile("VERSION"); err == nil {
+		version = strings.TrimSpace(string(data))
+	}
+}
 
 // ── History (for arrow-key recall) ──
 var cmdHistory []string

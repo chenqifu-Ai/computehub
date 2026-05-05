@@ -22,14 +22,23 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/computehub/opc/src/gateway"
 	"github.com/computehub/opc/src/visualizer"
 )
 
-// Version
-const Version = "0.0.1"
+// Version 从 VERSION 文件读取
+var Version = "dev"
+
+func init() {
+	if data, err := os.ReadFile("../VERSION"); err == nil {
+		Version = strings.TrimSpace(string(data))
+	} else if data, err = os.ReadFile("VERSION"); err == nil {
+		Version = strings.TrimSpace(string(data))
+	}
+}
 
 // logWithTimestamp 添加时间戳的日志函数
 func logWithTimestamp(format string, args ...interface{}) {
