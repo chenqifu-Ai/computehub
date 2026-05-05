@@ -689,13 +689,13 @@ func printHelp() {
 }
 
 // ═══════════════════════════════════════════
-// DASHBOARD — 集群总览（自动刷新模式）
+// DASHBOARD — 集群总览（手动刷新）
 // ═══════════════════════════════════════════
 
 func screenDashboard(state *AppState) {
 	renderDashboard(state)
 
-	// 启动输入监听 goroutine：实时检测按键退出自动刷新
+	// 启动输入监听 goroutine
 	inputCh := make(chan string, 1)
 	go func() {
 		reader := bufio.NewReader(os.Stdin)
@@ -712,15 +712,8 @@ func screenDashboard(state *AppState) {
 		}
 	}()
 
-	ticker := time.NewTicker(5 * time.Second)
-	defer ticker.Stop()
-
 	for {
 		select {
-		case <-ticker.C:
-			// 输出分隔线 + 新一帧数据（不用清屏转义码，纯文本）
-			fmt.Print("\n" + Dim + strings.Repeat("─", 80) + Reset + "\n")
-			renderDashboard(state)
 		case input, ok := <-inputCh:
 			if !ok {
 				return
@@ -728,6 +721,9 @@ func screenDashboard(state *AppState) {
 			cmd := strings.ToLower(input)
 			if cmd == "q" || cmd == "quit" || cmd == "exit" || cmd == "" {
 				return
+			} else if cmd == "r" || cmd == "refresh" || cmd == "dashboard" || cmd == "d" {
+				fmt.Print("\n" + Dim + strings.Repeat("─", 80) + Reset + "\n")
+				renderDashboard(state)
 			}
 		}
 	}
