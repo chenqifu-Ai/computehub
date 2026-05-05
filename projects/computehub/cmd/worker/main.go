@@ -725,35 +725,24 @@ func parseConfig() Config {
 }
 
 func printWorkerHelp() {
-	fmt.Printf(`
-%sComputeHub Worker Agent v0.1%s
-
-%s用法:%s
-  ./compute-worker [flags]
-
-%s参数:%s
-  %-28s %s
-  %-28s %s
-  %-28s %s
-  %-28s %s
-  %-28s %s
-  %-28s %s
-  %-28s %s
-
-%s示例:%s
-  ./compute-worker --gw http://192.168.1.17:8282 --node-id gpu-01 --gpu-type H100 --region cn-east
-  ./compute-worker --node-id worker-2 --interval 3 --concurrent 8
-`,
-		yellow(bold("")), reset(),
-		bold(""), reset(),
-		fmt.Sprintf("--gw <url>           %s", dim("Gateway 地址 (默认: http://localhost:8282)")),
-		fmt.Sprintf("--node-id <id>       %s", dim("节点 ID (默认: worker-<hostname>)")),
-		fmt.Sprintf("--gpu-type <type>    %s", dim("GPU 型号 (默认: 自动检测)")),
-		fmt.Sprintf("--region <region>    %s", dim("区域 (默认: cn-east)")),
-		fmt.Sprintf("--interval <sec>     %s", dim("任务轮询间隔秒 (默认: 5)")),
-		fmt.Sprintf("--heartbeat <sec>    %s", dim("心跳间隔秒 (默认: 10)")),
-		fmt.Sprintf("--concurrent <n>     %s", dim("最大并发任务数 (默认: 4)")),
-		green(bold("")), reset(), reset())
+	fmt.Println("")
+	fmt.Println(yellow(bold("")), "ComputeHub Worker Agent v0.1", reset())
+	fmt.Println("")
+	fmt.Println(bold(""), "用法:", reset())
+	fmt.Println("  ./compute-worker --flags [options]")
+	fmt.Println("")
+	fmt.Println(bold(""), "参数:", reset())
+	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--gw <url>"), dim("Gateway 地址 (默认: http://localhost:8282)")))
+	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--node-id <id>"), dim("节点 ID (默认: worker-<hostname>)")))
+	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--gpu-type <type>"), dim("GPU 型号 (默认: 自动检测)")))
+	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--region <region>"), dim("区域 (默认: cn-east)")))
+	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--interval <sec>"), dim("任务轮询间隔秒 (默认: 5)")))
+	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--heartbeat <sec>"), dim("心跳间隔秒 (默认: 10)")))
+	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--concurrent <n>"), dim("最大并发任务数 (默认: 4)")))
+	fmt.Println("")
+	fmt.Println(green(bold("")), "示例:", reset())
+	fmt.Println("  ./compute-worker --gw http://192.168.1.17:8282 --node-id gpu-01 --gpu-type H100 --region cn-east")
+	fmt.Println("  ./compute-worker --node-id worker-2 --interval 3 --concurrent 8")
 }
 
 // ── ANSI 颜色 ──
