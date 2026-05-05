@@ -707,14 +707,82 @@ func screenDashboard(state *AppState) {
 
 	for {
 		input := readLine("\r> ")
-		if input == "" { return }
+		if input == "" { continue }
 		cmd := strings.ToLower(input)
-		if cmd == "q" || cmd == "quit" || cmd == "exit" {
+		switch {
+		case cmd == "q" || cmd == "quit" || cmd == "exit":
 			return
-		} else if cmd == "r" || cmd == "refresh" || cmd == "dashboard" || cmd == "d" {
+		case cmd == "r" || cmd == "refresh" || cmd == "dashboard" || cmd == "d":
 			fmt.Print("\n" + Dim + strings.Repeat("─", 80) + Reset + "\n")
 			renderDashboard(state)
+		case cmd == "n" || cmd == "nodes":
+			screenNodes(state)
+			detailInput := readLine("\r node> ")
+			detailInput = strings.TrimSpace(detailInput)
+			if detailInput != "" && detailInput != "q" && detailInput != "back" {
+				if strings.HasPrefix(strings.ToLower(detailInput), "delete ") || strings.HasPrefix(strings.ToLower(detailInput), "rm ") {
+					parts := strings.Fields(detailInput)
+					if len(parts) >= 2 {
+						targetNode := parts[1]
+						fmt.Printf("\n %s正在删除节点 %s...%s", Yellow, targetNode, Reset)
+						if err := unregisterNode(targetNode); err != nil {
+							fmt.Printf("\n %s❌ 删除失败: %v%s\n", Red+Bold, err, Reset)
+						} else {
+							fmt.Printf("\n %s✅ 节点 %s 已删除%s\n", Green+Bold, targetNode, Reset)
+						}
+						fmt.Printf("\n %s按 Enter 返回%s", Yellow, Reset)
+						readLine("\r")
+					}
+				} else if strings.ToLower(detailInput) == "add" || strings.ToLower(detailInput) == "new" {
+					fmt.Printf("\n")
+					fmt.Printf(" %s━━━ 新增节点 ━━━%s\n", Cyan+Bold, Reset)
+					fmt.Printf(" %s输入节点信息（直接 Enter 跳过可选字段）%s\n\n", Yellow, Reset)
+					fmt.Printf(" 节点ID %s>%s ", Dim, Reset)
+					nid := readLine("")
+					if nid == "" {
+						fmt.Printf(" %s❌ 节点ID不能为空%s\n", Red+Bold, Reset)
+					} else {
+						fmt.Printf(" GPU类型 (默认 H100) > ")
+						gpu := readLine("")
+						if gpu == "" { gpu = "H100" }
+						fmt.Printf(" 区域 (默认 cn-east) > ")
+						region := readLine("")
+						if region == "" { region = "cn-east" }
+						fmt.Printf(" CPU核心 (默认 16) > ")
+						fmt.Printf(" CPU核心 (默认 16) > ")
+						cpuStr := readLine("")
+						cpu := 16
+						if cpuStr != "" { fmt.Sscanf(cpuStr, "%d", &cpu) }
+						fmt.Printf(" 内存 (默认 32) > ")
+						memStr := readLine("")
+						mem := 32.0
+						if memStr != "" { fmt.Sscanf(memStr, "%f", &mem) }
+						registerNode(nid, gpu, region, cpu, mem)
+					}
+					fmt.Printf("\n %s按 Enter 返回%s", Yellow, Reset)
+					readLine("\r")
+				}
+			}
+		case cmd == "g" || cmd == "gpu" || cmd == "gpumon":
+			screenGPUMonitor(state)
+		case cmd == "map" || cmd == "regions" || cmd == "region":
+			screenRegions(state)
+		case cmd == "t" || cmd == "tasks":
+			screenTasks(state)
+		case cmd == "a" || cmd == "alerts":
+			screenAlerts(state)
+		case cmd == "h" || cmd == "history":
+			screenHistory(state)
+		case cmd == "health" || cmd == "chk":
+			screenHealth(state)
+		case cmd == "shell":
+			screenShell(state)
+		case cmd == "?" || cmd == "help":
+			printHelp()
+		default:
+			fmt.Printf("%s \u672a\u77e5\u547d\u4ee4: %s%s\n", Red, input, Reset)
 		}
+		printPrompt()
 	}
 }
 

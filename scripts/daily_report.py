@@ -24,7 +24,7 @@ REPORT_CONFIG = {
         "smtp_port": 587,          # STARTTLS
         "from_email": "19525456@qq.com",
         "to_email": "19525456@qq.com",
-        "password": "ormxhluuafwnbgei"
+        "password": "xzxveoguxylbbgbg"
     },
     "positions": {
         "600460": {"name": "士兰微", "cost": 29.364, "volume": 1000},

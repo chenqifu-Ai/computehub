@@ -22,7 +22,7 @@ EMAIL_CONFIG = {
     "smtp_port": 465,
     "from_email": "19525456@qq.com",
     "to_email": "19525456@qq.com",
-    "password": "ormxhluuafwnbgei"  # 2026-04-05更新的邮箱授权码
+    "password": "xzxveoguxylbbgbg"  # 2026-04-05更新的邮箱授权码
 }
 
 def load_usage_data():
