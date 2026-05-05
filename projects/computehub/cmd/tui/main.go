@@ -1476,7 +1476,7 @@ func taskCommandLoop(state *AppState) {
 			return // 返回上级
 		}
 
-		parts := fieldsN(input, 2) // 最多分2个字段
+		parts := strings.Fields(input)
 		if len(parts) == 0 {
 			fmt.Printf(" %s未知命令: %s%s\n", Red, input, Reset)
 			continue
@@ -1484,28 +1484,31 @@ func taskCommandLoop(state *AppState) {
 
 		cmd := strings.ToLower(parts[0])
 		if cmd == "submit" && len(parts) >= 3 {
+			// 一行模式: submit <node_id> <command>
 			nodeID := parts[1]
 			command := strings.Join(parts[2:], " ")
 			fmt.Printf(" %s正在提交任务到节点 %s...%s\n", Yellow, nodeID, Reset)
 			submitTask(nodeID, command)
 		} else if cmd == "submit" && len(parts) == 2 {
-			// Interactive mode
-			fmt.Printf(" %s输入节点ID > %s", Yellow, Reset)
-			nodeID := readLine("")
+			// 交互式: 先给 node_id，补全 command
+			nodeID := parts[1]
 			fmt.Printf(" %s输入命令 > %s", Yellow, Reset)
 			command := readLine("")
-			if nodeID != "" && command != "" {
+			command = strings.TrimSpace(command)
+			if command != "" {
 				fmt.Printf(" %s正在提交任务到节点 %s...%s\n", Yellow, nodeID, Reset)
 				submitTask(nodeID, command)
 			} else {
-				fmt.Printf(" %s❌ 节点ID 和 命令 不能为空%s\n", Red, Reset)
+				fmt.Printf(" %s❌ 命令不能为空%s\n", Red, Reset)
 			}
+		} else if cmd == "submit" {
+			fmt.Printf(" %s用法: submit <node_id> <command>%s\n", Blue, Reset)
 		} else if cmd == "cancel" && len(parts) >= 2 {
 			taskID := parts[1]
 			fmt.Printf(" %s正在取消任务 %s...%s\n", Yellow, taskID, Reset)
 			cancelTask(taskID)
 		} else if cmd == "cancel" {
-			fmt.Printf(" %s用法: cancel <task_id>%s\n", Yellow, Reset)
+			fmt.Printf(" %s用法: cancel <task_id>%s\n", Blue, Reset)
 		} else {
 			fmt.Printf(" %s未知命令: %s%s\n", Red, input, Reset)
 		}
