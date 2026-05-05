@@ -1,0 +1,154 @@
+# ==============================================================
+# ComputeHub — Docker Compose 生产环境配置
+# 包含: 资源限制 + 日志轮转 + 健康检查 + 网络隔离
+# 使用: docker compose -f docker-compose.prod.yml up -d
+# ==============================================================
+
+version: "3.8"
+
+services:
+  # ---------------------------------------
+  # Gateway — 核心 API + Dashboard
+  # ---------------------------------------
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        LDFLAGS: "-s -w -X main.version=${COMPUTEHUB_VERSION:-v0.7.0}"
+    container_name: computehub-gateway
+    hostname: computehub-gateway
+    ports:
+      - "${GATEWAY_PORT:-8282}:8282"
+    volumes:
+      - ./config.json:/app/config.json:ro
+      - ./genes.json:/app/genes.json
+      - computehub-data:/app/data
+      - computehub-logs:/tmp/computehub-logs
+      - computehub-sandbox:/tmp/computehub-sandbox
+    environment:
+      - TZ=${TZ:-Asia/Shanghai}
+      - COMPUTEHUB_ENV=${COMPUTEHUB_ENV:-production}
+      - GIN_MODE=release
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "${COMPUTEHUB_CPU_LIMIT:-4.0}"
+          memory: "${COMPUTEHUB_MEM_LIMIT:-4G}"
+        reservations:
+          cpus: "${COMPUTEHUB_CPU_RESERVATION:-0.5}"
+          memory: "${COMPUTEHUB_MEM_RESERVATION:-512M}"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        compress: "true"
+    networks:
+      - computehub-net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8282/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    # 安全：不暴露特权端口
+    security_opt:
+      - no-new-privileges:true
+
+  # ---------------------------------------
+  # TUI — 终端客户端 (按需启动)
+  # ---------------------------------------
+  tui:
+    build:
+      context: .
+      dockerfile: Dockerfile.tui
+    container_name: computehub-tui
+    stdin_open: true
+    tty: true
+    environment:
+      - GATEWAY_URL=http://gateway:8282
+      - TZ=${TZ:-Asia/Shanghai}
+    depends_on:
+      gateway:
+        condition: service_healthy
+    networks:
+      - computehub-net
+    profiles:
+      - tui
+    deploy:
+      resources:
+        limits:
+          memory: "256M"
+
+  # ---------------------------------------
+  # Prometheus Exporter (可选)
+  # ---------------------------------------
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: computehub-prometheus
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=7d'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    networks:
+      - computehub-net
+    profiles:
+      - monitoring
+    deploy:
+      resources:
+        limits:
+          memory: "1G"
+
+  # ---------------------------------------
+  # Grafana Dashboard (可选)
+  # ---------------------------------------
+  grafana:
+    image: grafana/grafana:latest
+    container_name: computehub-grafana
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - computehub-net
+    profiles:
+      - monitoring
+    deploy:
+      resources:
+        limits:
+          memory: "512M"
+
+networks:
+  computehub-net:
+    driver: bridge
+    # 生产环境建议启用 IP 分配
+    # ipam:
+    #   config:
+    #     - subnet: 172.28.0.0/16
+
+volumes:
+  computehub-data:
+    driver: local
+  computehub-logs:
+    driver: local
+  computehub-sandbox:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
