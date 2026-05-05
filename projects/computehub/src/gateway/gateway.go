@@ -253,6 +253,7 @@ func (g *OpcGateway) Serve(port int, dashboardDir ...string) {
 	http.HandleFunc("/api/v1/tasks/submit", g.handleTaskSubmit)
 	http.HandleFunc("/api/v1/tasks/result", g.handleTaskResult)
 	http.HandleFunc("/api/v1/tasks/list", g.handleTaskList)
+	http.HandleFunc("/api/v1/tasks/cancel", g.handleTaskCancel)
 
 	// Prometheus metrics endpoint
 	http.HandleFunc("/metrics", prometheus.MetricsHandler(g.Metrics.Registry))
@@ -303,6 +304,8 @@ func (g *OpcGateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		g.handleTaskResult(w, r)
 	case "/api/v1/tasks/list":
 		g.handleTaskList(w, r)
+	case "/api/v1/tasks/cancel":
+		g.handleTaskCancel(w, r)
 	default:
 		http.NotFound(w, r)
 	}
@@ -745,5 +748,47 @@ func (g *OpcGateway) handleTaskList(w http.ResponseWriter, r *http.Request) {
 	g.sendResponse(w, Response{
 		Success: true,
 		Data:    tasks,
+	})
+}
+
+func (g *OpcGateway) handleTaskCancel(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, `{"error":"Only POST allowed"}`, http.StatusMethodNotAllowed)
+		return
+	}
+
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		g.sendResponse(w, Response{Success: false, Error: "Failed to read request body"})
+		return
+	}
+	defer r.Body.Close()
+
+	var req struct {
+		TaskID string `json:"task_id"`
+	}
+	if err := json.Unmarshal(body, &req); err != nil {
+		g.sendResponse(w, Response{Success: false, Error: fmt.Sprintf("Invalid JSON: %v", err)})
+		return
+	}
+
+	if req.TaskID == "" {
+		g.sendResponse(w, Response{Success: false, Error: "task_id is required"})
+		return
+	}
+
+	respChan := g.Kernel.DispatchExtended("gw-"+time.Now().Format("150405"), kernel.ActionTaskCancel, req.TaskID)
+	resp := <-respChan
+
+	errStr := ""
+	if resp.Error != nil {
+		errStr = resp.Error.Error()
+	}
+
+	g.sendResponse(w, Response{
+		Success:  resp.Success,
+		Data:     resp.Data,
+		Error:    errStr,
+		Duration: resp.Duration,
 	})
 }

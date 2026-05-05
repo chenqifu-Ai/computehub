@@ -27,6 +27,7 @@ import (
 	"sort"
 	"strings"
 	"time"
+	"unicode"
 
 	"golang.org/x/term"
 )
@@ -1375,6 +1376,12 @@ func screenTasks(state *AppState) {
 	fmt.Printf("  %-25s %s\n", "list", "刷新任务列表")
 	fmt.Println()
 	fmt.Printf(" task> ")
+	
+	// Task command loop
+	taskCommandLoop(state)
+	
+	// After command loop, return to main menu
+	clearScreen()
 }
 
 // findNodeIDForTask 从 taskMap 中查找任务所在的节点
@@ -1387,6 +1394,138 @@ func findNodeIDForTask(taskMap map[string][]TaskListInfo, targetID string) strin
 		}
 	}
 	return "—"
+}
+
+// ═══════════════════════════════════════════
+// TASK COMMANDS — submit / cancel / list
+// ═══════════════════════════════════════════
+
+func submitTask(nodeID, command string) {
+	payload := map[string]interface{}{
+		"task_id":      fmt.Sprintf("tui-%d", time.Now().UnixNano()),
+		"command":      command,
+		"source_type":  "tui",
+		"priority":     5,
+		"max_retries":  3,
+		"timeout":      3600,
+		"env_vars":     map[string]string{},
+	}
+	data, _ := json.Marshal(payload)
+	resp, err := http.Post(gw+"/api/v1/tasks/submit", "application/json", bytes.NewBuffer(data))
+	if err != nil {
+		fmt.Printf(" %s❌ 提交失败 (连接错误): %v%s\n", Red+Bold, err, Reset)
+		return
+	}
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	var tr TUIResponse
+	json.Unmarshal(body, &tr)
+
+	if tr.Success {
+		fmt.Printf(" %s✅ 任务提交成功!%s  任务ID: %v\n", Green+Bold, Reset, tr.Data)
+	} else {
+		fmt.Printf(" %s❌ 提交失败: %s%s\n", Red+Bold, tr.Error, Reset)
+	}
+}
+
+func cancelTask(taskID string) {
+	payload := map[string]interface{}{
+		"task_id": taskID,
+	}
+	data, _ := json.Marshal(payload)
+	resp, err := http.Post(gw+"/api/v1/tasks/cancel", "application/json", bytes.NewBuffer(data))
+	if err != nil {
+		fmt.Printf(" %s❌ 取消失败 (连接错误): %v%s\n", Red+Bold, err, Reset)
+		return
+	}
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	var tr TUIResponse
+	json.Unmarshal(body, &tr)
+
+	if tr.Success {
+		fmt.Printf(" %s✅ 任务 %s 已取消%s\n", Green+Bold, taskID, Reset)
+	} else {
+		fmt.Printf(" %s❌ 取消失败: %s%s\n", Red+Bold, tr.Error, Reset)
+	}
+}
+
+func taskCommandLoop(state *AppState) {
+	for {
+		fmt.Printf("\n %s输入命令%s\n", Yellow+Bold, Reset)
+		fmt.Printf("  %ssubmit <node_id> <command>%s — 提交任务\n", Blue, Reset)
+		fmt.Printf("  %scancel <task_id>%s — 取消任务\n", Blue, Reset)
+		fmt.Printf("  %srefresh (或 Enter)%s — 刷新任务列表\n", Blue, Reset)
+		fmt.Printf("  %sback%s — 返回上级\n", Blue, Reset)
+		fmt.Printf("\n task> ")
+
+		input := readLine("\r")
+		input = strings.TrimSpace(input)
+		if input == "" || strings.ToLower(input) == "refresh" || strings.ToLower(input) == "r" {
+			return // 回到任务列表
+		}
+		if strings.ToLower(input) == "back" || strings.ToLower(input) == "q" {
+			return // 返回上级
+		}
+
+		parts := fieldsN(input, 2) // 最多分2个字段
+		if len(parts) == 0 {
+			fmt.Printf(" %s未知命令: %s%s\n", Red, input, Reset)
+			continue
+		}
+
+		cmd := strings.ToLower(parts[0])
+		if cmd == "submit" && len(parts) >= 3 {
+			nodeID := parts[1]
+			command := strings.Join(parts[2:], " ")
+			fmt.Printf(" %s正在提交任务到节点 %s...%s\n", Yellow, nodeID, Reset)
+			submitTask(nodeID, command)
+		} else if cmd == "submit" && len(parts) == 2 {
+			// Interactive mode
+			fmt.Printf(" %s输入节点ID > %s", Yellow, Reset)
+			nodeID := readLine("")
+			fmt.Printf(" %s输入命令 > %s", Yellow, Reset)
+			command := readLine("")
+			if nodeID != "" && command != "" {
+				fmt.Printf(" %s正在提交任务到节点 %s...%s\n", Yellow, nodeID, Reset)
+				submitTask(nodeID, command)
+			} else {
+				fmt.Printf(" %s❌ 节点ID 和 命令 不能为空%s\n", Red, Reset)
+			}
+		} else if cmd == "cancel" && len(parts) >= 2 {
+			taskID := parts[1]
+			fmt.Printf(" %s正在取消任务 %s...%s\n", Yellow, taskID, Reset)
+			cancelTask(taskID)
+		} else if cmd == "cancel" {
+			fmt.Printf(" %s用法: cancel <task_id>%s\n", Yellow, Reset)
+		} else {
+			fmt.Printf(" %s未知命令: %s%s\n", Red, input, Reset)
+		}
+	}
+}
+
+// fieldsN 类似 strings.Fields 但最多分成 n 个部分
+func fieldsN(s string, n int) []string {
+	if n <= 0 {
+		return strings.Fields(s)
+	}
+	fields := []string{}
+	remaining := s
+	for i := 0; i < n-1; i++ {
+		idx := strings.IndexFunc(remaining, unicode.IsSpace)
+		if idx < 0 {
+			if remaining != "" {
+				fields = append(fields, remaining)
+			}
+			break
+		}
+		fields = append(fields, strings.TrimSpace(remaining[:idx]))
+		remaining = strings.TrimSpace(remaining[idx:])
+	}
+	if remaining != "" {
+		fields = append(fields, remaining)
+	}
+	return fields
 }
 
 // ═══════════════════════════════════════════
