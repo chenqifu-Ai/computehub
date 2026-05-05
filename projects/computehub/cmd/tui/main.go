@@ -1468,7 +1468,7 @@ func taskCommandLoop(state *AppState) {
 
 		input := readLine("\r")
 		input = strings.TrimSpace(input)
-		if input == "" || strings.ToLower(input) == "refresh" || strings.ToLower(input) == "r" {
+		if input == "" || strings.ToLower(input) == "refresh" || strings.ToLower(input) == "r" || strings.ToLower(input) == "list" {
 			return // 回到任务列表
 		}
 		if strings.ToLower(input) == "back" || strings.ToLower(input) == "q" {
