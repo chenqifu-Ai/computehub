@@ -28,6 +28,9 @@ import (
 	"github.com/computehub/opc/src/visualizer"
 )
 
+// Version
+const Version = "0.0.1"
+
 // logWithTimestamp 添加时间戳的日志函数
 func logWithTimestamp(format string, args ...interface{}) {
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
@@ -89,7 +92,7 @@ func loadConfig() (Config, error) {
 }
 
 func main() {
-	logWithTimestamp("🚀 Starting ComputeHub Gateway Service...")
+	logWithTimestamp("🚀 Starting ComputeHub Gateway Service v%s...", Version)
 
 	config, err := loadConfig()
 	if err != nil {
@@ -150,7 +153,7 @@ func main() {
 		logWithTimestamp("   - /ws/visual           → WebSocket 实时推送")
 	}
 
-	logWithTimestamp("Gateway service starting on :%d...", port)
+	logWithTimestamp("🌐 ComputeHub Gateway v%s listening on :%d", Version, port)
 	gw.Serve(port, "./code/dashboard")
 
 	logWithTimestamp("Gateway service stopped")
