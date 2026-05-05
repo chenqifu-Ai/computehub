@@ -1,9 +1,10 @@
 # ComputeHub - 确定性算力调度平台
 
-**项目状态**: 🟢 Phase 1-4 核心代码完成 | Docker 部署就绪  
+**项目状态**: 🟢 Sprint 1-2 完成 | Sprint 5 生产就绪 | Docker 生产化部署  
 **创建日期**: 2026-04-22  
-**最后更新**: 2026-05-03  
+**最后更新**: 2026-05-05  
 **负责人**: 小智  
+**版本**: v0.7.0  
 **核心目标**: 基于确定性内核的海外算力调度平台
 
 ## 🚀 核心理念
@@ -38,6 +39,8 @@ Client → Gateway API (8282) → Pure Pipeline(4 级过滤) → Kernel → Exec
 | **Discover** | `src/discover/` | 广播/多播/手动节点发现 | P2 |
 | **Monitor** | `src/monitor/` | GPU 监控模拟 | P2 |
 | **Composer** | `src/composer/` | 大模型拆解→并行分发→汇总 | P3 |
+| **Scheduler** | `src/scheduler/preempt.go` | 优先级抢占 (Sprint 1.1) ✅ | P2 |
+| **Visualizer** | `src/visualizer/prometheus.go` | Prometheus Exporter (Sprint 1.2) ✅ | P4 |
 | **Visualizer** | `src/visualizer/` | 全球算力地图 + GPU 看板 + WS 推送 | P4 |
 | **API** | `src/api/` | 权限控制 + 状态机 | - |
 
@@ -53,14 +56,14 @@ Client → Gateway API (8282) → Pure Pipeline(4 级过滤) → Kernel → Exec
 ```bash
 cd projects/computehub
 
-# 构建并启动所有服务
+# 标准模式
 docker compose up -d
 
-# 查看状态
-docker compose ps
+# 生产模式 (含资源限制 + 日志轮转)
+docker compose -f docker-compose.prod.yml up -d
 
-# 查看日志
-docker compose logs -f gateway
+# 含监控 (Prometheus + Grafana)
+docker compose --profile monitoring -f docker-compose.prod.yml up -d
 ```
 
 ### 服务访问
@@ -68,6 +71,8 @@ docker compose logs -f gateway
 | 服务 | 地址 | 说明 |
 |------|------|------|
 | Gateway API + Dashboard | http://localhost:8282 | REST API + 可视化面板 |
+| Prometheus | http://localhost:9090 | 监控指标 (monitoring profile) |
+| Grafana | http://localhost:3000 | Dashboard (monitoring profile) |
 | TUI 客户端 | `docker compose --profile tui run tui` | 交互式终端 |
 
 ### Dashboard 功能
@@ -120,7 +125,36 @@ docker compose build --no-cache gateway
 
 # 一键重建并启动
 docker compose up -d --build
+
+# 生产模式
+docker compose -f docker-compose.prod.yml up -d
+
+# 查看生产日志
+docker compose -f docker-compose.prod.yml logs -f gateway
 ```
+
+## 🚀 Makefile 快捷命令
+
+```bash
+make build        # 编译 gateway
+make build-tui    # 编译 TUI
+make test         # 运行短测试
+make test-all     # 运行全部测试
+make docker-up    # docker compose up -d
+make prod-up      # 生产模式启动
+make load-test    # 运行压测
+make clean        # 清理构建产物
+```
+
+## 📊 压测结果 (Sprint 5.2)
+
+| 并发 | 成功率 | TPS | P50 | P99 | 状态 |
+|------|--------|-----|-----|-----|------|
+| 50 | 100% | 25.3 | 1.3s | 5.0s | ✅ |
+| 100 | 100% | 26.2 | 2.0s | 7.6s | ✅ |
+| 200 | 100% | 10.9 | 4.1s | 74.0s | ✅ |
+
+> 压测脚本: `scripts/load_test.py`
 
 ## 🛠️ 手动构建 (Go)
 
