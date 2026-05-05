@@ -4,6 +4,7 @@
 发送 AI 智能体推文到邮箱
 """
 
+from scripts.email_utils import send_email_safe
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -100,3 +101,9 @@ result = agent.run(task)
 
 if __name__ == "__main__":
     send_tweet_email()
+
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

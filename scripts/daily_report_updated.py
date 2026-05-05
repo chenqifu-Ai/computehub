@@ -5,6 +5,7 @@
 使用最新持仓数据和实时价格
 """
 
+from scripts.email_utils import send_email_safe
 import smtplib
 import json
 from datetime import datetime, timedelta
@@ -335,3 +336,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

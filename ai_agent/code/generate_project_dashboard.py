@@ -4,6 +4,7 @@
 生成完整的项目仪表盘并发送邮件
 """
 
+from scripts.email_utils import send_email_safe
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -640,3 +641,9 @@ def send_dashboard_email():
 if __name__ == "__main__":
     print("🤖 正在生成公司项目仪表盘...")
     send_dashboard_email()
+
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

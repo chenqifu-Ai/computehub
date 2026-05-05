@@ -4,6 +4,7 @@
 发送当前执行规则到用户邮箱
 """
 
+from scripts.email_utils import send_email_safe
 import smtplib
 import os
 from email.mime.text import MIMEText
@@ -81,3 +82,8 @@ if __name__ == "__main__":
     success = send_rules_email()
     if not success:
         exit(1)
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

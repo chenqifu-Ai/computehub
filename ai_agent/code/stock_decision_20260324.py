@@ -4,6 +4,7 @@
 监控士兰微是否跌破止损位，实时发送卖出信号
 """
 
+from scripts.email_utils import send_email_safe
 import requests
 import time
 import smtplib
@@ -77,3 +78,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

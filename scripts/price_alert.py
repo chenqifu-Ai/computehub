@@ -4,6 +4,7 @@
 股票价格预警监控脚本
 """
 
+from scripts.email_utils import send_email_safe
 import requests
 import json
 import time
@@ -149,3 +150,9 @@ def monitor():
 
 if __name__ == "__main__":
     monitor()
+
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

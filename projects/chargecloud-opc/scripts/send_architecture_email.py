@@ -8,6 +8,7 @@ ChargeCloud OPC 架构图邮件发送器
 作者：小智 (数据智能体)
 """
 
+from scripts.email_utils import send_email_safe
 import smtplib
 import os
 from email.mime.text import MIMEText
@@ -124,3 +125,9 @@ def send_architecture_email():
 if __name__ == '__main__':
     success = send_architecture_email()
     exit(0 if success else 1)
+
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

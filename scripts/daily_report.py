@@ -5,6 +5,7 @@
 每天自动获取真实股价，生成持仓报告并邮件发送
 """
 
+from scripts.email_utils import send_email_safe
 import smtplib
 import json
 import time
@@ -483,3 +484,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

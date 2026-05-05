@@ -4,6 +4,7 @@
 生成系统状态报告并发送到指定邮箱
 """
 
+from scripts.email_utils import send_email_safe
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -182,3 +183,9 @@ if __name__ == "__main__":
     period = sys.argv[1] if len(sys.argv) > 1 else "定时"
     print(f"🤖 正在生成公司脉搏报告({period})...")
     send_report(period)
+
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

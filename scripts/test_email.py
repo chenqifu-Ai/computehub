@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """测试邮件发送功能"""
 
+from scripts.email_utils import send_email_safe
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -59,3 +60,8 @@ def test_email():
 
 if __name__ == "__main__":
     test_email()
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

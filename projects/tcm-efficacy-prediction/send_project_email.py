@@ -5,6 +5,7 @@
 包含完整项目文件和说明
 """
 
+from scripts.email_utils import send_email_safe
 import smtplib
 import os
 import zipfile
@@ -234,3 +235,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

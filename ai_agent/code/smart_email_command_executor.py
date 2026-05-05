@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from scripts.email_utils import load_config
 """
 智能邮件命令执行器 - 集成智能决策引擎
 自动执行"小智请执行"邮件，无需"继续"确认
@@ -19,7 +21,7 @@ from smart_decision_engine import SmartDecisionEngine
 IMAP_SERVER = "imap.qq.com"
 IMAP_PORT = 993
 EMAIL_ACCOUNT = "19525456@qq.com"
-AUTH_CODE = "xunlwhjokescbgdd"
+AUTH_CODE = "__USE_CONFIG__"
 TARGET_SUBJECT = "小智请执行"
 
 class SmartEmailCommandExecutor:
@@ -368,3 +370,6 @@ if __name__ == "__main__":
     
     # 实际运行（取消注释以使用）
     # asyncio.run(SmartEmailCommandExecutor().run_smart_email_check())
+# 从统一配置加载
+_cfg = load_config()
+AUTH_CODE = _cfg["auth_code"]

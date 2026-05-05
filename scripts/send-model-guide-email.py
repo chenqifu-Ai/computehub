@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """发送模型切换指南PPT邮件"""
 
+from scripts.email_utils import send_email_safe
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -113,3 +114,8 @@ def send_email():
 
 if __name__ == "__main__":
     send_email()
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

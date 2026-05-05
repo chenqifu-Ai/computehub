@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """最终版股票预警系统 - 修复编码问题"""
 
+from scripts.email_utils import send_email_safe
 import smtplib
 import requests
 from email.mime.text import MIMEText
@@ -184,3 +185,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

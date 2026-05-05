@@ -4,6 +4,7 @@
 简单邮件发送脚本
 """
 
+from scripts.email_utils import send_email_safe
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -68,3 +69,8 @@ if __name__ == "__main__":
         print("合同签订SOP已发送到您的邮箱")
     else:
         print("发送失败，请检查配置")
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

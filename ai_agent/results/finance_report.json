@@ -1,0 +1,52 @@
+{
+  "timestamp": "2026-05-04 11:57:05",
+  "indices": {
+    "上证指数": {
+      "current": 4112.16,
+      "change_pct": 0.11,
+      "high": 4118.76,
+      "low": 4100.97,
+      "volume": 656912728,
+      "turnover": 656912728.0
+    },
+    "深证成指": {
+      "current": 15107.55,
+      "change_pct": -0.09,
+      "high": 15186.12,
+      "low": 15044.86,
+      "volume": 737703743,
+      "turnover": 737703743.0
+    },
+    "创业板指": {
+      "current": 3677.15,
+      "change_pct": -0.27,
+      "high": 3718.4,
+      "low": 3660.22,
+      "volume": 201808141,
+      "turnover": 201808141.0
+    }
+  },
+  "holdings": [
+    {
+      "current": 1.65,
+      "change_pct": 1.23,
+      "pnl_pct": -11.91,
+      "pnl_amount": -3010.5,
+      "total_value": 22275.0,
+      "stop_triggered": false,
+      "stop_loss": 1.6,
+      "advice": "⚠️ 关注止损线",
+      "action": "接近止损位，建议减仓",
+      "qty": 13500,
+      "cost": 1.873,
+      "name": "华联股份",
+      "code": "000882"
+    }
+  ],
+  "summary": {
+    "total_value": 22275.0,
+    "total_cost": 25285.5,
+    "total_pnl": -3010.5,
+    "total_pnl_pct": -11.91
+  }
+}

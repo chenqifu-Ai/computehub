@@ -5,6 +5,7 @@
 包含：任务分类、时间分布、工具使用、费用分析、每次调用时间戳
 """
 
+from scripts.email_utils import send_email_safe
 import smtplib
 import json
 from email.mime.text import MIMEText
@@ -480,3 +481,9 @@ except Exception as e:
     print(f"❌ 邮件发送失败：{e}")
     import traceback
     traceback.print_exc()
+
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

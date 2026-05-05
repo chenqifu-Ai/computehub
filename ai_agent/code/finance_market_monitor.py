@@ -4,6 +4,7 @@
 监控持仓股票、市场动态、学习金融知识
 """
 
+from scripts.email_utils import send_email_safe
 import requests
 import json
 import os
@@ -222,3 +223,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

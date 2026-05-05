@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from scripts.email_utils import load_config
 """
 邮件命令检查脚本
 读取指定邮箱中主题为"小智请执行"的邮件并执行命令
@@ -16,7 +18,7 @@ import sys
 IMAP_SERVER = "imap.qq.com"
 IMAP_PORT = 993
 EMAIL_ACCOUNT = "19525456@qq.com"
-AUTH_CODE = "xunlwhjokescbgdd"
+AUTH_CODE = "__USE_CONFIG__"
 TARGET_SUBJECT = "小智请执行"
 
 def decode_str(s):
@@ -135,3 +137,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+# 从统一配置加载
+_cfg = load_config()
+AUTH_CODE = _cfg["auth_code"]

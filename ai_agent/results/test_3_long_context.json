@@ -1,0 +1,56 @@
+[
+  {
+    "port": "8000",
+    "input_tokens_approx": 4096,
+    "actual_tokens_in": 20498,
+    "output_tokens": 256,
+    "time": "6.28s",
+    "tps": "40.8 t/s",
+    "success": true
+  },
+  {
+    "port": "8000",
+    "input_tokens_approx": 16384,
+    "actual_tokens_in": 81938,
+    "output_tokens": 256,
+    "time": "25.52s",
+    "tps": "10.0 t/s",
+    "success": true
+  },
+  {
+    "port": "8000",
+    "input_tokens_approx": 32768,
+    "actual_tokens_in": 163858,
+    "output_tokens": 256,
+    "time": "30.07s",
+    "tps": "8.5 t/s",
+    "success": true
+  },
+  {
+    "port": "8001",
+    "input_tokens_approx": 4096,
+    "actual_tokens_in": 20498,
+    "output_tokens": 256,
+    "time": "5.23s",
+    "tps": "49.0 t/s",
+    "success": true
+  },
+  {
+    "port": "8001",
+    "input_tokens_approx": 16384,
+    "actual_tokens_in": 81938,
+    "output_tokens": 256,
+    "time": "14.63s",
+    "tps": "17.5 t/s",
+    "success": true
+  },
+  {
+    "port": "8001",
+    "input_tokens_approx": 32768,
+    "actual_tokens_in": 163858,
+    "output_tokens": 256,
+    "time": "33.56s",
+    "tps": "7.6 t/s",
+    "success": true
+  }
+]

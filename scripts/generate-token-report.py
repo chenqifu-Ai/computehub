@@ -4,6 +4,7 @@
 生成默认的百炼 API Token 用量日报
 """
 
+from scripts.email_utils import send_email_safe
 import json
 import os
 import sys
@@ -100,3 +101,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

@@ -4,6 +4,7 @@
 将HTML方案作为附件发送到指定邮箱
 """
 
+from scripts.email_utils import send_email_safe
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -131,3 +132,8 @@ if __name__ == "__main__":
     for file_path in HTML_FILES:
         if os.path.exists(file_path):
             print(f"   📄 {os.path.basename(file_path)} - {file_path}")
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

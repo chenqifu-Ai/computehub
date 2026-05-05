@@ -1,0 +1,10 @@
+{
+  "smtp_server": "smtp.qq.com",
+  "smtp_port": 587,
+  "smtp_port_ssl": 465,
+  "from_email": "19525456@qq.com",
+  "to_email": "19525456@qq.com",
+  "auth_code": "xzxveoguxylbbgbg",
+  "last_updated": "2026-04-05 07:56",
+  "note": "授权码更新时只需改这个文件，脚本自动读取。QQ邮箱→设置→账户→POP3/SMTP→生成授权码"
+}

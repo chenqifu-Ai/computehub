@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from scripts.email_utils import load_config
 # -*- coding: utf-8 -*-
 """
 简化版邮箱配置信息提取脚本
@@ -14,7 +16,7 @@ def extract_email_config():
     # 从MEMORY.md获取基本信息
     config["primary_email"] = {
         "email": "19525456@qq.com",
-        "auth_code": "xunlwhjokescbgdd",
+        "auth_code": "__USE_CONFIG__",
         "imap_server": "imap.qq.com",
         "imap_port": 993,
         "smtp_server": "smtp.qq.com", 
@@ -53,3 +55,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+# 从统一配置加载
+_cfg = load_config()
+AUTH_CODE = _cfg["auth_code"]

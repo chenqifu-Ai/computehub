@@ -4,6 +4,7 @@
 发送投资指导意见报告到邮箱
 """
 
+from scripts.email_utils import send_email_safe
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -247,3 +248,9 @@ except Exception as e:
     print(f"❌ 邮件发送失败：{e}")
     import traceback
     traceback.print_exc()
+
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

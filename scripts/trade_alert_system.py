@@ -5,6 +5,7 @@
 实时监控，及时通知
 """
 
+from scripts.email_utils import send_email_safe
 import requests
 import smtplib
 import json
@@ -241,3 +242,9 @@ if __name__ == "__main__":
     monitor_once()
     # 持续监控（后台运行）
     # main()
+
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

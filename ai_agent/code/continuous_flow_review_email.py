@@ -5,6 +5,7 @@
 用户需求 → 智能分析 → 代码生成 → 自动执行 → 结果验证 → 学习优化 → 连续交付
 """
 
+from scripts.email_utils import send_email_safe
 import json
 import os
 import smtplib
@@ -273,3 +274,8 @@ if __name__ == "__main__":
     
     if results['send_result'][0]:
         print("\n🎉 复盘邮件已成功发送到您的邮箱！")
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

@@ -3,6 +3,7 @@
 OpenClaw TUI 进程被杀问题解决报告
 """
 
+from scripts.email_utils import send_email_safe
 import smtplib
 import os
 from email.mime.text import MIMEText
@@ -141,3 +142,8 @@ if __name__ == "__main__":
         print("📧 邮件已发送至: 19525456@qq.com")
     else:
         print("📧 邮件发送失败，请检查配置")
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

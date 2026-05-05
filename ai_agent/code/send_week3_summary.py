@@ -5,6 +5,7 @@
 时间：2026-04-22 15:55
 """
 
+from scripts.email_utils import send_email_safe
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -254,3 +255,9 @@ try:
     print(f"   主题：{subject}")
 except Exception as e:
     print(f"❌ 邮件发送失败：{e}")
+
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

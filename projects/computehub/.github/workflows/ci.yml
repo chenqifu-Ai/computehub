@@ -1,0 +1,78 @@
+name: ComputeHub CI/CD
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+env:
+  GO_VERSION: '1.24'
+  CGO_ENABLED: '0'
+
+jobs:
+  test:
+    name: Test & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Run unit tests
+        run: go test ./src/... -v -short -count=1
+
+      - name: Run go vet
+        run: go vet ./...
+
+      - name: Build Gateway
+        run: go build -o bin/compute-gateway ./cmd/gateway/
+
+      - name: Build Worker
+        run: go build -o bin/compute-worker ./cmd/worker/
+
+      - name: Build TUI
+        run: go build -o bin/compute-tui ./cmd/tui/
+
+      - name: Build Node
+        run: go build -o bin/compute-node ./cmd/node/
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: computehub-bins
+          path: bin/
+          retention-days: 7
+
+  deploy:
+    name: Deploy
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Build all binaries
+        run: make all
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: code/bin/*
+          tag_name: v${{ github.run_number }}
+          name: Release ${{ github.run_number }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

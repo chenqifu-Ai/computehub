@@ -62,8 +62,7 @@ func main() {
 }
 
 func printHelp() {
-	fmt.Println(`
-ComputeNode CLI v0.1 — 节点注册与管理工具
+	fmt.Print(`ComputeNode CLI v0.1 — 节点注册与管理工具
 
 用法:
   compute-node register              交互式注册新节点

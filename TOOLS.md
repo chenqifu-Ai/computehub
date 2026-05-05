@@ -82,6 +82,33 @@ python scripts/git-memory-search.py history "MEMORY.md"
 - Preferred voice: "Nova" (warm, slightly British)
 - Default speaker: Kitchen HomePod
 
+### 📧 邮件系统（统一配置中心）
+
+**不要在任何脚本中硬编码授权码！** 统一用这个:
+
+```python
+from scripts.email_utils import send_email_safe
+
+# 一行发送，自动重试、自动降级
+send_email_safe("主题", "正文")
+send_email_safe("主题", html_body="<h1>HTML</h1>")
+
+# 测试连接
+python3 scripts/email_utils.py --test
+
+# 自动修复授权码（找不到有效码时）
+python3 scripts/email_utils.py --fix
+```
+
+**配置文件**: `/root/.openclaw/workspace/config/email.json`
+- 以后授权码过期，只需改这一个文件
+- 更新方法: QQ邮箱 → 设置 → 账户 → POP3/SMTP → 生成新授权码
+- 把新码写进 `config/email.json` 的 `auth_code` 字段
+
+**当前有效授权码 (2026-05-04)**:
+- `xzxveoguxylbbgbg` (主用，config/email.json 中)
+- `bzgwylbbrocdbiie` (备用)
+
 ### AI API 配置
 
 - **Qwen 3.6 35B (推理模型)**: http://58.23.129.98:8000/v1 (Key: sk-78sadn09bjawde123e) ⭐ 默认
@@ -111,9 +138,25 @@ python scripts/git-memory-search.py history "MEMORY.md"
 - 华为手机 → u0_a46/123 - HWI-AL00型号 (IP动态变化)
 ```
 
-## Why Separate?
+## 📧 邮箱系统 (2026-05-04 重构)
 
-Skills are shared. Your setup is yours. Keeping them apart means you can update skills without losing your notes, and share skills without leaking your infrastructure.
+**⚠️ 铁律：授权码只存放在 config/email.json，永远不要在脚本里硬编码！**
+
+### 使用方法
+```python
+from mail_util import send_email
+ok, msg = send_email("主题", "正文", "<h1>HTML正文</h1>")
+```
+
+### 更新授权码
+1. QQ邮箱 → 设置 → 账户 → POP3/SMTP → 生成新授权码
+2. 编辑 `config/email.json` 的 `auth_code` 字段
+3. **不需要改任何脚本**
+
+### 文件结构
+- `config/email.json` — 邮箱配置（唯一授权码存放点）
+- `scripts/mail_util.py` — 集中发送模块（所有脚本从这里读配置）
+- 任何新脚本发邮件都从 `mail_util import send_email`
 
 ---
 

@@ -42,7 +42,7 @@ func TestNewTaskComposer(t *testing.T) {
 
 func TestNewDispatchEngine(t *testing.T) {
 	models := []string{"qwen2.5:3b", "glm-4.7-flash"}
-	de := NewDispatchEngine(models, 5, 30*time.Second)
+	de := NewDispatchEngine(models, 5, 30*time.Second, "http://localhost:8282", "test-key")
 
 	if de == nil {
 		t.Fatal("DispatchEngine should not be nil")
@@ -57,7 +57,7 @@ func TestNewDispatchEngine(t *testing.T) {
 
 func TestDispatchEngineSelectModel(t *testing.T) {
 	models := []string{"test-model"}
-	de := NewDispatchEngine(models, 5, 30*time.Second)
+	de := NewDispatchEngine(models, 5, 30*time.Second, "http://localhost:8282", "test-key")
 
 	selected := de.selectModel()
 	if selected != "test-model" {
@@ -66,7 +66,7 @@ func TestDispatchEngineSelectModel(t *testing.T) {
 }
 
 func TestDispatchEngineSelectModelUnknown(t *testing.T) {
-	de := NewDispatchEngine([]string{}, 5, 30*time.Second)
+	de := NewDispatchEngine([]string{}, 5, 30*time.Second, "http://localhost:8282", "test-key")
 	selected := de.selectModel()
 	if selected != "unknown" {
 		t.Errorf("Expected 'unknown' for empty models, got '%s'", selected)
@@ -75,7 +75,7 @@ func TestDispatchEngineSelectModelUnknown(t *testing.T) {
 
 func TestDispatchEngineDispatch(t *testing.T) {
 	models := []string{"test-model"}
-	de := NewDispatchEngine(models, 5, 30*time.Second)
+	de := NewDispatchEngine(models, 5, 30*time.Second, "http://localhost:8282", "test-key")
 	ctx := context.Background()
 
 	tasks := []DecomposedTask{
@@ -104,7 +104,7 @@ func TestDispatchEngineDispatch(t *testing.T) {
 
 func TestDispatchEngineContextCancellation(t *testing.T) {
 	models := []string{"test-model"}
-	de := NewDispatchEngine(models, 5, 30*time.Second)
+	de := NewDispatchEngine(models, 5, 30*time.Second, "http://localhost:8282", "test-key")
 
 	// Cancelled context
 	ctx, cancel := context.WithCancel(context.Background())
@@ -125,7 +125,7 @@ func TestDispatchEngineContextCancellation(t *testing.T) {
 
 func TestDispatchEnginePriority(t *testing.T) {
 	models := []string{"test-model"}
-	de := NewDispatchEngine(models, 5, 30*time.Second)
+	de := NewDispatchEngine(models, 5, 30*time.Second, "http://localhost:8282", "test-key")
 	ctx := context.Background()
 
 	tasks := []DecomposedTask{

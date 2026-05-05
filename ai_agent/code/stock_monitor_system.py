@@ -12,6 +12,7 @@
 日期：2026-03-25
 """
 
+from scripts.email_utils import send_email_safe
 import os
 import sys
 import json
@@ -152,3 +153,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

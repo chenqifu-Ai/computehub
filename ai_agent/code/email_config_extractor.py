@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from scripts.email_utils import load_config
 # -*- coding: utf-8 -*-
 """
 邮箱配置信息提取脚本
@@ -22,7 +24,7 @@ def extract_email_configs():
             if "邮件API配置" in content:
                 email_config = {
                     "email": "19525456@qq.com",
-                    "auth_code": "xunlwhjokescbgdd",
+                    "auth_code": "__USE_CONFIG__",
                     "imap_server": "imap.qq.com:993",
                     "smtp_server": "smtp.qq.com:465",
                     "config_file": "~/.openclaw/workspace/config/email.conf"
@@ -57,3 +59,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+# 从统一配置加载
+_cfg = load_config()
+AUTH_CODE = _cfg["auth_code"]

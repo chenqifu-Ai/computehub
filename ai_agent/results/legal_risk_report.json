@@ -1,0 +1,122 @@
+{
+  "timestamp": "2026-05-04 12:03:22",
+  "company": "小智影业",
+  "regulations": [
+    {
+      "id": "REG-2026-001",
+      "title": "《网络音视频内容管理规定》修订版",
+      "source": "国家广播电视总局",
+      "date": "2026-03-15",
+      "impact": "medium",
+      "summary": "强化短视频平台内容审核责任，新增AI生成内容标识要求",
+      "related_keywords": [
+        "视频版权",
+        "内容合规"
+      ],
+      "status": "new"
+    },
+    {
+      "id": "REG-2026-002",
+      "title": "《著作权法实施条例》更新",
+      "source": "国家版权局",
+      "date": "2026-01-20",
+      "impact": "medium",
+      "summary": "明确AI生成内容的著作权归属，增加惩罚性赔偿上限",
+      "related_keywords": [
+        "视频版权"
+      ],
+      "status": "update"
+    },
+    {
+      "id": "REG-2026-003",
+      "title": "《互联网信息服务管理办法》修订",
+      "source": "国务院",
+      "date": "2026-04-01",
+      "impact": "high",
+      "summary": "新增平台内容安全主体责任，违规罚款上限提升至500万元",
+      "related_keywords": [
+        "平台政策",
+        "内容合规"
+      ],
+      "status": "new"
+    },
+    {
+      "id": "REG-2026-004",
+      "title": "《数据安全法》配套细则发布",
+      "source": "国家互联网信息办公室",
+      "date": "2026-02-10",
+      "impact": "low",
+      "summary": "细化用户数据收集边界，要求明确告知数据使用目的",
+      "related_keywords": [
+        "用户隐私"
+      ],
+      "status": "update"
+    }
+  ],
+  "compliance_checks": [
+    {
+      "category": "版权",
+      "item": "视频原创比例",
+      "status": "compliant",
+      "risk": "medium",
+      "detail": "需确认原创视频占比≥70%，否则面临版权诉讼风险"
+    },
+    {
+      "category": "内容",
+      "item": "敏感词过滤",
+      "status": "pending",
+      "risk": "high",
+      "detail": "2026年新规要求AI生成内容必须添加水印标识，需立即排查"
+    },
+    {
+      "category": "平台政策",
+      "item": "抖音/B站最新政策",
+      "status": "non_compliant",
+      "risk": "medium",
+      "detail": "抖音2026年更新创作者协议，要求授权独家内容，需评估是否签署"
+    },
+    {
+      "category": "税务",
+      "item": "个税申报",
+      "status": "compliant",
+      "risk": "low",
+      "detail": "2026年Q1个税申报已完成"
+    },
+    {
+      "category": "劳动",
+      "item": "员工合同续签",
+      "status": "pending",
+      "risk": "medium",
+      "detail": "3名员工合同将于2026年Q2到期，需提前准备续签"
+    }
+  ],
+  "risk_alerts": [
+    {
+      "level": "high",
+      "title": "🔴 平台政策变更风险",
+      "detail": "抖音/B站2026年新规可能影响内容分发，建议制定应对方案",
+      "recommendation": "法务部需在一周内完成政策对比分析"
+    },
+    {
+      "level": "medium",
+      "title": "🟡 版权诉讼风险",
+      "detail": "非原创内容占比可能超过30%，存在侵权诉讼风险",
+      "recommendation": "立即启动版权自查，下架疑似侵权内容"
+    },
+    {
+      "level": "low",
+      "title": "🟢 税务合规风险",
+      "detail": "2026年Q1个税申报已完成，暂无风险",
+      "recommendation": "继续按时申报"
+    }
+  ],
+  "summary": {
+    "total_checks": 5,
+    "compliant": 2,
+    "pending": 2,
+    "non_compliant": 1,
+    "compliance_rate": 40.0,
+    "risk_percent": 52.0,
+    "overall_risk": "🟡 中风险"
+  }
+}

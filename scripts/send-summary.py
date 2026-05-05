@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """发送工作汇总邮件"""
+from scripts.email_utils import send_email_safe
 import smtplib
 import os
 from email.mime.text import MIMEText
@@ -105,3 +106,9 @@ try:
     print("✅ 邮件发送成功")
 except Exception as e:
     print(f"❌ 发送失败: {e}")
+
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

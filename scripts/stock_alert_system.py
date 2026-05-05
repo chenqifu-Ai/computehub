@@ -3,6 +3,7 @@
 智能股票预警系统 - 深度思考解决方案 + 邮件提醒
 """
 
+from scripts.email_utils import send_email_safe
 import smtplib
 import requests
 from email.mime.text import MIMEText
@@ -222,3 +223,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

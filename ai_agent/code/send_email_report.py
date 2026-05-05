@@ -3,6 +3,7 @@
 发送3月份成果总结邮件
 """
 
+from scripts.email_utils import send_email_safe
 import smtplib
 import os
 from email.mime.text import MIMEText
@@ -191,3 +192,8 @@ try:
 except Exception as e:
     print(f"❌ 发送失败: {e}")
     print("请检查邮箱配置或网络连接")
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

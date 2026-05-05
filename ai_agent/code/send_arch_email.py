@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """发送 ComputeHub 架构文档到邮箱"""
 
+from scripts.email_utils import send_email_safe
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -59,3 +60,9 @@ try:
     print("✅ 架构文档已发送到 19525456@qq.com")
 except Exception as e:
     print(f"❌ 发送失败: {e}")
+
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

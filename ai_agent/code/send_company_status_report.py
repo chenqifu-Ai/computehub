@@ -4,6 +4,7 @@
 生成并发送完整的公司运营状态报告
 """
 
+from scripts.email_utils import send_email_safe
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -455,3 +456,9 @@ if __name__ == "__main__":
         print("\n✅ 公司状态报告已成功发送到邮箱：19525456@qq.com")
     else:
         print("\n❌ 发送失败，请检查网络或邮件配置")
+
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

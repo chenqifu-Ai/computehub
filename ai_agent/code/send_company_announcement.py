@@ -4,6 +4,7 @@
 发送证券公司成立通知邮件 - 使用现有配置
 """
 
+from scripts.email_utils import send_email_safe
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -115,3 +116,8 @@ if __name__ == "__main__":
         print("🎉 证券公司成立通知邮件已发送！")
     else:
         print("⚠️ 邮件发送遇到问题，需要检查配置")
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)

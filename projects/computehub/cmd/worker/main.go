@@ -290,15 +290,18 @@ func (s *WorkerState) heartbeatLoop() {
 
 		// Log GPU status
 		if stats.Count > 0 {
-			fmt.Printf("\r %s[心跳] GPU: %s%.1f%%%s  %s%.0f°C%s  Mem: %s%.0f/%.0fGB%s   ",
+			fmt.Printf("\r %s[心跳] GPU: %s%.1f%%%s  %s%.0f°C%s  Mem: %s%.0f/%.0fGB%s",
 				dim(""), reset(),
-				pctColor(stats.Utilization),
+				stats.Utilization,
+				pctColor(0),
 				reset(),
-				tempColor(stats.Temperature),
+				stats.Temperature,
+				tempColor(0),
 				reset(),
-				cyan(fmt.Sprintf("%.0f", stats.MemoryUsedGB)),
-				reset(),
-				cyan(fmt.Sprintf("%.0f", stats.MemoryTotalGB)),
+				cyan(""),
+				stats.MemoryUsedGB,
+				cyan(""),
+				stats.MemoryTotalGB,
 				reset(),
 			)
 		}
@@ -742,7 +745,6 @@ func printWorkerHelp() {
   %-28s %s
   %-28s %s
   %-28s %s
-
 %s示例:%s
   ./compute-worker --gw http://192.168.1.17:8282 --node-id gpu-01 --gpu-type H100 --region cn-east
   ./compute-worker --node-id worker-2 --interval 3 --concurrent 8

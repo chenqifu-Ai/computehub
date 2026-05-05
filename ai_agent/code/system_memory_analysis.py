@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from scripts.email_utils import load_config
 # -*- coding: utf-8 -*-
 """
 系统性遗忘问题分析脚本
@@ -97,7 +99,7 @@ def create_memory_checkpoint():
             "emails": [
                 {
                     "email": "19525456@qq.com",
-                    "auth_code": "xunlwhjokescbgdd",
+                    "auth_code": "__USE_CONFIG__",
                     "type": "qq",
                     "config_file": "/root/.openclaw/workspace/config/email.conf"
                 },
@@ -154,3 +156,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+# 从统一配置加载
+_cfg = load_config()
+AUTH_CODE = _cfg["auth_code"]

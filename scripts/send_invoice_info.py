@@ -4,6 +4,7 @@
 发送开票资料到邮箱
 """
 
+from scripts.email_utils import send_email_safe
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -154,3 +155,9 @@ def send_invoice_email():
 
 if __name__ == "__main__":
     send_invoice_email()
+
+
+# TODO: 迁移到统一邮件模块
+# 建议替换为:
+#   from email_utils import send_email_safe
+#   send_email_safe(SUBJECT, BODY)
