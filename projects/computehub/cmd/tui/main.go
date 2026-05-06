@@ -30,6 +30,8 @@ import (
 	"unicode"
 
 	"golang.org/x/term"
+
+	computeHubVersion "github.com/computehub/opc/src/version"
 )
 
 // ── ANSI ──
@@ -58,15 +60,7 @@ const (
 const termW = 80
 
 // ── Version ──
-var version = "dev"
-
-func init() {
-	if data, err := os.ReadFile("../VERSION"); err == nil {
-		version = strings.TrimSpace(string(data))
-	} else if data, err = os.ReadFile("VERSION"); err == nil {
-		version = strings.TrimSpace(string(data))
-	}
-}
+var appVersion = computeHubVersion.Short()
 
 // ── History (for arrow-key recall) ──
 var cmdHistory []string
@@ -798,7 +792,7 @@ func printPrompt() {
 
 func printHelp() {
 	fmt.Println()
-	fmt.Printf("%s ComputeHub TUI v%s%s\n", Yellow+Bold, version, Reset)
+	fmt.Printf("%s ComputeHub TUI v%s%s\n", Yellow+Bold, appVersion, Reset)
 	fmt.Printf(" %s━━━ 快捷键 ━━━%s\n", Cyan+Bold, Reset)
 	fmt.Printf("  %-20s %s\n", "d / dashboard", "📊 系统仪表板")
 	fmt.Printf("  %-20s %s\n", "n / nodes", "🔌 节点浏览器")
@@ -951,7 +945,7 @@ func renderDashboard(state *AppState) {
 		avgUtil /= float64(totalGPUCount)
 	}
 
-	printHeader("📊 ComputeHub 系统仪表板", fmt.Sprintf("v%s  %s", version, state.lastUpdate.Format("15:04:05")))
+	printHeader("📊 ComputeHub 系统仪表板", fmt.Sprintf("v%s  %s", appVersion, state.lastUpdate.Format("15:04:05")))
 
 	// ── Row 1: Core KPI ──
 	fmt.Println()

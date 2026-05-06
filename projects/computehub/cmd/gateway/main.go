@@ -22,23 +22,12 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/computehub/opc/src/gateway"
+	"github.com/computehub/opc/src/version"
 	"github.com/computehub/opc/src/visualizer"
 )
-
-// Version 从 VERSION 文件读取
-var Version = "dev"
-
-func init() {
-	if data, err := os.ReadFile("../VERSION"); err == nil {
-		Version = strings.TrimSpace(string(data))
-	} else if data, err = os.ReadFile("VERSION"); err == nil {
-		Version = strings.TrimSpace(string(data))
-	}
-}
 
 // logWithTimestamp 添加时间戳的日志函数
 func logWithTimestamp(format string, args ...interface{}) {
@@ -101,7 +90,7 @@ func loadConfig() (Config, error) {
 }
 
 func main() {
-	logWithTimestamp("🚀 Starting ComputeHub Gateway Service v%s...", Version)
+	logWithTimestamp("🚀 Starting ComputeHub Gateway Service v%s...", version.Short())
 
 	config, err := loadConfig()
 	if err != nil {
@@ -162,7 +151,7 @@ func main() {
 		logWithTimestamp("   - /ws/visual           → WebSocket 实时推送")
 	}
 
-	logWithTimestamp("🌐 ComputeHub Gateway v%s listening on :%d", Version, port)
+	logWithTimestamp("🌐 ComputeHub Gateway v%s listening on :%d", version.Short(), port)
 	gw.Serve(port, "./code/dashboard")
 
 	logWithTimestamp("Gateway service stopped")
