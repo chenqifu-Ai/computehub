@@ -1435,89 +1435,90 @@ func priorityLabel(p int) string {
 }
 
 func screenTasks(state *AppState) {
-	clearScreen()
+	for { // loop until user goes back
+		clearScreen()
 
-	nodes := fetchV2Nodes()
-	if nodes == nil {
-		printf(Red+Bold, " ⚠ 无法获取节点数据\n")
-		printPrompt()
-		return
-	}
-	state.v2Nodes = nodes
+		nodes := fetchV2Nodes()
+		if nodes == nil {
+			printf(Red+Bold, " ⚠ 无法获取节点数据\n")
+			printPrompt()
+			return
+		}
+		state.v2Nodes = nodes
 
-	// Fetch task details and queue depth
-	taskMap := fetchTaskList()
-	queueDepth := fetchQueueDepth()
+		// Fetch task details and queue depth
+		taskMap := fetchTaskList()
+		queueDepth := fetchQueueDepth()
 
-	printHeader("📋 任务管理器", "优先级调度")
+		printHeader("📋 任务管理器", "优先级调度")
 
-	// ── 全局统计 ──
-	totalTasks := 0
-	prioCount := map[string]int{"critical": 0, "high": 0, "medium": 0, "low": 0}
-	var allTasks []TaskListInfo
+		// ── 全局统计 ──
+		totalTasks := 0
+		prioCount := map[string]int{"critical": 0, "high": 0, "medium": 0, "low": 0}
+		var allTasks []TaskListInfo
 
-	for _, tasks := range taskMap {
-		for _, t := range tasks {
-			totalTasks++
-			allTasks = append(allTasks, t)
-			switch {
-			case t.Priority >= 9:
-				prioCount["critical"]++
-			case t.Priority >= 7:
-				prioCount["high"]++
-			case t.Priority >= 5:
-				prioCount["medium"]++
-			default:
-				prioCount["low"]++
+		for _, tasks := range taskMap {
+			for _, t := range tasks {
+				totalTasks++
+				allTasks = append(allTasks, t)
+				switch {
+				case t.Priority >= 9:
+					prioCount["critical"]++
+				case t.Priority >= 7:
+					prioCount["high"]++
+				case t.Priority >= 5:
+					prioCount["medium"]++
+				default:
+					prioCount["low"]++
+				}
 			}
 		}
-	}
 
-	fmt.Printf("\n %s━━━ 任务概览 ━━━%s\n", Cyan+Bold, Reset)
-	fmt.Printf("  活跃任务: %s%3d%s", Yellow+Bold, totalTasks, Reset)
+		fmt.Printf("\n %s━━━ 任务概览 ━━━%s\n", Cyan+Bold, Reset)
+		fmt.Printf("  活跃任务: %s%3d%s", Yellow+Bold, totalTasks, Reset)
 
-	if queueDepth >= 0 {
-		fmt.Printf("  等待队列: %s%3d%s", Dim, queueDepth, Reset)
-	} else {
-		fmt.Printf("  等待队列: %s N/A%s", Dim, Reset)
-	}
+		if queueDepth >= 0 {
+			fmt.Printf("  等待队列: %s%3d%s", Dim, queueDepth, Reset)
+		} else {
+			fmt.Printf("  等待队列: %s N/A%s", Dim, Reset)
+		}
 
-	// 优先级分布条
-	fmt.Printf("\n")
-	fmt.Printf("  优先级: ")
-	if prioCount["critical"] > 0 {
-		fmt.Printf("%s⬛ Critical:%d%s ", Red+Bold, prioCount["critical"], Reset)
-	}
-	if prioCount["high"] > 0 {
-		fmt.Printf("%s⬛ High:%d%s ", Magenta+Bold, prioCount["high"], Reset)
-	}
-	if prioCount["medium"] > 0 {
-		fmt.Printf("%s⬛ Medium:%d%s ", Yellow, prioCount["medium"], Reset)
-	}
-	if prioCount["low"] > 0 {
-		fmt.Printf("%s⬛ Low:%d%s ", Green, prioCount["low"], Reset)
-	}
-	if totalTasks == 0 {
-		fmt.Printf("%s(无活跃任务)%s", Dim, Reset)
-	}
-	fmt.Println()
+		// 优先级分布条
+		fmt.Printf("\n")
+		fmt.Printf("  优先级: ")
+		if prioCount["critical"] > 0 {
+			fmt.Printf("%s⬛ Critical:%d%s ", Red+Bold, prioCount["critical"], Reset)
+		}
+		if prioCount["high"] > 0 {
+			fmt.Printf("%s⬛ High:%d%s ", Magenta+Bold, prioCount["high"], Reset)
+		}
+		if prioCount["medium"] > 0 {
+			fmt.Printf("%s⬛ Medium:%d%s ", Yellow, prioCount["medium"], Reset)
+		}
+		if prioCount["low"] > 0 {
+			fmt.Printf("%s⬛ Low:%d%s ", Green, prioCount["low"], Reset)
+		}
+		if totalTasks == 0 {
+			fmt.Printf("%s(无活跃任务)%s", Dim, Reset)
+		}
+		fmt.Println()
 
-	// ── 节点任务分布 ──
-	fmt.Printf("\n %s━━━ 节点任务分布 ━━━%s\n", Cyan+Bold, Reset)
+		// ── 节点任务分布 ──
+		fmt.Printf("\n %s━━━ 节点任务分布 ━━━%s\n", Cyan+Bold, Reset)
 
-	type nodeTaskInfo struct {
-		id, region, gpu string
-		active, max     int
-	}
-	var list []nodeTaskInfo
-	for _, n := range nodes {
-		list = append(list, nodeTaskInfo{n.ID, n.Region, n.GPUType, n.ActiveTasks, n.MaxTasks})
-	}
-	sort.Slice(list, func(i, j int) bool { return list[i].active > list[j].active })
+		type nodeTaskInfo struct {
+			id, region, gpu string
+			active, max     int
+		}
+		var list []nodeTaskInfo
+		for _, n := range nodes {
+			list = append(list, nodeTaskInfo{n.ID, n.Region, n.GPUType, n.ActiveTasks, n.MaxTasks})
+		}
+		sort.Slice(list, func(i, j int) bool { return list[i].active > list[j].active })
 
-	fmt.Printf("  %-24s │ %-10s │ %-8s │ %-9s │ %s\n",
-		White+Bold, "Node", "Region", "GPU", "Load")
-	fmt.Printf("  %s%s\n", Dim, strings.Repeat("─", 62))
+		fmt.Printf("  %-24s │ %-10s │ %-8s │ %-9s │ %s\n",
+			White+Bold, "Node", "Region", "GPU", "Load")
+		fmt.Printf("  %s%s\n", Dim, strings.Repeat("─", 62))
 
 	for _, li := range list {
 		loadBar := renderBar(float64(li.active), float64(li.max), 16)
@@ -1561,11 +1562,67 @@ func screenTasks(state *AppState) {
 	fmt.Printf("  %-25s %s\n", "cancel <task_id>", "取消任务")
 	fmt.Printf("  %-25s %s\n", "list", "刷新任务列表")
 	fmt.Println()
-	
-	// Task command loop — help text and prompt handled inside taskCommandLoop
-	taskCommandLoop(state)
-	
-	// After command loop, return to main menu
+
+	// ── 任务命令循环（内联） ──
+	fmt.Printf(" %s输入命令 (submit/cancel/list/back)%s\n", Yellow+Bold, Reset)
+	fmt.Printf(" task> ")
+
+	input := readLine("")
+	input = strings.TrimSpace(input)
+
+	if input == "" || strings.ToLower(input) == "list" || strings.ToLower(input) == "l" || strings.ToLower(input) == "r" || strings.ToLower(input) == "refresh" {
+		continue // re-render task screen
+	}
+	if strings.ToLower(input) == "back" || strings.ToLower(input) == "q" {
+		break // return to main menu
+	}
+
+	parts := strings.Fields(input)
+	if len(parts) == 0 {
+		continue
+	}
+
+	cmd := strings.ToLower(parts[0])
+	if cmd == "submit" && len(parts) >= 3 {
+		// submit <node_id> <command>
+		nodeID := parts[1]
+		command := strings.Join(parts[2:], " ")
+		fmt.Printf(" %s正在提交任务到节点 %s...%s\n", Yellow, nodeID, Reset)
+		submitTask(nodeID, command)
+		fmt.Printf("\n %s按 Enter 继续...%s", Dim, Reset)
+		readLine("")
+		continue
+	} else if cmd == "submit" && len(parts) == 2 {
+		nodeID := parts[1]
+		fmt.Printf(" %s输入命令 > %s", Yellow, Reset)
+		command := readLine("")
+		if command == "" {
+			fmt.Printf(" %s取消提交%s\n", Dim, Reset)
+			fmt.Printf("\n %s按 Enter 继续...%s", Dim, Reset)
+			readLine("")
+			continue
+		}
+		fmt.Printf(" %s正在提交任务到节点 %s...%s\n", Yellow, nodeID, Reset)
+		submitTask(nodeID, command)
+		fmt.Printf("\n %s按 Enter 继续...%s", Dim, Reset)
+		readLine("")
+		continue
+	} else if cmd == "cancel" && len(parts) >= 2 {
+		taskID := parts[1]
+		cancelTask(taskID)
+		fmt.Printf("\n %s按 Enter 继续...%s", Dim, Reset)
+		readLine("")
+		continue
+	} else {
+		fmt.Printf(" %s未知命令: %s%s\n", Red, input, Reset)
+		fmt.Printf("  可用: submit <node_id> <cmd> | cancel <task_id> | list | back\n")
+		fmt.Printf("\n %s按 Enter 继续...%s", Dim, Reset)
+		readLine("")
+		continue
+	}
+	}
+
+	// Exit task manager
 	clearScreen()
 }
 
@@ -1637,63 +1694,6 @@ func cancelTask(taskID string) {
 		fmt.Printf(" %s✅ 任务 %s 已取消%s\n", Green+Bold, taskID, Reset)
 	} else {
 		fmt.Printf(" %s❌ 取消失败: %s%s\n", Red+Bold, tr.Error, Reset)
-	}
-}
-
-func taskCommandLoop(state *AppState) {
-	for {
-		fmt.Printf("\n %s输入命令%s\n", Yellow+Bold, Reset)
-		fmt.Printf("  %ssubmit <node_id> <command>%s — 提交任务\n", Blue, Reset)
-		fmt.Printf("  %scancel <task_id>%s — 取消任务\n", Blue, Reset)
-		fmt.Printf("  %srefresh (或 Enter)%s — 刷新任务列表\n", Blue, Reset)
-		fmt.Printf("  %sback%s — 返回上级\n", Blue, Reset)
-		fmt.Printf("\n task> ")
-
-		input := readLine("")
-		input = strings.TrimSpace(input)
-		if input == "" || strings.ToLower(input) == "refresh" || strings.ToLower(input) == "r" || strings.ToLower(input) == "list" {
-			return // 回到任务列表
-		}
-		if strings.ToLower(input) == "back" || strings.ToLower(input) == "q" {
-			return // 返回上级
-		}
-
-		parts := strings.Fields(input)
-		if len(parts) == 0 {
-			fmt.Printf(" %s未知命令: %s%s\n", Red, input, Reset)
-			continue
-		}
-
-		cmd := strings.ToLower(parts[0])
-		if cmd == "submit" && len(parts) >= 3 {
-			// 一行模式: submit <node_id> <command>
-			nodeID := parts[1]
-			command := strings.Join(parts[2:], " ")
-			fmt.Printf(" %s正在提交任务到节点 %s...%s\n", Yellow, nodeID, Reset)
-			submitTask(nodeID, command)
-		} else if cmd == "submit" && len(parts) == 2 {
-			// 交互式: 先给 node_id，补全 command
-			nodeID := parts[1]
-			fmt.Printf(" %s输入命令 > %s", Yellow, Reset)
-			command := readLine("")
-			command = strings.TrimSpace(command)
-			if command != "" {
-				fmt.Printf(" %s正在提交任务到节点 %s...%s\n", Yellow, nodeID, Reset)
-				submitTask(nodeID, command)
-			} else {
-				fmt.Printf(" %s❌ 命令不能为空%s\n", Red, Reset)
-			}
-		} else if cmd == "submit" {
-			fmt.Printf(" %s用法: submit <node_id> <command>%s\n", Blue, Reset)
-		} else if cmd == "cancel" && len(parts) >= 2 {
-			taskID := parts[1]
-			fmt.Printf(" %s正在取消任务 %s...%s\n", Yellow, taskID, Reset)
-			cancelTask(taskID)
-		} else if cmd == "cancel" {
-			fmt.Printf(" %s用法: cancel <task_id>%s\n", Blue, Reset)
-		} else {
-			fmt.Printf(" %s未知命令: %s%s\n", Red, input, Reset)
-		}
 	}
 }
 
