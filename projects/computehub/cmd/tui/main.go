@@ -1466,7 +1466,7 @@ func taskCommandLoop(state *AppState) {
 		fmt.Printf("  %sback%s — 返回上级\n", Blue, Reset)
 		fmt.Printf("\n task> ")
 
-		input := readLine("\n")
+		input := readLine("")
 		input = strings.TrimSpace(input)
 		if input == "" || strings.ToLower(input) == "refresh" || strings.ToLower(input) == "r" || strings.ToLower(input) == "list" {
 			return // 回到任务列表
