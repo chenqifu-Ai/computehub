@@ -84,14 +84,13 @@
 
 ## 🚨 系统状态监控
 
-### 实时系统状态 (2026-05-05 17:56 心跳)
-- **系统负载**: 🔴 22.58/21.91/21.94 — 持续高位（持续 4 天 15.6 小时运行）
-- **内存使用**: 🔴 76% (8.3G/11G), available 3.2G, swap 5.8G/11G
+### 实时系统状态 (2026-05-06 11:45 心跳)
+- **系统负载**: 🔴 21.74/21.47/20.48 — 持续高位（持续 5 天 9 小时运行）
+- **内存使用**: 🟡 65% (7.1G/11G), available 3.7G, swap 5.8G/11G
 - **磁盘空间**: 🟡 80% 使用, 93G 可用
-- **运行时间**: 4 天 15.6 小时
+- **运行时间**: 5 天
 - **当前模型**: ollama-cloud-2/deepseek-v4-flash
-- **Gateway**: ✅ 运行中
-- **TUI**: ✅ 运行中
+- **TUI Binary**: ✅ v0.7.7 (Android 端已编译)
 
 ### AI服务状态 (2026-05-05 更新)
 - **Primary (ollama-cloud-2)**: ✅ 正常
@@ -115,7 +114,7 @@
 ### 紧急事项
 - [ ] **🔴 CI/CD GitHub Actions** — PAT缺workflow scope，需手动创建新token
 - [ ] **🟡 ComputeHub真实GPU节点接入** — 需外网服务器验证
-- [ ] **🟡 Worker Agent部署** — 代码已完成，需GPU机器运行
+- [ ] **🟡 Worker Agent部署** — Fedora node (192.168.2.140) 已上线但SSH不通
 - [ ] **⚪ Gateway/TUI/Worker 版本号统一至 v0.7.0**
 
 ### 本周事项
@@ -124,3 +123,9 @@
 - [ ] GitHub 公开 ComputeHub 仓库
 - [ ] Worker Agent → 部署到真实GPU服务器测试
 - [ ] TUI 升级至 v0.7.0
+
+### ✅ 今日完成 (2026-05-06)
+- 🔧 **ComputeHub 节点注册修复** — 注册缺 max_concurrency 导致任务无法分配 ✅
+- 🔧 **task detail GET 接口** — 新增 /api/v1/tasks/detail 查看执行结果 ✅
+- 🤖 **Fedora 40 节点上线** — 192.168.2.140 (4核CPU/8GB) 作为 node_fedora_140 注册 ✅
+- ⏳ **Worker Agent 自动执行** — 编译了带 max_concurrency 修复的 worker 二进制，等 Fedora 在线后部署

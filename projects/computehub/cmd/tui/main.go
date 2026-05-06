@@ -741,6 +741,13 @@ func memColor(used, total float64) string {
 	return Blue + fmt.Sprintf("%.0f/%.0fGB", used, total) + Reset
 }
 
+// visiblePad 对字符串加颜色后按可见宽度右填充，确保表格对齐
+func visiblePad(s, color, reset string, width int) string {
+	p := width - len(s)
+	if p < 0 { p = 0 }
+	return color + s + reset + strings.Repeat(" ", p)
+}
+
 func powerColor(w float64) string {
 	if w > 430 { return Red + Bold + fmt.Sprintf("%.0fW", w) + Reset }
 	if w > 370 { return Yellow + fmt.Sprintf("%.0fW", w) + Reset }
@@ -827,52 +834,6 @@ func screenDashboard(state *AppState) {
 			renderDashboard(state)
 		case cmd == "n" || cmd == "nodes":
 			screenNodes(state)
-			detailInput := readLine("\r node> ")
-			detailInput = strings.TrimSpace(detailInput)
-			if detailInput != "" && detailInput != "q" && detailInput != "back" {
-				if strings.HasPrefix(strings.ToLower(detailInput), "delete ") || strings.HasPrefix(strings.ToLower(detailInput), "rm ") {
-					parts := strings.Fields(detailInput)
-					if len(parts) >= 2 {
-						targetNode := parts[1]
-						fmt.Printf("\n %s正在删除节点 %s...%s", Yellow, targetNode, Reset)
-						if err := unregisterNode(targetNode); err != nil {
-							fmt.Printf("\n %s❌ 删除失败: %v%s\n", Red+Bold, err, Reset)
-						} else {
-							fmt.Printf("\n %s✅ 节点 %s 已删除%s\n", Green+Bold, targetNode, Reset)
-						}
-						fmt.Printf("\n %s按 Enter 返回%s", Yellow, Reset)
-						readLine("\r")
-					}
-				} else if strings.ToLower(detailInput) == "add" || strings.ToLower(detailInput) == "new" {
-					fmt.Printf("\n")
-					fmt.Printf(" %s━━━ 新增节点 ━━━%s\n", Cyan+Bold, Reset)
-					fmt.Printf(" %s输入节点信息（直接 Enter 跳过可选字段）%s\n\n", Yellow, Reset)
-					fmt.Printf(" 节点ID %s>%s ", Dim, Reset)
-					nid := readLine("")
-					if nid == "" {
-						fmt.Printf(" %s❌ 节点ID不能为空%s\n", Red+Bold, Reset)
-					} else {
-						fmt.Printf(" GPU类型 (默认 H100) > ")
-						gpu := readLine("")
-						if gpu == "" { gpu = "H100" }
-						fmt.Printf(" 区域 (默认 cn-east) > ")
-						region := readLine("")
-						if region == "" { region = "cn-east" }
-						fmt.Printf(" CPU核心 (默认 16) > ")
-						fmt.Printf(" CPU核心 (默认 16) > ")
-						cpuStr := readLine("")
-						cpu := 16
-						if cpuStr != "" { fmt.Sscanf(cpuStr, "%d", &cpu) }
-						fmt.Printf(" 内存 (默认 32) > ")
-						memStr := readLine("")
-						mem := 32.0
-						if memStr != "" { fmt.Sscanf(memStr, "%f", &mem) }
-						registerNode(nid, gpu, region, cpu, mem)
-					}
-					fmt.Printf("\n %s按 Enter 返回%s", Yellow, Reset)
-					readLine("\r")
-				}
-			}
 		case cmd == "g" || cmd == "gpu" || cmd == "gpumon":
 			screenGPUMonitor(state)
 		case cmd == "map" || cmd == "regions" || cmd == "region":
@@ -1141,8 +1102,74 @@ func screenNodes(state *AppState) {
 	}
 
 	fmt.Println()
-	fmt.Printf(" %s输入节点ID查看详情 | delete <id> 删除 | add 新增 | Enter 返回%s\n", Yellow, Reset)
+	fmt.Printf(" %s输入节点ID查看详情 | d + 节点 ID 删除 | a 新增 | Enter 返回%s\n", Yellow, Reset)
 	fmt.Printf(" node> ")
+	input := readLine("")
+	input = strings.TrimSpace(input)
+
+	if input == "" {
+		return
+	}
+	if input == "q" || input == "quit" || input == "exit" {
+		return
+	}
+
+	// Add node
+	if strings.ToLower(input) == "a" || strings.ToLower(input) == "add" || strings.ToLower(input) == "new" {
+		fmt.Printf("\n")
+		fmt.Printf(" %s━━━ 新增节点 ━━━%s\n", Cyan+Bold, Reset)
+		fmt.Printf(" %s输入节点信息（直接 Enter 跳过可选字段）%s\n\n", Yellow, Reset)
+		fmt.Printf(" 节点ID > ")
+		nid := readLine("")
+		if nid == "" {
+			fmt.Printf(" %s❌ 节点 ID 不能为空%s\n", Red+Bold, Reset)
+		} else {
+			fmt.Printf(" GPU 类型 (默认 H100) > ")
+			gpu := readLine("")
+			if gpu == "" { gpu = "H100" }
+			fmt.Printf(" 区域 (默认 cn-east) > ")
+			region := readLine("")
+			if region == "" { region = "cn-east" }
+			fmt.Printf(" CPU 核心 (默认 16) > ")
+			cpuStr := readLine("")
+			cpu := 16
+			if cpuStr != "" { fmt.Sscanf(cpuStr, "%d", &cpu) }
+			fmt.Printf(" 内存 (默认 32 GB) > ")
+			memStr := readLine("")
+			mem := 32.0
+			if memStr != "" { fmt.Sscanf(memStr, "%f", &mem) }
+			registerNode(nid, gpu, region, cpu, mem)
+		}
+		fmt.Printf("\n %s按 Enter 返回%s", Yellow, Reset)
+		readLine("\r")
+		return
+	}
+
+	// Delete node: check for 'd <id>' or 'delete <id>' format
+	if strings.HasPrefix(strings.ToLower(input), "d ") || strings.HasPrefix(strings.ToLower(input), "delete ") {
+		parts := strings.Fields(input)
+		if len(parts) >= 2 {
+			targetNode := parts[len(parts)-1] // get last field as node ID
+			fmt.Printf("\n %s正在删除节点 %s...%s", Yellow, targetNode, Reset)
+			if err := unregisterNode(targetNode); err != nil {
+				fmt.Printf("\n %s❌ 删除失败: %v%s\n", Red+Bold, err, Reset)
+			} else {
+				fmt.Printf("\n %s✅ 节点 %s 已删除%s\n", Green+Bold, targetNode, Reset)
+			}
+			fmt.Printf("\n %s按 Enter 返回%s", Yellow, Reset)
+			readLine("\r")
+			return
+		}
+	}
+
+	// View node detail
+	if input != "" {
+		screenNodeDetail(state, input)
+		// Return to node list
+		fmt.Printf("\n %s按 Enter 返回%s", Yellow, Reset)
+		readLine("\r")
+		return
+	}
 }
 
 func truncate(s string, n int) string {
@@ -1504,7 +1531,7 @@ func screenTasks(state *AppState) {
 		fmt.Println()
 
 		// ── 节点任务分布 ──
-		fmt.Printf("\n %s━━━ 节点任务分布 ━━━%s\n", Cyan+Bold, Reset)
+		fmt.Printf("\n %s━━━ 节点任务分布 ━━━%s\n\n", Cyan+Bold, Reset)
 
 		type nodeTaskInfo struct {
 			id, region, gpu string
@@ -1516,24 +1543,36 @@ func screenTasks(state *AppState) {
 		}
 		sort.Slice(list, func(i, j int) bool { return list[i].active > list[j].active })
 
-		fmt.Printf("  %-24s │ %-10s │ %-8s │ %-9s │ %s\n",
-			White+Bold, "Node", "Region", "GPU", "Load")
-		fmt.Printf("  %s%s\n", Dim, strings.Repeat("─", 62))
+		// header
+		fmt.Printf("  │ %-26s │ %-10s │ %-10s │ %-18s │\n", "Node", "Region", "GPU", "Load (active/max)")
+		fmt.Printf("  │%s%s│\n", Dim, strings.Repeat("─", 74))
 
-	for _, li := range list {
-		loadBar := renderBar(float64(li.active), float64(li.max), 16)
-		fmt.Printf("  %-24s │ %-10s │ %-8s │ %3d/%-3d %s\n",
-			White+truncate(li.id, 24)+Reset,
-			li.region, li.gpu,
-			li.active, li.max, loadBar)
-	}
+		for _, li := range list {
+			loadStr := fmt.Sprintf("%d/%d", li.active, li.max)
+			pct := 0.0
+			if li.max > 0 {
+				pct = float64(li.active) / float64(li.max) * 100
+			}
+			pctColor := Green
+			if pct > 85 {
+				pctColor = Red
+			} else if pct > 65 {
+				pctColor = Yellow
+			}
+			fmt.Printf("  │ %-26s │ %-10s │ %-10s │ %s%-7s%s %s│\n",
+				truncate(li.id, 26),
+				li.region,
+				li.gpu,
+				pctColor, loadStr, Reset,
+				renderBar(float64(li.active), float64(li.max), 10))
+		}
 
 	// ── 按节点展示任务详情（含优先级） ──
 	if len(allTasks) > 0 {
-		fmt.Printf("\n %s━━━ 任务明细（优先级）━━━%s\n", Cyan+Bold, Reset)
-		fmt.Printf("  %-24s │ %-14s │ %-6s │ %-10s │ %-8s\n",
+		fmt.Printf("\n %s━━━ 任务明细（优先级降序）━━━%s\n", Cyan+Bold, Reset)
+		fmt.Printf("  │ %-26s │ %-14s │ %-8s │ %-10s │ %-8s│\n",
 			"Task ID", "Node", "Priority", "Status", "Source")
-		fmt.Printf("  %s%s\n", Dim, strings.Repeat("─", 72))
+		fmt.Printf("  │%s%s│\n", Dim, strings.Repeat("─", 78))
 
 		sort.Slice(allTasks, func(i, j int) bool {
 			if allTasks[i].Priority != allTasks[j].Priority {
@@ -1545,12 +1584,13 @@ func screenTasks(state *AppState) {
 		for _, t := range allTasks {
 			pc := priorityColor(t.Priority)
 			sc := statusColor(t.Status)
-			fmt.Printf("  %s%-24s%s │ %s%-14s%s │ %s%2d(%s)%-6s │ %s │ %-8s\n",
-				Dim, truncate(t.TaskID, 24), Reset,
-				Dim, truncate(findNodeIDForTask(taskMap, t.TaskID), 14), Reset,
-				pc, t.Priority, priorityLabel(t.Priority), Reset,
-				sc,
-				t.Source)
+			prioStr := fmt.Sprintf("%d", t.Priority)
+			fmt.Printf("  │ %-26s │ %-14s │ %s │ %s │ %-8s│\n",
+				truncate(t.TaskID, 26),
+				truncate(findNodeIDForTask(taskMap, t.TaskID), 14),
+				visiblePad(prioStr, pc, Reset, 8),
+				visiblePad(t.Status, sc, Reset, 10),
+				truncate(t.Source, 8))
 		}
 		fmt.Println()
 		fmt.Printf("  %s↑ 按优先级降序排列 | 数值 1-10, 10=Critical%s\n", Dim, Reset)
@@ -2040,79 +2080,6 @@ func main() {
 
 		case cmd == "n" || cmd == "nodes":
 			screenNodes(state)
-			// Wait for node selection or delete command
-			detailInput := readLine("\r node> ")
-			detailInput = strings.TrimSpace(detailInput)
-			if detailInput != "" && detailInput != "q" && detailInput != "back" {
-				if strings.HasPrefix(strings.ToLower(detailInput), "delete ") || strings.HasPrefix(strings.ToLower(detailInput), "rm ") {
-					parts := strings.Fields(detailInput)
-					if len(parts) >= 2 {
-						targetNode := parts[1]
-						fmt.Printf("\n %s正在删除节点 %s...%s", Yellow, targetNode, Reset)
-						if err := unregisterNode(targetNode); err != nil {
-							fmt.Printf("\n %s❌ 删除失败: %v%s\n", Red+Bold, err, Reset)
-						} else {
-							fmt.Printf("\n %s✅ 节点 %s 已删除%s\n", Green+Bold, targetNode, Reset)
-						}
-						fmt.Printf("\n %s按 Enter 返回%s", Yellow, Reset)
-						readLine("\r")
-					} else {
-						fmt.Printf("\n %s用法: delete <node_id> 或 rm <node_id>%s\n", Yellow, Reset)
-						fmt.Printf("\n %s按 Enter 返回%s", Yellow, Reset)
-						readLine("\r")
-					}
-				} else if strings.ToLower(detailInput) == "add" || strings.ToLower(detailInput) == "new" {
-					fmt.Printf("\n")
-					fmt.Printf(" %s━━━ 新增节点 ━━━%s\n", Cyan+Bold, Reset)
-					fmt.Printf(" %s输入节点信息（直接 Enter 跳过可选字段）%s\n\n", Yellow, Reset)
-					fmt.Printf(" 节点ID %s>%s ", Dim, Reset)
-					nid := readLine("")
-					if nid == "" {
-						fmt.Printf(" %s❌ 节点ID不能为空%s\n", Red+Bold, Reset)
-						fmt.Printf("\n %s按 Enter 返回%s", Yellow, Reset)
-						readLine("\r")
-					} else {
-						fmt.Printf(" GPU类型 (默认 H100) > ")
-						gpu := readLine("")
-						if gpu == "" { gpu = "H100" }
-						fmt.Printf(" 区域 (默认 cn-east) > ")
-						region := readLine("")
-						if region == "" { region = "cn-east" }
-						fmt.Printf(" CPU核心 (默认 16) > ")
-						cpuStr := readLine("")
-						cpu := 16
-						if cpuStr != "" { fmt.Sscanf(cpuStr, "%d", &cpu) }
-						fmt.Printf(" 内存GB (默认 64) > ")
-						memStr := readLine("")
-						mem := 64.0
-						if memStr != "" { fmt.Sscanf(memStr, "%f", &mem) }
-						fmt.Printf(" %s正在注册节点 %s...%s", Yellow, nid, Reset)
-						if err := registerNode(nid, gpu, region, cpu, mem); err != nil {
-							fmt.Printf("\n %s❌ 注册失败: %v%s\n", Red+Bold, err, Reset)
-						} else {
-							fmt.Printf("\n %s✅ 节点 %s 注册成功! [%s | %s | %dc/%dGB]%s\n", Green+Bold, nid, gpu, region, cpu, int(mem), Reset)
-						}
-						fmt.Printf("\n %s按 Enter 返回%s", Yellow, Reset)
-						readLine("\r")
-					}
-				} else {
-					screenNodeDetail(state, detailInput)
-					// Check if user wants to delete
-					fmt.Printf("\r detail> ")
-					detailCmd := readLine("")
-					dc := strings.ToLower(strings.TrimSpace(detailCmd))
-					if dc == "d" || dc == "delete" || dc == "rm" {
-						fmt.Printf("\n %s删除节点 %s...%s", Yellow, detailInput, Reset)
-						if err := unregisterNode(detailInput); err != nil {
-							fmt.Printf("\n %s❌ 删除失败: %v%s\n", Red+Bold, err, Reset)
-						} else {
-							fmt.Printf("\n %s✅ 节点 %s 已删除%s\n", Green+Bold, detailInput, Reset)
-						}
-						fmt.Printf("\n %s按 Enter 返回%s", Yellow, Reset)
-						readLine("\r")
-					}
-				}
-			}
 
 		case cmd == "g" || cmd == "gpu" || cmd == "gpumon":
 			screenGPUMonitor(state)

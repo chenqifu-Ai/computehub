@@ -62,13 +62,14 @@ var defaultConfig = Config{
 
 // ── API 类型 ──
 type RegisterReq struct {
-	NodeID     string  `json:"node_id"`
-	GPUType    string  `json:"gpu_type"`
-	Region     string  `json:"region"`
-	CPUCores   int     `json:"cpu_cores"`
-	MemoryGB   float64 `json:"memory_gb"`
-	Status     string  `json:"status"`
-	IPAddress  string  `json:"ip_address"`
+	NodeID         string  `json:"node_id"`
+	GPUType        string  `json:"gpu_type"`
+	Region         string  `json:"region"`
+	CPUCores       int     `json:"cpu_cores"`
+	MemoryGB       float64 `json:"memory_gb"`
+	Status         string  `json:"status"`
+	IPAddress      string  `json:"ip_address"`
+	MaxConcurrency int     `json:"max_concurrency"`
 }
 
 type HeartbeatReq struct {
@@ -210,13 +211,14 @@ func main() {
 func (s *WorkerState) register() error {
 	ip := getLocalIP()
 	req := RegisterReq{
-		NodeID:   s.nodeID,
-		GPUType:  s.config.GPUType,
-		Region:   s.config.Region,
-		CPUCores: s.config.CPUCores,
-		MemoryGB: s.config.MemoryGB,
-		Status:   "online",
-		IPAddress: ip,
+		NodeID:         s.nodeID,
+		GPUType:        s.config.GPUType,
+		Region:         s.config.Region,
+		CPUCores:       s.config.CPUCores,
+		MemoryGB:       s.config.MemoryGB,
+		Status:         "online",
+		IPAddress:      ip,
+		MaxConcurrency: s.config.MaxConcurrent,
 	}
 
 	body, _ := json.Marshal(req)

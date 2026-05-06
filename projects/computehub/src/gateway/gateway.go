@@ -254,6 +254,7 @@ func (g *OpcGateway) Serve(port int, dashboardDir ...string) {
 	http.HandleFunc("/api/v1/tasks/result", g.handleTaskResult)
 	http.HandleFunc("/api/v1/tasks/cancel", g.handleTaskCancel)
 	http.HandleFunc("/api/v1/tasks/list", g.handleTaskList)
+	http.HandleFunc("/api/v1/tasks/detail", g.handleTaskDetail)
 
 	// Prometheus metrics endpoint
 	http.HandleFunc("/metrics", prometheus.MetricsHandler(g.Metrics.Registry))
@@ -306,6 +307,8 @@ func (g *OpcGateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		g.handleTaskCancel(w, r)
 	case "/api/v1/tasks/list":
 		g.handleTaskList(w, r)
+	case "/api/v1/tasks/detail":
+		g.handleTaskDetail(w, r)
 	default:
 		http.NotFound(w, r)
 	}
@@ -749,6 +752,46 @@ func (g *OpcGateway) handleTaskList(w http.ResponseWriter, r *http.Request) {
 		Success: true,
 		Data:    tasks,
 	})
+}
+
+// handleTaskDetail returns task execution results (stdout/stderr/exit_code)
+func (g *OpcGateway) handleTaskDetail(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, `{"error":"Only GET allowed"}`, http.StatusMethodNotAllowed)
+		return
+	}
+
+	taskID := r.URL.Query().Get("task_id")
+	if taskID == "" {
+		g.sendResponse(w, Response{Success: false, Error: "task_id is required"})
+		return
+	}
+
+	// Search all nodes for this task
+	nodes := g.Kernel.NodeMgr.ListNodes()
+	for _, state := range nodes {
+		if ts, exists := state.Tasks[taskID]; exists {
+			result := map[string]interface{}{
+				"task_id": taskID,
+				"node_id": state.Register.NodeID,
+				"status":  ts.Status,
+				"command": ts.Task.Command,
+				"priority": ts.Task.Priority,
+			}
+			if ts.Result != nil {
+				result["exit_code"] = ts.Result.ExitCode
+				result["stdout"] = ts.Result.Stdout
+				result["stderr"] = ts.Result.Stderr
+				result["duration"] = ts.Result.Duration
+				result["success"] = ts.Result.Success
+				result["verified"] = ts.Result.Verified
+			}
+			g.sendResponse(w, Response{Success: true, Data: result})
+			return
+		}
+	}
+
+	g.sendResponse(w, Response{Success: false, Error: fmt.Sprintf("task %s not found", taskID)})
 }
 
 func (g *OpcGateway) handleTaskCancel(w http.ResponseWriter, r *http.Request) {
