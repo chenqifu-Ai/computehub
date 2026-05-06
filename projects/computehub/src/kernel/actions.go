@@ -272,11 +272,12 @@ func (nm *NodeManager) SubmitTask(task *TaskSubmit) error {
 		state := nm.nodes[bestNodeID]
 		state.Tasks[task.TaskID] = &TaskState{
 			Task:     task,
-			Status:   "running",
+			Status:   "pending",   // pending → Worker polls and claims
 			Assigned: bestNodeID,
 			Created:  time.Now(),
 		}
-		state.Metrics.ActiveTasks++
+		// Don't increment ActiveTasks until Worker actually claims it via poll
+		// state.Metrics.ActiveTasks++
 		logWithTimestamp("[NodeMgr] Assigned task %s (prio=%d) → node %s", task.TaskID, task.Priority, bestNodeID)
 		return nil
 	}
@@ -363,11 +364,12 @@ func (nm *NodeManager) dispatchFromQueue() {
 		nodeState := nm.nodes[bestNodeID]
 		nodeState.Tasks[nextTask.TaskID] = &TaskState{
 			Task:     taskPayload,
-			Status:   "running",
+			Status:   "pending",   // pending → Worker polls and claims
 			Assigned: bestNodeID,
 			Created:  time.Now(),
 		}
-		nodeState.Metrics.ActiveTasks++
+		// Don't increment ActiveTasks until claimed
+		// nodeState.Metrics.ActiveTasks++
 
 		logWithTimestamp("[NodeMgr] Dispatched queued task %s (prio=%d) → node %s",
 			nextTask.TaskID, nextTask.Priority, bestNodeID)
@@ -396,6 +398,51 @@ func (nm *NodeManager) GetNodeState(nodeID string) (*NodeManagerState, error) {
 		return nil, fmt.Errorf("node %s not found", nodeID)
 	}
 	return state, nil
+}
+
+// NextPendingTask pops the next pending task from the priority queue.
+// Returns nil if queue is empty.
+func (nm *NodeManager) NextPendingTask() *TaskSubmit {
+	nm.mu.Lock()
+	defer nm.mu.Unlock()
+
+	next, ok := nm.prioQueue.PeekTask()
+	if !ok {
+		return nil
+	}
+
+	nm.prioQueue.PopTask()
+	payload, ok := next.Payload.(*TaskSubmit)
+	if !ok {
+		return nil
+	}
+	return payload
+}
+
+// AssignTaskToNode assigns a task to a specific node with "running" status.
+// Returns error if the node doesn't exist.
+func (nm *NodeManager) AssignTaskToNode(taskID, nodeID string) error {
+	nm.mu.Lock()
+	defer nm.mu.Unlock()
+
+	state, exists := nm.nodes[nodeID]
+	if !exists {
+		return fmt.Errorf("node %s not found", nodeID)
+	}
+
+	// Mark task as running on this node
+	// The task payload was already popped from queue, so we need to look
+	// in the node's tasks to find it (it should have been pre-created)
+	if ts, exists := state.Tasks[taskID]; exists {
+		ts.Status = "running"
+		ts.Assigned = nodeID
+		state.Metrics.ActiveTasks++
+		return nil
+	}
+
+	// Task not found — create a placeholder (shouldn't normally happen)
+	logWithTimestamp("[NodeMgr] task %s not found in node %s tasks on assign; creating placeholder", taskID, nodeID)
+	return fmt.Errorf("task %s not staged on node %s", taskID, nodeID)
 }
 
 // ListNodes returns all registered nodes

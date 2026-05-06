@@ -17,7 +17,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net"
 	"net/http"
 	"os"
@@ -81,6 +80,35 @@ type HeartbeatReq struct {
 	CPULoad       float64    `json:"cpu_load"`
 }
 
+// PollReq is the request body for the polling endpoint
+type PollReq struct {
+	NodeID          string `json:"node_id"`
+	GPUType         string `json:"gpu_type,omitempty"`
+	Region          string `json:"region,omitempty"`
+	RunningTaskCount int   `json:"running_task_count,omitempty"`
+}
+
+// PollResp is the response from the polling endpoint
+type PollResp struct {
+	Success bool                   `json:"success"`
+	Data    *PollRespData          `json:"data"`
+	Error   string                 `json:"error,omitempty"`
+}
+
+type PollRespData struct {
+	Task    *PolledTask `json:"task"`
+	Message string      `json:"message,omitempty"`
+}
+
+type PolledTask struct {
+	TaskID     string `json:"task_id"`
+	Command    string `json:"command"`
+	Timeout    int    `json:"timeout"`
+	Priority   int    `json:"priority"`
+	NodeID     string `json:"node_id,omitempty"`
+	SourceType string `json:"source_type,omitempty"`
+}
+
 type TaskInfo struct {
 	TaskID    string `json:"task_id"`
 	Source    string `json:"source"`
@@ -88,11 +116,6 @@ type TaskInfo struct {
 	Status    string `json:"status"`
 	Retries   int    `json:"retries"`
 	CreatedAt string `json:"created_at"`
-}
-
-type TaskListResponse struct {
-	Success bool                   `json:"success"`
-	Data    map[string][]TaskInfo  `json:"data"`
 }
 
 type TaskSubmit struct {
@@ -322,82 +345,76 @@ func (s *WorkerState) taskPollLoop() {
 			continue
 		}
 
-		// Fetch task list
-		tasks, err := s.fetchTasks()
+		// Poll Gateway for a pending task
+		task, err := s.pollTask()
 		if err != nil {
+			fmt.Printf(" %s⚠️ poll 失败: %v%s\n", yellow(""), err, reset())
 			time.Sleep(s.config.PollInterval)
 			continue
 		}
 
-		// Look for pending tasks assigned to us
-		for _, task := range tasks {
-			if task.Status == "pending" {
-				s.mu.Lock()
-				_, alreadyRunning := s.runningTasks[task.TaskID]
-				s.mu.Unlock()
-				if alreadyRunning {
-					continue
-				}
-
-				fmt.Printf("\n %s📋 发现待处理任务: %s%s\n", yellow(bold("")), cyan(task.TaskID), reset())
-
-				// Fetch full task detail (includes command)
-				detail, err := s.fetchTaskDetail(task.TaskID)
-				if err != nil {
-					fmt.Printf(" %s⚠️ 无法获取任务详情: %v%s\n", yellow(""), err, reset())
-					continue
-				}
-
-				// Execute in background
-				go s.executeTask(detail)
-			}
+		if task == nil {
+			// No pending tasks, sleep and retry
+			time.Sleep(s.config.PollInterval)
+			continue
 		}
+
+		fmt.Printf("\n %s📋 认领到任务: %s%s\n", yellow(bold("")), cyan(task.TaskID), reset())
+		fmt.Printf("   命令: %s%s%s\n", dim(""), task.Command, reset())
+
+		// Execute in background
+		go s.executeTask(&TaskDetail{
+			TaskID:     task.TaskID,
+			Command:    task.Command,
+			NodeID:     task.NodeID,
+			Timeout:    task.Timeout,
+			Priority:   task.Priority,
+			SourceType: task.SourceType,
+		})
 
 		time.Sleep(s.config.PollInterval)
 	}
 }
 
-func (s *WorkerState) fetchTasks() ([]TaskInfo, error) {
-	resp, err := s.client.Get(s.config.GatewayURL + "/api/v1/tasks/list")
+// pollTask 轮询 Gateway 获取待处理任务
+func (s *WorkerState) pollTask() (*PolledTask, error) {
+	req := PollReq{
+		NodeID:          s.nodeID,
+		GPUType:         s.config.GPUType,
+		Region:          s.config.Region,
+		RunningTaskCount: len(s.runningTasks),
+	}
+
+	body, _ := json.Marshal(req)
+	resp, err := s.client.Post(
+		s.config.GatewayURL+"/api/v1/tasks/poll",
+		"application/json",
+		bytes.NewBuffer(body),
+	)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("连接失败: %w", err)
 	}
 	defer resp.Body.Close()
 
-	body, _ := io.ReadAll(resp.Body)
-	var listResp TaskListResponse
-	if err := json.Unmarshal(body, &listResp); err != nil {
-		return nil, err
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("HTTP %d", resp.StatusCode)
 	}
-
-	tasks := listResp.Data[s.nodeID]
-	if tasks == nil {
-		return nil, nil
-	}
-	return tasks, nil
-}
-
-func (s *WorkerState) fetchTaskDetail(taskID string) (*TaskDetail, error) {
-	url := fmt.Sprintf("%s/api/v1/tasks/detail?task_id=%s&node_id=%s",
-		s.config.GatewayURL, taskID, s.nodeID)
-	resp, err := s.client.Get(url)
-	if err != nil {
-		return nil, fmt.Errorf("connection failed: %w", err)
-	}
-	defer resp.Body.Close()
 
 	var wrapper struct {
-		Success bool        `json:"success"`
-		Data    *TaskDetail `json:"data"`
-		Error   string      `json:"error"`
+		Success bool          `json:"success"`
+		Data    *PollRespData `json:"data"`
+		Error   string        `json:"error"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&wrapper); err != nil {
-		return nil, fmt.Errorf("parse error: %w", err)
+		return nil, fmt.Errorf("JSON 解析失败: %w", err)
 	}
 	if !wrapper.Success {
-		return nil, fmt.Errorf("API error: %s", wrapper.Error)
+		return nil, fmt.Errorf("API 错误: %s", wrapper.Error)
 	}
-	return wrapper.Data, nil
+	if wrapper.Data == nil || wrapper.Data.Task == nil {
+		return nil, nil // 没有待处理任务
+	}
+	return wrapper.Data.Task, nil
 }
 
 // ── GPU 采集 ──
