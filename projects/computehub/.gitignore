@@ -22,3 +22,4 @@ config.local.*
 gateway
 worker
 computehub-*
+source.tar.gz
