@@ -1586,8 +1586,9 @@ func findNodeIDForTask(taskMap map[string][]TaskListInfo, targetID string) strin
 // ═══════════════════════════════════════════
 
 func submitTask(nodeID, command string) {
+	taskID := fmt.Sprintf("tui-%d", time.Now().UnixNano())
 	payload := map[string]interface{}{
-		"task_id":      fmt.Sprintf("tui-%d", time.Now().UnixNano()),
+		"task_id":      taskID,
 		"command":      command,
 		"source_type":  "tui",
 		"priority":     5,
@@ -1607,7 +1608,11 @@ func submitTask(nodeID, command string) {
 	json.Unmarshal(body, &tr)
 
 	if tr.Success {
-		fmt.Printf(" %s✅ 任务提交成功!%s  任务ID: %v\n", Green+Bold, Reset, tr.Data)
+		fmt.Printf(" %s✅ 任务提交成功!%s\n", Green+Bold, Reset)
+		fmt.Printf("   📋 任务ID: %s%s%s\n", Yellow, taskID, Reset)
+		fmt.Printf("   🎯 节点: %s%s%s\n", Yellow, nodeID, Reset)
+		fmt.Printf("   ⚙️  命令: %s%s%s\n", Dim, truncate(command, 50), Reset)
+		fmt.Printf("   %s提示: 可用 cancel %s 取消此任务%s\n", Dim, taskID, Reset)
 	} else {
 		fmt.Printf(" %s❌ 提交失败: %s%s\n", Red+Bold, tr.Error, Reset)
 	}
