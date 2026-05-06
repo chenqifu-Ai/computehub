@@ -115,7 +115,7 @@
 - [ ] **🟢 CI/CD GitHub Actions** — workflow 已创建并推送至 GitHub ✅
 - [ ] **🟡 ComputeHub Gateway Worker polling** — 修复 Worker polling API (404)，使 Worker 能自动获取任务并执行
 - [ ] **🟡 Worker Agent部署** — Fedora node (192.168.2.140) 已可达，SSH 登录成功 (chenqifu/c9fc9f,.)，Worker 已启动但无任务执行
-- [ ] **⚪ Gateway/TUI/Worker 版本号统一至 v0.7.0**
+- [ ] **⚪ Gateway/TUI/Worker 版本号统一至 v0.7.0** — Worker ✅ 已升级 (140/v0.7.0)，Gateway ❌ 待修复，TUI ❌ 待整合
 
 ### 本周事项
 - [ ] ComputeHub Sprint 5 (Docker已完/CI待办/压测)

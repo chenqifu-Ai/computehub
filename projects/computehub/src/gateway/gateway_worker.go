@@ -115,6 +115,67 @@ type TaskPollItem struct {
 	SourceType string `json:"source_type,omitempty"`
 }
 
+// handleTaskProgress — Worker 流式输出推送 + TUI 轮询查询
+// POST: Worker 定期推送增量输出
+//   Body: { "task_id": "...", "node_id": "...", "stdout": "...", "stderr": "..." }
+//
+// GET: TUI 轮询获取当前输出
+//   ?task_id=xxx  → 返回当前累计 stdout/stderr
+func (g *OpcGateway) handleTaskProgress(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodPost:
+		// Worker pushes incremental output
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			g.sendResponse(w, Response{Success: false, Error: "Failed to read request body"})
+			return
+		}
+		defer r.Body.Close()
+
+		var req struct {
+			TaskID string `json:"task_id"`
+			NodeID string `json:"node_id"`
+			Stdout string `json:"stdout,omitempty"`
+			Stderr string `json:"stderr,omitempty"`
+		}
+		if err := json.Unmarshal(body, &req); err != nil {
+			g.sendResponse(w, Response{Success: false, Error: fmt.Sprintf("Invalid JSON: %v", err)})
+			return
+		}
+
+		if req.TaskID == "" || req.NodeID == "" {
+			g.sendResponse(w, Response{Success: false, Error: "task_id and node_id are required"})
+			return
+		}
+
+		if err := g.Kernel.NodeMgr.UpdateTaskStream(req.TaskID, req.NodeID, req.Stdout, req.Stderr); err != nil {
+			g.sendResponse(w, Response{Success: false, Error: err.Error()})
+			return
+		}
+
+		g.sendResponse(w, Response{Success: true, Data: map[string]string{"message": "stream updated"}})
+
+	case http.MethodGet:
+		// TUI queries current output
+		taskID := r.URL.Query().Get("task_id")
+		if taskID == "" {
+			g.sendResponse(w, Response{Success: false, Error: "task_id is required"})
+			return
+		}
+
+		so, err := g.Kernel.NodeMgr.GetTaskStream(taskID)
+		if err != nil {
+			g.sendResponse(w, Response{Success: false, Error: err.Error()})
+			return
+		}
+
+		g.sendResponse(w, Response{Success: true, Data: so})
+
+	default:
+		http.Error(w, `{"error":"Only GET and POST allowed"}`, http.StatusMethodNotAllowed)
+	}
+}
+
 // handleTaskDetailWithNode — 增强版任务详情，支持按节点过滤
 func (g *OpcGateway) handleTaskDetail(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {

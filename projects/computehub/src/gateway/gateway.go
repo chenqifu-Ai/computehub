@@ -256,6 +256,7 @@ func (g *OpcGateway) Serve(port int, dashboardDir ...string) {
 	http.HandleFunc("/api/v1/tasks/list", g.handleTaskList)
 	http.HandleFunc("/api/v1/tasks/detail", g.handleTaskDetail)
 	http.HandleFunc("/api/v1/tasks/poll", g.handleTaskPoll)
+	http.HandleFunc("/api/v1/tasks/progress", g.handleTaskProgress) // streaming output
 
 	// Prometheus metrics endpoint
 	http.HandleFunc("/metrics", prometheus.MetricsHandler(g.Metrics.Registry))

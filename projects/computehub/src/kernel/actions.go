@@ -113,12 +113,40 @@ type NodeManagerState struct {
 }
 
 type TaskState struct {
-	Task     *TaskSubmit
-	Status   string // "pending" | "running" | "completed" | "failed" | "cancelled"
-	Assigned string // node_id
-	Result   *TaskResult
-	Retries  int
-	Created  time.Time
+	Task        *TaskSubmit
+	Status      string // "pending" | "running" | "completed" | "failed" | "cancelled"
+	Assigned    string // node_id
+	Result      *TaskResult
+	Retries     int
+	Created     time.Time
+	
+	// Streaming output (for long-running tasks)
+	StreamStdout string `json:"stream_stdout"`
+	StreamStderr string `json:"stream_stderr"`
+	StreamUpdated time.Time `json:"stream_updated"`
+}
+
+// AppendStreamOutput appends incremental output to the task's stream buffer
+func (ts *TaskState) AppendStreamOutput(stdout, stderr string) {
+	if stdout != "" {
+		ts.StreamStdout += stdout
+	}
+	if stderr != "" {
+		ts.StreamStderr += stderr
+	}
+	ts.StreamUpdated = time.Now()
+}
+
+// StreamOutput represents the streaming output state of a task
+type StreamOutput struct {
+	TaskID       string    `json:"task_id"`
+	NodeID       string    `json:"node_id"`
+	Stdout       string    `json:"stdout"`
+	Stderr       string    `json:"stderr"`
+	UpdatedAt    time.Time `json:"updated_at"`
+	Running      bool      `json:"running"`
+	ExitCode     int       `json:"exit_code,omitempty"`
+	Duration     string    `json:"duration,omitempty"`
 }
 
 // NewNodeManager creates a new node manager
@@ -131,6 +159,51 @@ func NewNodeManager(maxNodes int) *NodeManager {
 		prioSched:   scheduler.NewPriorityScheduler(scheduler.DefaultConfig()),
 		preemptMgr:  scheduler.NewPreemptManager(prioQueue),
 	}
+}
+
+// UpdateTaskStream updates the streaming output for a running task
+func (nm *NodeManager) UpdateTaskStream(taskID, nodeID, stdout, stderr string) error {
+	nm.mu.Lock()
+	defer nm.mu.Unlock()
+
+	state, exists := nm.nodes[nodeID]
+	if !exists {
+		return fmt.Errorf("node %s not found", nodeID)
+	}
+
+	ts, exists := state.Tasks[taskID]
+	if !exists {
+		return fmt.Errorf("task %s not found on node %s", taskID, nodeID)
+	}
+
+	ts.AppendStreamOutput(stdout, stderr)
+	return nil
+}
+
+// GetTaskStream returns the current streaming output for a task
+func (nm *NodeManager) GetTaskStream(taskID string) (*StreamOutput, error) {
+	nm.mu.RLock()
+	defer nm.mu.RUnlock()
+
+	for _, state := range nm.nodes {
+		if ts, exists := state.Tasks[taskID]; exists {
+			running := ts.Status == "running" || ts.Status == "pending"
+			so := &StreamOutput{
+				TaskID:    taskID,
+				NodeID:    state.Register.NodeID,
+				Stdout:    ts.StreamStdout,
+				Stderr:    ts.StreamStderr,
+				UpdatedAt: ts.StreamUpdated,
+				Running:   running,
+			}
+			if ts.Result != nil {
+				so.ExitCode = ts.Result.ExitCode
+				so.Duration = ts.Result.Duration
+			}
+			return so, nil
+		}
+	}
+	return nil, fmt.Errorf("task %s not found", taskID)
 }
 
 // RegisterNode registers a new compute node

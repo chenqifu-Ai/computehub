@@ -14,6 +14,7 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -494,10 +495,21 @@ func (s *WorkerState) executeTask(task *TaskDetail) {
 
 	start := time.Now()
 
-	ctx := s.client
-	_ = ctx
-
 	cmd := exec.Command("sh", "-c", task.Command)
+
+	// Get stdout pipe for streaming
+	stdoutPipe, err := cmd.StdoutPipe()
+	if err != nil {
+		fmt.Printf(" %s❌ stdout pipe 创建失败: %v%s\n", red(bold("")), err, reset())
+		s.submitTaskError(task.TaskID, err.Error())
+		return
+	}
+	stderrPipe, err := cmd.StderrPipe()
+	if err != nil {
+		fmt.Printf(" %s❌ stderr pipe 创建失败: %v%s\n", red(bold("")), err, reset())
+		s.submitTaskError(task.TaskID, err.Error())
+		return
+	}
 
 	// Set timeout
 	if task.Timeout > 0 {
@@ -517,14 +529,112 @@ func (s *WorkerState) executeTask(task *TaskDetail) {
 	s.taskCount++
 	s.mu.Unlock()
 
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
+	// Start the command
+	if err := cmd.Start(); err != nil {
+		fmt.Printf(" %s❌ 启动命令失败: %v%s\n", red(bold("")), err, reset())
+		s.mu.Lock()
+		delete(s.runningTasks, task.TaskID)
+		s.mu.Unlock()
+		s.submitTaskError(task.TaskID, err.Error())
+		return
+	}
 
-	exitCode := 0
-	err := cmd.Run()
+	// Read stdout and stderr asynchronously with streaming
+	var stdoutBuf, stderrBuf bytes.Buffer
+	var stdoutDone, stderrDone bool
+	var mu sync.Mutex
+
+	// Streaming ticker — pushes incremental output every 500ms
+	streamTicker := time.NewTicker(500 * time.Millisecond)
+	stopStream := make(chan struct{})
+
+	go func() {
+		scanner := bufio.NewScanner(stdoutPipe)
+		for scanner.Scan() {
+			line := scanner.Text() + "\n"
+			mu.Lock()
+			stdoutBuf.WriteString(line)
+			mu.Unlock()
+		}
+		mu.Lock()
+		stdoutDone = true
+		mu.Unlock()
+	}()
+
+	go func() {
+		scanner := bufio.NewScanner(stderrPipe)
+		for scanner.Scan() {
+			line := scanner.Text() + "\n"
+			mu.Lock()
+			stderrBuf.WriteString(line)
+			mu.Unlock()
+		}
+		mu.Lock()
+		stderrDone = true
+		mu.Unlock()
+	}()
+
+	// Background streaming to Gateway
+	go func() {
+		var lastStdout, lastStderr int
+		for {
+			select {
+			case <-streamTicker.C:
+				mu.Lock()
+				currentStdout := stdoutBuf.String()
+				currentStderr := stderrBuf.String()
+				mu.Unlock()
+
+				// Compute increment
+				newStdout := ""
+				if len(currentStdout) > lastStdout {
+					newStdout = currentStdout[lastStdout:]
+				}
+				newStderr := ""
+				if len(currentStderr) > lastStderr {
+					newStderr = currentStderr[lastStderr:]
+				}
+
+				if newStdout != "" || newStderr != "" {
+					s.sendStreamProgress(task.TaskID, newStdout, newStderr)
+					lastStdout = len(currentStdout)
+					lastStderr = len(currentStderr)
+				}
+
+				if stdoutDone && stderrDone {
+					// Send remaining buffer
+					remainingStdout := ""
+					if len(currentStdout) > lastStdout {
+						remainingStdout = currentStdout[lastStdout:]
+					}
+					remainingStderr := ""
+					if len(currentStderr) > lastStderr {
+						remainingStderr = currentStderr[lastStderr:]
+					}
+					if remainingStdout != "" || remainingStderr != "" {
+						s.sendStreamProgress(task.TaskID, remainingStdout, remainingStderr)
+					}
+					close(stopStream)
+					return
+				}
+			case <-stopStream:
+				streamTicker.Stop()
+				return
+			}
+		}
+	}()
+
+	// Wait for command completion
+	err = cmd.Wait()
 	duration := time.Since(start)
 
+	// Wait for streaming goroutine to finish
+	select {
+	case <-stopStream:
+	case <-time.After(2 * time.Second):
+	}
+
+	exitCode := 0
 	if err != nil {
 		if exitErr, ok := err.(*exec.ExitError); ok {
 			exitCode = exitErr.ExitCode()
@@ -540,29 +650,24 @@ func (s *WorkerState) executeTask(task *TaskDetail) {
 
 	success := exitCode == 0
 
+	mu.Lock()
+	finalStdout := stdoutBuf.String()
+	finalStderr := stderrBuf.String()
+	mu.Unlock()
+
 	result := TaskResult{
 		TaskID:     task.TaskID,
 		Success:    success,
 		ExitCode:   exitCode,
-		Stdout:     truncateString(stdout.String(), 100*1024),
-		Stderr:     truncateString(stderr.String(), 100*1024),
+		Stdout:     truncateString(finalStdout, 100*1024),
+		Stderr:     truncateString(finalStderr, 100*1024),
 		Duration:   duration.Round(time.Millisecond).String(),
 		ExecutedOn: s.nodeID,
 		Verified:   true,
 	}
 
 	// Submit result
-	body, _ := json.Marshal(result)
-	resp, err := s.client.Post(
-		s.config.GatewayURL+"/api/v1/tasks/result",
-		"application/json",
-		bytes.NewBuffer(body),
-	)
-	if err != nil {
-		fmt.Printf(" %s❌ 结果回传失败: %v%s\n", red(bold("")), err, reset())
-		return
-	}
-	resp.Body.Close()
+	s.submitTaskResult(result)
 
 	statusIcon := "✅"
 	statusColor := green
@@ -578,6 +683,55 @@ func (s *WorkerState) executeTask(task *TaskDetail) {
 
 	// Save report
 	s.saveTaskReport(task.TaskID, result)
+}
+
+// sendStreamProgress sends incremental output to Gateway
+func (s *WorkerState) sendStreamProgress(taskID, stdout, stderr string) {
+	body, _ := json.Marshal(map[string]string{
+		"task_id": taskID,
+		"node_id": s.nodeID,
+		"stdout":  stdout,
+		"stderr":  stderr,
+	})
+	resp, err := s.client.Post(
+		s.config.GatewayURL+"/api/v1/tasks/progress",
+		"application/json",
+		bytes.NewBuffer(body),
+	)
+	if err != nil {
+		// Silently ignore stream errors — don't disrupt execution
+		return
+	}
+	resp.Body.Close()
+}
+
+// submitTaskError submits a task error result
+func (s *WorkerState) submitTaskError(taskID, errMsg string) {
+	result := TaskResult{
+		TaskID:     taskID,
+		Success:    false,
+		ExitCode:   -1,
+		Stderr:     errMsg,
+		Duration:   "0s",
+		ExecutedOn: s.nodeID,
+		Verified:   false,
+	}
+	s.submitTaskResult(result)
+}
+
+// submitTaskResult submits the final task result to Gateway
+func (s *WorkerState) submitTaskResult(result TaskResult) {
+	body, _ := json.Marshal(result)
+	resp, err := s.client.Post(
+		s.config.GatewayURL+"/api/v1/tasks/result",
+		"application/json",
+		bytes.NewBuffer(body),
+	)
+	if err != nil {
+		fmt.Printf(" %s❌ 结果回传失败: %v%s\n", red(bold("")), err, reset())
+		return
+	}
+	resp.Body.Close()
 }
 
 func (s *WorkerState) saveTaskReport(taskID string, result TaskResult) {

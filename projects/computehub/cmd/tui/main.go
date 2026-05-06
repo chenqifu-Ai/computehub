@@ -1679,8 +1679,129 @@ func findNodeIDForTask(taskMap map[string][]TaskListInfo, targetID string) strin
 }
 
 // ═══════════════════════════════════════════
-// TASK COMMANDS — submit / cancel / list
+// TASK COMMANDS — submit / cancel / list / live
 // ═══════════════════════════════════════════
+
+// StreamOutput represents the streaming output from Gateway
+type StreamOutput struct {
+	TaskID    string `json:"task_id"`
+	NodeID    string `json:"node_id"`
+	Stdout    string `json:"stdout"`
+	Stderr    string `json:"stderr"`
+	UpdatedAt string `json:"updated_at"`
+	Running   bool   `json:"running"`
+	ExitCode  int    `json:"exit_code,omitempty"`
+	Duration  string `json:"duration,omitempty"`
+}
+
+// StreamResponse wraps the Gateway progress response
+type StreamResponse struct {
+	Success bool          `json:"success"`
+	Data    *StreamOutput `json:"data,omitempty"`
+	Error   string        `json:"error,omitempty"`
+}
+
+func fetchStreamOutput(taskID string) *StreamOutput {
+	url := fmt.Sprintf("%s/api/v1/tasks/progress?task_id=%s", gw, taskID)
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil
+	}
+	defer resp.Body.Close()
+	var sr StreamResponse
+	if err := json.NewDecoder(resp.Body).Decode(&sr); err != nil {
+		return nil
+	}
+	if !sr.Success || sr.Data == nil {
+		return nil
+	}
+	return sr.Data
+}
+
+// screenTaskLive — 实时输出监控屏幕，每秒轮询刷新
+func screenTaskLive(taskID, nodeID string) {
+	clearScreen()
+	fmt.Printf("%s ┌─%s┐%s\n", Cyan+Bold, strings.Repeat("─", termW-6), Reset)
+	fmt.Printf("%s │  📡 实时输出监控  %s%s", Cyan+Bold, Reset, Dim)
+	fmt.Printf("  任务: %s  |  节点: %s", taskID, nodeID)
+	padding := termW - 6 - 14 - len(taskID) - len(nodeID)
+	if padding < 0 { padding = 0 }
+	fmt.Print(strings.Repeat(" ", padding))
+	fmt.Printf("%s │%s\n", Cyan+Bold, Reset)
+	fmt.Printf("%s └─%s┘%s\n", Cyan+Bold, strings.Repeat("─", termW-6), Reset)
+
+	lastLen := 0
+	pollCount := 0
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
+
+	done := make(chan struct{})
+	go func() {
+		for range ticker.C {
+			so := fetchStreamOutput(taskID)
+			if so == nil {
+				continue
+			}
+
+			currentLen := len(so.Stdout) + len(so.Stderr)
+			if currentLen > lastLen {
+				// Print new output
+				if len(so.Stdout) > lastLen {
+					newOut := so.Stdout[lastLen:]
+					if len(newOut) > 0 {
+						fmt.Print(newOut)
+					}
+				}
+				lastLen = currentLen
+			}
+
+			pollCount++
+
+			if !so.Running || so.ExitCode != 0 || so.Duration != "" {
+				// Task has completed (either success or fail)
+				fmt.Printf("\n\n%s━━━ 任务完成 ━━━%s\n", Green+Bold, Reset)
+				if so.ExitCode == 0 && so.Duration != "" {
+					fmt.Printf(" %s✅ 成功 (耗时: %s)%s\n", Green+Bold, so.Duration, Reset)
+				} else {
+					fmt.Printf(" %s%s❌ 失败 (exit=%d)%s\n", Red+Bold, so.Duration, so.ExitCode, Reset)
+				}
+				fmt.Printf("\n %s[s] 查看完整输出  [Enter] 返回%s\n", Yellow+Bold, Reset)
+				fmt.Printf(" > ")
+				close(done)
+				return
+			}
+		}
+	}()
+
+	// Wait for completion or user input
+	select {
+	case <-done:
+		// Task completed
+	case <-time.After(3600 * time.Second):
+		fmt.Printf("\n\n%s⚠️ 超时 (1h)%s\n", Yellow+Bold, Reset)
+	}
+
+	// Read user response
+	reply := readLine("")
+	reply = strings.TrimSpace(strings.ToLower(reply))
+	if reply == "s" {
+		// Show full output (fetch latest)
+		so := fetchStreamOutput(taskID)
+		clearScreen()
+		fmt.Printf("%s 📋 任务 %s 完整输出%s\n\n", Yellow+Bold, taskID, Reset)
+		if so != nil {
+			if so.Stdout != "" {
+				fmt.Println(so.Stdout)
+			}
+			if so.Stderr != "" {
+				fmt.Printf("%s%s%s\n", Red, so.Stderr, Reset)
+			}
+		}
+		fmt.Printf("\n %s按 Enter 返回%s", Dim, Reset)
+		readLine("")
+	}
+	return
+}
 
 func submitTask(nodeID, command string) {
 	taskID := fmt.Sprintf("tui-%d", time.Now().UnixNano())
@@ -1710,6 +1831,15 @@ func submitTask(nodeID, command string) {
 		fmt.Printf("   🎯 节点: %s%s%s\n", Yellow, nodeID, Reset)
 		fmt.Printf("   ⚙️  命令: %s%s%s\n", Dim, truncate(command, 50), Reset)
 		fmt.Printf("   %s提示: 可用 cancel %s 取消此任务%s\n", Dim, taskID, Reset)
+
+		// Ask user if they want to watch live output
+		fmt.Printf("\n %s[l] 查看实时输出  [Enter] 返回%s\n", Yellow+Bold, Reset)
+		fmt.Printf(" > ")
+		reply := readLine("")
+		reply = strings.TrimSpace(strings.ToLower(reply))
+		if reply == "l" || reply == "live" {
+			screenTaskLive(taskID, nodeID)
+		}
 	} else {
 		fmt.Printf(" %s❌ 提交失败: %s%s\n", Red+Bold, tr.Error, Reset)
 	}
