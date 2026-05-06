@@ -84,13 +84,13 @@
 
 ## 🚨 系统状态监控
 
-### 实时系统状态 (2026-05-06 11:45 心跳)
-- **系统负载**: 🔴 21.74/21.47/20.48 — 持续高位（持续 5 天 9 小时运行）
-- **内存使用**: 🟡 65% (7.1G/11G), available 3.7G, swap 5.8G/11G
-- **磁盘空间**: 🟡 80% 使用, 93G 可用
-- **运行时间**: 5 天
+### 实时系统状态 (2026-05-06 15:00 心跳)
+- **系统负载**: 🟡 20.17/21.33/21.98 (持续偏高，已 5 天)
+- **内存使用**: 🟡 7.3G/11G (66%), available 3.7G, swap 4.4G/11G
+- **磁盘**: 🟡 80% (93G 可用)
+- **运行时间**: 5 天 12h
 - **当前模型**: ollama-cloud-2/deepseek-v4-flash
-- **TUI Binary**: ✅ v0.7.7 (Android 端已编译)
+- **TUI Binary**: ✅ v0.7.7 (编译通过, 8.2MB, x86_64 静态链接)
 
 ### AI服务状态 (2026-05-05 更新)
 - **Primary (ollama-cloud-2)**: ✅ 正常
@@ -112,9 +112,9 @@
 ## 📋 待办事项
 
 ### 紧急事项
-- [ ] **🔴 CI/CD GitHub Actions** — PAT缺workflow scope，需手动创建新token
-- [ ] **🟡 ComputeHub真实GPU节点接入** — 需外网服务器验证
-- [ ] **🟡 Worker Agent部署** — Fedora node (192.168.2.140) 已上线但SSH不通
+- [ ] **🟢 CI/CD GitHub Actions** — workflow 已创建并推送至 GitHub ✅
+- [ ] **🟡 ComputeHub Gateway Worker polling** — 修复 Worker polling API (404)，使 Worker 能自动获取任务并执行
+- [ ] **🟡 Worker Agent部署** — Fedora node (192.168.2.140) 已可达，SSH 登录成功 (chenqifu/c9fc9f,.)，Worker 已启动但无任务执行
 - [ ] **⚪ Gateway/TUI/Worker 版本号统一至 v0.7.0**
 
 ### 本周事项
@@ -129,3 +129,17 @@
 - 🔧 **task detail GET 接口** — 新增 /api/v1/tasks/detail 查看执行结果 ✅
 - 🤖 **Fedora 40 节点上线** — 192.168.2.140 (4核CPU/8GB) 作为 node_fedora_140 注册 ✅
 - ⏳ **Worker Agent 自动执行** — 编译了带 max_concurrency 修复的 worker 二进制，等 Fedora 在线后部署
+- 🔧 **Worker Agent 编译测试** — x86_64 + ARM64 双平台构建全部通过 ✅
+- 🤖 **TUI 节点浏览器增强** — 增加交互按钮：查看详情 / 删除 (d <id>) / 新增 (a) ✅
+- 📦 **CI/CD GitHub Actions** — 多平台交叉编译 workflow 已创建 ✅
+- 🎯 **192.168.2.140 机器确认** — SSH 可达 (chenqifu/c9fc9f,.)，CPU: i5-10210U, 8GB, 无 GPU
+
+### 🔍 140 完整链路测试 (14:17-15:00)
+- ✅ Worker 进程运行正常 (PID 6099, PID 19869)
+- ✅ Gateway 本地启动 (140:8282)
+- ✅ 节点注册成功 (node_fedora_140)
+- ✅ 任务路由修复 — 正确路由到 node_fedora_140 (不再全部到 cqf-worker-01)
+- ❌ **Worker polling API 不存在** — `POST /api/v1/tasks/poll` 返回 404
+- ❌ **Worker 未执行任务** — 任务已分配但未执行
+- 📋 根因：Gateway 缺少 Worker 需要的 polling 端点
+- 📋 **下一步**：修复 Gateway 的 Worker polling 端点 (POST /api/v1/tasks/poll)
