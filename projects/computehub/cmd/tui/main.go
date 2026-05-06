@@ -74,7 +74,7 @@ var cmdHistIdx int = -1
 
 const maxHistory = 64
 
-// readLine reads a line from raw stdin with arrow-key history support.
+// readLine reads a line from raw stdin with arrow-key history & cursor movement support.
 func readLine(prompt string) string {
 	fd := int(os.Stdin.Fd())
 	old, err := term.MakeRaw(fd)
@@ -88,7 +88,20 @@ func readLine(prompt string) string {
 
 	fmt.Print(prompt)
 	var buf []byte
+	cursor := 0 // cursor position within buf (0 = before first char)
 	histIdx := cmdHistIdx // local copy, -1 means fresh input
+
+	// redrawLine redraws the input line from scratch at cursor position
+	redrawLine := func() {
+		fmt.Print("\r" + prompt + string(buf))
+		// clear to end of line
+		fmt.Print("\033[K")
+		// move cursor back to actual position
+		right := len(buf) - cursor
+		if right > 0 {
+			fmt.Printf("\033[%dD", right)
+		}
+	}
 
 	for {
 		var b [1]byte
@@ -117,11 +130,25 @@ func readLine(prompt string) string {
 				cmdHistIdx = len(cmdHistory)
 			}
 			return line
-		case 27: // ESC sequence (arrows, etc.)
-			// Arrow key sequence: ESC [ A/B/C/D (3 bytes total)
-			// Read byte-by-byte to avoid partial-read issues
+		case 1: // Ctrl+A → Home
+			for cursor > 0 {
+				fmt.Print("\033[D")
+				cursor--
+			}
+		case 5: // Ctrl+E → End
+			for cursor < len(buf) {
+				fmt.Print("\033[C")
+				cursor++
+			}
+		case 27: // ESC sequence
 			var b2 [1]byte
-			if n2, _ := os.Stdin.Read(b2[:]); n2 == 0 || b2[0] != '[' {
+			if n2, _ := os.Stdin.Read(b2[:]); n2 == 0 {
+				continue
+			}
+			// Detect Alt+<key>: ESC <char>
+			if b2[0] != '[' {
+				// Alt+key — treat as normal char (e.g. Alt+b / Alt+f)
+				// We just skip it since these are not common in this TUI
 				continue
 			}
 			var b3 [1]byte
@@ -129,62 +156,151 @@ func readLine(prompt string) string {
 				continue
 			}
 			switch b3[0] {
-			case 'A': // Up
+			case 'A': // Up arrow
 				if histIdx <= 0 {
 					histIdx = 0
 				} else {
 					histIdx--
 				}
 				if histIdx >= 0 && histIdx < len(cmdHistory) {
-					// Clear current line
-					for i := 0; i < len(buf)+8; i++ {
-						fmt.Print(" ")
-					}
 					buf = []byte(cmdHistory[histIdx])
-					fmt.Print("\r" + prompt + string(buf))
-					// clear rest
-					fmt.Print("\033[K")
+					cursor = len(buf)
+					redrawLine()
 				}
-			case 'B': // Down
+			case 'B': // Down arrow
 				if histIdx < len(cmdHistory)-1 {
 					histIdx++
-					// Clear current line
-					for i := 0; i < len(buf)+8; i++ {
-						fmt.Print(" ")
-					}
 					buf = []byte(cmdHistory[histIdx])
-					fmt.Print("\r" + prompt + string(buf))
-					fmt.Print("\033[K")
+					cursor = len(buf)
+					redrawLine()
 				} else {
 					histIdx = len(cmdHistory)
-					for i := 0; i < len(buf)+8; i++ {
-						fmt.Print(" ")
-					}
 					buf = nil
-					fmt.Print("\r" + prompt)
-					fmt.Print("\033[K")
+					cursor = 0
+					redrawLine()
 				}
-			case 'C': // Right
-				// ignore
-			case 'D': // Left
-				// ignore
-			case 'H': // Home
-				// ignore
-			case 'F': // End
-				// ignore
-			case '3': // Delete
-				os.Stdin.Read([]byte{0}) // consume ~
-				fmt.Print("\033[P")
+			case 'C': // Right arrow
+				if cursor < len(buf) {
+					fmt.Print("\033[C")
+					cursor++
+				}
+			case 'D': // Left arrow
+				if cursor > 0 {
+					fmt.Print("\033[D")
+					cursor--
+				}
+			case 'H': // Home (ESC [ H)
+				if cursor > 0 {
+					fmt.Printf("\033[%dD", cursor)
+					cursor = 0
+				}
+			case 'F': // End (ESC [ F)
+				if cursor < len(buf) {
+					n := len(buf) - cursor
+					fmt.Printf("\033[%dC", n)
+					cursor = len(buf)
+				}
+			case '1': // Home (ESC [ 1 ~) or PgUp (ESC [ 5 ~) or PgDn (ESC [ 6 ~) or End (ESC [ 4 ~)
+				// Read the fourth byte to distinguish 1~ vs 5~ vs 6~ vs 4~
+				var b4 [1]byte
+				if n4, _ := os.Stdin.Read(b4[:]); n4 == 0 {
+					continue
+				}
+				switch b4[0] {
+				case '~':
+					switch b3[0] {
+					case '1': // Home
+						if cursor > 0 {
+							fmt.Printf("\033[%dD", cursor)
+							cursor = 0
+						}
+					case '4': // End
+						if cursor < len(buf) {
+							n := len(buf) - cursor
+							fmt.Printf("\033[%dC", n)
+							cursor = len(buf)
+						}
+					case '5': // PgUp → go to beginning of line
+						if cursor > 0 {
+							fmt.Printf("\033[%dD", cursor)
+							cursor = 0
+						}
+					case '6': // PgDn → go to end of line
+						if cursor < len(buf) {
+							n := len(buf) - cursor
+							fmt.Printf("\033[%dC", n)
+							cursor = len(buf)
+						}
+					}
+				}
+			case '4': // End (ESC [ 4 ~)
+				var b4 [1]byte
+				if n4, _ := os.Stdin.Read(b4[:]); n4 == 0 {
+					continue
+				}
+				if b4[0] == '~' {
+					if cursor < len(buf) {
+						n := len(buf) - cursor
+						fmt.Printf("\033[%dC", n)
+						cursor = len(buf)
+					}
+				}
+			case '5': // PgUp (ESC [ 5 ~)
+				var b4 [1]byte
+				if n4, _ := os.Stdin.Read(b4[:]); n4 == 0 {
+					continue
+				}
+				if b4[0] == '~' {
+					if cursor > 0 {
+						fmt.Printf("\033[%dD", cursor)
+						cursor = 0
+					}
+				}
+			case '6': // PgDn (ESC [ 6 ~)
+				var b4 [1]byte
+				if n4, _ := os.Stdin.Read(b4[:]); n4 == 0 {
+					continue
+				}
+				if b4[0] == '~' {
+					if cursor < len(buf) {
+						n := len(buf) - cursor
+						fmt.Printf("\033[%dC", n)
+						cursor = len(buf)
+					}
+				}
+			case '3': // Delete (ESC [ 3 ~)
+				if cursor < len(buf) {
+					// Remove char at cursor
+					buf = append(buf[:cursor], buf[cursor+1:]...)
+					// Redraw from cursor position
+					fmt.Print("\033[P")
+				}
+				var b4 [1]byte
+				os.Stdin.Read(b4[:]) // consume ~
 			}
 		case 127, 8: // Backspace
-			if len(buf) > 0 {
-				buf = buf[:len(buf)-1]
-				fmt.Print("\b \b")
+			if cursor > 0 {
+				cursor--
+				buf = append(buf[:cursor], buf[cursor+1:]...)
+				// Move cursor left, push rest, clean up
+				fmt.Print("\033[D")
+				fmt.Print(string(buf[cursor:]) + " ")
+				fmt.Printf("\033[%dD", len(buf)-cursor+1)
 			}
 		default:
 			if ch >= 32 {
-				buf = append(buf, ch)
-				fmt.Printf("%c", ch)
+				// Insert at cursor position
+				buf = append(buf, 0)
+				copy(buf[cursor+1:], buf[cursor:])
+				buf[cursor] = ch
+				// Write char + rest of string
+				fmt.Print(string(buf[cursor:]))
+				cursor++
+				// Move cursor back
+				right := len(buf) - cursor
+				if right > 0 {
+					fmt.Printf("\033[%dD", right)
+				}
 			}
 		}
 	}
