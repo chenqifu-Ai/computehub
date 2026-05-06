@@ -12,10 +12,6 @@
 *.exe
 *.out
 *.test
-opc-gateway
-opc-tui
-opc-gateway-*
-opc-tui-*
 
 # 测试和临时文件
 tests/

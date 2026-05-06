@@ -8,7 +8,7 @@ set -e
 
 # 配置变量
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-GATEWAY_BINARY="$SCRIPT_DIR/opc-gateway"
+GATEWAY_BINARY="$SCRIPT_DIR/../bin/computehub-gateway"
 CONFIG_FILE="$SCRIPT_DIR/config.json"
 LOG_FILE="$SCRIPT_DIR/gateway.log"
 PID_FILE="$SCRIPT_DIR/gateway.pid"
@@ -85,7 +85,7 @@ stop_service() {
     fi
     
     # 额外清理可能存在的进程
-    pkill -f "opc-gateway" 2>/dev/null || true
+    pkill -f "computehub-gateway" 2>/dev/null || true
 }
 
 # 启动服务
@@ -234,4 +234,4 @@ case "${1:-help}" in
         ;;
 esac
 
-exit 0
+exit 0t 0

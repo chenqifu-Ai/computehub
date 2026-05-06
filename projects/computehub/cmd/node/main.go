@@ -18,6 +18,8 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/computehub/opc/src/version"
 )
 
 const defaultGateway = "http://localhost:8282"
@@ -62,7 +64,7 @@ func main() {
 }
 
 func printHelp() {
-	fmt.Print(`ComputeNode CLI v0.1 — 节点注册与管理工具
+	fmt.Print(`ComputeNode CLI ` + version.Short() + ` — 节点注册与管理工具
 用法:
   compute-node register              交互式注册新节点
   compute-node register --json '...' 直接提交 JSON 注册

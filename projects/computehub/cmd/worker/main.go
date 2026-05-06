@@ -29,6 +29,8 @@ import (
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/computehub/opc/src/version"
 )
 
 // ── 配置 ──
@@ -158,7 +160,7 @@ func main() {
 	}
 	state.nodeID = cfg.NodeID
 
-	fmt.Printf("%s ComputeHub Worker Agent v0.7.0%s\n", green(bold("╔══════════════════════════════════════╗")), reset())
+	fmt.Printf("%s ComputeHub Worker Agent v%s%s\n", green(bold("╔══════════════════════════════════════╗")), version.Short(), reset())
 	fmt.Printf("%s  Node:     %s%s", green(bold("║")), cyan(cfg.NodeID), reset())
 	fmt.Println()
 	fmt.Printf("%s  Gateway:  %s%s", green(bold("║")), cyan(cfg.GatewayURL), reset())
@@ -726,7 +728,7 @@ func parseConfig() Config {
 
 func printWorkerHelp() {
 	fmt.Println("")
-	fmt.Println(yellow(bold("")), "ComputeHub Worker Agent v0.1", reset())
+	fmt.Println(yellow(bold("")), "ComputeHub Worker Agent v"+version.Short(), reset())
 	fmt.Println("")
 	fmt.Println(bold(""), "用法:", reset())
 	fmt.Println("  ./compute-worker --flags [options]")
