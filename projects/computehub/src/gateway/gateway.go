@@ -225,6 +225,10 @@ func NewOpcGateway(port int, config *GatewayConfig) *OpcGateway {
 	gw.Scheduler = sched
 	logWithTimestamp("✅ Scheduler initialized with %d real nodes", len(nodes))
 
+	// 启动死节点心跳监控（每 15 秒检查一次）
+	gw.Kernel.NodeMgr.StartHealthMonitor(15 * time.Second)
+	logWithTimestamp("✅ Heartbeat monitor started (interval=15s)")
+
 	return gw
 }
 

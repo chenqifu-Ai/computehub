@@ -598,3 +598,80 @@ func (td *TaskDispatcher) dispatch() {
 	// Placeholder: dispatch pending tasks
 }
 
+// ====== Heartbeat Monitor ======
+
+// StartHealthMonitor starts a background goroutine that periodically checks
+// node health. Dead nodes (no heartbeat for >30s) are marked offline and
+// their pending/running tasks are automatically re-queued.
+func (nm *NodeManager) StartHealthMonitor(interval time.Duration) {
+	go func() {
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
+		for range ticker.C {
+			nm.checkNodeHealth()
+		}
+	}()
+}
+
+// checkNodeHealth iterates all nodes and marks any as offline if their
+// heartbeat has been missing for more than 30 seconds. Tasks from
+// newly-offlined nodes are reclaimed and re-queued.
+func (nm *NodeManager) checkNodeHealth() {
+	nm.mu.Lock()
+	defer nm.mu.Unlock()
+
+	threshold := 30 * time.Second
+	now := time.Now()
+
+	for nodeID, state := range nm.nodes {
+		elapsed := now.Sub(state.Heartbeat)
+		if state.Register.Status == "online" && elapsed > threshold {
+			// Mark node as offline
+			state.Register.Status = "offline"
+			logWithTimestamp("[HealthMonitor] ⚠️ Node %s marked OFFLINE (no heartbeat for %v)", nodeID, elapsed.Round(time.Second))
+
+			// Reclaim all tasks from this node
+			nm.reclaimTasksForNodeLocked(nodeID)
+		}
+	}
+}
+
+// reclaimTasksForNode reclaims all pending and running tasks from a dead node,
+// re-queuing them into the priority queue so they can be picked up by other nodes.
+//
+// NOTE: Caller MUST hold nm.mu.Lock(). Use reclaimTasksForNodeLocked internally.
+func (nm *NodeManager) reclaimTasksForNode(nodeID string) {
+	nm.mu.Lock()
+	defer nm.mu.Unlock()
+	nm.reclaimTasksForNodeLocked(nodeID)
+}
+
+// reclaimTasksForNodeLocked is the internal implementation.
+// Caller must hold nm.mu.Lock().
+func (nm *NodeManager) reclaimTasksForNodeLocked(nodeID string) {
+	state, exists := nm.nodes[nodeID]
+	if !exists {
+		return
+	}
+
+	reclaimedCount := 0
+	for taskID, ts := range state.Tasks {
+		if ts.Status == "pending" || ts.Status == "running" {
+			// Re-queue the task into the priority queue
+			nm.prioQueue.PushTask(taskID, scheduler.TaskPriority(ts.Task.Priority), ts.Task)
+			reclaimedCount++
+			logWithTimestamp("[HealthMonitor] 🔄 Reclaimed task %s (status=%s, prio=%d) from node %s → re-queued",
+				taskID, ts.Status, ts.Task.Priority, nodeID)
+		}
+		// Delete task record from node
+		delete(state.Tasks, taskID)
+	}
+
+	// Reset active tasks count
+	state.Metrics.ActiveTasks = 0
+
+	if reclaimedCount > 0 {
+		logWithTimestamp("[HealthMonitor] ✅ Reclaimed %d task(s) from offline node %s", reclaimedCount, nodeID)
+	}
+}
+

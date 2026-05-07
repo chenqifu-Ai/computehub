@@ -157,6 +157,15 @@ type GPUStats struct {
 }
 
 func main() {
+	for {
+		runWorker()
+		// 如果 worker 正常退出了，等 3 秒重拉
+		fmt.Printf("\n %s⚠️ Worker 已退出，3 秒后自动重启...%s\n", yellow(bold("")), reset())
+		time.Sleep(3 * time.Second)
+	}
+}
+
+func runWorker() {
 	cfg := parseConfig()
 
 	if cfg.NodeID == "" {
@@ -227,7 +236,8 @@ func main() {
 
 	fmt.Printf("\n%s ⚠️ 收到终止信号，正在关闭...%s\n", yellow(bold("")), reset())
 	state.unregister()
-	os.Exit(0)
+	// Use return instead of os.Exit(0) so the auto-restart loop can continue
+	return
 }
 
 // ── 注册 ──
