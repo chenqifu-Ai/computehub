@@ -377,13 +377,25 @@ func (g *Gateway) handleDispatch(w http.ResponseWriter, r *http.Request) {
 					purifiedTask.Status = fmt.Sprint(s)
 				}
 			}
+			// Use local result as the kernel result (skip Stage 4's double dispatch)
+			dispatchError = localResult.Error
 		}
 	}
 
-	// Stage 4: Kernel Dispatch
-	result := g.Kernel.Dispatch(purifiedTask)
+	// Stage 4: Kernel Dispatch (only if not already dispatched via fallback)
+	var result *kernel.Response
+	if dispatchError != nil && purifiedTask.Action != kernel.TaskActionSubmit && purifiedTask.Action != kernel.TaskActionExecute {
+		// Not submitted/executed yet, dispatch to kernel now
+		result = g.Kernel.Dispatch(purifiedTask)
+	} else {
+		// Already dispatched via fallback, check the kernel
+		result = &kernel.Response{
+			Success: true,
+			Data: map[string]any{"status": purifiedTask.Status},
+		}
+	}
 
-	// Stage 5: Execute (if EXECUTE action)
+	// Stage 5: Execute (if EXECUTE action and dispatched to remote node)
 	var execResult *executor.ExecutionResult
 	if result.Success && purifiedTask.Action == kernel.TaskActionExecute && dispatchError == nil {
 		// Build the execution command
