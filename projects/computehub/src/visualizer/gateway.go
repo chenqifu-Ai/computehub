@@ -16,9 +16,12 @@
 package visualizer
 
 import (
+	"crypto/sha1"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"strings"
 	"sync"
@@ -26,6 +29,9 @@ import (
 
 	"github.com/computehub/opc/src/kernel"
 )
+
+// WebSocket magic GUID per RFC 6455
+const websocketGUID = "258EAFA5-E914-47DA-95CA-5AB5A31E4C9B"
 
 // ====== 可视化网关 ======
 
@@ -324,7 +330,7 @@ func (vg *VisualizerGateway) handleHealth(w http.ResponseWriter, r *http.Request
 	})
 }
 
-// handleWebSocket WebSocket 实时推送
+// handleWebSocket WebSocket 实时推送 (RFC 6455 实现)
 func (vg *VisualizerGateway) handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Only GET allowed", http.StatusMethodNotAllowed)
@@ -337,17 +343,54 @@ func (vg *VisualizerGateway) handleWebSocket(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
+	// 使用 Hijacker 手动升级 WebSocket 连接
+	hj, ok := w.(http.Hijacker)
+	if !ok {
+		http.Error(w, "hijacking not supported", http.StatusInternalServerError)
+		return
+	}
+
+	conn, bufrw, err := hj.Hijack()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer conn.Close()
+
+	// 计算 Sec-WebSocket-Accept (RFC 6455 Section 4.2.2)
+	key := r.Header.Get("Sec-WebSocket-Key")
+	if key == "" {
+		log.Printf("[Visualizer] WebSocket upgrade missing Sec-WebSocket-Key")
+		return
+	}
+	h := sha1.New()
+	h.Write([]byte(key + websocketGUID))
+	acceptKey := base64.StdEncoding.EncodeToString(h.Sum(nil))
+
+	// 发送 WebSocket 握手响应
+	response := "HTTP/1.1 101 Switching Protocols\r\n" +
+		"Upgrade: websocket\r\n" +
+		"Connection: Upgrade\r\n" +
+		"Sec-WebSocket-Accept: " + acceptKey + "\r\n\r\n"
+
+	if _, err := bufrw.WriteString(response); err != nil {
+		log.Printf("[Visualizer] WebSocket handshake write error: %v", err)
+		return
+	}
+	if err := bufrw.Flush(); err != nil {
+		log.Printf("[Visualizer] WebSocket handshake flush error: %v", err)
+		return
+	}
+
+	log.Printf("[Visualizer] WebSocket handshake successful (key=%s)", key[:7]+"...")
+
 	// 生成订阅 ID
 	vg.subLock.Lock()
 	vg.subSeq++
 	subID := fmt.Sprintf("ws_%d", vg.subSeq)
 	vg.subLock.Unlock()
 
-	// 注册订阅者
-	sub := vg.gpm.Subscribe(subID, "")
-	defer vg.gpm.Unsubscribe(subID)
-
-	// 发送初始数据
+	// 发送初始数据 (unmasked text frame)
 	snapshot := vg.gpm.GetGlobalSnapshot()
 	initialData, _ := json.Marshal(map[string]interface{}{
 		"type":       "init",
@@ -355,16 +398,46 @@ func (vg *VisualizerGateway) handleWebSocket(w http.ResponseWriter, r *http.Requ
 		"timestamp":  time.Now().Format(time.RFC3339),
 		"subscribed": subID,
 	})
-	sub.Chan <- initialData
+	if err := writeWSFrame(conn, 0x1, initialData); err != nil {
+		log.Printf("[Visualizer] WebSocket %s initial write error: %v", subID, err)
+		return
+	}
 
 	// 持续推送
 	ticker := time.NewTicker(2 * time.Second)
 	defer ticker.Stop()
 
+	// 读 goroutine: 客户端可能发送 ping/close frames
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		readBuf := make([]byte, 4096)
+		for {
+			conn.SetReadDeadline(time.Now().Add(30 * time.Second))
+			n, err := conn.Read(readBuf)
+			if err != nil {
+				return
+			}
+			if n < 2 {
+				continue
+			}
+			opcode := readBuf[0] & 0x0F
+			switch opcode {
+			case 0x8: // Close frame
+				// Respond with close frame
+				writeWSFrame(conn, 0x8, []byte{})
+				return
+			case 0x9: // Ping frame
+				// Respond with pong
+				writeWSFrame(conn, 0xA, []byte{})
+			}
+		}
+	}()
+
 	for {
 		select {
-		case <-r.Context().Done():
-			log.Printf("[Visualizer] WebSocket %s closed", subID)
+		case <-done:
+			log.Printf("[Visualizer] WebSocket %s client disconnected", subID)
 			return
 		case <-ticker.C:
 			snapshot := vg.gpm.GetGlobalSnapshot()
@@ -373,9 +446,39 @@ func (vg *VisualizerGateway) handleWebSocket(w http.ResponseWriter, r *http.Requ
 				"data":      snapshot,
 				"timestamp": time.Now().Format(time.RFC3339),
 			})
-			sub.Chan <- payload
+			if err := writeWSFrame(conn, 0x1, payload); err != nil {
+				log.Printf("[Visualizer] WebSocket %s write error: %v", subID, err)
+				return
+			}
 		}
 	}
+}
+
+// writeWSFrame writes a single WebSocket frame (from server to client, no masking).
+// opcode: 0x1=text, 0x8=close, 0x9=ping, 0xA=pong
+func writeWSFrame(conn net.Conn, opcode byte, payload []byte) error {
+	// Frame header: FIN + opcode
+	header := []byte{0x80 | opcode} // FIN=1, opcode
+
+	// Payload length
+	length := len(payload)
+	if length < 126 {
+		header = append(header, byte(length))
+	} else if length < 65536 {
+		header = append(header, 126, byte(length>>8), byte(length))
+	} else {
+		header = append(header, 127,
+			byte(length>>56), byte(length>>48), byte(length>>40), byte(length>>32),
+			byte(length>>24), byte(length>>16), byte(length>>8), byte(length))
+	}
+
+	if _, err := conn.Write(header); err != nil {
+		return err
+	}
+	if _, err := conn.Write(payload); err != nil {
+		return err
+	}
+	return nil
 }
 
 // ====== 工具函数 ======

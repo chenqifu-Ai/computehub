@@ -434,7 +434,43 @@ func (s *WorkerState) collectGPUStats() GPUStats {
 	return stats
 }
 
-// collectNvidiaSMI is implemented in worker_util_linux.go / worker_util_windows.go
+func (s *WorkerState) collectNvidiaSMI() GPUStats {
+	var stats GPUStats
+
+	cmd := exec.Command("nvidia-smi",
+		"--query-gpu=index,utilization.gpu,temperature.gpu,memory.used,memory.total",
+		"--format=csv,noheader,nounits")
+	output, err := cmd.Output()
+	if err != nil {
+		return stats
+	}
+
+	lines := strings.Split(strings.TrimSpace(string(output)), "\n")
+	for _, line := range lines {
+		parts := strings.Split(line, ",")
+		if len(parts) < 5 {
+			continue
+		}
+		stats.Count++
+
+		util, _ := strconv.ParseFloat(strings.TrimSpace(parts[1]), 64)
+		temp, _ := strconv.ParseFloat(strings.TrimSpace(parts[2]), 64)
+		memUsed, _ := strconv.ParseFloat(strings.TrimSpace(parts[3]), 64)
+		memTotal, _ := strconv.ParseFloat(strings.TrimSpace(parts[4]), 64)
+
+		stats.Utilization += util
+		stats.Temperature += temp
+		stats.MemoryUsedGB += memUsed / 1024
+		stats.MemoryTotalGB += memTotal / 1024
+	}
+
+	if stats.Count > 0 {
+		stats.Utilization /= float64(stats.Count)
+		stats.Temperature /= float64(stats.Count)
+	}
+
+	return stats
+}
 
 // ── 任务执行 ──
 
@@ -459,7 +495,7 @@ func (s *WorkerState) executeTask(task *TaskDetail) {
 
 	start := time.Now()
 
-	cmd := runCommand(task.Command)
+	cmd := exec.Command("sh", "-c", task.Command)
 
 	// Get stdout pipe for streaming
 	stdoutPipe, err := cmd.StdoutPipe()
@@ -478,12 +514,10 @@ func (s *WorkerState) executeTask(task *TaskDetail) {
 	// Set timeout
 	if task.Timeout > 0 {
 		timer := time.AfterFunc(time.Duration(task.Timeout)*time.Second, func() {
+			cmd.Process.Signal(syscall.SIGTERM)
+			time.Sleep(3 * time.Second)
 			if cmd.Process != nil {
-				killProcess(cmd.Process)
-				time.Sleep(3 * time.Second)
-				if cmd.Process != nil {
-					cmd.Process.Kill()
-				}
+				cmd.Process.Kill()
 			}
 		})
 		defer timer.Stop()
@@ -742,6 +776,60 @@ func getLocalIP() string {
 	}
 	return "0.0.0.0"
 	// We need net - add it
+}
+
+func detectMemoryGB() float64 {
+	// Try /proc/meminfo
+	data, err := os.ReadFile("/proc/meminfo")
+	if err != nil {
+		return 32
+	}
+	for _, line := range strings.Split(string(data), "\n") {
+		if strings.HasPrefix(line, "MemTotal:") {
+			parts := strings.Fields(line)
+			if len(parts) >= 2 {
+				kb, _ := strconv.ParseFloat(parts[1], 64)
+				return kb / 1024 / 1024
+			}
+		}
+	}
+	return 32
+}
+
+func detectGPUType() (string, error) {
+	cmd := exec.Command("nvidia-smi", "--query-gpu=name", "--format=csv,noheader")
+	output, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+	lines := strings.Split(strings.TrimSpace(string(output)), "\n")
+	if len(lines) > 0 {
+		return strings.TrimSpace(lines[0]), nil
+	}
+	return "", fmt.Errorf("no GPU found")
+}
+
+func countGPUs() int {
+	cmd := exec.Command("nvidia-smi", "-L")
+	output, err := cmd.Output()
+	if err != nil {
+		return 0
+	}
+	return len(strings.Split(strings.TrimSpace(string(output)), "\n"))
+}
+
+func getCPULoad() float64 {
+	// Quick load average
+	data, err := os.ReadFile("/proc/loadavg")
+	if err != nil {
+		return 0
+	}
+	parts := strings.Fields(string(data))
+	if len(parts) >= 1 {
+		load, _ := strconv.ParseFloat(parts[0], 64)
+		return load / float64(runtime.NumCPU()) * 100
+	}
+	return 0
 }
 
 func truncateString(s string, max int) string {

@@ -18,10 +18,13 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/computehub/opc/src/gateway"
@@ -34,6 +37,16 @@ func logWithTimestamp(format string, args ...interface{}) {
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	message := fmt.Sprintf(format, args...)
 	fmt.Printf("[%s] %s\n", timestamp, message)
+}
+
+// ComposerConfig 大模型编排配置
+type ComposerConfig struct {
+	APIURL   string   `json:"api_url"`
+	APIKey   string   `json:"api_key"`
+	Model    string   `json:"model"`
+	ExecModels []string `json:"execute_models"`
+	MaxConcurrency int    `json:"max_concurrency"`
+	TimeoutSeconds  int    `json:"timeout_seconds"`
 }
 
 // Config 配置文件结构
@@ -57,6 +70,7 @@ type Config struct {
 		Simulate bool `json:"simulate"`
 		Port     int  `json:"port"`
 	} `json:"visualizer"`
+	Composer ComposerConfig `json:"composer"`
 }
 
 // loadConfig 加载配置文件，返回完整配置
@@ -74,6 +88,8 @@ func loadConfig() (Config, error) {
 	config.Visualizer.Enabled = true
 	config.Visualizer.Simulate = true
 	config.Visualizer.Port = 8282 // same port as gateway (different URL paths)
+	config.Composer.MaxConcurrency = 8
+	config.Composer.TimeoutSeconds = 120
 
 	// 尝试读取配置文件
 	if data, err := os.ReadFile(configFile); err == nil {
@@ -106,6 +122,25 @@ func main() {
 		SandboxPath:   config.Executor.SandboxPath,
 		BufferSize:    config.Kernel.BufferSize,
 		MaxStates:     config.Kernel.MaxStates,
+	}
+
+	// 读取 Composer 配置（从 config.json，无硬编码 fallback）
+	if config.Composer.APIURL != "" || config.Composer.APIKey != "" {
+		gwConfig.ComposerAPIURL = config.Composer.APIURL
+		gwConfig.ComposerKey = config.Composer.APIKey
+		if config.Composer.Model != "" {
+			gwConfig.ComposerModel = config.Composer.Model
+		}
+		if len(config.Composer.ExecModels) > 0 {
+			gwConfig.ComposerExecModels = config.Composer.ExecModels
+		}
+		if config.Composer.MaxConcurrency > 0 {
+			gwConfig.ComposerMaxConcurrency = config.Composer.MaxConcurrency
+		}
+		logWithTimestamp("📝 Composer configured: model=%s, max_concurrency=%d",
+			config.Composer.Model, config.Composer.MaxConcurrency)
+	} else {
+		logWithTimestamp("⚠️  Composer not configured (api_url/api_key empty). Task decomposition disabled.")
 	}
 
 	gw := gateway.NewOpcGateway(port, gwConfig)
@@ -152,7 +187,23 @@ func main() {
 	}
 
 	logWithTimestamp("🌐 ComputeHub Gateway v%s listening on :%d", version.Short(), port)
-	gw.Serve(port, "./code/dashboard")
+
+	// 优雅关闭: 监听 SIGINT/SIGTERM
+	srv := gw.ServeWithServer(port, "./code/dashboard")
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	logWithTimestamp("Shutting down gateway...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		logWithTimestamp("❌ Gateway forced shutdown: %v", err)
+	} else {
+		logWithTimestamp("✅ Gateway shut down gracefully")
+	}
 
 	logWithTimestamp("Gateway service stopped")
 }

@@ -187,6 +187,10 @@ func NewOpcGateway(port int, config *GatewayConfig) *OpcGateway {
 	gw.Metrics = metricsReg.CreateMetrics()
 	gw.MetricsCollector = prometheus.NewCollector(gw.Metrics)
 
+	// Connect collector to real NodeManager for live metrics
+	gw.MetricsCollector.SetNodeMgr(kernelObj.NodeMgr)
+	logWithTimestamp("🔗 Prometheus metrics collector connected to NodeManager")
+
 	// Start metrics collector (updates every 5s from kernel state)
 	gw.MetricsCollector.Start(5 * time.Second)
 	logWithTimestamp("✅ Prometheus metrics collector started (interval=5s)")
@@ -280,6 +284,58 @@ func (g *OpcGateway) Serve(port int, dashboardDir ...string) {
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
 		logWithTimestamp("Fatal Gateway Error: %v", err)
 	}
+}
+
+// ServeWithServer is like Serve but returns *http.Server for graceful shutdown.
+// This is the preferred method for production use.
+func (g *OpcGateway) ServeWithServer(port int, dashboardDir ...string) *http.Server {
+	// Register all routes (same logic as Serve)
+	http.HandleFunc("/api/dispatch", g.handleDispatch)
+	http.HandleFunc("/api/health", g.handleHealth)
+	http.HandleFunc("/api/status", g.handleStatus)
+
+	http.HandleFunc("/api/v1/nodes/register", g.handleNodeRegister)
+	http.HandleFunc("/api/v1/nodes/unregister", g.handleNodeUnregister)
+	http.HandleFunc("/api/v1/nodes/heartbeat", g.handleNodeHeartbeat)
+	http.HandleFunc("/api/v1/nodes/list", g.handleNodeList)
+	http.HandleFunc("/api/v1/nodes/metrics", g.handleNodeMetrics)
+	http.HandleFunc("/api/v1/tasks/submit", g.handleTaskSubmit)
+	http.HandleFunc("/api/v1/tasks/result", g.handleTaskResult)
+	http.HandleFunc("/api/v1/tasks/cancel", g.handleTaskCancel)
+	http.HandleFunc("/api/v1/tasks/list", g.handleTaskList)
+	http.HandleFunc("/api/v1/tasks/detail", g.handleTaskDetail)
+	http.HandleFunc("/api/v1/tasks/poll", g.handleTaskPoll)
+	http.HandleFunc("/api/v1/tasks/progress", g.handleTaskProgress)
+
+	// Prometheus metrics endpoint
+	http.HandleFunc("/metrics", prometheus.MetricsHandler(g.Metrics.Registry))
+
+	// Dashboard static files (if directory provided)
+	if len(dashboardDir) > 0 && dashboardDir[0] != "" {
+		fs := http.FileServer(http.Dir(dashboardDir[0]))
+		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			if strings.HasPrefix(r.URL.Path, "/api/") || strings.HasPrefix(r.URL.Path, "/ws/") {
+				http.NotFound(w, r)
+				return
+			}
+			fs.ServeHTTP(w, r)
+		})
+		logWithTimestamp("📂 Dashboard static files: %s", dashboardDir[0])
+	}
+
+	srv := &http.Server{
+		Addr:    fmt.Sprintf(":%d", port),
+		Handler: nil, // use DefaultServeMux
+	}
+
+	go func() {
+		logWithTimestamp("🌐 ComputeHub Gateway listening on :%d", port)
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			logWithTimestamp("Fatal Gateway Error: %v", err)
+		}
+	}()
+
+	return srv
 }
 
 // ServeHTTP implements http.Handler for test integration

@@ -6,20 +6,22 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/computehub/opc/src/kernel"
 )
 
 // ====== Metrics Registry ======
 
 // Registry is a simple metrics registry
 type Registry struct {
-	mu          sync.RWMutex
-	totalNodes       atomic.Int64
-	onlineNodes      atomic.Int64
-	totalTasks       atomic.Int64
-	activeTasks      atomic.Int64
-	taskSubmissions  atomic.Int64
-	taskCompletions  atomic.Int64
-	taskFailures     atomic.Int64
+	mu              sync.RWMutex
+	totalNodes      atomic.Int64
+	onlineNodes     atomic.Int64
+	totalTasks      atomic.Int64
+	activeTasks     atomic.Int64
+	taskSubmissions atomic.Int64
+	taskCompletions atomic.Int64
+	taskFailures    atomic.Int64
 }
 
 // NewRegistry creates a new metrics registry
@@ -46,6 +48,7 @@ type Metrics struct {
 // Collector periodically updates metrics from kernel state
 type Collector struct {
 	metrics  *Metrics
+	nodeMgr  *kernel.NodeManager
 	interval time.Duration
 	stopCh   chan struct{}
 	done     chan struct{}
@@ -61,6 +64,13 @@ func NewCollector(metrics *Metrics) *Collector {
 		stopCh:   make(chan struct{}),
 		done:     make(chan struct{}),
 	}
+}
+
+// SetNodeMgr connects the collector to a live NodeManager for real metrics.
+func (c *Collector) SetNodeMgr(nm *kernel.NodeManager) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.nodeMgr = nm
 }
 
 // Start begins the metrics collection loop
@@ -104,12 +114,41 @@ func (c *Collector) run() {
 	}
 }
 
-// updateMetrics refreshes metrics from kernel state
+// updateMetrics refreshes metrics from kernel NodeManager
 func (c *Collector) updateMetrics() {
-	// Placeholder - will be connected to kernel.NodeMgr in gateway initialization
-	if c.metrics == nil {
+	c.mu.Lock()
+	nm := c.nodeMgr
+	c.mu.Unlock()
+
+	if c.metrics == nil || c.metrics.Registry == nil {
 		return
 	}
+	reg := c.metrics.Registry
+
+	if nm == nil {
+		// No NodeManager connected yet — nothing to update
+		return
+	}
+
+	// Read real data from NodeManager
+	nodes := nm.ListNodes()
+
+	var totalNodes, onlineNodes, totalTasks, activeTasks int64
+
+	for _, state := range nodes {
+		totalNodes++
+		if state.Register.Status == "online" {
+			onlineNodes++
+		}
+		totalTasks += int64(state.Metrics.TotalTasks)
+		activeTasks += int64(state.Metrics.ActiveTasks)
+	}
+
+	// Atomically update the registry counters
+	reg.totalNodes.Store(totalNodes)
+	reg.onlineNodes.Store(onlineNodes)
+	reg.totalTasks.Store(totalTasks)
+	reg.activeTasks.Store(activeTasks)
 }
 
 // RecordTaskSubmission increments the task submission counter
@@ -145,7 +184,7 @@ func MetricsHandler(reg *Registry) http.HandlerFunc {
 		output = append(output, counter("computehub_task_completions_total", reg.taskCompletions.Load()))
 		output = append(output, counter("computehub_task_failures_total", reg.taskFailures.Load()))
 
-		// Node metrics from kernel state
+		// Node metrics from kernel state (via nodeMetrics helper)
 		output = append(output, nodeMetrics(reg)...)
 
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
@@ -166,9 +205,9 @@ func counter(name string, value int64) string {
 
 func nodeMetrics(reg *Registry) []string {
 	var lines []string
-	// Placeholder - connects to kernel.NodeMgr when gateway initializes
+	// Placeholder — could emit per-node labels if needed
+	// Current metrics are aggregated via the registry counters above.
 	_ = reg
-	_ = lines
 	return lines
 }
 

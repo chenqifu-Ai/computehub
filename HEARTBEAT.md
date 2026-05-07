@@ -84,62 +84,47 @@
 
 ## 🚨 系统状态监控
 
-### 实时系统状态 (2026-05-06 15:00 心跳)
-- **系统负载**: 🟡 20.17/21.33/21.98 (持续偏高，已 5 天)
-- **内存使用**: 🟡 7.3G/11G (66%), available 3.7G, swap 4.4G/11G
-- **磁盘**: 🟡 80% (93G 可用)
-- **运行时间**: 5 天 12h
+### 实时系统状态 (2026-05-07 00:13 心跳)
+- **系统负载**: 🔴 异常 — load avg 20.53/21.13/20.83（极高）
+- **内存使用**: 🟡 紧张 — 11GB 总，已用 7.9GB，可用 3.3GB
+- **Swap**: 🟡 使用 6.4GB/12GB
+- **磁盘**: 🟡 81% (92G 可用)
+- **运行时间**: 5 天
 - **当前模型**: ollama-cloud-2/deepseek-v4-flash
-- **TUI Binary**: ✅ v0.7.7 (编译通过, 8.2MB, x86_64 静态链接)
+- **ComputeHub 版本**: ✅ **v0.7.0**
 
-### AI服务状态 (2026-05-05 更新)
-- **Primary (ollama-cloud-2)**: ✅ 正常
-- **NewAPI (zhangtuo-ai-common)**: ✅ 正常 (qwen3.6-35b-common)
-- **qwen3.6-35b 端口 8001 (主用)**: ✅ 正常, **contextWindow=256K, maxTokens=131072** ✅
-- **qwen-8000 端口 8000 (备用)**: ✅ 正常, contextWindow=256K, maxTokens=131072 ✅
-- **qwen36-backup 端口 8999**: ⚠️ 预算用尽 (Spend=100.48/Budget=100), 暂时不可用
-- **composer LLM client**: ✅ 已接入 NewAPI
-- **技能包**: ✅ `model-config-standard` 已生成 (MCP-STD-001 标准流程)
-
-### 今日完成 (2026-05-05)
-- 🔧 **qwen3.6-35b contextWindow 修正** — 实测验证 1M→256K，修正配置 ✅
-- 🔧 **qwen-8000 备用 Provider** — 新增端口 8000 备用，标准化配置 ✅
-- 🔧 **qwen36-backup 修正** — contextWindow 32K→256K（端口 8999 预算耗尽）✅
-- 🤖 **MCP-STD-001 标准流程** — 模型配置修改标准 SOP 文档化 ✅
-- 📦 **model-config-standard 技能包** — 含 4 个脚本 + 示例，已打包 + 邮件发送 ✅
-- 📧 **技能包已发送至 19525456@qq.com** ✅
+### ComputeHub 组件状态 (2026-05-07 00:13 更新)
+- **Gateway (localhost:8282)**: ✅ 运行中 (PID 23523)
+- **TUI**: ✅ 运行中 (PID 24151)
+- **Worker**: ⚠️ 本机无 Worker 进程 — fedora-vm-01 节点 105 个任务 pending
+- **任务积压**: fedora-vm-01 总计 256，完成 151，待处理 105
+- **原因**: 本机只有 Gateway+TUI，没有 Worker 进程在轮询任务
+- **cqf-worker-01 (139)**: 未确认状态（需检查网络）
+- **node_fedora_140**: 未确认状态
+- **GitHub**: ❌ 网络不通
 
 ## 📋 待办事项
 
 ### 紧急事项
-- [ ] **🟢 CI/CD GitHub Actions** — workflow 已创建并推送至 GitHub ✅
-- [ ] **🟡 ComputeHub Gateway Worker polling** — 修复 Worker polling API (404)，使 Worker 能自动获取任务并执行
-- [ ] **🟡 Worker Agent部署** — Fedora node (192.168.2.140) 已可达，SSH 登录成功 (chenqifu/c9fc9f,.)，Worker 已启动但无任务执行
-- [ ] **⚪ Gateway/TUI/Worker 版本号统一至 v0.7.0** — Worker ✅ 已升级 (140/v0.7.0)，Gateway ❌ 待修复，TUI ❌ 待整合
+- [ ] **🟢 GitHub push** — 5 个 commit 本地已就绪，等有网时 push (cd ~/workspace && git push origin master)
+- [ ] **🟡 TUI 集成流式反馈** — 代码已写好(TUI + Gateway + Worker)，TUI 二进制已编译 ARM64
+- [ ] **🟡 TUI Binary 在小米平板部署** — 替换旧版 opc-tui，实测 live 输出
 
 ### 本周事项
-- [ ] ComputeHub Sprint 5 (Docker已完/CI待办/压测)
+- [ ] ComputeHub Sprint 6 (流式反馈完成，下一个：任务超时/重试机制)
 - [ ] 远程 Windows worker 部署 (192.168.2.165)
 - [ ] GitHub 公开 ComputeHub 仓库
 - [ ] Worker Agent → 部署到真实GPU服务器测试
-- [ ] TUI 升级至 v0.7.0
+- [ ] 自举验证：所有代码传输/部署通过 ComputeHub 自身完成
 
 ### ✅ 今日完成 (2026-05-06)
-- 🔧 **ComputeHub 节点注册修复** — 注册缺 max_concurrency 导致任务无法分配 ✅
-- 🔧 **task detail GET 接口** — 新增 /api/v1/tasks/detail 查看执行结果 ✅
-- 🤖 **Fedora 40 节点上线** — 192.168.2.140 (4核CPU/8GB) 作为 node_fedora_140 注册 ✅
-- ⏳ **Worker Agent 自动执行** — 编译了带 max_concurrency 修复的 worker 二进制，等 Fedora 在线后部署
-- 🔧 **Worker Agent 编译测试** — x86_64 + ARM64 双平台构建全部通过 ✅
-- 🤖 **TUI 节点浏览器增强** — 增加交互按钮：查看详情 / 删除 (d <id>) / 新增 (a) ✅
-- 📦 **CI/CD GitHub Actions** — 多平台交叉编译 workflow 已创建 ✅
-- 🎯 **192.168.2.140 机器确认** — SSH 可达 (chenqifu/c9fc9f,.)，CPU: i5-10210U, 8GB, 无 GPU
-
-### 🔍 140 完整链路测试 (14:17-15:00)
-- ✅ Worker 进程运行正常 (PID 6099, PID 19869)
-- ✅ Gateway 本地启动 (140:8282)
-- ✅ 节点注册成功 (node_fedora_140)
-- ✅ 任务路由修复 — 正确路由到 node_fedora_140 (不再全部到 cqf-worker-01)
-- ❌ **Worker polling API 不存在** — `POST /api/v1/tasks/poll` 返回 404
-- ❌ **Worker 未执行任务** — 任务已分配但未执行
-- 📋 根因：Gateway 缺少 Worker 需要的 polling 端点
-- 📋 **下一步**：修复 Gateway 的 Worker polling 端点 (POST /api/v1/tasks/poll)
+- 🔧 **流式反馈系统** — Worker 逐行管道输出 → Gateway /api/v1/tasks/progress → TUI Live 模式 ✅
+- 🔧 **Worker 重构** — executeTask 改用 PIPE 模式，500ms 推送增量输出 ✅
+- 🔧 **Kernel TaskState** — 新增 StreamStdout/StreamStderr 流式存储字段 ✅
+- 🤖 **v0.7.0 统一** — Gateway/Worker/TUI 全部升级到 v0.7.0 ✅
+- 🔧 **源码自举传输** — 通过 Gateway 静态文件 serve，Worker curl 下载，免 SSH 部署 ✅
+- 🤖 **140 机器全功能测试** — 10 项系统测试全部通过，网络/CPU/内存/磁盘 ✅
+- 📦 **140 Go 环境安装** — go1.24.4 linux/amd64 部署完成 ✅
+- 📦 **140 源码编译验证** — 提交编译任务，Worker 成功编译 ELF x86_64 二进制 ✅
+- 🔧 **Gateway ARM64 修复** — 本地是 aarch64 不是 x86_64，重编后运行正常 ✅
+- 🎯 **发现 139 = 140 母机** — 140 是 139 上的 VirtualBox VM，同一颗 CPU
