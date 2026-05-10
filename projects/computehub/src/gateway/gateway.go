@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -270,6 +271,15 @@ func (g *OpcGateway) Serve(port int, dashboardDir ...string) {
 	http.HandleFunc("/metrics", prometheus.MetricsHandler(g.Metrics.Registry))
 	logWithTimestamp("📈 Prometheus /metrics endpoint registered")
 
+	// File download endpoint (self-bootstrap transport for workers)
+	http.HandleFunc("/api/v1/download", g.handleFileDownload)
+	logWithTimestamp("📦 Download endpoint registered: /api/v1/download")
+
+	// Upgrade check endpoint (worker auto-update)
+	http.HandleFunc("/api/v1/upgrade/check", g.handleUpgradeCheck)
+	http.HandleFunc("/api/v1/upgrade/config", g.handleUpgradeConfig)
+	logWithTimestamp("🔄 Upgrade endpoints registered: /api/v1/upgrade/*")
+
 	// Dashboard static files (if directory provided)
 	if len(dashboardDir) > 0 && dashboardDir[0] != "" {
 		fs := http.FileServer(http.Dir(dashboardDir[0]))
@@ -313,6 +323,14 @@ func (g *OpcGateway) ServeWithServer(port int, dashboardDir ...string) *http.Ser
 
 	// Prometheus metrics endpoint
 	http.HandleFunc("/metrics", prometheus.MetricsHandler(g.Metrics.Registry))
+
+	// File download endpoint (self-bootstrap transport for workers)
+	http.HandleFunc("/api/v1/download", g.handleFileDownload)
+	logWithTimestamp("📦 Download endpoint registered: /api/v1/download")
+	// Upgrade check endpoint (worker auto-update)
+	http.HandleFunc("/api/v1/upgrade/check", g.handleUpgradeCheck)
+	http.HandleFunc("/api/v1/upgrade/config", g.handleUpgradeConfig)
+	logWithTimestamp("🔄 Upgrade endpoints registered: /api/v1/upgrade/*")
 
 	// Dashboard static files (if directory provided)
 	if len(dashboardDir) > 0 && dashboardDir[0] != "" {
@@ -373,6 +391,14 @@ func (g *OpcGateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		g.handleTaskDetail(w, r)
 	case "/api/v1/tasks/poll":
 		g.handleTaskPoll(w, r)
+	case "/api/v1/tasks/progress":
+		g.handleTaskProgress(w, r)
+	case "/api/v1/download":
+	case "/api/v1/upgrade/check":
+		g.handleUpgradeCheck(w, r)
+	case "/api/v1/upgrade/config":
+		g.handleUpgradeConfig(w, r)
+		g.handleFileDownload(w, r)
 	default:
 		http.NotFound(w, r)
 	}
@@ -858,4 +884,82 @@ func (g *OpcGateway) handleTaskCancel(w http.ResponseWriter, r *http.Request) {
 		Error:    errStr,
 		Duration: resp.Duration,
 	})
+}
+
+// ==================== File Download Endpoint ====================
+
+// findDeployDir finds the deploy directory relative to the binary location.
+func findDeployDir() string {
+	// Try relative to CWD first
+	if _, err := os.Stat("deploy"); err == nil {
+		return "deploy"
+	}
+	// Try relative to current binary directory
+	exe, _ := os.Executable()
+	if exe != "" {
+		exeDir := "."
+		if idx := strings.LastIndex(exe, "/"); idx >= 0 {
+			exeDir = exe[:idx]
+		}
+		candidate := exeDir + "/deploy"
+		if _, err := os.Stat(candidate); err == nil {
+			return candidate
+		}
+	}
+	// Fallback
+	return "deploy"
+}
+
+// handleFileDownload serves files for worker self-transport / bootstrap.
+// Usage: GET /api/v1/download?file=compute-worker-win-amd64.exe
+// Serves from the deploy/ directory relative to the binary location.
+func (g *OpcGateway) handleFileDownload(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, `{"error":"Only GET allowed"}`, http.StatusMethodNotAllowed)
+		return
+	}
+
+	fileName := r.URL.Query().Get("file")
+	if fileName == "" {
+		g.sendResponse(w, Response{Success: false, Error: "file parameter is required"})
+		return
+	}
+
+	// Only serve worker binaries from known directory
+	allowedPrefixes := []string{"compute-worker-", "compute-gateway-", "computehub-tui", "opc-"}
+	allowed := false
+	for _, prefix := range allowedPrefixes {
+		if strings.HasPrefix(fileName, prefix) {
+			allowed = true
+			break
+		}
+	}
+	if !allowed {
+		g.sendResponse(w, Response{Success: false, Error: "file not allowed"})
+		return
+	}
+
+	// Find deploy directory (relative to binary or CWD)
+	deployDir := findDeployDir()
+	
+	// First try direct file match in deploy/
+	filePath := deployDir + "/" + fileName
+	if _, err := os.Stat(filePath); err == nil {
+		w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fileName))
+		http.ServeFile(w, r, filePath)
+		return
+	}
+	
+	// Try windows-worker subdirectory
+	windowsDir := deployDir + "/windows-worker"
+	if _, err := os.Stat(windowsDir); err == nil {
+		windowsFilePath := windowsDir + "/" + fileName
+		if _, err := os.Stat(windowsFilePath); err == nil {
+			w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fileName))
+			http.ServeFile(w, r, windowsFilePath)
+			return
+		}
+	}
+	
+	http.NotFound(w, r)
 }

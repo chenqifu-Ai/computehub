@@ -15,14 +15,14 @@
   },
   "visualizer": {
     "enabled": true,
-    "simulate": true,
+    "simulate": false,
     "port": 8282
   },
   "composer": {
-    "api_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
-    "api_key": "sk-65ca99f6fd55437fba47dc7ba7973242",
-    "model": "qwen-turbo",
-    "execute_models": ["qwen-turbo", "qwen-turbo", "qwen-turbo"],
+    "api_url": "http://localhost:11434/v1",
+    "api_key": "",
+    "model": "deepseek-v4-flash",
+    "execute_models": ["deepseek-v4-flash", "qwen3.6-35b", "llama3.1:8b"],
     "max_concurrency": 8,
     "timeout_seconds": 120
   }

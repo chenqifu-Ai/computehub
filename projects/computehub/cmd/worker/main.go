@@ -54,7 +54,7 @@ var defaultConfig = Config{
 	Region:            "cn-east",
 	CPUCores:          0,
 	MemoryGB:          0,
-	PollInterval:      5 * time.Second,
+	PollInterval:      500 * time.Millisecond,
 	HeartbeatInterval: 10 * time.Second,
 	MaxConcurrent:     4,
 	ReportDir:         "/tmp/computehub-worker",
@@ -226,7 +226,10 @@ func runWorker() {
 	// Step 2: Start heartbeat loop
 	go state.heartbeatLoop()
 
-	// Step 3: Start task poller
+	// Step 3: Start auto-upgrade loop (checks every 5 min)
+	go state.upgradeLoop()
+
+	// Step 4: Start task poller
 	go state.taskPollLoop()
 
 	// Step 4: Graceful shutdown
@@ -272,7 +275,7 @@ func (s *WorkerState) register() error {
 	}
 	json.NewDecoder(resp.Body).Decode(&result)
 
-	if !result.Success && result.Error != "" && !strings.Contains(result.Error, "node already registered") {
+	if !result.Success && result.Error != "" && !strings.Contains(result.Error, "already registered") {
 		return fmt.Errorf("注册被拒: %s", result.Error)
 	}
 
@@ -460,7 +463,8 @@ type TaskDetail struct {
 
 func (s *WorkerState) executeTask(task *TaskDetail) {
 	if task.Command == "" {
-		fmt.Printf(" %s⚠️ 任务 %s 没有命令，跳过%s\n", yellow(""), task.TaskID, reset())
+		fmt.Printf(" %s⚠️ 任务 %s 没有命令，回传错误结果%s\n", yellow(""), task.TaskID, reset())
+		s.submitTaskError(task.TaskID, "empty command")
 		return
 	}
 

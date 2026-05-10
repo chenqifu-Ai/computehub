@@ -179,12 +179,29 @@ func (k *OpcKernel) handleNodeHeartbeat(cmd Command) Response {
 		if p == nil {
 			return Response{Success: false, Error: fmt.Errorf("nil GPUMetrics payload")}
 		}
+		// Auto-register node if not found (recover from Gateway restart)
+		if err := k.maybeAutoRegisterNode(p.NodeID, func() {
+			k.NodeMgr.RegisterNode(&NodeRegister{
+				NodeID: p.NodeID, NodeType: "gpu", GPUType: p.NodeID,
+				Status: "online", RegisteredAt: time.Now(),
+			})
+		}); err != nil {
+			return Response{Success: false, Error: err, Duration: time.Since(start).String()}
+		}
 		if err := k.NodeMgr.Heartbeat(p.NodeID, p); err != nil {
 			return Response{Success: false, Error: err, Duration: time.Since(start).String()}
 		}
 	case string:
 		// heartbeat with just nodeID
-		if err := k.NodeMgr.Heartbeat(p, nil); err != nil {
+		nodeID := p
+		if err := k.maybeAutoRegisterNode(nodeID, func() {
+			k.NodeMgr.RegisterNode(&NodeRegister{
+				NodeID: nodeID, NodeType: "gpu", Status: "online", RegisteredAt: time.Now(),
+			})
+		}); err != nil {
+			return Response{Success: false, Error: err, Duration: time.Since(start).String()}
+		}
+		if err := k.NodeMgr.Heartbeat(nodeID, nil); err != nil {
 			return Response{Success: false, Error: err, Duration: time.Since(start).String()}
 		}
 	case map[string]interface{}:
@@ -192,7 +209,29 @@ func (k *OpcKernel) handleNodeHeartbeat(cmd Command) Response {
 		if nodeID == "" {
 			return Response{Success: false, Error: fmt.Errorf("heartbeat payload missing node_id")}
 		}
-		if err := k.NodeMgr.Heartbeat(nodeID, nil); err != nil {
+		// Auto-register node if not found (recover from Gateway restart)
+		if err := k.maybeAutoRegisterNode(nodeID, func() {
+			k.NodeMgr.RegisterNode(&NodeRegister{
+				NodeID: nodeID, NodeType: "gpu", Status: "online", RegisteredAt: time.Now(),
+			})
+		}); err != nil {
+			return Response{Success: false, Error: err, Duration: time.Since(start).String()}
+		}
+		// Extract GPU metrics from heartbeat payload
+		var metrics *GPUMetrics
+		if gpuUtil, ok := p["gpu_utilization"].(float64); ok {
+			metrics = &GPUMetrics{
+				NodeID:        nodeID,
+				Utilization:   gpuUtil,
+				Temperature:   extractFloat64(p["gpu_temperature"]),
+				MemoryUsedGB:  extractFloat64(p["memory_used_gb"]),
+				MemoryTotalGB: extractFloat64(p["memory_total_gb"]),
+			}
+			logWithTimestamp("[Kernel] 💓 Heartbeat metrics for %s: util=%.1f temp=%.1f mem=%.1f", nodeID, metrics.Utilization, metrics.Temperature, metrics.MemoryUsedGB)
+		} else {
+			logWithTimestamp("[Kernel] ⚠️ No GPU metrics in heartbeat for %s, keys=%v", nodeID, p)
+		}
+		if err := k.NodeMgr.Heartbeat(nodeID, metrics); err != nil {
 			return Response{Success: false, Error: err, Duration: time.Since(start).String()}
 		}
 	default:
@@ -204,6 +243,28 @@ func (k *OpcKernel) handleNodeHeartbeat(cmd Command) Response {
 		Data:     map[string]string{"message": "heartbeat acknowledged"},
 		Duration: time.Since(start).String(),
 	}
+}
+
+// maybeAutoRegisterNode checks if node exists; if not, calls fn to register it.
+// Returns error only if registration itself fails (e.g., max nodes reached).
+func (k *OpcKernel) maybeAutoRegisterNode(nodeID string, registerFn func()) error {
+	k.NodeMgr.mu.Lock()
+	_, exists := k.NodeMgr.nodes[nodeID]
+	k.NodeMgr.mu.Unlock()
+
+	if !exists {
+		logWithTimestamp("[Kernel] 🔁 Auto-registering node %s (heartbeat recovery)", nodeID)
+		registerFn()
+	}
+	return nil
+}
+
+// extractFloat64 safely extracts a float64 from an interface{} value
+func extractFloat64(v interface{}) float64 {
+	if f, ok := v.(float64); ok {
+		return f
+	}
+	return 0
 }
 
 func (k *OpcKernel) handleTaskSubmit(cmd Command) Response {

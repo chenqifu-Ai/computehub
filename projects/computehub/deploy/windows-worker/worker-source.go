@@ -495,7 +495,13 @@ func (s *WorkerState) executeTask(task *TaskDetail) {
 
 	start := time.Now()
 
-	cmd := exec.Command("sh", "-c", task.Command)
+	// Windows: use cmd /c, Linux: use sh -c
+	var cmd *exec.Cmd
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command("cmd", "/c", task.Command)
+	} else {
+		cmd = exec.Command("sh", "-c", task.Command)
+	}
 
 	// Get stdout pipe for streaming
 	stdoutPipe, err := cmd.StdoutPipe()

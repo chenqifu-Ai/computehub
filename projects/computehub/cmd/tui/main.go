@@ -1806,13 +1806,14 @@ func screenTaskLive(taskID, nodeID string) {
 func submitTask(nodeID, command string) {
 	taskID := fmt.Sprintf("tui-%d", time.Now().UnixNano())
 	payload := map[string]interface{}{
-		"task_id":      taskID,
-		"command":      command,
-		"source_type":  "tui",
-		"priority":     5,
-		"max_retries":  3,
-		"timeout":      3600,
-		"env_vars":     map[string]string{},
+		"task_id":        taskID,
+		"command":        command,
+		"source_type":    "tui",
+		"priority":       5,
+		"max_retries":    3,
+		"timeout":        3600,
+		"env_vars":       map[string]string{},
+		"assigned_node":  nodeID,
 	}
 	data, _ := json.Marshal(payload)
 	resp, err := http.Post(gw+"/api/v1/tasks/submit", "application/json", bytes.NewBuffer(data))

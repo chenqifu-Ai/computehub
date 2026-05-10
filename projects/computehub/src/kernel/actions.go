@@ -1,12 +1,20 @@
 package kernel
 
 import (
+	"crypto/rand"
 	"fmt"
 	"sync"
 	"time"
 
 	"github.com/computehub/opc/src/scheduler"
 )
+
+// generateShortID generates a 6-char random hex ID
+func generateShortID() string {
+	b := make([]byte, 3)
+	rand.Read(b)
+	return fmt.Sprintf("%06x", b)
+}
 
 // ====== 算力调度 Action 定义 ======
 
@@ -57,6 +65,7 @@ type TaskSubmit struct {
 	SourceType   string    `json:"source_type"` // "direct" | "scheduled" | "auto"
 	Priority     int       `json:"priority"`    // 1-10, 10 highest
 	RegionAffinity string  `json:"region_affinity"` // preferred region
+	AssignedNode  string   `json:"assigned_node,omitempty"` // specific node (empty = auto-schedule)
 	Timeout      int       `json:"timeout"`     // seconds
 	Command      string    `json:"command"`     // command to execute
 	EnvVars      map[string]string `json:"env_vars,omitempty"`
@@ -219,12 +228,18 @@ func (nm *NodeManager) RegisterNode(reg *NodeRegister) error {
 		return fmt.Errorf("max nodes reached (%d)", nm.maxNodes)
 	}
 
+	// Default MaxConcurrency to 8 if not specified
+	maxTasks := reg.MaxConcurrency
+	if maxTasks <= 0 {
+		maxTasks = 8
+	}
+
 	nm.nodes[reg.NodeID] = &NodeManagerState{
-		Register:  reg,
+		Register: reg,
 		Metrics: &NodeMetrics{
 			NodeID:        reg.NodeID,
 			Region:        reg.Region,
-			MaxTasks:      reg.MaxConcurrency,
+			MaxTasks:      maxTasks,
 			ActiveTasks:   0,
 			SuccessRate:   1.0,
 			LastHeartbeat: time.Now(),
@@ -260,6 +275,12 @@ func (nm *NodeManager) Heartbeat(nodeID string, metrics *GPUMetrics) error {
 	}
 
 	state.Heartbeat = time.Now()
+
+	// Restore online status if it was temporarily offline
+	if state.Register.Status == "offline" {
+		state.Register.Status = "online"
+		logWithTimestamp("[Heartbeat] 🟢 Node %s recovered to ONLINE", nodeID)
+	}
 	if metrics != nil {
 		// Append or update GPU metrics
 		m := state.Metrics
@@ -267,6 +288,9 @@ func (nm *NodeManager) Heartbeat(nodeID string, metrics *GPUMetrics) error {
 		if len(m.GPU) > 10 {
 			m.GPU = m.GPU[len(m.GPU)-10:]
 		}
+		// Update current metrics for node list endpoint
+		m.GPUUtilization = metrics.Utilization
+		m.Temperature = metrics.Temperature
 		m.MemoryUsedGB = metrics.MemoryUsedGB
 	}
 
@@ -277,6 +301,11 @@ func (nm *NodeManager) Heartbeat(nodeID string, metrics *GPUMetrics) error {
 func (nm *NodeManager) SubmitTask(task *TaskSubmit) error {
 	nm.mu.Lock()
 	defer nm.mu.Unlock()
+
+	// Generate task ID if empty
+	if task.TaskID == "" {
+		task.TaskID = fmt.Sprintf("task-%d-%s", time.Now().UnixMilli(), generateShortID())
+	}
 
 	// 0. 没有任何节点注册
 	if len(nm.nodes) == 0 {
@@ -289,21 +318,40 @@ func (nm *NodeManager) SubmitTask(task *TaskSubmit) error {
 		schedPriority = scheduler.PriorityMedium
 	}
 
-	// 2. Check if any node has capacity
+	// 1a. Find target node: direct assignment or auto-schedule
 	hasCapacity := false
-	var bestNodeID string
-	var bestLoad int = 999999
+	bestNodeID := ""
+	bestLoad := 999999
 
-	for nid, state := range nm.nodes {
-		if state.Register.Status != "online" {
-			continue
-		}
-		load := state.Metrics.ActiveTasks
-		if load < state.Metrics.MaxTasks {
+	if task.AssignedNode != "" {
+		// Direct assignment to specific node
+		if state, exists := nm.nodes[task.AssignedNode]; exists {
+			if state.Register.Status != "online" {
+				return fmt.Errorf("assigned node %s is not online (status=%s)", task.AssignedNode, state.Register.Status)
+			}
+			load := state.Metrics.ActiveTasks
+			if load >= state.Metrics.MaxTasks {
+				return fmt.Errorf("assigned node %s has no capacity (%d/%d tasks)", task.AssignedNode, load, state.Metrics.MaxTasks)
+			}
+			bestNodeID = task.AssignedNode
 			hasCapacity = true
-			if load < bestLoad {
-				bestLoad = load
-				bestNodeID = nid
+			logWithTimestamp("[NodeMgr] Direct assignment: task %s → node %s", task.TaskID, task.AssignedNode)
+		} else {
+			return fmt.Errorf("assigned node %s not registered", task.AssignedNode)
+		}
+	} else {
+		// Auto-schedule: find best node
+		for nid, state := range nm.nodes {
+			if state.Register.Status != "online" {
+				continue
+			}
+			load := state.Metrics.ActiveTasks
+			if load < state.Metrics.MaxTasks {
+				hasCapacity = true
+				if load < bestLoad {
+					bestLoad = load
+					bestNodeID = nid
+				}
 			}
 		}
 	}
