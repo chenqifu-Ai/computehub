@@ -157,12 +157,9 @@ type GPUStats struct {
 }
 
 func main() {
-	for {
-		runWorker()
-		// 如果 worker 正常退出了，等 3 秒重拉
-		fmt.Printf("\n %s⚠️ Worker 已退出，3 秒后自动重启...%s\n", yellow(bold("")), reset())
-		time.Sleep(3 * time.Second)
-	}
+	runWorker()
+	// 单次执行，退出后不自动重启
+	fmt.Printf("\n %s⚠️ Worker 已退出%s\n", yellow(bold("")), reset())
 }
 
 func runWorker() {

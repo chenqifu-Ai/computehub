@@ -612,12 +612,14 @@ func fetchV2History() []V2HistoryEntry {
 // ── Task list (v1) ──
 
 type TaskListInfo struct {
-	TaskID    string `json:"task_id"`
-	Source    string `json:"source"`
-	Priority  int    `json:"priority"`
-	Status    string `json:"status"`
-	Retries   int    `json:"retries"`
-	CreatedAt string `json:"created_at"`
+	TaskID      string `json:"task_id"`
+	Source      string `json:"source"`
+	Priority    int    `json:"priority"`
+	Status      string `json:"status"`
+	Retries     int    `json:"retries"`
+	CreatedAt   string `json:"created_at"`
+	SubmittedAt string `json:"submitted_at"`
+	NodeIP      string `json:"node_ip"`
 }
 
 func fetchTaskList() map[string][]TaskListInfo {
@@ -1570,9 +1572,9 @@ func screenTasks(state *AppState) {
 	// ── 按节点展示任务详情（含优先级） ──
 	if len(allTasks) > 0 {
 		fmt.Printf("\n %s━━━ 任务明细（优先级降序）━━━%s\n", Cyan+Bold, Reset)
-		fmt.Printf("  │ %-26s │ %-14s │ %-8s │ %-10s │ %-8s│\n",
-			"Task ID", "Node", "Priority", "Status", "Source")
-		fmt.Printf("  │%s%s│\n", Dim, strings.Repeat("─", 78))
+		fmt.Printf("  │ %-22s │ %-12s │ %-8s │ %-8s │ %-10s │ %-8s │ %-15s│\n",
+			"Task ID", "Node", "Priority", "Status", "Time", "Source", "IP")
+		fmt.Printf("  │%s%s│\n", Dim, strings.Repeat("─", 100))
 
 		sort.Slice(allTasks, func(i, j int) bool {
 			if allTasks[i].Priority != allTasks[j].Priority {
@@ -1585,15 +1587,25 @@ func screenTasks(state *AppState) {
 			pc := priorityColor(t.Priority)
 			sc := statusColor(t.Status)
 			prioStr := fmt.Sprintf("%d", t.Priority)
-			fmt.Printf("  │ %-26s │ %-14s │ %s │ %s │ %-8s│\n",
-				truncate(t.TaskID, 26),
-				truncate(findNodeIDForTask(taskMap, t.TaskID), 14),
+			timeStr := t.SubmittedAt
+			if timeStr == "" {
+				timeStr = t.CreatedAt
+			}
+			ipStr := t.NodeIP
+			if ipStr == "" {
+				ipStr = findNodeIPForTask(taskMap, t.TaskID)
+			}
+			fmt.Printf("  │ %-22s │ %-12s │ %s │ %s │ %-8s │ %-8s│ %-15s│\n",
+				truncate(t.TaskID, 22),
+				truncate(findNodeIDForTask(taskMap, t.TaskID), 12),
 				visiblePad(prioStr, pc, Reset, 8),
-				visiblePad(t.Status, sc, Reset, 10),
-				truncate(t.Source, 8))
+				visiblePad(t.Status, sc, Reset, 8),
+				timeStr,
+				truncate(t.Source, 8),
+				truncate(ipStr, 15))
 		}
 		fmt.Println()
-		fmt.Printf("  %s↑ 按优先级降序排列 | 数值 1-10, 10=Critical%s\n", Dim, Reset)
+		fmt.Printf("  %s↑ 按优先级降序排列 | 数值 1-10, 10=Critical | 时间=提交时间 | IP=节点IP%s\n", Dim, Reset)
 	}
 
 	fmt.Println()
@@ -1676,6 +1688,17 @@ func findNodeIDForTask(taskMap map[string][]TaskListInfo, targetID string) strin
 		}
 	}
 	return "—"
+}
+
+func findNodeIPForTask(taskMap map[string][]TaskListInfo, targetID string) string {
+	for _, tasks := range taskMap {
+		for _, t := range tasks {
+			if t.TaskID == targetID && t.NodeIP != "" {
+				return t.NodeIP
+			}
+		}
+	}
+	return "?"
 }
 
 // ═══════════════════════════════════════════

@@ -827,13 +827,25 @@ func (g *OpcGateway) handleTaskList(w http.ResponseWriter, r *http.Request) {
 
 	for _, node := range nodes {
 		tasks[node.Register.NodeID] = []map[string]interface{}{}
+		ip := node.Register.IPAddress
+		if ip == "" {
+			ip = "127.0.0.1"
+		}
 		for taskID, ts := range node.Tasks {
+			createdAt := ""
+			if !ts.Created.IsZero() {
+				createdAt = ts.Created.Format("15:04:05")
+			} else if !ts.Task.SubmittedAt.IsZero() {
+				createdAt = ts.Task.SubmittedAt.Format("15:04:05")
+			}
 			tasks[node.Register.NodeID] = append(tasks[node.Register.NodeID], map[string]interface{}{
-				"task_id":    taskID,
-				"status":     ts.Status,
-				"command":    ts.Task.Command,
+				"task_id":     taskID,
+				"status":      ts.Status,
+				"command":     ts.Task.Command,
 				"source_type": ts.Task.SourceType,
-				"priority":   ts.Task.Priority,
+				"priority":    ts.Task.Priority,
+				"submitted_at": createdAt,
+				"node_ip":     ip,
 			})
 		}
 	}

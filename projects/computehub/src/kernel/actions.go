@@ -540,6 +540,45 @@ func (nm *NodeManager) NextPendingTask() *TaskSubmit {
 	return payload
 }
 
+// PopAndAssignNextTask pops next task from priority queue and assigns it to a
+// specific node. Creates the TaskState entry and marks it as "running".
+// Returns nil if queue is empty or the target node doesn't exist.
+func (nm *NodeManager) PopAndAssignNextTask(nodeID string) *TaskSubmit {
+	nm.mu.Lock()
+	defer nm.mu.Unlock()
+
+	next, ok := nm.prioQueue.PeekTask()
+	if !ok {
+		return nil
+	}
+
+	nm.prioQueue.PopTask()
+	payload, ok := next.Payload.(*TaskSubmit)
+	if !ok {
+		return nil
+	}
+
+	// Check target node exists
+	state, exists := nm.nodes[nodeID]
+	if !exists {
+		// Node gone — re-queue so other nodes can pick it up
+		nm.prioQueue.PushTask(next.TaskID, next.Priority, payload)
+		return nil
+	}
+
+	// Create TaskState on the target node
+	state.Tasks[payload.TaskID] = &TaskState{
+		Task:     payload,
+		Status:   "running", // directly running since Worker is claiming it
+		Assigned: nodeID,
+		Created:  time.Now(),
+	}
+	state.Metrics.ActiveTasks++
+
+	logWithTimestamp("[NodeMgr] 🎯 Queue → Node: task %s assigned to %s", payload.TaskID, nodeID)
+	return payload
+}
+
 // AssignTaskToNode assigns a task to a specific node with "running" status.
 // Returns error if the node doesn't exist.
 func (nm *NodeManager) AssignTaskToNode(taskID, nodeID string) error {

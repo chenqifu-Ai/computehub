@@ -85,20 +85,16 @@ func (g *OpcGateway) findPendingTaskForNode(nodeID string) *TaskPollItem {
 	}
 
 	// Phase 2: 检查优先级队列中是否有等待的任务（全局未分配）
-	// 需要访问 NodeManager 内部的优先级队列
-	task := g.Kernel.NodeMgr.NextPendingTask()
+	// PopAndAssignNextTask 从队列取出并直接创建 TaskState 到目标节点上
+	task := g.Kernel.NodeMgr.PopAndAssignNextTask(nodeID)
 	if task != nil {
-		// Claim this task for the requesting node
-		err := g.Kernel.NodeMgr.AssignTaskToNode(task.TaskID, nodeID)
-		if err == nil {
-			return &TaskPollItem{
-				TaskID:    task.TaskID,
-				Command:   task.Command,
-				Timeout:   task.Timeout,
-				Priority:  task.Priority,
-				NodeID:    nodeID,
-				SourceType: task.SourceType,
-			}
+		return &TaskPollItem{
+			TaskID:    task.TaskID,
+			Command:   task.Command,
+			Timeout:   task.Timeout,
+			Priority:  task.Priority,
+			NodeID:    nodeID,
+			SourceType: task.SourceType,
 		}
 	}
 

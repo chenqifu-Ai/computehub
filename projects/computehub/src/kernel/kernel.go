@@ -245,9 +245,20 @@ func (k *OpcKernel) handleNodeHeartbeat(cmd Command) Response {
 	}
 }
 
+// blockedNodes is a permanent blocklist — these nodes can NEVER auto-register.
+var blockedNodes = map[string]bool{
+	// "cqf-test-worker02": true,  // unblocked 2026-05-10 for testing
+}
+
 // maybeAutoRegisterNode checks if node exists; if not, calls fn to register it.
 // Returns error only if registration itself fails (e.g., max nodes reached).
 func (k *OpcKernel) maybeAutoRegisterNode(nodeID string, registerFn func()) error {
+	// Block known problematic nodes from auto-registering
+	if blockedNodes[nodeID] {
+		logWithTimestamp("[Kernel] 🚫 Blocked node %s from auto-registration", nodeID)
+		return fmt.Errorf("node %s is permanently blocked", nodeID)
+	}
+
 	k.NodeMgr.mu.Lock()
 	_, exists := k.NodeMgr.nodes[nodeID]
 	k.NodeMgr.mu.Unlock()
