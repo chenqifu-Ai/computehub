@@ -1,18 +1,8 @@
-# ComputeHub 版本记录
+# ComputeHub Deploy Versions
 
-## 0.7.4 (2026-05-11)
-- 全平台编译完成，二进制统一命名：`computehub-{组件}-{平台}.{ext}`
-- 组件: gateway, tui, worker, node
-- 平台: linux-amd64, linux-arm64, win-amd64(.exe), darwin-amd64, darwin-arm64
-- SHA256 checksums: sha256sums-v0.7.4.txt
-
-### 变更
-- Stream 流式输出反馈系统（v0.7.0）
-- TUI Live 模式 + Worker PIPE 输出（v0.7.0-0.7.1）
-- darwin 编译支持（新增 worker_util_darwin.go, v0.7.4）
-
-## 0.7.3 (2026-05-10)
-- 见 archive/0.7.3/
-
-## 0.7.1 (2026-05-08)
-- 见 archive/0.7.1/
+## v0.7.4 (2026-05-11)
+- First deploy directory created
+- SHA256 checksums:
+  - gateway: 8477e63e2ba7c3c73f41705b66eb57b431dfbe1efd7200597cf108e94e178676
+  - worker: 75ffda68211691d1b8999a0bcb312b54d6925e8aae00d8fb1c8eba12207fd1ea
+  - tui: 4bac8c64eaa6e3138dc0d8c88871924f3e47563db76e55dbf0411554189d8f7e

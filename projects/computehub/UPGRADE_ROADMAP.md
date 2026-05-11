@@ -1,37 +1,35 @@
 # 🗺️ ComputeHub 升级路线图
 
-**版本**: v0.7.1 → v0.8.0  
-**最后更新**: 2026-05-08
+**版本**: v0.7.4 → v0.8.0  
+**最后更新**: 2026-05-11
 
 ---
 
-## 🔴 紧急修复 (v0.7.2 - 1-2 周)
+## 🔴 紧急修复 (v0.7.5 - 已完成)
 
-### 1. 路由处理器缺失
-**状态**: 3 个路由注册但无实现，访问会返回 500
+### 1. 路由处理器缺失 ✅ 已完成 (2026-05-11)
+**状态**: ✅ 全部实现在 `src/gateway/gateway_worker.go` (221 行)
+- ✅ `handleTaskPoll` — Worker 轮询任务
+- ✅ `handleTaskDetail` — 查询任务详情（支持按 node_id 过滤）
+- ✅ `handleTaskProgress` — 流式输出（POST 推送 + GET 查询）
 
-- [ ] 实现 `handleTaskDetail` — 查询任务详情
-- [ ] 实现 `handleTaskPoll` — Worker 轮询任务
-- [ ] 实现 `handleTaskProgress` — 流式输出
+### 2. 路由重复注册 ✅ 已完成 (2026-05-11)
+**状态**: ✅ 抽取为 `allRoutes()` + `registerRoutes()` 统一注册
+- ✅ 路由定义集中在一处，新增路由只需在 `allRoutes()` 添加
+- ✅ Serve() 和 ServeWithServer() 共享同一注册逻辑
+- ✅ ServeHTTP() switch case 仍保留（测试友好）
 
-**影响**: 功能不可用，修复优先级最高
+### 3. API Key 硬编码 ✅ 已完成 (2026-05-11)
+**状态**: ✅ `cmd/gateway/main.go` 从 config.json 读取，无硬编码
+- ✅ config.json 中 api_key 为空字符串（需外部配置）
+- ✅ 已创建 `.env.example` 环境变量模板
+- ⏳ 待实现: 自动读取 .env 文件注入
 
-### 2. 配置安全问题
-**状态**: API Key 硬编码在 config.json
-
-- [ ] 移除 config.json 中的 api_key
-- [ ] 使用环境变量注入 `${COMPUTEHUB_API_KEY}`
-- [ ] 添加 .env.example 示例文件
-- [ ] 更新部署脚本自动处理环境变量
-
-**影响**: 安全风险，防止密钥泄露
-
-### 3. 路由重复注册
-**状态**: 路由注册逻辑重复了两次
-
-- [ ] 抽取路由为数组配置
-- [ ] 统一循环注册，避免重复
-- [ ] 编译时验证处理器存在性
+### 4. 部署文档合并 ✅ 已完成 (2026-05-11)
+**状态**: ✅ 三份矛盾文档合并为 `docs/deploy-docs.md`
+- ✅ 旧文档归档至 `_archive/deploy-docs-2026-05-11/`
+- ✅ deploy/ 目录已创建并同步二进制
+- ✅ 命名约定统一为无后缀（匹配代码实际行为）
 
 ---
 

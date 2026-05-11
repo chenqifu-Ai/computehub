@@ -1,0 +1,44 @@
+{
+  "project": "AI智能招商平台",
+  "version": "1.0.0",
+  "dictionary": {
+    "qa_category": {
+      "policy": "政策",
+      "fee": "费用",
+      "profit": "利润",
+      "support": "扶持",
+      "roi": "回本"
+    },
+    "device_type": {
+      "box": "电视盒子",
+      "mini_pc": "迷你工控机",
+      "other": "其他"
+    },
+    "online_status": {
+      "offline": "离线",
+      "online": "在线"
+    },
+    "content_status": {
+      "draft": "草稿",
+      "published": "已发布",
+      "rolled_back": "已回滚"
+    },
+    "user_role": {
+      "super_admin": "超级管理员",
+      "content_editor": "内容编辑",
+      "operator": "操作员",
+      "viewer": "只读用户"
+    },
+    "slide_action": {
+      "next": "下一页",
+      "prev": "上一页",
+      "play": "播放",
+      "pause": "暂停",
+      "zoom_in": "放大",
+      "zoom_out": "缩小",
+      "home": "返回首页",
+      "start_presentation": "开始讲解",
+      "stop_presentation": "停止讲解"
+    }
+  }
+}

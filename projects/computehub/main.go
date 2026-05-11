@@ -7,6 +7,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/computehub/opc/src/gateway"
@@ -85,25 +87,45 @@ func main() {
 	logWithTimestamp("Initializing Gateway on port %d", port)
 
 	// Composer LLM config (for task decompose/compose)
+	// Priority: env var > config.json > hardcoded default
 	composerAPI := config.Composer.APIURL
 	composerKey := config.Composer.APIKey
 	composerModel := config.Composer.Model
 	composerExecModels := config.Composer.ExecModels
 	composerConcurrency := config.Composer.Concurrency
+
+	// Env var fallback (highest priority — never hardcode secrets)
+	if composerAPI == "" {
+		composerAPI = os.Getenv("COMPOSER_API_URL")
+	}
 	if composerAPI == "" {
 		composerAPI = "https://ai.zhangtuokeji.top:9090/v1"
 	}
 	if composerKey == "" {
-		composerKey = "sk-3RgMq1COL9uqn29hCBwXOt5X3d5TpIddaRKH44chQ2QcAybl"
+		composerKey = os.Getenv("COMPOSER_API_KEY")
+	}
+	if composerModel == "" {
+		composerModel = os.Getenv("COMPOSER_MODEL")
 	}
 	if composerModel == "" {
 		composerModel = "qwen3.6-35b-common"
 	}
 	if len(composerExecModels) == 0 {
-		composerExecModels = []string{"qwen-turbo", "qwen-turbo", "qwen-turbo"}
+		if v := os.Getenv("COMPOSER_EXEC_MODELS"); v != "" {
+			composerExecModels = strings.Split(v, ",")
+		} else {
+			composerExecModels = []string{"qwen-turbo", "qwen-turbo", "qwen-turbo"}
+		}
 	}
 	if composerConcurrency == 0 {
-		composerConcurrency = 8
+		if v := os.Getenv("COMPOSER_MAX_CONCURRENCY"); v != "" {
+			if n, err := strconv.Atoi(v); err == nil && n > 0 {
+				composerConcurrency = n
+			}
+		}
+		if composerConcurrency == 0 {
+			composerConcurrency = 8
+		}
 	}
 
 	logWithTimestamp("🤖 TaskComposer initialized: %s (concurrency=%d, exec_models=%v)", composerModel, composerConcurrency, composerExecModels)

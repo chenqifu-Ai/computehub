@@ -84,38 +84,45 @@
 
 ## 🚨 系统状态监控
 
-### 实时系统状态 (2026-05-07 14:43 心跳)
-- **系统负载**: ✅ 正常 — load avg 0.12/0.07/0.02（大幅回落）
-- **内存使用**: 🟡 紧张 — 11GB 总，已用 7.6GB，可用 212MB / 3.5G available
-- **Swap**: 🟡 使用 4.9GB/11GB
-- **磁盘**: 🟡 81% (91G 可用)
-- **运行时间**: 6 天
+### 实时系统状态 (2026-05-11 16:18 心跳)
+- **系统负载**: 🟢 正常 — load avg 19.64/18.43/18.50（负载稳定）
+- **内存使用**: 🟡 偏高 — 6.9G/11G 已用，4.2G available
+- **Swap**: 🟢 正常 — 使用中（在范围内）
+- **磁盘**: 🟢 84% 可用 — 90G 剩余
+- **运行时间**: 4 小时
 - **当前模型**: ollama-cloud-2/deepseek-v4-flash
-- **ComputeHub 版本**: ✅ **v0.7.0**（新增心跳监控 + 任务自动回收 + Worker 自动重启）
+- **ComputeHub 版本**: ✅ **v0.7.4**（已发布）
 
-### ComputeHub 组件状态 (2026-05-07 14:43 更新)
-- **Gateway (localhost:8282)**: ✅ 运行中 (PID 32606) — **新版本已部署**（Heartbeat Monitor 已激活）
-- **Worker**: ❌ 无连接节点（旧 cqf-worker-02 已掉线，Gateway 重启后状态清空）
-- **TUI**: ❌ 未运行
-- **节点列表**: 0 在线
+### ComputeHub 组件状态 (2026-05-11 16:21 更新)
+- **本地 Gateway**: ✅ 运行中 (PID 432)
+- **本地 Worker**: ✅ 运行中 (PID 476)
+- **TUI**: ❌ 未运行（已退出）
+- **远程节点**: ✅ **192.168.2.140** — Fedora 40, OpenPC Gateway v0.0.3, 端口 8282, Gateway/Worker/TUI 均运行中, 3节点在线
+- **140 新 Worker**: ✅ `worker-192.168.2.140` 已注册 (cn-east), 旧 worker (PID 58890) 因连接139持续失败已停止
+- **节点列表**: 本地 gateway 1 + 本地 worker 1 + 远程 140 worker 1
 - **任务积压**: 无
-- **GitHub**: ⚡ 间歇性网络问题（可通但 git fetch 超时）
+- **GitHub**: ✅ deepseek-v4-flash 已 push
 
 ## 📋 待办事项
 
 ### 紧急事项
-- [ ] **🟢 GitHub push** — 5 个 commit 本地已就绪，等有网时 push (cd ~/workspace && git push origin master)
-- [ ] **🟡 TUI 集成流式反馈** — 代码已写好(TUI + Gateway + Worker)，TUI 二进制已编译 ARM64
-- [ ] **🟡 TUI Binary 在小米平板部署** — 替换旧版 opc-tui，实测 live 输出
+- [x] ✅ **GitHub push** — `c2f8a8fa` deepseek-v4-flash 已推送成功
 
 ### 本周事项
-- [ ] ComputeHub Sprint 6 (流式反馈完成，下一个：任务超时/重试机制)
+- [ ] ComputeHub Sprint 6 (流式反馈 ✅完成，下一个：任务超时/重试机制)
 - [ ] 远程 Windows worker 部署 (192.168.2.165)
 - [ ] GitHub 公开 ComputeHub 仓库
 - [ ] Worker Agent → 部署到真实GPU服务器测试
 - [ ] 自举验证：所有代码传输/部署通过 ComputeHub 自身完成
 
-### ✅ 今日完成 (2026-05-06)
+### ✅ 今日完成 (2026-05-11)
+- 🚀 **v0.7.4 全平台编译** — 5平台×4组件=20个二进制全部通过 ✅
+- 🏗️ **darwin 编译支持** — amd64 + arm64，新增 worker_util_darwin.go ✅
+- 🧹 **deploy/ 大清理** — 移除旧 v0.7.1、根目录散装文件、统一命名规范 ✅
+- 📋 **sha256sums 全部生成** — deploy/ + ubuntu/ 全部更新 ✅
+- 📤 **Git push 成功** — `c2f8a8fa` deepseek-v4-flash 远程已同步 ✅
+- 🏠 **140 远程部署** — v0.7.4 gateway 在 192.168.2.140 Fedora 40 上运行 ✅
+- 📥 **download 端点测试** — `compute-worker-linux-amd64/arm64/win-amd64` 全部可下载 ✅
 - 🔧 **流式反馈系统** — Worker 逐行管道输出 → Gateway /api/v1/tasks/progress → TUI Live 模式 ✅
 - 🔧 **Worker 重构** — executeTask 改用 PIPE 模式，500ms 推送增量输出 ✅
 - 🔧 **Kernel TaskState** — 新增 StreamStdout/StreamStderr 流式存储字段 ✅

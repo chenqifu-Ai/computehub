@@ -1,0 +1,2 @@
+-- MySQL初始化数据
+-- 实际初始化由docker-compose.yml中的init.sql完成

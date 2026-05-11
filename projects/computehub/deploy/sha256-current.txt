@@ -1,4 +1,0 @@
-ee76a3a4ce94a59908bc208c47edcf3c3a72ef0aa7189e66d549d958a2b8c414  compute-worker-linux-arm64
-4afb18acab0134232bdd7118fde9d7bcc6975fc9ccd7c9e21e55085cc1461bca  compute-worker-linux-amd64
-cb388e5b3b286be9171f01028feb3e2c965b0d60d0ee1bcf1e69f9dfbe5ce59d  compute-worker-win-amd64.exe
-00eb08aa609487f9e6715929f8dba72797f64d82376e958d3eeedf2ca1919afe  compute-worker-win-arm64.exe
