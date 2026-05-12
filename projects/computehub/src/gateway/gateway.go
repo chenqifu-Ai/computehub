@@ -901,24 +901,48 @@ func (g *OpcGateway) handleTaskCancel(w http.ResponseWriter, r *http.Request) {
 // ==================== File Download Endpoint ====================
 
 // findDeployDir finds the deploy directory relative to the binary location.
+// It supports both flat (deploy/) and versioned (deploy/<version>/) layouts.
 func findDeployDir() string {
-	// Try relative to CWD first
-	if _, err := os.Stat("deploy"); err == nil {
-		return "deploy"
-	}
-	// Try relative to current binary directory
+	// Determine where the running binary lives — that's the most reliable anchor
 	exe, _ := os.Executable()
+	exeDir := ""
 	if exe != "" {
-		exeDir := "."
 		if idx := strings.LastIndex(exe, "/"); idx >= 0 {
 			exeDir = exe[:idx]
 		}
-		candidate := exeDir + "/deploy"
-		if _, err := os.Stat(candidate); err == nil {
-			return candidate
+	}
+
+	// Search versioned directory first (binary may live in deploy/0.7.4/linux-arm64/)
+	versionCandidates := []string{
+		"deploy/0.7.4",
+	}
+	for _, c := range versionCandidates {
+		// Try relative to binary directory
+		if exeDir != "" {
+			candidate := exeDir + "/" + c
+			if _, err := os.Stat(candidate); err == nil {
+				return candidate
+			}
+		}
+		// Try relative to CWD
+		if _, err := os.Stat(c); err == nil {
+			return c
 		}
 	}
-	// Fallback
+
+	// Fall back to flat deploy/ directory
+	flatCandidates := []string{"deploy"}
+	for _, c := range flatCandidates {
+		if exeDir != "" {
+			candidate := exeDir + "/" + c
+			if _, err := os.Stat(candidate); err == nil {
+				return candidate
+			}
+		}
+		if _, err := os.Stat(c); err == nil {
+			return c
+		}
+	}
 	return "deploy"
 }
 
@@ -938,7 +962,7 @@ func (g *OpcGateway) handleFileDownload(w http.ResponseWriter, r *http.Request) 
 	}
 
 	// Only serve worker binaries from known directory
-	allowedPrefixes := []string{"compute-worker-", "compute-gateway-", "computehub-tui", "opc-"}
+	allowedPrefixes := []string{"compute-worker-", "compute-gateway-", "compute-tui-", "computehub-tui", "computehub-", "opc-"}
 	allowed := false
 	for _, prefix := range allowedPrefixes {
 		if strings.HasPrefix(fileName, prefix) {
@@ -953,25 +977,47 @@ func (g *OpcGateway) handleFileDownload(w http.ResponseWriter, r *http.Request) 
 
 	// Find deploy directory (relative to binary or CWD)
 	deployDir := findDeployDir()
-	
-	// First try direct file match in deploy/
+
+	// Try file in deploy/ root
 	filePath := deployDir + "/" + fileName
 	if _, err := os.Stat(filePath); err == nil {
 		w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fileName))
 		http.ServeFile(w, r, filePath)
 		return
 	}
-	
-	// Try windows-worker subdirectory
-	windowsDir := deployDir + "/windows-worker"
-	if _, err := os.Stat(windowsDir); err == nil {
-		windowsFilePath := windowsDir + "/" + fileName
-		if _, err := os.Stat(windowsFilePath); err == nil {
+
+	// Try file in deploy/windows-worker/
+	windowsFilePath := deployDir + "/windows-worker/" + fileName
+	if _, err := os.Stat(windowsFilePath); err == nil {
+		w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fileName))
+		http.ServeFile(w, r, windowsFilePath)
+		return
+	}
+
+	// Try file in deploy/{platform}/ — strip platform suffix to match real file names
+	for _, platDir := range []string{"linux-amd64", "linux-arm64", "windows-amd64", "darwin-amd64", "darwin-arm64"} {
+		// Try full name first (e.g. "compute-worker-linux-amd64" or "compute-gateway-windows-amd64.exe")
+		platPath := deployDir + "/" + platDir + "/" + fileName
+		if _, err := os.Stat(platPath); err == nil {
 			w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fileName))
-			http.ServeFile(w, r, windowsFilePath)
+			http.ServeFile(w, r, platPath)
 			return
 		}
+		// Strip .exe if present, then strip platform suffix to get base name
+		noExt := strings.TrimSuffix(fileName, ".exe")
+		baseName := strings.TrimSuffix(noExt, "-"+platDir)
+		if baseName != noExt {
+			// Try base name (linux) or base name + .exe (windows)
+			for _, tryName := range []string{baseName, baseName + ".exe"} {
+				tryPath := deployDir + "/" + platDir + "/" + tryName
+				if _, err := os.Stat(tryPath); err == nil {
+					w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fileName))
+					http.ServeFile(w, r, tryPath)
+					return
+				}
+			}
+		}
 	}
-	
+
 	http.NotFound(w, r)
 }

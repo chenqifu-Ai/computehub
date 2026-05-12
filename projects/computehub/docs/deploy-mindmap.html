@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>deploy.sh 思维导图</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+body { background: #1a1a2e; display: flex; justify-content: center; padding: 20px; }
+.mermaid { background: #fff; padding: 30px; border-radius: 12px; }
+</style>
+</head>
+<body>
+<div class="mermaid">
+mindmap
+  root((deploy.sh<br/>ComputeHub))
+    build
+      全平台交叉编译
+        linux-amd64
+        linux-arm64
+        windows-amd64
+      产物
+        gateway
+        tui
+        worker
+        node
+      sync_deploy
+        复制 bin ➔ deploy/
+        sha256sums
+        version.txt
+    deploy
+      参数解析
+        host
+        password
+        --component
+        --port
+        --gateway
+        --node-id
+        --region
+        --user
+      连接检查
+        ping 或 nc
+        不通则 exit
+      平台检测
+        uname -s
+        uname -m
+        aarch64 ➔ arm64
+        x86_64 ➔ amd64
+      文件传输
+        唯一方式: Gateway HTTP 下载
+        SSH ➔ curl -sL
+        从 /api/v1/download 拉
+        chmod +x
+        验证文件存在
+      安装与启动
+        检测 Termux / 标准 Linux
+        cp 到 bin 目录
+        pkill 旧进程
+        nohup 新进程
+        gateway -- 端口 8282
+        worker --gw --node-id --region
+      验证
+        Gateway: curl /api/health
+        Worker: ps aux 检测进程
+    all
+      build + deploy 连做
+</div>
+</body>
+</html>
