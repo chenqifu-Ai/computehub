@@ -183,16 +183,37 @@ func (gpm *GlobalPowerMap) RegisterNode(node *scheduler.NodeInfo) {
 	}
 
 	rd := gpm.regions[region]
-	rd.TotalNodes++
-	if node.Status == "online" {
-		rd.OnlineNodes++
-	}
-	rd.Nodes = append(rd.Nodes, nodeToVisual(node))
+	nv := nodeToVisual(node)
 
-	gpm.totalNodes++
-	gpm.totalGPUs += 8 // 假设每节点 8 卡
-	gpm.totalCPU += node.CPUCores
-	gpm.totalRAM += node.MemoryGB
+	// 查重：同一节点只更新不重复累加
+	found := false
+	for i, existing := range rd.Nodes {
+		if existing.ID == nv.ID {
+			// 旧节点在线、新节点离线：online 数 -1
+			if existing.Status == "online" && nv.Status != "online" {
+				rd.OnlineNodes--
+			}
+			// 旧节点离线、新节点在线：online 数 +1
+			if existing.Status != "online" && nv.Status == "online" {
+				rd.OnlineNodes++
+			}
+			rd.Nodes[i] = nv
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		rd.TotalNodes++
+		if nv.Status == "online" {
+			rd.OnlineNodes++
+		}
+		gpm.totalNodes++
+		gpm.totalGPUs += len(nv.GPUs)
+		gpm.totalCPU += nv.CPUCores
+		gpm.totalRAM += nv.MemoryGB
+		rd.Nodes = append(rd.Nodes, nv)
+	}
 }
 
 // RegisterNodeDiscovery 从 node discover 模块注册节点
@@ -211,8 +232,7 @@ func (gpm *GlobalPowerMap) RegisterNodeDiscovery(node *discover.NodeInfo) {
 	}
 
 	rd := gpm.regions[region]
-	rd.TotalNodes++
-	rd.Nodes = append(rd.Nodes, NodeVisual{
+	nv := NodeVisual{
 		ID:         node.NodeID,
 		Region:     node.Region,
 		Country:    rd.Country,
@@ -223,10 +243,24 @@ func (gpm *GlobalPowerMap) RegisterNodeDiscovery(node *discover.NodeInfo) {
 		MemoryGB:   64,
 		Load:       0,
 		RegisteredAt: node.RegisteredAt.Format(time.RFC3339),
-	})
+	}
 
-	gpm.totalNodes++
-	gpm.totalGPUs += 4
+	// 查重：同一节点只更新不重复累加
+	found := false
+	for i, existing := range rd.Nodes {
+		if existing.ID == nv.ID {
+			rd.Nodes[i] = nv
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		rd.TotalNodes++
+		gpm.totalNodes++
+		gpm.totalGPUs += 4
+		rd.Nodes = append(rd.Nodes, nv)
+	}
 }
 
 // RegisterNodeFromKernel 从 kernel 节点管理器注册节点

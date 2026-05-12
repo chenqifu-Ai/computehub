@@ -1,0 +1,29 @@
+{
+  "gateway": {
+    "port": 8282,
+    "max_connections": 100
+  },
+  "kernel": {
+    "buffer_size": 100,
+    "max_states": 1000
+  },
+  "executor": {
+    "sandbox_path": "/tmp/computehub-sandbox"
+  },
+  "gene_store": {
+    "path": "./genes.json"
+  },
+  "visualizer": {
+    "enabled": true,
+    "simulate": false,
+    "port": 8282
+  },
+  "composer": {
+    "api_url": "http://localhost:11434/v1",
+    "api_key": "",
+    "model": "deepseek-v4-flash",
+    "execute_models": ["deepseek-v4-flash", "qwen3.6-35b", "llama3.1:8b"],
+    "max_concurrency": 8,
+    "timeout_seconds": 120
+  }
+}

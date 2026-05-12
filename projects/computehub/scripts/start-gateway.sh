@@ -66,7 +66,13 @@ esac
 
 # 启动
 echo "🚀 启动 Gateway..."
-nohup "$GW_BIN" > /tmp/gateway.log 2>&1 &
+echo "   工作目录: ${PROJECT_DIR}"
+echo "   配置文件: ${PROJECT_DIR}/config.json"
+(
+  cd "$PROJECT_DIR"
+  nohup "$GW_BIN" > /tmp/gateway.log 2>&1 &
+  echo $! > /tmp/computehub-gateway.pid
+) &
 GW_PID=$!
 echo "   PID: ${GW_PID}"
 

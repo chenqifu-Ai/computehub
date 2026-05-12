@@ -111,8 +111,17 @@ cmd_deploy() {
     download_via_gateway "$host" "$pass" "$ssh_port" "$deploy_user" "$c" "$platform" "$gw"
   done
 
-  # Install & start (single SSH command)
-  echo "  Install & start..."
+  # Push config.json template (remote auto-generate)
+  echo "  Push config.json template..."
+  local config_content=$(cat "${PROJECT_DIR}/config.template.json")
+  ssh_exec "$host" "$pass" "$ssh_port" "$deploy_user" "
+    cat > ~/config.json << 'CONFIGEOF'
+${config_content}
+CONFIGEOF
+    echo \"✅ config.json written\"
+  "
+
+  # Install & start
   local cmd="set -e; mkdir -p /tmp;"
   cmd+='if [ -d /data/data/com.termux/files/usr/bin ]; then B=/data/data/com.termux/files/usr/bin; else B=/usr/local/bin; fi;'
   for c in "${comps[@]}"; do

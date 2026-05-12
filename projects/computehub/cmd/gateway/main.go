@@ -24,6 +24,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 	"time"
 
@@ -75,31 +76,60 @@ type Config struct {
 
 // loadConfig 加载配置文件，返回完整配置
 func loadConfig() (Config, error) {
-	configFile := "config.json"
-
 	// 默认配置
 	config := Config{}
 	config.Gateway.Port = 8282
 	config.Gateway.MaxConnections = 100
 	config.Kernel.BufferSize = 100
 	config.Kernel.MaxStates = 1000
-	config.Executor.SandboxPath = "/tmp/opc-sandbox"
+	config.Executor.SandboxPath = "/tmp/computehub-sandbox"
 	config.GeneStore.Path = "./genes.json"
 	config.Visualizer.Enabled = true
-	config.Visualizer.Simulate = true
+	config.Visualizer.Simulate = false
 	config.Visualizer.Port = 8282 // same port as gateway (different URL paths)
 	config.Composer.MaxConcurrency = 8
 	config.Composer.TimeoutSeconds = 120
 
+	// 查找配置文件（优先级：项目目录 → 用户家目录）
+	var configFile string
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		homeDir = "."
+	}
+	configPaths := []string{"config.json", filepath.Join(homeDir, "config.json")}
+	for _, path := range configPaths {
+		if _, err := os.Stat(path); err == nil {
+			configFile = path
+			break
+		}
+	}
+
 	// 尝试读取配置文件
-	if data, err := os.ReadFile(configFile); err == nil {
-		if err := json.Unmarshal(data, &config); err != nil {
-			logWithTimestamp("⚠️  Config file parse error: %v, using default values", err)
+	if configFile != "" {
+		if data, err := os.ReadFile(configFile); err == nil {
+			if err := json.Unmarshal(data, &config); err != nil {
+				logWithTimestamp("⚠️  Config file parse error: %v, using default values", err)
+			} else {
+				logWithTimestamp("✅ Config file loaded: %s", configFile)
+			}
 		} else {
-			logWithTimestamp("✅ Config file loaded: %s", configFile)
+			logWithTimestamp("⚠️  Config file not found (%s), using default values", configFile)
 		}
 	} else {
-		logWithTimestamp("⚠️  Config file not found (%s), using default values", configFile)
+		// 找不到文件时，自动创建默认配置
+		configPath := filepath.Join(homeDir, "config.json")
+		data, err := json.MarshalIndent(config, "", "  ")
+		if err != nil {
+			logWithTimestamp("⚠️  Failed to marshal config: %v", err)
+		} else {
+			if err := os.MkdirAll(filepath.Dir(configPath), 0755); err != nil {
+				logWithTimestamp("⚠️  Failed to create config dir: %v", err)
+			} else if err := os.WriteFile(configPath, data, 0644); err != nil {
+				logWithTimestamp("⚠️  Failed to write config: %v", err)
+			} else {
+				logWithTimestamp("ℹ️  Created default config: %s", configPath)
+			}
+		}
 	}
 
 	return config, nil
