@@ -84,24 +84,20 @@
 
 ## 🚨 系统状态监控
 
-### 实时系统状态 (2026-05-11 16:18 心跳)
-- **系统负载**: 🟢 正常 — load avg 19.64/18.43/18.50（负载稳定）
-- **内存使用**: 🟡 偏高 — 6.9G/11G 已用，4.2G available
-- **Swap**: 🟢 正常 — 使用中（在范围内）
+### 实时系统状态 (2026-05-12 16:59 心跳)
+- **系统负载**: 🟢 正常
 - **磁盘**: 🟢 84% 可用 — 90G 剩余
-- **运行时间**: 4 小时
 - **当前模型**: ollama-cloud-2/deepseek-v4-flash
-- **ComputeHub 版本**: ✅ **v0.7.4**（已发布）
+- **ComputeHub 版本**: ✅ **v0.7.4**
 
-### ComputeHub 组件状态 (2026-05-11 16:21 更新)
-- **本地 Gateway**: ✅ 运行中 (PID 432)
-- **本地 Worker**: ✅ 运行中 (PID 476)
-- **TUI**: ❌ 未运行（已退出）
-- **远程节点**: ✅ **192.168.2.140** — Fedora 40, OpenPC Gateway v0.0.3, 端口 8282, Gateway/Worker/TUI 均运行中, 3节点在线
-- **140 新 Worker**: ✅ `worker-192.168.2.140` 已注册 (cn-east), 旧 worker (PID 58890) 因连接139持续失败已停止
-- **节点列表**: 本地 gateway 1 + 本地 worker 1 + 远程 140 worker 1
+### ComputeHub 组件状态 (2026-05-12 16:59 更新)
+- **本地 Gateway**: ⚠️ proot 环境端口可能僵尸，需 `bash scripts/start-gateway.sh restart`
+- **远程节点 140**: ✅ Gateway/TUI/Worker 运行中，3 节点在线
+  - `fedora-node-140` - online
+  - `worker-189-1` - online (cn-east)
+  - `cqf-worker-22` - online (cn-west)
+- **新二进制已推送**: computehub-gateway/worker/tui 到 ~/ (待替换)
 - **任务积压**: 无
-- **GitHub**: ✅ deepseek-v4-flash 已 push
 
 ## 📋 待办事项
 
@@ -115,21 +111,13 @@
 - [ ] Worker Agent → 部署到真实GPU服务器测试
 - [ ] 自举验证：所有代码传输/部署通过 ComputeHub 自身完成
 
-### ✅ 今日完成 (2026-05-11)
-- 🚀 **v0.7.4 全平台编译** — 5平台×4组件=20个二进制全部通过 ✅
-- 🏗️ **darwin 编译支持** — amd64 + arm64，新增 worker_util_darwin.go ✅
-- 🧹 **deploy/ 大清理** — 移除旧 v0.7.1、根目录散装文件、统一命名规范 ✅
-- 📋 **sha256sums 全部生成** — deploy/ + ubuntu/ 全部更新 ✅
-- 📤 **Git push 成功** — `c2f8a8fa` deepseek-v4-flash 远程已同步 ✅
-- 🏠 **140 远程部署** — v0.7.4 gateway 在 192.168.2.140 Fedora 40 上运行 ✅
-- 📥 **download 端点测试** — `compute-worker-linux-amd64/arm64/win-amd64` 全部可下载 ✅
-- 🔧 **流式反馈系统** — Worker 逐行管道输出 → Gateway /api/v1/tasks/progress → TUI Live 模式 ✅
-- 🔧 **Worker 重构** — executeTask 改用 PIPE 模式，500ms 推送增量输出 ✅
-- 🔧 **Kernel TaskState** — 新增 StreamStdout/StreamStderr 流式存储字段 ✅
-- 🤖 **v0.7.0 统一** — Gateway/Worker/TUI 全部升级到 v0.7.0 ✅
-- 🔧 **源码自举传输** — 通过 Gateway 静态文件 serve，Worker curl 下载，免 SSH 部署 ✅
-- 🤖 **140 机器全功能测试** — 10 项系统测试全部通过，网络/CPU/内存/磁盘 ✅
-- 📦 **140 Go 环境安装** — go1.24.4 linux/amd64 部署完成 ✅
-- 📦 **140 源码编译验证** — 提交编译任务，Worker 成功编译 ELF x86_64 二进制 ✅
-- 🔧 **Gateway ARM64 修复** — 本地是 aarch64 不是 x86_64，重编后运行正常 ✅
-- 🎯 **发现 139 = 140 母机** — 140 是 139 上的 VirtualBox VM，同一颗 CPU
+### ✅ 今日完成 (2026-05-12)
+- 🔧 **二进制名统一** — build_all.sh / gateway / worker 全部 `compute-*` → `computehub-*` ✅
+- 🔧 **findDeployDir 修复** — 新增 `./` `../` `../../` 三级路径搜索，解决 proot 环境路径问题 ✅
+- 🔧 **build_all.sh bug 修复** — `! -name` 历史扩展导致 `ne: command not found`，改 `-not -name` ✅
+- 📝 **sync-deploy.sh** — bin → deploy 同步 + 远程 SCP 推送 + `push` 子命令 ✅
+- 📝 **start-gateway.sh** — Gateway 启动/重启/停止脚本，自动检测架构 ✅
+- 🚀 **全平台重编译 15/15** — 5平台×3组件全部通过，0 失败 ✅
+- 📤 **140 远程推送** — gateway/worker/tui 新二进制已推到 192.168.2.140 ✅
+- 📋 **邮件总结** — 完整总结 + 命令速查 + 各平台下载方式已发老大邮箱 ✅
+- 🔍 **发现 proot 僵尸问题** — Android Termux proot 网络层会挂，非 Go 代码 bug

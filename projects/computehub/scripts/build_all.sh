@@ -36,7 +36,7 @@ for PLATFORM in "${PLATFORMS[@]}"; do
         os=${GOOS[$PLATFORM]}
         arch=${GOARCH[$PLATFORM]}
         ext=${EXT[$PLATFORM]:-}
-        out="bin/${PLATFORM}/compute-${BIN}${ext}"
+        out="bin/${PLATFORM}/computehub-${BIN}${ext}"
         tmp="${out}.tmp"
 
         echo "[$TOTAL] $BIN → $PLATFORM"
@@ -68,7 +68,7 @@ echo "结果: ${PASS}/${TOTAL} 通过, ${FAIL} 失败"
 echo ""
 echo "📝 生成 sha256sums..."
 cd bin
-find . -type f -name "compute-*" ! -name "*.tmp" | sort | xargs sha256sum > sha256sums-${VERSION}.txt
+find . -type f -name "computehub-*" -not -name "*.tmp" | sort | xargs sha256sum > sha256sums-${VERSION}.txt
 echo "   sha256sums-${VERSION}.txt"
 cd ..
 

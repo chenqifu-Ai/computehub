@@ -914,11 +914,22 @@ func findDeployDir() string {
 
 	// Search versioned directory first (binary may live in deploy/0.7.4/linux-arm64/)
 	versionCandidates := []string{
+		"deploy/0.7.5",
 		"deploy/0.7.4",
 	}
 	for _, c := range versionCandidates {
-		// Try relative to binary directory
+		// Try relative to binary directory (e.g. exe=/deploy/0.7.4/linux-arm64/gw → ../../deploy/0.7.4)
 		if exeDir != "" {
+			// Binary is in a platform subdirectory: ../.. = version dir
+			// Binary is in deploy root: .. = parent dir (project root)
+			// Try both relative paths
+			for _, rel := range []string{"./" + c, "../" + c, "../../" + c} {
+				candidate := exeDir + "/" + rel
+				if _, err := os.Stat(candidate); err == nil {
+					return candidate
+				}
+			}
+			// Also try abs path from exeDir parent
 			candidate := exeDir + "/" + c
 			if _, err := os.Stat(candidate); err == nil {
 				return candidate
@@ -934,6 +945,12 @@ func findDeployDir() string {
 	flatCandidates := []string{"deploy"}
 	for _, c := range flatCandidates {
 		if exeDir != "" {
+			for _, rel := range []string{"./" + c, "../" + c, "../../" + c} {
+				candidate := exeDir + "/" + rel
+				if _, err := os.Stat(candidate); err == nil {
+					return candidate
+				}
+			}
 			candidate := exeDir + "/" + c
 			if _, err := os.Stat(candidate); err == nil {
 				return candidate
@@ -996,7 +1013,7 @@ func (g *OpcGateway) handleFileDownload(w http.ResponseWriter, r *http.Request) 
 
 	// Try file in deploy/{platform}/ — strip platform suffix to match real file names
 	for _, platDir := range []string{"linux-amd64", "linux-arm64", "windows-amd64", "darwin-amd64", "darwin-arm64"} {
-		// Try full name first (e.g. "compute-worker-linux-amd64" or "compute-gateway-windows-amd64.exe")
+		// Try full name first (e.g. "computehub-worker-linux-amd64" or "computehub-gateway-windows-amd64.exe")
 		platPath := deployDir + "/" + platDir + "/" + fileName
 		if _, err := os.Stat(platPath); err == nil {
 			w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fileName))
