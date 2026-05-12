@@ -1,0 +1,78 @@
+{
+  "timestamp": "2026-05-12 19:25:08",
+  "model": "qwen3.6-35b",
+  "api_base": "http://58.23.129.98:8999/v1",
+  "total": 6,
+  "passed": 6,
+  "failed": 0,
+  "total_time_s": 11.57,
+  "avg_response_s": 1.93,
+  "tests": [
+    {
+      "name": "基础常识",
+      "status": "PASS",
+      "response_time_s": 0.53,
+      "output_tokens": 50,
+      "has_content": true,
+      "has_reasoning": true,
+      "response_preview": "Thinking Process:  1.  **Analyze the Request:**     *   User asks: \"中国的首都是哪里？\" (What is the capital of China?)     *   Constraint: \"请简短回答。\" (Please answer",
+      "reasoning_preview": "Thinking Process:  1.  **Analyze the Request:**     *   User asks: \"中国的首都是哪里？\" (What is the capital of China?)     *   Constraint: \"请简短回答。\" (Please answer",
+      "error": null
+    },
+    {
+      "name": "数学计算",
+      "status": "PASS",
+      "response_time_s": 1.44,
+      "output_tokens": 200,
+      "has_content": true,
+      "has_reasoning": true,
+      "response_preview": "Here's a thinking process that leads to the suggested calculation for $17 \\times 23$:  1.  **Analyze the Request:**     *   **Problem:** Calculate $17 \\times 23$.     *   **Requirement:** Show the cal",
+      "reasoning_preview": "Here's a thinking process that leads to the suggested calculation for $17 \\times 23$:  1.  **Analyze the Request:**     *   **Problem:** Calculate $17 \\times 23$.     *   **Requirement:** Show the calculation process (step-by-step).     *   **Language:** Chinese.  2.  **Determine the Method:**     T",
+      "error": null
+    },
+    {
+      "name": "代码生成 (Python)",
+      "status": "PASS",
+      "response_time_s": 3.36,
+      "output_tokens": 500,
+      "has_content": true,
+      "has_reasoning": true,
+      "response_preview": "Here's a thinking process:  1.  **Understand User Request:**    - **Task:** Write a Python function to sort a list of integers.    - **Algorithm:** Quick Sort (快速排序).    - **Requirement:** Include com",
+      "reasoning_preview": "Here's a thinking process:  1.  **Understand User Request:**    - **Task:** Write a Python function to sort a list of integers.    - **Algorithm:** Quick Sort (快速排序).    - **Requirement:** Include comments (有注释).    - **Language:** Python.  2.  **Recall Quick Sort Algorithm:**    - Quick sort is a d",
+      "error": null
+    },
+    {
+      "name": "长文本摘要",
+      "status": "PASS",
+      "response_time_s": 2.72,
+      "output_tokens": 300,
+      "has_content": true,
+      "has_reasoning": true,
+      "response_preview": "Here's a thinking process:  1.  **Analyze User Input:**     - **Input Text:** A work record for \"2026-05-12\". The text is heavily duplicated (repeated many times), but the core content is consistent. ",
+      "reasoning_preview": "Here's a thinking process:  1.  **Analyze User Input:**     - **Input Text:** A work record for \"2026-05-12\". The text is heavily duplicated (repeated many times), but the core content is consistent.     - **Required Output Structure:**       1) 上午完成了什么 (What was completed in the morning)       2) 下",
+      "error": null
+    },
+    {
+      "name": "创意写作",
+      "status": "PASS",
+      "response_time_s": 1.44,
+      "output_tokens": 200,
+      "has_content": true,
+      "has_reasoning": true,
+      "response_preview": "Here's a thinking process:  1.  **Analyze User Input:**    - **Topic:** AI and humans (AI 和人类)    - **Genre:** Micro sci-fi story (微型科幻故事)    - **Constraint:** Exactly two sentences (用两句话)    - **Lang",
+      "reasoning_preview": "Here's a thinking process:  1.  **Analyze User Input:**    - **Topic:** AI and humans (AI 和人类)    - **Genre:** Micro sci-fi story (微型科幻故事)    - **Constraint:** Exactly two sentences (用两句话)    - **Language:** Chinese (中文)  2.  **Deconstruct Constraints:**    - Must be exactly two sentences.    - Must",
+      "error": null
+    },
+    {
+      "name": "中文理解",
+      "status": "PASS",
+      "response_time_s": 2.08,
+      "output_tokens": 300,
+      "has_content": true,
+      "has_reasoning": true,
+      "response_preview": "Here's a thinking process:  1.  **Analyze User Input:**    - **成语 (Idiom):** 胸有成竹 (xiōng yǒu chéng zhú)    - **Task 1:** Explain its meaning (含义)    - **Task 2:** Provide a daily life example (日常生活中的例",
+      "reasoning_preview": "Here's a thinking process:  1.  **Analyze User Input:**    - **成语 (Idiom):** 胸有成竹 (xiōng yǒu chéng zhú)    - **Task 1:** Explain its meaning (含义)    - **Task 2:** Provide a daily life example (日常生活中的例子)  2.  **Understand the Idiom (胸有成竹):**    - *Literal Meaning:* Have a complete bamboo in the chest",
+      "error": null
+    }
+  ]
+}
