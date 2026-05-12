@@ -189,11 +189,28 @@ func (gpm *GlobalPowerMap) RegisterNode(node *scheduler.NodeInfo) {
 	found := false
 	for i, existing := range rd.Nodes {
 		if existing.ID == nv.ID {
-			// 旧节点在线、新节点离线：online 数 -1
+			// 更新节点：先扣减旧值
+			if existing.Status == "online" {
+				gpm.totalGPUs -= len(existing.GPUs)
+				gpm.totalCPU -= existing.CPUCores
+				gpm.totalRAM -= existing.MemoryGB
+				rd.TotalGPUs -= len(existing.GPUs)
+				rd.TotalCPU -= existing.CPUCores
+				rd.TotalRAMGB -= existing.MemoryGB
+			}
+			// 再加新值
+			if nv.Status == "online" {
+				gpm.totalGPUs += len(nv.GPUs)
+				gpm.totalCPU += nv.CPUCores
+				gpm.totalRAM += nv.MemoryGB
+				rd.TotalGPUs += len(nv.GPUs)
+				rd.TotalCPU += nv.CPUCores
+				rd.TotalRAMGB += nv.MemoryGB
+			}
+			// 状态变化时调整 online 计数
 			if existing.Status == "online" && nv.Status != "online" {
 				rd.OnlineNodes--
 			}
-			// 旧节点离线、新节点在线：online 数 +1
 			if existing.Status != "online" && nv.Status == "online" {
 				rd.OnlineNodes++
 			}
@@ -207,11 +224,16 @@ func (gpm *GlobalPowerMap) RegisterNode(node *scheduler.NodeInfo) {
 		rd.TotalNodes++
 		if nv.Status == "online" {
 			rd.OnlineNodes++
+			gpm.totalNodes++
+			gpm.totalGPUs += len(nv.GPUs)
+			gpm.totalCPU += nv.CPUCores
+			gpm.totalRAM += nv.MemoryGB
+			rd.TotalGPUs += len(nv.GPUs)
+			rd.TotalCPU += nv.CPUCores
+			rd.TotalRAMGB += nv.MemoryGB
+		} else {
+			gpm.totalNodes++
 		}
-		gpm.totalNodes++
-		gpm.totalGPUs += len(nv.GPUs)
-		gpm.totalCPU += nv.CPUCores
-		gpm.totalRAM += nv.MemoryGB
 		rd.Nodes = append(rd.Nodes, nv)
 	}
 }
@@ -233,22 +255,46 @@ func (gpm *GlobalPowerMap) RegisterNodeDiscovery(node *discover.NodeInfo) {
 
 	rd := gpm.regions[region]
 	nv := NodeVisual{
-		ID:         node.NodeID,
-		Region:     node.Region,
-		Country:    rd.Country,
-		IPAddress:  node.IPAddress,
-		Status:     "online",
-		GPUType:    node.GPUType,
-		CPUCores:   16, // default
-		MemoryGB:   64,
-		Load:       0,
+		ID:           node.NodeID,
+		Region:       node.Region,
+		Country:      rd.Country,
+		IPAddress:    node.IPAddress,
+		Status:       "online",
+		GPUType:      node.GPUType,
+		CPUCores:     16, // default
+		MemoryGB:     64,
+		Load:         0,
 		RegisteredAt: node.RegisteredAt.Format(time.RFC3339),
 	}
 
-	// 查重：同一节点只更新不重复累加
+		// 查重：同一节点只更新不重复累加
 	found := false
 	for i, existing := range rd.Nodes {
 		if existing.ID == nv.ID {
+			// 更新节点：先扣减旧值
+			if existing.Status == "online" {
+				gpm.totalGPUs -= len(existing.GPUs)
+				gpm.totalCPU -= existing.CPUCores
+				gpm.totalRAM -= existing.MemoryGB
+				rd.TotalGPUs -= len(existing.GPUs)
+				rd.TotalCPU -= existing.CPUCores
+				rd.TotalRAMGB -= existing.MemoryGB
+			}
+			// 再加新值
+			if nv.Status == "online" {
+				gpm.totalGPUs += len(nv.GPUs)
+				gpm.totalCPU += nv.CPUCores
+				gpm.totalRAM += nv.MemoryGB
+				rd.TotalGPUs += len(nv.GPUs)
+				rd.TotalCPU += nv.CPUCores
+				rd.TotalRAMGB += nv.MemoryGB
+			}
+			if existing.Status == "online" && nv.Status != "online" {
+				rd.OnlineNodes--
+			}
+			if existing.Status != "online" && nv.Status == "online" {
+				rd.OnlineNodes++
+			}
 			rd.Nodes[i] = nv
 			found = true
 			break
@@ -257,8 +303,18 @@ func (gpm *GlobalPowerMap) RegisterNodeDiscovery(node *discover.NodeInfo) {
 
 	if !found {
 		rd.TotalNodes++
-		gpm.totalNodes++
-		gpm.totalGPUs += 4
+		if nv.Status == "online" {
+			rd.OnlineNodes++
+			gpm.totalNodes++
+			gpm.totalGPUs += len(nv.GPUs)
+			gpm.totalCPU += nv.CPUCores
+			gpm.totalRAM += nv.MemoryGB
+			rd.TotalGPUs += len(nv.GPUs)
+			rd.TotalCPU += nv.CPUCores
+			rd.TotalRAMGB += nv.MemoryGB
+		} else {
+			gpm.totalNodes++
+		}
 		rd.Nodes = append(rd.Nodes, nv)
 	}
 }
@@ -279,37 +335,79 @@ func (gpm *GlobalPowerMap) RegisterNodeFromKernel(nv *NodeVisual) {
 	}
 
 	rd := gpm.regions[region]
-	rd.TotalNodes++
-	if nv.Status == "online" {
-		rd.OnlineNodes++
-	}
 
-	// Replace existing node if same ID, else append
+	// 查重：同ID节点只更新，不重复累加
 	found := false
 	for i, existing := range rd.Nodes {
 		if existing.ID == nv.ID {
+			// 更新节点：先扣减旧值
+			if existing.Status == "online" {
+				gpm.totalGPUs -= len(existing.GPUs)
+				gpm.totalCPU -= existing.CPUCores
+				gpm.totalRAM -= existing.MemoryGB
+				rd.TotalGPUs -= len(existing.GPUs)
+				rd.TotalCPU -= existing.CPUCores
+				rd.TotalRAMGB -= existing.MemoryGB
+			}
+			// 再加新值
+			if nv.Status == "online" {
+				gpm.totalGPUs += len(nv.GPUs)
+				gpm.totalCPU += nv.CPUCores
+				gpm.totalRAM += nv.MemoryGB
+				rd.TotalGPUs += len(nv.GPUs)
+				rd.TotalCPU += nv.CPUCores
+				rd.TotalRAMGB += nv.MemoryGB
+			}
+			// 状态变化时调整 online 计数
+			if existing.Status == "online" && nv.Status != "online" {
+				rd.OnlineNodes--
+			}
+			if existing.Status != "online" && nv.Status == "online" {
+				rd.OnlineNodes++
+			}
 			rd.Nodes[i] = *nv
 			found = true
 			break
 		}
 	}
+
 	if !found {
+		rd.TotalNodes++
+		if nv.Status == "online" {
+			rd.OnlineNodes++
+			gpm.totalGPUs += len(nv.GPUs)
+			gpm.totalCPU += nv.CPUCores
+			gpm.totalRAM += nv.MemoryGB
+			rd.TotalGPUs += len(nv.GPUs)
+			rd.TotalCPU += nv.CPUCores
+			rd.TotalRAMGB += nv.MemoryGB
+		}
+		gpm.totalNodes++
 		rd.Nodes = append(rd.Nodes, *nv)
 	}
 
+	// 重新计算 region 级别汇总（只统计在线节点）
 	rd.TotalGPUs = 0
+	rd.TotalCPU = 0
+	rd.TotalRAMGB = 0
 	for _, n := range rd.Nodes {
 		if n.Status == "online" {
 			rd.TotalGPUs += len(n.GPUs)
+			rd.TotalCPU += n.CPUCores
+			rd.TotalRAMGB += n.MemoryGB
 		}
 	}
 
-	// 更新汇总
+	// 更新全局汇总（只统计在线节点）
 	gpm.totalNodes = 0
 	gpm.totalGPUs = 0
+	gpm.totalCPU = 0
+	gpm.totalRAM = 0
 	for _, r := range gpm.regions {
 		gpm.totalNodes += r.TotalNodes
 		gpm.totalGPUs += r.TotalGPUs
+		gpm.totalCPU += r.TotalCPU
+		gpm.totalRAM += r.TotalRAMGB
 	}
 }
 
@@ -795,12 +893,14 @@ func (gpm *GlobalPowerMap) RemoveNode(nodeID string) error {
 				rd.TotalNodes--
 				if n.Status == "online" {
 					rd.OnlineNodes--
+					gpm.totalGPUs -= len(n.GPUs)
+					gpm.totalCPU -= n.CPUCores
+					gpm.totalRAM -= n.MemoryGB
+					rd.TotalGPUs -= len(n.GPUs)
+					rd.TotalCPU -= n.CPUCores
+					rd.TotalRAMGB -= n.MemoryGB
 				}
 				gpm.totalNodes--
-				// Re-count GPUs
-				gpuCount := len(n.GPUs)
-				gpm.totalGPUs -= gpuCount
-				rd.TotalGPUs -= gpuCount
 
 				log.Printf("[Visualizer] Removed simulated node %s from region %s", nodeID, region)
 				return nil
