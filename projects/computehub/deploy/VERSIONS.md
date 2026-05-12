@@ -1,8 +1,0 @@
-# ComputeHub Deploy Versions
-
-## v0.7.4 (2026-05-11)
-- First deploy directory created
-- SHA256 checksums:
-  - gateway: 8477e63e2ba7c3c73f41705b66eb57b431dfbe1efd7200597cf108e94e178676
-  - worker: 75ffda68211691d1b8999a0bcb312b54d6925e8aae00d8fb1c8eba12207fd1ea
-  - tui: 4bac8c64eaa6e3138dc0d8c88871924f3e47563db76e55dbf0411554189d8f7e
