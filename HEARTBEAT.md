@@ -84,20 +84,35 @@
 
 ## 🚨 系统状态监控
 
-### 实时系统状态 (2026-05-12 16:59 心跳)
-- **系统负载**: 🟢 正常
-- **磁盘**: 🟢 84% 可用 — 90G 剩余
+### 实时系统状态 (2026-05-14 22:56 心跳)
+- **系统负载**: ⚠️ 偏高 (load 20/20/20, 3核机器)
+- **磁盘**: ⚠️ 82% 使用 (379G/463G)
 - **当前模型**: ollama-cloud-2/deepseek-v4-flash
-- **ComputeHub 版本**: ✅ **v0.7.4**
+- **ComputeHub 版本**: ✅ **v0.7.6**
 
-### ComputeHub 组件状态 (2026-05-12 16:59 更新)
-- **本地 Gateway**: ⚠️ proot 环境端口可能僵尸，需 `bash scripts/start-gateway.sh restart`
-- **远程节点 140**: ✅ Gateway/TUI/Worker 运行中，3 节点在线
-  - `fedora-node-140` - online
-  - `worker-189-1` - online (cn-east)
-  - `cqf-worker-22` - online (cn-west)
-- **新二进制已推送**: computehub-gateway/worker/tui 到 ~/ (待替换)
-- **任务积压**: 无
+### ComputeHub 组件状态 (2026-05-14 22:56 更新)
+- **192.168.1.12 Gateway**: ✅ 运行中 (端口 8282)
+- **集群节点 (192.168.1.12)**:
+  - ❌ worker-localhost (192.168.1.7) — 已离线
+  - ⚠️ worker-DESKTOP-BUAUIFL — Windows，**1 个任务卡住未释放**
+  - ✅ fedora-gpu-01 (192.168.1.6) — Fedora 37，空闲
+  - ✅ redmi-1 (192.168.1.7) — Android/Termux，空闲
+- **集群状态**: 🟡 3 节点 (localhost 已离线)
+- **⚠️ Windows 节点有 1 个超时任务，API 请求常超时**
+- **⚠️ 所有 GPU 都是 CPU 虚拟的，无真实 GPU**
+
+### 192.168.2.138 集群 (已隔离)
+- **节点**: 4 个（140/138/27/189），全部 CPU 虚拟
+- **状态**: 不可达（可能网络隔离）
+
+### 📋 今日已完成
+- 🐛 **结果回传 Bug 修复** — GetTaskStream 回退到 ts.Result ✅
+- 🚀 **三合一 computehub 编译** — 5 平台全部通过 ✅
+- 📤 **结果回传验证** — progress + detail 端点正确 ✅
+- 🖥 **192.168.1.12 集群测试** — 4 节点全部通 ✅
+- 🔧 **Windows Worker 命令引号问题** — 修复：Worker 自动包 cmd /c，测试命令无需再包 ✅
+- ⚠️ **Windows 节点无 GPU 驱动** — nvidia-smi 不可用
+- ⚠️ **所有 GPU 都是 CPU 虚拟卡位**，需确认物理 GPU 并装驱动
 
 ## 📋 待办事项
 
@@ -111,13 +126,15 @@
 - [ ] Worker Agent → 部署到真实GPU服务器测试
 - [ ] 自举验证：所有代码传输/部署通过 ComputeHub 自身完成
 
-### ✅ 今日完成 (2026-05-12)
-- 🔧 **二进制名统一** — build_all.sh / gateway / worker 全部 `compute-*` → `computehub-*` ✅
-- 🔧 **findDeployDir 修复** — 新增 `./` `../` `../../` 三级路径搜索，解决 proot 环境路径问题 ✅
-- 🔧 **build_all.sh bug 修复** — `! -name` 历史扩展导致 `ne: command not found`，改 `-not -name` ✅
-- 📝 **sync-deploy.sh** — bin → deploy 同步 + 远程 SCP 推送 + `push` 子命令 ✅
-- 📝 **start-gateway.sh** — Gateway 启动/重启/停止脚本，自动检测架构 ✅
-- 🚀 **全平台重编译 15/15** — 5平台×3组件全部通过，0 失败 ✅
-- 📤 **140 远程推送** — gateway/worker/tui 新二进制已推到 192.168.2.140 ✅
-- 📋 **邮件总结** — 完整总结 + 命令速查 + 各平台下载方式已发老大邮箱 ✅
-- 🔍 **发现 proot 僵尸问题** — Android Termux proot 网络层会挂，非 Go 代码 bug
+### ✅ 今日完成 (2026-05-14)
+- 🐛 **结果回传 Bug 修复** — `GetTaskStream` 回退到 `ts.Result`（短任务不再空输出）✅
+- 🚀 **三合一 computehub 编译** — 5 平台全部通过（linux-arm64/amd64, darwin-arm64/amd64, windows-amd64）✅
+- 📤 **结果回传验证** — `progress` + `detail` 端点均能正确读取 stdout/stderr ✅
+- 🖥 **138 集群测试** — 3 节点测通：cqf-worker-31 (Fedora x86_64)、cqf-worker-02 (Windows)、xiaoXi-table-01 (Android) ✅
+- 🖥 **worker-localhost 测试** — 本地真实节点跑通 shell 命令 + Python，1.1s 完成 ✅
+
+### ✅ 昨日完成 (2026-05-13)
+- 🔍 **ComputeHub 节点测试** — worker-localhost 集群状态验证 ✅
+- 📊 **API 端点确认** — Gateway 运行在 8282 端口（非 18789）✅
+- 🚀 **远程编译成功** — worker-localhost 完成 ComputeHub v0.7.6 全平台编译（15个二进制）✅
+- ⚠️ **发现问题** — 远程节点 192.168.2.140 连接超时，需检查网络

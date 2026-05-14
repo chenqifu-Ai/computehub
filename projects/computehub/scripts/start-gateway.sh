@@ -1,8 +1,9 @@
 #!/bin/bash
-# start-gateway.sh — 启动、重启 ComputeHub Gateway
+# start-gateway.sh — 启动、重启 ComputeHub Gateway（三合一版本）
 # 用法: start-gateway.sh                 （启动）
 #        start-gateway.sh restart        （重启）
 #        start-gateway.sh stop           （停止）
+#        start-gateway.sh status         （状态）
 
 set -euo pipefail
 
@@ -16,13 +17,13 @@ case "$ARCH" in
   *) echo "❌ 未知架构: $ARCH"; exit 1 ;;
 esac
 
-# 找最新版本的二进制（优先 versioned 目录，再回退到根目录）
+# 找二进制（优先当前平台目录，再回退到根目录）
 VERSION=$(cat deploy/version.txt 2>/dev/null || echo "0.0.0")
 GW_BIN=""
 for candidate in \
-  "deploy/${VERSION}/${PLAT}/computehub-gateway" \
-  "deploy/${VERSION}/computehub-gateway-${PLAT}" \
-  "deploy/computehub-gateway-${PLAT}"; do
+  "deploy/${VERSION}/${PLAT}/computehub" \
+  "deploy/${PLAT}/computehub" \
+  "deploy/computehub"; do
   if [ -f "$candidate" ]; then
     GW_BIN="$candidate"
     break
@@ -30,8 +31,8 @@ for candidate in \
 done
 
 if [ -z "$GW_BIN" ]; then
-  echo "❌ 找不到 computehub-gateway 二进制"
-  echo "   查找路径: deploy/${VERSION}/${PLAT}/computehub-gateway"
+  echo "❌ 找不到 computehub 二进制"
+  echo "   先编译: bash scripts/build_all.sh 或 bash scripts/build-deploy.sh"
   exit 1
 fi
 
@@ -42,7 +43,7 @@ CMD="${1:-start}"
 case "$CMD" in
   stop)
     echo "🛑 停止 Gateway..."
-    pkill -f "computehub-gateway" 2>/dev/null || true
+    pkill -f "computehub gateway" 2>/dev/null || true
     fuser -k 8282/tcp 2>/dev/null || true
     sleep 1
     echo "✅ 已停止"
@@ -50,15 +51,26 @@ case "$CMD" in
     ;;
   restart)
     echo "🔄 重启 Gateway..."
-    pkill -f "computehub-gateway" 2>/dev/null || true
+    pkill -f "computehub gateway" 2>/dev/null || true
     fuser -k 8282/tcp 2>/dev/null || true
     sleep 1
     ;;
+  status)
+    if pgrep -f "computehub gateway" > /dev/null 2>&1; then
+      GW_PID=$(pgrep -f "computehub gateway" | head -1)
+      echo "✅ Gateway 运行中 (PID: ${GW_PID})"
+      curl -s --connect-timeout 3 "http://localhost:8282/api/health" 2>/dev/null \
+        && echo "📍 http://localhost:8282/health: OK" \
+        || echo "⚠️  http://localhost:8282 未响应"
+    else
+      echo "❌ Gateway 未运行"
+    fi
+    exit 0
+    ;;
   start)
-    # 检查是否已在运行
-    if pgrep -f "computehub-gateway" > /dev/null 2>&1; then
-      echo "✅ Gateway 已在运行 (PID: $(pgrep -f computehub-gateway | head -1))"
-      echo "   要重启: $0 restart"
+    if pgrep -f "computehub gateway" > /dev/null 2>&1; then
+      echo "✅ Gateway 已在运行 (PID: $(pgrep -f 'computehub gateway' | head -1))"
+      echo "   重启: $0 restart"
       exit 0
     fi
     ;;
@@ -67,10 +79,10 @@ esac
 # 启动
 echo "🚀 启动 Gateway..."
 echo "   工作目录: ${PROJECT_DIR}"
-echo "   配置文件: ${PROJECT_DIR}/config.json"
+echo "   命令: ${GW_BIN} gateway --port 8282"
 (
   cd "$PROJECT_DIR"
-  nohup "$GW_BIN" > /tmp/gateway.log 2>&1 &
+  nohup "$GW_BIN" gateway --port 8282 > /tmp/computehub-gateway.log 2>&1 &
   echo $! > /tmp/computehub-gateway.pid
 ) &
 GW_PID=$!
@@ -82,10 +94,10 @@ for i in $(seq 1 10); do
   if curl -s "http://localhost:8282/api/health" > /dev/null 2>&1; then
     echo "✅ Gateway 启动成功 (${i}s)"
     echo "   📍 http://localhost:8282"
-    echo "   📋 /tmp/gateway.log"
+    echo "   📋 /tmp/computehub-gateway.log"
     exit 0
   fi
 done
 
-echo "❌ Gateway 启动超时，请检查日志: /tmp/gateway.log"
+echo "❌ Gateway 启动超时，请检查日志: /tmp/computehub-gateway.log"
 exit 1

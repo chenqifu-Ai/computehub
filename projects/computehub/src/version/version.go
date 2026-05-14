@@ -4,7 +4,7 @@ package version
 
 // VERSION 是 ComputeHub 当前版本
 // 修改规则: fix → +0.0.1, feature → +0.1.0, major → +1.0.0
-var VERSION = "0.7.6"
+const VERSION = "0.7.7"
 
 // BUILD 是构建标识，编译时可通过 ldflags 注入
 // go build -ldflags="-X github.com/computehub/opc/src/version.BUILD=$(date +%s)" ./cmd/gateway/

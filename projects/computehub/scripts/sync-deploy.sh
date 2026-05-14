@@ -1,5 +1,5 @@
 #!/bin/bash
-# sync-deploy.sh — 将 bin/ 新编译的二进制同步到 deploy/ 目录
+# sync-deploy.sh — 将 bin/ 新编译的单一二进制同步到 deploy/ 目录
 # 用法:
 #   bash scripts/sync-deploy.sh                    # 仅本地同步
 #   bash scripts/sync-deploy.sh push <host> <password> [user]
@@ -11,69 +11,72 @@ cd "$(dirname "$0")/.."
 PROJECT_DIR=$(pwd)
 BIN_DIR="${PROJECT_DIR}/bin"
 DEPLOY_DIR="${PROJECT_DIR}/deploy"
-VERSION=$(cat "${DEPLOY_DIR}/version.txt" 2>/dev/null || echo "0.0.0")
+VERSION=$(grep 'var VERSION' src/version/version.go | awk -F'"' '{print $2}')
 
 echo "🔁 Sync bin/ → deploy/ (v${VERSION})"
 echo "===================================="
 
 # 1. 同步到 deploy/{version}/{platform}/
 echo ""
-echo "📂 Step 1: deploy/${VERSION}/{platform}/"
+echo "📂 Step 1: deploy/${VERSION}/{platform}/computehub"
 for plat in linux-amd64 linux-arm64 darwin-amd64 darwin-arm64 windows-amd64; do
-  src_dir="${BIN_DIR}/${plat}"
+  src="${BIN_DIR}/${plat}/computehub"
+  src_exe="${BIN_DIR}/${plat}/computehub.exe"
   dst_dir="${DEPLOY_DIR}/${VERSION}/${plat}"
-  if [ ! -d "$src_dir" ]; then
-    echo "  ⚠️  ${plat}: bin/ 无此目录，跳过"
-    continue
-  fi
   mkdir -p "$dst_dir"
-  count=0
-  for f in "${src_dir}"/computehub-*; do
-    [ -f "$f" ] || continue
-    cp "$f" "$dst_dir/"
-    count=$((count + 1))
-  done
-  echo "  ✅ ${plat}: ${count} 个文件"
+
+  if [ -f "$src" ]; then
+    cp "$src" "${dst_dir}/computehub"
+    echo "  ✅ ${plat}: computehub"
+  elif [ -f "$src_exe" ]; then
+    cp "$src_exe" "${dst_dir}/computehub.exe"
+    echo "  ✅ ${plat}: computehub.exe"
+  else
+    echo "  ⚠️  ${plat}: 无二进制"
+  fi
 done
 
-# 2. 同步到 deploy/ 根目录（扁平命名: computehub-{comp}-{platform}）
+# 2. 同步到 deploy/ 根目录（当前平台 + 版本目录）
 echo ""
-echo "📂 Step 2: deploy/ (扁平命名)"
-count=0
+echo "📂 Step 2: deploy/ (根目录)"
+CUR_PLAT="linux-arm64"  # 默认（在 Android 上编译）
+case "$(uname -s),$(uname -m)" in
+  Linux,aarch64|Linux,arm64)  CUR_PLAT="linux-arm64" ;;
+  Linux,x86_64|Linux,amd64)   CUR_PLAT="linux-amd64" ;;
+esac
+
+if [ -f "${BIN_DIR}/${CUR_PLAT}/computehub" ]; then
+  cp "${BIN_DIR}/${CUR_PLAT}/computehub" "${DEPLOY_DIR}/computehub"
+  echo "  ✅ deploy/computehub (${CUR_PLAT})"
+fi
+
+# 3. 同步各平台到 deploy/{platform}/
+echo ""
+echo "📂 Step 3: deploy/{platform}/computehub"
 for plat in linux-amd64 linux-arm64 darwin-amd64 darwin-arm64 windows-amd64; do
-  src_dir="${BIN_DIR}/${plat}"
-  [ -d "$src_dir" ] || continue
-  for f in "${src_dir}"/computehub-*; do
-    [ -f "$f" ] || continue
-    name=$(basename "$f")
-    base="${name%.exe}"
-    ext=""
-    [[ "$name" == *.exe ]] && ext=".exe"
-    flat_name="${base}-${plat}${ext}"
-    cp "$f" "${DEPLOY_DIR}/${flat_name}"
-    count=$((count + 1))
-  done
+  src="${BIN_DIR}/${plat}/computehub"
+  src_exe="${BIN_DIR}/${plat}/computehub.exe"
+  dst_dir="${DEPLOY_DIR}/${plat}"
+  mkdir -p "$dst_dir"
+
+  if [ -f "$src" ]; then
+    cp "$src" "${dst_dir}/computehub"
+    echo "  ✅ ${plat}/computehub"
+  elif [ -f "$src_exe" ]; then
+    cp "$src_exe" "${dst_dir}/computehub.exe"
+    echo "  ✅ ${plat}/computehub.exe"
+  fi
 done
-echo "  ✅ ${count} 个文件"
 
-# 3. 重新生成 sha256sums
+# 4. 重新生成 sha256sums
 echo ""
-echo "📝 Step 3: sha256sums"
-cd "${DEPLOY_DIR}/${VERSION}"
-find . -type f -name "computehub-*" | sort | xargs sha256sum > sha256sums.txt
-echo "  ✅ deploy/${VERSION}/sha256sums.txt"
-
+echo "📝 Step 4: sha256sums"
 cd "${DEPLOY_DIR}"
-find . -maxdepth 1 -type f -name "computehub-*" | sort | xargs sha256sum > sha256sums-${VERSION}.txt
+find . -type f \( -name "computehub" -o -name "computehub.exe" \) | sort | xargs sha256sum > "sha256sums-${VERSION}.txt"
 echo "  ✅ deploy/sha256sums-${VERSION}.txt"
 
 echo ""
 echo "✅ 同步完成!"
-
-echo ""
-echo "✅ 全部完成！文件位置："
-echo "   deploy/${VERSION}/{platform}/computehub-{gateway,worker,tui}"
-echo "   deploy/computehub-{gateway,worker,tui}-{platform}"
 
 # ==========================================================
 # 远程推送：scp 到远程主机
@@ -96,15 +99,16 @@ if [ $# -ge 1 ]; then
       ;;
     *)
       echo "未知命令: $CMD"
-      echo "用法: $0 [push <host> <password> [user]]"
       exit 1
       ;;
   esac
 fi
-  echo ""
-  echo "📤 Step 4: 远程推送 → ${REMOTE_USER}@${REMOTE_HOST}"
 
-  # 确定远程架构（默认 linux-amd64）
+if [ -n "$REMOTE_HOST" ]; then
+  echo ""
+  echo "📤 Step 5: 远程推送 → ${REMOTE_USER}@${REMOTE_HOST}"
+
+  # 确定远程架构
   REMOTE_ARCH="linux-amd64"
   if command -v sshpass > /dev/null 2>&1; then
     REMOTE_ARCH=$(sshpass -p "$REMOTE_PASS" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 "${REMOTE_USER}@${REMOTE_HOST}" "uname -m" 2>/dev/null | tr -d '\r')
@@ -115,25 +119,19 @@ fi
     esac
   fi
 
-  # 推送三个二进制
-  for comp in gateway worker tui; do
-    src="${DEPLOY_DIR}/computehub-${comp}-${REMOTE_ARCH}"
-    if [ ! -f "$src" ]; then
-      echo "  ⚠️  ${src} 不存在，跳过"
-      continue
-    fi
-    echo "  📄 computehub-${comp} → ${REMOTE_USER}@${REMOTE_HOST}:~/"
-    sshpass -p "$REMOTE_PASS" scp -o StrictHostKeyChecking=no -o ConnectTimeout=5 "$src" "${REMOTE_USER}@${REMOTE_HOST}:~/computehub-${comp}" 2>/dev/null
-    sshpass -p "$REMOTE_PASS" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 "${REMOTE_USER}@${REMOTE_HOST}" "chmod +x ~/computehub-${comp}" 2>/dev/null
-    echo "     ✅"
-  done
+  src="${BIN_DIR}/${REMOTE_ARCH}/computehub"
+  [ -f "$src" ] || src="${DEPLOY_DIR}/${REMOTE_ARCH}/computehub"
+  [ -f "$src" ] || { echo "  ❌ 无 ${REMOTE_ARCH} 二进制"; exit 1; }
 
+  echo "  📄 computehub (${REMOTE_ARCH}) → ${REMOTE_USER}@${REMOTE_HOST}:~/"
+  sshpass -p "$REMOTE_PASS" scp -o StrictHostKeyChecking=no -o ConnectTimeout=5 "$src" "${REMOTE_USER}@${REMOTE_HOST}:~/computehub" 2>/dev/null
+  sshpass -p "$REMOTE_PASS" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 "${REMOTE_USER}@${REMOTE_HOST}" "chmod +x ~/computehub" 2>/dev/null
   echo "  ✅ 远程推送完成"
-  echo "  远程文件: ~/computehub-{gateway,worker,tui}"
-  echo "  远程安装: sudo cp ~/computehub-* /usr/local/bin/"
+  echo "  远程文件: ~/computehub"
+  echo "  用法: ~/computehub {gateway|worker|tui} ..."
 fi
 
 echo ""
 echo "💡 提示：若需验证 download 端点，请确认 Gateway 运行中"
 echo "   bash scripts/start-gateway.sh"
-echo "   然后: curl http://localhost:8282/api/v1/download?file=computehub-worker-linux-amd64 -o /dev/null -w '%{http_code}'"
+echo "   然后: curl http://localhost:8282/api/v1/download?file=computehub&platform=linux-amd64 -o /dev/null -w '%{http_code}'"

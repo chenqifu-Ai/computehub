@@ -1,5 +1,5 @@
 #!/bin/bash
-# ComputeHub 一键部署脚本
+# ComputeHub 一键部署脚本（三合一版本）
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
@@ -13,9 +13,9 @@ warn(){ echo -e "  ${YELLOW}$1${NC}"; }
 err() { echo -e "  ${RED}$1${NC}"; }
 
 usage() {
-  echo "Usage:"
-  echo "  deploy.sh build [version]"
-  echo "  deploy.sh deploy <host> [password] [--component X] [--port N] [--gateway URL] [--node-id X] [--region X]"
+  echo "用法:"
+  echo "  deploy.sh build [version]                        # 编译"
+  echo "  deploy.sh deploy <host> [password] [--component X] [--port N] [--gateway URL]"
   echo "  deploy.sh all <host> [password] [--component X] [--port N] [--version V]"
   exit 1
 }
@@ -30,13 +30,13 @@ ssh_exec() {
 }
 
 download_via_gateway() {
-  local host=$1 pass=$2 port=$3 user=$4 comp=$5 platform=$6 gw=$7
+  local host=$1 pass=$2 port=$3 user=$4 bin_name=$5 platform=$6 gw=$7
   local ext=""; [[ "$platform" == windows-* ]] && ext=".exe"
-  local file_url="${gw%/}/api/v1/download?file=computehub-${comp}-${platform}${ext}"
-  local dst="~/computehub-${comp}${ext}"
-  echo "  ${comp}: ${file_url}"
+  local file_url="${gw%/}/api/v1/download?file=computehub${ext}&platform=${platform}"
+  local dst="~/computehub${ext}"
+  echo "  computehub → ${file_url}"
   ssh_exec "$host" "$pass" "$port" "$user" "curl -sL -o '${dst}' '${file_url}' && chmod +x '${dst}'"
-  ssh_exec "$host" "$pass" "$port" "$user" "test -s '${dst}'" && ok "${comp} downloaded" || err "${comp} download failed"
+  ssh_exec "$host" "$pass" "$port" "$user" "test -s '${dst}'" && ok "下载成功" || err "下载失败"
 }
 
 cmd_build() {
@@ -44,34 +44,41 @@ cmd_build() {
   echo "  Build v${version}"
   cd "${PROJECT_DIR}"
   go version || { err "Go not found"; exit 1; }
-  declare -A MAP=( ["linux-amd64"]="linux/amd64" ["linux-arm64"]="linux/arm64" ["windows-amd64"]="windows/amd64" )
+
+  declare -A PLAT_MAP=( ["linux-amd64"]="linux/amd64" ["linux-arm64"]="linux/arm64" ["darwin-amd64"]="darwin/amd64" ["darwin-arm64"]="darwin/arm64" ["windows-amd64"]="windows/amd64" )
   local ldflags="-s -w -X github.com/computehub/opc/src/version.VERSION=${version}"
-  local comps=("gateway" "tui" "worker" "node")
-  
-  for platform in "${!MAP[@]}"; do
-    IFS='/' read -r goos goarch <<< "${MAP[$platform]}"
+
+  for platform in "${!PLAT_MAP[@]}"; do
+    IFS='/' read -r goos goarch <<< "${PLAT_MAP[$platform]}"
     local ext=""; [ "$goos" = "windows" ] && ext=".exe"
     local dir="${BIN_DIR}/${platform}"; mkdir -p "$dir"
-    for c in "${comps[@]}"; do
-      local src="./cmd/${c}/"; [ "$c" = "node" ] && src="./cmd/node/"
-      [ ! -d "$src" ] && { warn "${c}: no src"; continue; }
-      CGO_ENABLED=0 GOOS="$goos" GOARCH="$goarch" go build $ldflags -o "${dir}/computehub-${c}${ext}" "$src"
-    done
+    local out="${dir}/computehub${ext}"
+
+    CGO_ENABLED=0 GOOS="$goos" GOARCH="$goarch" \
+      go build $ldflags -o "$out" "./cmd/computehub/" 2>&1
+
+    chmod +x "$out" 2>/dev/null || true
+    size=$(stat -c%s "$out" 2>/dev/null || echo "0")
+    echo "  ✅ ${platform}: $(awk "BEGIN{printf \"%.1f\", $size/1024/1024}") MB"
   done
-  
-  mkdir -p "${DEPLOY_DIR}/archive"
-  for platform in "${!MAP[@]}"; do
-    IFS='/' read -r goos goarch <<< "${MAP[$platform]}"
-    local ext=""; [ "$goos" = "windows" ] && ext=".exe"
-    local suffix="${goos}-${goarch}${ext}"
-    for c in "${comps[@]}"; do
-      src="${BIN_DIR}/${platform}/computehub-${c}${ext}"
-      [ -f "$src" ] || continue
-      dst="${DEPLOY_DIR}/computehub-${c}-${suffix}"
-      chmod +x "$src"; cp "$src" "$dst"
-      ok "${dst}"
-    done
+
+  # 同步到 deploy/
+  mkdir -p "${DEPLOY_DIR}"
+  for platform in "${!PLAT_MAP[@]}"; do
+    local ext=""; [[ "$platform" == windows-* ]] && ext=".exe"
+    local src="${BIN_DIR}/${platform}/computehub${ext}"
+    [ -f "$src" ] && cp "$src" "${DEPLOY_DIR}/${platform}/computehub${ext}"
   done
+
+  # 当前平台到根目录
+  CUR_OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+  CUR_ARCH=$(uname -m)
+  case "$CUR_ARCH" in aarch64|arm64) CUR_ARCH="arm64" ;; x86_64|amd64) CUR_ARCH="amd64" ;; esac
+  CUR_PLAT="${CUR_OS}-${CUR_ARCH}"
+  ext=""; [ "$CUR_OS" = "windows" ] && ext=".exe"
+  [ -f "${BIN_DIR}/${CUR_PLAT}/computehub${ext}" ] && \
+    cp "${BIN_DIR}/${CUR_PLAT}/computehub${ext}" "${DEPLOY_DIR}/computehub${ext}"
+
   echo "$version" > "${DEPLOY_DIR}/version.txt"
   ok "build v${version} done"
 }
@@ -89,7 +96,7 @@ cmd_deploy() {
     nc -z -w 3 "$host" "$ssh_port" 2>/dev/null || { err "${host}:${ssh_port} unreachable"; exit 1; }
   }
 
-  # SSH + platform
+  # SSH + platform detection
   ssh_exec "$host" "$pass" "$ssh_port" "$deploy_user" "uname -a" >/dev/null 2>&1 || { err "SSH failed"; exit 1; }
   local os_info=$(ssh_exec "$host" "$pass" "$ssh_port" "$deploy_user" "uname -s" 2>/dev/null)
   local arch_info=$(ssh_exec "$host" "$pass" "$ssh_port" "$deploy_user" "uname -m" 2>/dev/null)
@@ -101,66 +108,41 @@ cmd_deploy() {
     Linux,x86_64|Linux,amd64)  platform="linux-amd64" ;;
   esac
 
-  # Parse component list
-  local comps=()
-  if [ "$component" = "all" ]; then comps=("gateway" "tui" "worker" "node")
-  else IFS=',' read -ra comps <<< "$component"; fi
+  # 下载单一二进制
+  download_via_gateway "$host" "$pass" "$ssh_port" "$deploy_user" "computehub" "$platform" "$gw"
 
-  # Transfer via Gateway download
-  for c in "${comps[@]}"; do
-    download_via_gateway "$host" "$pass" "$ssh_port" "$deploy_user" "$c" "$platform" "$gw"
-  done
-
-  # Push config.json template (remote auto-generate)
-  echo "  Push config.json template..."
-  local config_content=$(cat "${PROJECT_DIR}/config.template.json")
-  ssh_exec "$host" "$pass" "$ssh_port" "$deploy_user" "
-    cat > ~/config.json << 'CONFIGEOF'
-${config_content}
-CONFIGEOF
-    echo \"✅ config.json written\"
-  "
-
-  # Install & start
-  local cmd="set -e; mkdir -p /tmp;"
+  # Install
+  local cmd="set -e;"
   cmd+='if [ -d /data/data/com.termux/files/usr/bin ]; then B=/data/data/com.termux/files/usr/bin; else B=/usr/local/bin; fi;'
-  for c in "${comps[@]}"; do
-    local ext=""; [[ "$platform" == windows-* ]] && ext=".exe"
-    cmd+="chmod +x ~/computehub-${c}${ext} 2>/dev/null;"
-    cmd+="mkdir -p \$B 2>/dev/null; cp ~/computehub-${c}${ext} \$B/computehub-${c} 2>/dev/null;"
-  done
+  cmd+="chmod +x ~/computehub 2>/dev/null; cp ~/computehub \$B/computehub 2>/dev/null;"
 
-  # Start gateway
-  local has_gw=false
-  for c in "${comps[@]}"; do [ "$c" = "gateway" ] && has_gw=true; done
-  if $has_gw; then
-    cmd+="pkill -f computehub-gateway 2>/dev/null || true;"
-    cmd+="G=\$(command -v computehub-gateway || echo ~/computehub-gateway);"
-    cmd+="nohup \$G > /tmp/gateway.log 2>&1 & sleep 2;"
+  # Start gateway if requested
+  if [[ "$component" == *"gateway"* ]] || [ "$component" = "all" ]; then
+    cmd+="pkill -f 'computehub gateway' 2>/dev/null || true;"
+    cmd+="G=\$(command -v computehub || echo ~/computehub);"
+    cmd+="nohup \$G gateway --port 8282 > /tmp/gateway.log 2>&1 & sleep 2;"
   fi
 
-  # Start worker
-  local has_wk=false
-  for c in "${comps[@]}"; do [ "$c" = "worker" ] && has_wk=true; done
-  if $has_wk; then
+  # Start worker if requested
+  if [[ "$component" == *"worker"* ]] || [ "$component" = "all" ]; then
     local node_id="${NODE_ID:-cqf-${host##*.}}"
     local region="${REGION:-cn-east}"
-    cmd+="pkill -f computehub-worker 2>/dev/null || true;"
-    cmd+="W=\$(command -v computehub-worker || echo ~/computehub-worker);"
-    cmd+="nohup \$W --gw ${gw} --node-id ${node_id} --region ${region} > /tmp/worker.log 2>&1 &"
+    cmd+="pkill -f 'computehub worker' 2>/dev/null || true;"
+    cmd+="W=\$(command -v computehub || echo ~/computehub);"
+    cmd+="nohup \$W worker --gw ${gw} --node-id ${node_id} --region ${region} > /tmp/worker.log 2>&1 &"
   fi
 
   ssh_exec "$host" "$pass" "$ssh_port" "$deploy_user" "$cmd" 2>&1 | tail -5 || true
 
   # Verify
-  if $has_gw; then
+  if [[ "$component" == *"gateway"* ]] || [ "$component" = "all" ]; then
     curl -s --connect-timeout 5 "${gw}/api/health" 2>/dev/null | grep -qi "healthy" && ok "Gateway" || warn "Gateway N/A"
   fi
-  if $has_wk; then
-    ssh_exec "$host" "$pass" "$ssh_port" "$deploy_user" "ps aux | grep computehub-worker | grep -v grep" \
+  if [[ "$component" == *"worker"* ]] || [ "$component" = "all" ]; then
+    ssh_exec "$host" "$pass" "$ssh_port" "$deploy_user" "ps aux | grep 'computehub worker' | grep -v grep" \
       && ok "Worker running" || warn "Worker not detected"
   fi
-  ok "Deploy done: ${comps[*]}"
+  ok "Deploy done"
 }
 
 # ============================================================

@@ -14,15 +14,17 @@
 package main
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+	"mime/multipart"
 	"net"
 	"net/http"
 	"os"
 	"os/exec"
 	"os/signal"
+	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
@@ -44,8 +46,8 @@ type Config struct {
 	PollInterval time.Duration
 	HeartbeatInterval time.Duration
 	MaxConcurrent int
-	IPOverride  string
 	ReportDir   string
+	UploadDir   string // 任务输出目录，Worker 会扫描此目录自动上传到 Gallery
 }
 
 var defaultConfig = Config{
@@ -55,22 +57,22 @@ var defaultConfig = Config{
 	Region:            "cn-east",
 	CPUCores:          0,
 	MemoryGB:          0,
-	PollInterval:      500 * time.Millisecond,
-	HeartbeatInterval: 25 * time.Second,
+	PollInterval:      5 * time.Second,
+	HeartbeatInterval: 10 * time.Second,
 	MaxConcurrent:     4,
 	ReportDir:         "/tmp/computehub-worker",
+	UploadDir:         "", // 默认不上传，需命令行指定
 }
 
 // ── API 类型 ──
 type RegisterReq struct {
-	NodeID         string  `json:"node_id"`
-	GPUType        string  `json:"gpu_type"`
-	Region         string  `json:"region"`
-	CPUCores       int     `json:"cpu_cores"`
-	MemoryGB       float64 `json:"memory_gb"`
-	Status         string  `json:"status"`
-	IPAddress      string  `json:"ip_address"`
-	MaxConcurrency int     `json:"max_concurrency"`
+	NodeID     string  `json:"node_id"`
+	GPUType    string  `json:"gpu_type"`
+	Region     string  `json:"region"`
+	CPUCores   int     `json:"cpu_cores"`
+	MemoryGB   float64 `json:"memory_gb"`
+	Status     string  `json:"status"`
+	IPAddress  string  `json:"ip_address"`
 }
 
 type HeartbeatReq struct {
@@ -82,35 +84,6 @@ type HeartbeatReq struct {
 	CPULoad       float64    `json:"cpu_load"`
 }
 
-// PollReq is the request body for the polling endpoint
-type PollReq struct {
-	NodeID          string `json:"node_id"`
-	GPUType         string `json:"gpu_type,omitempty"`
-	Region          string `json:"region,omitempty"`
-	RunningTaskCount int   `json:"running_task_count,omitempty"`
-}
-
-// PollResp is the response from the polling endpoint
-type PollResp struct {
-	Success bool                   `json:"success"`
-	Data    *PollRespData          `json:"data"`
-	Error   string                 `json:"error,omitempty"`
-}
-
-type PollRespData struct {
-	Task    *PolledTask `json:"task"`
-	Message string      `json:"message,omitempty"`
-}
-
-type PolledTask struct {
-	TaskID     string `json:"task_id"`
-	Command    string `json:"command"`
-	Timeout    int    `json:"timeout"`
-	Priority   int    `json:"priority"`
-	NodeID     string `json:"node_id,omitempty"`
-	SourceType string `json:"source_type,omitempty"`
-}
-
 type TaskInfo struct {
 	TaskID    string `json:"task_id"`
 	Source    string `json:"source"`
@@ -118,6 +91,11 @@ type TaskInfo struct {
 	Status    string `json:"status"`
 	Retries   int    `json:"retries"`
 	CreatedAt string `json:"created_at"`
+}
+
+type TaskListResponse struct {
+	Success bool                   `json:"success"`
+	Data    map[string][]TaskInfo  `json:"data"`
 }
 
 type TaskSubmit struct {
@@ -158,12 +136,6 @@ type GPUStats struct {
 }
 
 func main() {
-	runWorker()
-	// 单次执行，退出后不自动重启
-	fmt.Printf("\n %s⚠️ Worker 已退出%s\n", yellow(bold("")), reset())
-}
-
-func runWorker() {
 	cfg := parseConfig()
 
 	if cfg.NodeID == "" {
@@ -224,10 +196,7 @@ func runWorker() {
 	// Step 2: Start heartbeat loop
 	go state.heartbeatLoop()
 
-	// Step 3: Start auto-upgrade loop (checks every 5 min)
-	go state.upgradeLoop()
-
-	// Step 4: Start task poller
+	// Step 3: Start task poller
 	go state.taskPollLoop()
 
 	// Step 4: Graceful shutdown
@@ -237,26 +206,21 @@ func runWorker() {
 
 	fmt.Printf("\n%s ⚠️ 收到终止信号，正在关闭...%s\n", yellow(bold("")), reset())
 	state.unregister()
-	// Use return instead of os.Exit(0) so the auto-restart loop can continue
-	return
+	os.Exit(0)
 }
 
 // ── 注册 ──
 
 func (s *WorkerState) register() error {
-	ip := s.config.IPOverride
-	if ip == "" {
-		ip = getLocalIP()
-	}
+	ip := getLocalIP()
 	req := RegisterReq{
-		NodeID:         s.nodeID,
-		GPUType:        s.config.GPUType,
-		Region:         s.config.Region,
-		CPUCores:       s.config.CPUCores,
-		MemoryGB:       s.config.MemoryGB,
-		Status:         "online",
-		IPAddress:      ip,
-		MaxConcurrency: s.config.MaxConcurrent,
+		NodeID:   s.nodeID,
+		GPUType:  s.config.GPUType,
+		Region:   s.config.Region,
+		CPUCores: s.config.CPUCores,
+		MemoryGB: s.config.MemoryGB,
+		Status:   "online",
+		IPAddress: ip,
 	}
 
 	body, _ := json.Marshal(req)
@@ -276,7 +240,7 @@ func (s *WorkerState) register() error {
 	}
 	json.NewDecoder(resp.Body).Decode(&result)
 
-	if !result.Success && result.Error != "" && !strings.Contains(result.Error, "already registered") {
+	if !result.Success && result.Error != "" && !strings.Contains(result.Error, "node already registered") {
 		return fmt.Errorf("注册被拒: %s", result.Error)
 	}
 
@@ -360,76 +324,82 @@ func (s *WorkerState) taskPollLoop() {
 			continue
 		}
 
-		// Poll Gateway for a pending task
-		task, err := s.pollTask()
+		// Fetch task list
+		tasks, err := s.fetchTasks()
 		if err != nil {
-			fmt.Printf(" %s⚠️ poll 失败: %v%s\n", yellow(""), err, reset())
 			time.Sleep(s.config.PollInterval)
 			continue
 		}
 
-		if task == nil {
-			// No pending tasks, sleep and retry
-			time.Sleep(s.config.PollInterval)
-			continue
+		// Look for pending tasks assigned to us
+		for _, task := range tasks {
+			if task.Status == "pending" {
+				s.mu.Lock()
+				_, alreadyRunning := s.runningTasks[task.TaskID]
+				s.mu.Unlock()
+				if alreadyRunning {
+					continue
+				}
+
+				fmt.Printf("\n %s📋 发现待处理任务: %s%s\n", yellow(bold("")), cyan(task.TaskID), reset())
+
+				// Fetch full task detail (includes command)
+				detail, err := s.fetchTaskDetail(task.TaskID)
+				if err != nil {
+					fmt.Printf(" %s⚠️ 无法获取任务详情: %v%s\n", yellow(""), err, reset())
+					continue
+				}
+
+				// Execute in background
+				go s.executeTask(detail)
+			}
 		}
-
-		fmt.Printf("\n %s📋 认领到任务: %s%s\n", yellow(bold("")), cyan(task.TaskID), reset())
-		fmt.Printf("   命令: %s%s%s\n", dim(""), task.Command, reset())
-
-		// Execute in background
-		go s.executeTask(&TaskDetail{
-			TaskID:     task.TaskID,
-			Command:    task.Command,
-			NodeID:     task.NodeID,
-			Timeout:    task.Timeout,
-			Priority:   task.Priority,
-			SourceType: task.SourceType,
-		})
 
 		time.Sleep(s.config.PollInterval)
 	}
 }
 
-// pollTask 轮询 Gateway 获取待处理任务
-func (s *WorkerState) pollTask() (*PolledTask, error) {
-	req := PollReq{
-		NodeID:          s.nodeID,
-		GPUType:         s.config.GPUType,
-		Region:          s.config.Region,
-		RunningTaskCount: len(s.runningTasks),
-	}
-
-	body, _ := json.Marshal(req)
-	resp, err := s.client.Post(
-		s.config.GatewayURL+"/api/v1/tasks/poll",
-		"application/json",
-		bytes.NewBuffer(body),
-	)
+func (s *WorkerState) fetchTasks() ([]TaskInfo, error) {
+	resp, err := s.client.Get(s.config.GatewayURL + "/api/v1/tasks/list")
 	if err != nil {
-		return nil, fmt.Errorf("连接失败: %w", err)
+		return nil, err
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("HTTP %d", resp.StatusCode)
+	body, _ := io.ReadAll(resp.Body)
+	var listResp TaskListResponse
+	if err := json.Unmarshal(body, &listResp); err != nil {
+		return nil, err
 	}
 
+	tasks := listResp.Data[s.nodeID]
+	if tasks == nil {
+		return nil, nil
+	}
+	return tasks, nil
+}
+
+func (s *WorkerState) fetchTaskDetail(taskID string) (*TaskDetail, error) {
+	url := fmt.Sprintf("%s/api/v1/tasks/detail?task_id=%s&node_id=%s",
+		s.config.GatewayURL, taskID, s.nodeID)
+	resp, err := s.client.Get(url)
+	if err != nil {
+		return nil, fmt.Errorf("connection failed: %w", err)
+	}
+	defer resp.Body.Close()
+
 	var wrapper struct {
-		Success bool          `json:"success"`
-		Data    *PollRespData `json:"data"`
-		Error   string        `json:"error"`
+		Success bool        `json:"success"`
+		Data    *TaskDetail `json:"data"`
+		Error   string      `json:"error"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&wrapper); err != nil {
-		return nil, fmt.Errorf("JSON 解析失败: %w", err)
+		return nil, fmt.Errorf("parse error: %w", err)
 	}
 	if !wrapper.Success {
-		return nil, fmt.Errorf("API 错误: %s", wrapper.Error)
+		return nil, fmt.Errorf("API error: %s", wrapper.Error)
 	}
-	if wrapper.Data == nil || wrapper.Data.Task == nil {
-		return nil, nil // 没有待处理任务
-	}
-	return wrapper.Data.Task, nil
+	return wrapper.Data, nil
 }
 
 // ── GPU 采集 ──
@@ -448,7 +418,43 @@ func (s *WorkerState) collectGPUStats() GPUStats {
 	return stats
 }
 
-// collectNvidiaSMI is implemented in worker_util_linux.go / worker_util_windows.go
+func (s *WorkerState) collectNvidiaSMI() GPUStats {
+	var stats GPUStats
+
+	cmd := exec.Command("nvidia-smi",
+		"--query-gpu=index,utilization.gpu,temperature.gpu,memory.used,memory.total",
+		"--format=csv,noheader,nounits")
+	output, err := cmd.Output()
+	if err != nil {
+		return stats
+	}
+
+	lines := strings.Split(strings.TrimSpace(string(output)), "\n")
+	for _, line := range lines {
+		parts := strings.Split(line, ",")
+		if len(parts) < 5 {
+			continue
+		}
+		stats.Count++
+
+		util, _ := strconv.ParseFloat(strings.TrimSpace(parts[1]), 64)
+		temp, _ := strconv.ParseFloat(strings.TrimSpace(parts[2]), 64)
+		memUsed, _ := strconv.ParseFloat(strings.TrimSpace(parts[3]), 64)
+		memTotal, _ := strconv.ParseFloat(strings.TrimSpace(parts[4]), 64)
+
+		stats.Utilization += util
+		stats.Temperature += temp
+		stats.MemoryUsedGB += memUsed / 1024
+		stats.MemoryTotalGB += memTotal / 1024
+	}
+
+	if stats.Count > 0 {
+		stats.Utilization /= float64(stats.Count)
+		stats.Temperature /= float64(stats.Count)
+	}
+
+	return stats
+}
 
 // ── 任务执行 ──
 
@@ -464,8 +470,7 @@ type TaskDetail struct {
 
 func (s *WorkerState) executeTask(task *TaskDetail) {
 	if task.Command == "" {
-		fmt.Printf(" %s⚠️ 任务 %s 没有命令，回传错误结果%s\n", yellow(""), task.TaskID, reset())
-		s.submitTaskError(task.TaskID, "empty command")
+		fmt.Printf(" %s⚠️ 任务 %s 没有命令，跳过%s\n", yellow(""), task.TaskID, reset())
 		return
 	}
 
@@ -474,31 +479,18 @@ func (s *WorkerState) executeTask(task *TaskDetail) {
 
 	start := time.Now()
 
-	cmd := runCommand(task.Command)
+	ctx := s.client
+	_ = ctx
 
-	// Get stdout pipe for streaming
-	stdoutPipe, err := cmd.StdoutPipe()
-	if err != nil {
-		fmt.Printf(" %s❌ stdout pipe 创建失败: %v%s\n", red(bold("")), err, reset())
-		s.submitTaskError(task.TaskID, err.Error())
-		return
-	}
-	stderrPipe, err := cmd.StderrPipe()
-	if err != nil {
-		fmt.Printf(" %s❌ stderr pipe 创建失败: %v%s\n", red(bold("")), err, reset())
-		s.submitTaskError(task.TaskID, err.Error())
-		return
-	}
+	cmd := exec.Command("sh", "-c", task.Command)
 
 	// Set timeout
 	if task.Timeout > 0 {
 		timer := time.AfterFunc(time.Duration(task.Timeout)*time.Second, func() {
+			cmd.Process.Signal(syscall.SIGTERM)
+			time.Sleep(3 * time.Second)
 			if cmd.Process != nil {
-				killProcess(cmd.Process)
-				time.Sleep(3 * time.Second)
-				if cmd.Process != nil {
-					cmd.Process.Kill()
-				}
+				cmd.Process.Kill()
 			}
 		})
 		defer timer.Stop()
@@ -510,112 +502,14 @@ func (s *WorkerState) executeTask(task *TaskDetail) {
 	s.taskCount++
 	s.mu.Unlock()
 
-	// Start the command
-	if err := cmd.Start(); err != nil {
-		fmt.Printf(" %s❌ 启动命令失败: %v%s\n", red(bold("")), err, reset())
-		s.mu.Lock()
-		delete(s.runningTasks, task.TaskID)
-		s.mu.Unlock()
-		s.submitTaskError(task.TaskID, err.Error())
-		return
-	}
-
-	// Read stdout and stderr asynchronously with streaming
-	var stdoutBuf, stderrBuf bytes.Buffer
-	var stdoutDone, stderrDone bool
-	var mu sync.Mutex
-
-	// Streaming ticker — pushes incremental output every 500ms
-	streamTicker := time.NewTicker(500 * time.Millisecond)
-	stopStream := make(chan struct{})
-
-	go func() {
-		scanner := bufio.NewScanner(stdoutPipe)
-		for scanner.Scan() {
-			line := scanner.Text() + "\n"
-			mu.Lock()
-			stdoutBuf.WriteString(line)
-			mu.Unlock()
-		}
-		mu.Lock()
-		stdoutDone = true
-		mu.Unlock()
-	}()
-
-	go func() {
-		scanner := bufio.NewScanner(stderrPipe)
-		for scanner.Scan() {
-			line := scanner.Text() + "\n"
-			mu.Lock()
-			stderrBuf.WriteString(line)
-			mu.Unlock()
-		}
-		mu.Lock()
-		stderrDone = true
-		mu.Unlock()
-	}()
-
-	// Background streaming to Gateway
-	go func() {
-		var lastStdout, lastStderr int
-		for {
-			select {
-			case <-streamTicker.C:
-				mu.Lock()
-				currentStdout := stdoutBuf.String()
-				currentStderr := stderrBuf.String()
-				mu.Unlock()
-
-				// Compute increment
-				newStdout := ""
-				if len(currentStdout) > lastStdout {
-					newStdout = currentStdout[lastStdout:]
-				}
-				newStderr := ""
-				if len(currentStderr) > lastStderr {
-					newStderr = currentStderr[lastStderr:]
-				}
-
-				if newStdout != "" || newStderr != "" {
-					s.sendStreamProgress(task.TaskID, newStdout, newStderr)
-					lastStdout = len(currentStdout)
-					lastStderr = len(currentStderr)
-				}
-
-				if stdoutDone && stderrDone {
-					// Send remaining buffer
-					remainingStdout := ""
-					if len(currentStdout) > lastStdout {
-						remainingStdout = currentStdout[lastStdout:]
-					}
-					remainingStderr := ""
-					if len(currentStderr) > lastStderr {
-						remainingStderr = currentStderr[lastStderr:]
-					}
-					if remainingStdout != "" || remainingStderr != "" {
-						s.sendStreamProgress(task.TaskID, remainingStdout, remainingStderr)
-					}
-					close(stopStream)
-					return
-				}
-			case <-stopStream:
-				streamTicker.Stop()
-				return
-			}
-		}
-	}()
-
-	// Wait for command completion
-	err = cmd.Wait()
-	duration := time.Since(start)
-
-	// Wait for streaming goroutine to finish
-	select {
-	case <-stopStream:
-	case <-time.After(2 * time.Second):
-	}
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
 
 	exitCode := 0
+	err := cmd.Run()
+	duration := time.Since(start)
+
 	if err != nil {
 		if exitErr, ok := err.(*exec.ExitError); ok {
 			exitCode = exitErr.ExitCode()
@@ -631,24 +525,29 @@ func (s *WorkerState) executeTask(task *TaskDetail) {
 
 	success := exitCode == 0
 
-	mu.Lock()
-	finalStdout := stdoutBuf.String()
-	finalStderr := stderrBuf.String()
-	mu.Unlock()
-
 	result := TaskResult{
 		TaskID:     task.TaskID,
 		Success:    success,
 		ExitCode:   exitCode,
-		Stdout:     truncateString(finalStdout, 100*1024),
-		Stderr:     truncateString(finalStderr, 100*1024),
+		Stdout:     truncateString(stdout.String(), 100*1024),
+		Stderr:     truncateString(stderr.String(), 100*1024),
 		Duration:   duration.Round(time.Millisecond).String(),
 		ExecutedOn: s.nodeID,
 		Verified:   true,
 	}
 
 	// Submit result
-	s.submitTaskResult(result)
+	body, _ := json.Marshal(result)
+	resp, err := s.client.Post(
+		s.config.GatewayURL+"/api/v1/tasks/result",
+		"application/json",
+		bytes.NewBuffer(body),
+	)
+	if err != nil {
+		fmt.Printf(" %s❌ 结果回传失败: %v%s\n", red(bold("")), err, reset())
+		return
+	}
+	resp.Body.Close()
 
 	statusIcon := "✅"
 	statusColor := green
@@ -664,55 +563,11 @@ func (s *WorkerState) executeTask(task *TaskDetail) {
 
 	// Save report
 	s.saveTaskReport(task.TaskID, result)
-}
 
-// sendStreamProgress sends incremental output to Gateway
-func (s *WorkerState) sendStreamProgress(taskID, stdout, stderr string) {
-	body, _ := json.Marshal(map[string]string{
-		"task_id": taskID,
-		"node_id": s.nodeID,
-		"stdout":  stdout,
-		"stderr":  stderr,
-	})
-	resp, err := s.client.Post(
-		s.config.GatewayURL+"/api/v1/tasks/progress",
-		"application/json",
-		bytes.NewBuffer(body),
-	)
-	if err != nil {
-		// Silently ignore stream errors — don't disrupt execution
-		return
+	// Auto-upload output files to Gallery
+	if success && s.config.UploadDir != "" {
+		s.uploadToGallery(task.TaskID)
 	}
-	resp.Body.Close()
-}
-
-// submitTaskError submits a task error result
-func (s *WorkerState) submitTaskError(taskID, errMsg string) {
-	result := TaskResult{
-		TaskID:     taskID,
-		Success:    false,
-		ExitCode:   -1,
-		Stderr:     errMsg,
-		Duration:   "0s",
-		ExecutedOn: s.nodeID,
-		Verified:   false,
-	}
-	s.submitTaskResult(result)
-}
-
-// submitTaskResult submits the final task result to Gateway
-func (s *WorkerState) submitTaskResult(result TaskResult) {
-	body, _ := json.Marshal(result)
-	resp, err := s.client.Post(
-		s.config.GatewayURL+"/api/v1/tasks/result",
-		"application/json",
-		bytes.NewBuffer(body),
-	)
-	if err != nil {
-		fmt.Printf(" %s❌ 结果回传失败: %v%s\n", red(bold("")), err, reset())
-		return
-	}
-	resp.Body.Close()
 }
 
 func (s *WorkerState) saveTaskReport(taskID string, result TaskResult) {
@@ -734,6 +589,98 @@ func (s *WorkerState) saveTaskReport(taskID string, result TaskResult) {
 }
 
 // ═══════════════════════════════════════════
+// uploadToGallery 扫描输出目录并将媒体文件自动上传到 Gallery
+func (s *WorkerState) uploadToGallery(taskID string) {
+	uploadDir := s.config.UploadDir
+	if uploadDir == "" {
+		return
+	}
+
+	entries, err := os.ReadDir(uploadDir)
+	if err != nil {
+		fmt.Printf(" %s⚠️ 无法扫描输出目录 %s: %v%s\n", yellow(""), uploadDir, err, reset())
+		return
+	}
+
+	// 支持的媒体扩展名
+	isMedia := func(name string) bool {
+		ext := strings.ToLower(filepath.Ext(name))
+		switch ext {
+		case ".mp4", ".webm", ".mov", ".avi", ".mkv", ".flv",
+			".mp3", ".wav", ".ogg", ".aac", ".flac", ".m4a",
+			".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp":
+			return true
+		}
+		return false
+	}
+
+	count := 0
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+		name := entry.Name()
+		if !isMedia(name) {
+			continue
+		}
+
+		filePath := filepath.Join(uploadDir, name)
+		if err := s.uploadFile(filePath, name); err != nil {
+			fmt.Printf(" %s⚠️  上传 %s 失败: %v%s\n", yellow(""), name, err, reset())
+		} else {
+			fmt.Printf(" %s📤 自动上传: %s → Gallery%s\n", green(""), cyan(name), reset())
+			count++
+		}
+	}
+
+	if count == 0 {
+		fmt.Printf(" %s📭 输出目录没有可上传的媒体文件%s\n", dim(""), reset())
+	}
+}
+
+// uploadFile 上传单个文件到 Gallery
+func (s *WorkerState) uploadFile(filePath, filename string) error {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return fmt.Errorf("无法打开文件: %w", err)
+	}
+	defer file.Close()
+
+	var buf bytes.Buffer
+	mw := multipart.NewWriter(&buf)
+	part, err := mw.CreateFormFile("file", filename)
+	if err != nil {
+		return fmt.Errorf("创建 multipart 失败: %w", err)
+	}
+
+	if _, err := io.Copy(part, file); err != nil {
+		return fmt.Errorf("读取文件失败: %w", err)
+	}
+
+	mw.Close()
+
+	req, err := http.NewRequest("POST",
+		s.config.GatewayURL+"/api/v1/gallery/upload",
+		&buf)
+	if err != nil {
+		return fmt.Errorf("创建请求失败: %w", err)
+	}
+	req.Header.Set("Content-Type", mw.FormDataContentType())
+
+	resp, err := s.client.Do(req)
+	if err != nil {
+		return fmt.Errorf("请求失败: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("服务端错误 (%d): %s", resp.StatusCode, string(body))
+	}
+
+	return nil
+}
+
 // ── 工具函数 ──
 // ═══════════════════════════════════════════
 
@@ -746,28 +693,71 @@ func hostname() string {
 }
 
 func getLocalIP() string {
-	// First try: UDP dial to determine the outbound interface IP
-	// Works in most environments including proot/Termux
-	conn, err := net.Dial("udp", "8.8.8.8:80")
-	if err == nil {
-		defer conn.Close()
-		localAddr := conn.LocalAddr().(*net.UDPAddr)
-		if localAddr != nil && localAddr.IP != nil && !localAddr.IP.IsLoopback() {
-			return localAddr.IP.String()
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return "0.0.0.0"
+	}
+	for _, addr := range addrs {
+		if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() && ipnet.IP.To4() != nil {
+			return ipnet.IP.String()
 		}
 	}
+	return "0.0.0.0"
+	// We need net - add it
+}
 
-	// Second try: enumerate interfaces
-	addrs, err := net.InterfaceAddrs()
-	if err == nil {
-		for _, addr := range addrs {
-			if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() && ipnet.IP.To4() != nil {
-				return ipnet.IP.String()
+func detectMemoryGB() float64 {
+	// Try /proc/meminfo
+	data, err := os.ReadFile("/proc/meminfo")
+	if err != nil {
+		return 32
+	}
+	for _, line := range strings.Split(string(data), "\n") {
+		if strings.HasPrefix(line, "MemTotal:") {
+			parts := strings.Fields(line)
+			if len(parts) >= 2 {
+				kb, _ := strconv.ParseFloat(parts[1], 64)
+				return kb / 1024 / 1024
 			}
 		}
 	}
+	return 32
+}
 
-	return "0.0.0.0"
+func detectGPUType() (string, error) {
+	cmd := exec.Command("nvidia-smi", "--query-gpu=name", "--format=csv,noheader")
+	output, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+	lines := strings.Split(strings.TrimSpace(string(output)), "\n")
+	if len(lines) > 0 {
+		return strings.TrimSpace(lines[0]), nil
+	}
+	return "", fmt.Errorf("no GPU found")
+}
+
+func countGPUs() int {
+	cmd := exec.Command("nvidia-smi", "-L")
+	output, err := cmd.Output()
+	if err != nil {
+		return 0
+	}
+	return len(strings.Split(strings.TrimSpace(string(output)), "\n"))
+}
+
+func getCPULoad() float64 {
+	// Quick load average
+	data, err := os.ReadFile("/proc/loadavg")
+	if err != nil {
+		return 0
+	}
+	parts := strings.Fields(string(data))
+	if len(parts) >= 1 {
+		load, _ := strconv.ParseFloat(parts[0], 64)
+		return load / float64(runtime.NumCPU()) * 100
+	}
+	return 0
 }
 
 func truncateString(s string, max int) string {
@@ -813,11 +803,6 @@ func parseConfig() Config {
 				}
 				i++
 			}
-		case "--ip", "--address":
-			if i+1 < len(args) {
-				cfg.IPOverride = args[i+1]
-				i++
-			}
 		case "--heartbeat":
 			if i+1 < len(args) {
 				d, _ := time.ParseDuration(args[i+1] + "s")
@@ -832,6 +817,11 @@ func parseConfig() Config {
 				if n > 0 {
 					cfg.MaxConcurrent = n
 				}
+				i++
+			}
+		case "--upload-dir":
+			if i+1 < len(args) {
+				cfg.UploadDir = args[i+1]
 				i++
 			}
 		case "--help", "-h":
@@ -852,16 +842,17 @@ func printWorkerHelp() {
 	fmt.Println(bold(""), "参数:", reset())
 	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--gw <url>"), dim("Gateway 地址 (默认: http://localhost:8282)")))
 	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--node-id <id>"), dim("节点 ID (默认: worker-<hostname>)")))
-	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--ip <address>"), dim("手动指定 IP (默认: 自动检测)")))
 	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--gpu-type <type>"), dim("GPU 型号 (默认: 自动检测)")))
 	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--region <region>"), dim("区域 (默认: cn-east)")))
 	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--interval <sec>"), dim("任务轮询间隔秒 (默认: 5)")))
-	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--heartbeat <sec>"), dim("心跳间隔秒 (默认: 25)")))
+	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--heartbeat <sec>"), dim("心跳间隔秒 (默认: 10)")))
 	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--concurrent <n>"), dim("最大并发任务数 (默认: 4)")))
+	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--upload-dir <dir>"), dim("任务输出目录(扫描并自动上传到 Gallery)")))
 	fmt.Println("")
 	fmt.Println(green(bold("")), "示例:", reset())
 	fmt.Println("  ./compute-worker --gw http://192.168.1.17:8282 --node-id gpu-01 --gpu-type H100 --region cn-east")
 	fmt.Println("  ./compute-worker --node-id worker-2 --interval 3 --concurrent 8")
+	fmt.Println("  ./compute-worker --upload-dir /output --gw http://192.168.1.17:8282")
 }
 
 // ── ANSI 颜色 ──

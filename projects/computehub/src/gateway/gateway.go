@@ -788,6 +788,11 @@ func (g *OpcGateway) handleTaskSubmit(w http.ResponseWriter, r *http.Request) {
 		task.NodeID = task.AssignedNode
 	}
 
+	// If only payload is provided, use it as the command
+	if task.Command == "" && task.Payload != "" {
+		task.Command = task.Payload
+	}
+
 	task.SubmittedAt = time.Now()
 	if task.Priority == 0 {
 		task.Priority = 5
@@ -955,6 +960,7 @@ func findDeployDir() string {
 
 	// Search versioned directory first (binary may live in deploy/0.7.4/linux-arm64/)
 	versionCandidates := []string{
+		"deploy/0.7.6",
 		"deploy/0.7.5",
 		"deploy/0.7.4",
 	}
@@ -1005,7 +1011,12 @@ func findDeployDir() string {
 }
 
 // handleFileDownload serves files for worker self-transport / bootstrap.
-// Usage: GET /api/v1/download?file=compute-worker-win-amd64.exe
+// Usage:
+//   GET /api/v1/download?file=computehub                        → auto-detect (fallback chain)
+//   GET /api/v1/download?file=computehub&platform=linux-amd64   → exact platform
+//   GET /api/v1/download?file=computehub.exe&platform=windows-amd64
+//
+// Supported platforms: linux-amd64, linux-arm64, darwin-amd64, darwin-arm64, windows-amd64
 // Serves from the deploy/ directory relative to the binary location.
 func (g *OpcGateway) handleFileDownload(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
@@ -1019,8 +1030,8 @@ func (g *OpcGateway) handleFileDownload(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// Only serve worker binaries from known directory
-	allowedPrefixes := []string{"compute-worker-", "compute-gateway-", "compute-tui-", "computehub-tui", "computehub-", "opc-"}
+	// Only serve binaries from known directory
+	allowedPrefixes := []string{"compute-worker-", "compute-gateway-", "compute-tui-", "computehub", "computehub-", "opc-"}
 	allowed := false
 	for _, prefix := range allowedPrefixes {
 		if strings.HasPrefix(fileName, prefix) {
@@ -1033,10 +1044,25 @@ func (g *OpcGateway) handleFileDownload(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// Find deploy directory (relative to binary or CWD)
 	deployDir := findDeployDir()
 
-	// Try file in deploy/ root
+	// If platform is specified, serve directly from that platform subdirectory
+	if platform := r.URL.Query().Get("platform"); platform != "" {
+		subDir := deployDir + "/" + platform
+		// Try the file as-is, then computehub/computehub.exe
+		for _, tryName := range []string{fileName, "computehub", "computehub.exe"} {
+			tryPath := subDir + "/" + tryName
+			if _, err := os.Stat(tryPath); err == nil {
+				w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fileName))
+				http.ServeFile(w, r, tryPath)
+				return
+			}
+		}
+		http.NotFound(w, r)
+		return
+	}
+
+	// No platform specified — try deploy/ root first
 	filePath := deployDir + "/" + fileName
 	if _, err := os.Stat(filePath); err == nil {
 		w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fileName))
@@ -1044,35 +1070,22 @@ func (g *OpcGateway) handleFileDownload(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// Try file in deploy/windows-worker/
-	windowsFilePath := deployDir + "/windows-worker/" + fileName
-	if _, err := os.Stat(windowsFilePath); err == nil {
-		w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fileName))
-		http.ServeFile(w, r, windowsFilePath)
-		return
-	}
-
-	// Try file in deploy/{platform}/ — strip platform suffix to match real file names
+	// Fallback: try all platform directories
 	for _, platDir := range []string{"linux-amd64", "linux-arm64", "windows-amd64", "darwin-amd64", "darwin-arm64"} {
-		// Try full name first (e.g. "computehub-worker-linux-amd64" or "computehub-gateway-windows-amd64.exe")
 		platPath := deployDir + "/" + platDir + "/" + fileName
 		if _, err := os.Stat(platPath); err == nil {
 			w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fileName))
 			http.ServeFile(w, r, platPath)
 			return
 		}
-		// Strip .exe if present, then strip platform suffix to get base name
+		// Strip .exe, try just the base name
 		noExt := strings.TrimSuffix(fileName, ".exe")
-		baseName := strings.TrimSuffix(noExt, "-"+platDir)
-		if baseName != noExt {
-			// Try base name (linux) or base name + .exe (windows)
-			for _, tryName := range []string{baseName, baseName + ".exe"} {
-				tryPath := deployDir + "/" + platDir + "/" + tryName
-				if _, err := os.Stat(tryPath); err == nil {
-					w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fileName))
-					http.ServeFile(w, r, tryPath)
-					return
-				}
+		for _, tryName := range []string{noExt, noExt + ".exe"} {
+			tryPath := deployDir + "/" + platDir + "/" + tryName
+			if _, err := os.Stat(tryPath); err == nil {
+				w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fileName))
+				http.ServeFile(w, r, tryPath)
+				return
 			}
 		}
 	}

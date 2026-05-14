@@ -1,0 +1,400 @@
+{
+  "timestamp": "2026-05-12 19:55:31",
+  "test_name": "worker-localhost 压力测试",
+  "config": {
+    "target_node": "worker-localhost",
+    "total_tasks": 30,
+    "batch_size": 10
+  },
+  "summary": {
+    "total_tasks": 30,
+    "success": 0,
+    "failed": 0,
+    "timeout": 30,
+    "success_rate_pct": 0.0,
+    "submit_time_s": 0.61,
+    "poll_time_s": 60.82,
+    "total_time_s": 61.43,
+    "throughput": 0.5,
+    "avg_submit_latency_ms": 155.7
+  },
+  "task_durations": {
+    "avg_s": null,
+    "min_s": null,
+    "max_s": null,
+    "count": 0
+  },
+  "details": [
+    {
+      "task_id": "stress-echo-008",
+      "status": "submitted",
+      "duration_ms": 93.03,
+      "response_time": 0.093,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-008\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"72.308µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-010",
+      "status": "submitted",
+      "duration_ms": 90.0,
+      "response_time": 0.09,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-010\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"14.231µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-009",
+      "status": "submitted",
+      "duration_ms": 124.7,
+      "response_time": 0.125,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-009\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"37.231µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-006",
+      "status": "submitted",
+      "duration_ms": 148.0,
+      "response_time": 0.148,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-006\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"25.923µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-007",
+      "status": "submitted",
+      "duration_ms": 167.05,
+      "response_time": 0.167,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-007\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"18.154µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-005",
+      "status": "submitted",
+      "duration_ms": 190.35,
+      "response_time": 0.19,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-005\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"18.154µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-012",
+      "status": "submitted",
+      "duration_ms": 71.83,
+      "response_time": 0.072,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-012\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"20.692µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-011",
+      "status": "submitted",
+      "duration_ms": 161.35,
+      "response_time": 0.161,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-011\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"27.077µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-013",
+      "status": "submitted",
+      "duration_ms": 147.78,
+      "response_time": 0.148,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-013\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"19.308µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-014",
+      "status": "submitted",
+      "duration_ms": 125.56,
+      "response_time": 0.126,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-014\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"10.462µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-015",
+      "status": "submitted",
+      "duration_ms": 101.14,
+      "response_time": 0.101,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-015\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"17.231µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-003",
+      "status": "submitted",
+      "duration_ms": 294.1,
+      "response_time": 0.294,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-003\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"24.846µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-004",
+      "status": "submitted",
+      "duration_ms": 251.46,
+      "response_time": 0.251,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-004\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"55.077µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-002",
+      "status": "submitted",
+      "duration_ms": 289.49,
+      "response_time": 0.289,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-002\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"14.539µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-017",
+      "status": "submitted",
+      "duration_ms": 89.4,
+      "response_time": 0.089,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-017\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"20.308µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-018",
+      "status": "submitted",
+      "duration_ms": 110.25,
+      "response_time": 0.11,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-018\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"50.077µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-019",
+      "status": "submitted",
+      "duration_ms": 83.94,
+      "response_time": 0.084,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-019\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"52.923µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-016",
+      "status": "submitted",
+      "duration_ms": 187.61,
+      "response_time": 0.188,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-016\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"33.846µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-001",
+      "status": "submitted",
+      "duration_ms": 469.61,
+      "response_time": 0.47,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-001\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"44.077µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-025",
+      "status": "submitted",
+      "duration_ms": 137.58,
+      "response_time": 0.138,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-025\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"14.846µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-021",
+      "status": "submitted",
+      "duration_ms": 126.01,
+      "response_time": 0.126,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-021\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"16.923µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-022",
+      "status": "submitted",
+      "duration_ms": 145.84,
+      "response_time": 0.146,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-022\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"13.231µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-023",
+      "status": "submitted",
+      "duration_ms": 171.75,
+      "response_time": 0.172,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-023\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"16µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-020",
+      "status": "submitted",
+      "duration_ms": 196.75,
+      "response_time": 0.197,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-020\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"16.308µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-026",
+      "status": "submitted",
+      "duration_ms": 132.29,
+      "response_time": 0.132,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-026\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"16µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-027",
+      "status": "submitted",
+      "duration_ms": 131.11,
+      "response_time": 0.131,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-027\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"15.077µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-024",
+      "status": "submitted",
+      "duration_ms": 220.93,
+      "response_time": 0.221,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-024\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"15.384µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-030",
+      "status": "submitted",
+      "duration_ms": 47.24,
+      "response_time": 0.047,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-030\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"22.231µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-028",
+      "status": "submitted",
+      "duration_ms": 98.35,
+      "response_time": 0.098,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-028\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"34.231µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-029",
+      "status": "submitted",
+      "duration_ms": 67.62,
+      "response_time": 0.068,
+      "gateway_response": "{\"id\":\"\",\"success\":true,\"data\":{\"message\":\"task submitted\",\"task_id\":\"stress-echo-029\"},\"error\":\"\\u003cnil\\u003e\",\"verified\":false,\"duration\":\"22.384µs\"}\n"
+    },
+    {
+      "task_id": "stress-echo-003",
+      "status": "timeout",
+      "total_duration_s": 30.0
+    },
+    {
+      "task_id": "stress-echo-014",
+      "status": "timeout",
+      "total_duration_s": 30.06
+    },
+    {
+      "task_id": "stress-echo-015",
+      "status": "timeout",
+      "total_duration_s": 30.11
+    },
+    {
+      "task_id": "stress-echo-013",
+      "status": "timeout",
+      "total_duration_s": 30.19
+    },
+    {
+      "task_id": "stress-echo-010",
+      "status": "timeout",
+      "total_duration_s": 30.26
+    },
+    {
+      "task_id": "stress-echo-008",
+      "status": "timeout",
+      "total_duration_s": 30.37
+    },
+    {
+      "task_id": "stress-echo-011",
+      "status": "timeout",
+      "total_duration_s": 30.33
+    },
+    {
+      "task_id": "stress-echo-009",
+      "status": "timeout",
+      "total_duration_s": 30.41
+    },
+    {
+      "task_id": "stress-echo-016",
+      "status": "timeout",
+      "total_duration_s": 30.28
+    },
+    {
+      "task_id": "stress-echo-025",
+      "status": "timeout",
+      "total_duration_s": 30.26
+    },
+    {
+      "task_id": "stress-echo-001",
+      "status": "timeout",
+      "total_duration_s": 30.29
+    },
+    {
+      "task_id": "stress-echo-007",
+      "status": "timeout",
+      "total_duration_s": 30.41
+    },
+    {
+      "task_id": "stress-echo-012",
+      "status": "timeout",
+      "total_duration_s": 30.42
+    },
+    {
+      "task_id": "stress-echo-019",
+      "status": "timeout",
+      "total_duration_s": 30.31
+    },
+    {
+      "task_id": "stress-echo-006",
+      "status": "timeout",
+      "total_duration_s": 30.46
+    },
+    {
+      "task_id": "stress-echo-002",
+      "status": "timeout",
+      "total_duration_s": 30.42
+    },
+    {
+      "task_id": "stress-echo-018",
+      "status": "timeout",
+      "total_duration_s": 30.38
+    },
+    {
+      "task_id": "stress-echo-004",
+      "status": "timeout",
+      "total_duration_s": 30.45
+    },
+    {
+      "task_id": "stress-echo-005",
+      "status": "timeout",
+      "total_duration_s": 30.51
+    },
+    {
+      "task_id": "stress-echo-017",
+      "status": "timeout",
+      "total_duration_s": 30.49
+    },
+    {
+      "task_id": "stress-echo-021",
+      "status": "timeout",
+      "total_duration_s": 30.25
+    },
+    {
+      "task_id": "stress-echo-023",
+      "status": "timeout",
+      "total_duration_s": 30.15
+    },
+    {
+      "task_id": "stress-echo-022",
+      "status": "timeout",
+      "total_duration_s": 30.21
+    },
+    {
+      "task_id": "stress-echo-020",
+      "status": "timeout",
+      "total_duration_s": 30.38
+    },
+    {
+      "task_id": "stress-echo-024",
+      "status": "timeout",
+      "total_duration_s": 30.26
+    },
+    {
+      "task_id": "stress-echo-026",
+      "status": "timeout",
+      "total_duration_s": 30.37
+    },
+    {
+      "task_id": "stress-echo-027",
+      "status": "timeout",
+      "total_duration_s": 30.26
+    },
+    {
+      "task_id": "stress-echo-029",
+      "status": "timeout",
+      "total_duration_s": 30.28
+    },
+    {
+      "task_id": "stress-echo-030",
+      "status": "timeout",
+      "total_duration_s": 30.31
+    },
+    {
+      "task_id": "stress-echo-028",
+      "status": "timeout",
+      "total_duration_s": 30.31
+    }
+  ],
+  "node_state": {
+    "node_id": "worker-localhost",
+    "error": "无法获取节点状态"
+  },
+  "burst_test": {
+    "duration_s": 20.0,
+    "total_submitted": 2961,
+    "successful": 2961,
+    "failed": 0,
+    "throughput": 148.0
+  }
+}

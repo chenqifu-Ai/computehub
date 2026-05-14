@@ -69,6 +69,7 @@ type TaskSubmit struct {
 	AssignedNode string    `json:"assigned_node,omitempty"` // specific node (empty = auto-schedule)
 	Timeout      int       `json:"timeout"`     // seconds
 	Command      string    `json:"command"`     // command to execute
+	Payload      string    `json:"payload"`     // alternative to command (API friendly)
 	EnvVars      map[string]string `json:"env_vars,omitempty"`
 	MaxRetries   int       `json:"max_retries"`
 	SubmittedAt  time.Time `json:"submitted_at"`
@@ -191,6 +192,7 @@ func (nm *NodeManager) UpdateTaskStream(taskID, nodeID, stdout, stderr string) e
 }
 
 // GetTaskStream returns the current streaming output for a task
+// For completed tasks, falls back to the final result's stdout/stderr.
 func (nm *NodeManager) GetTaskStream(taskID string) (*StreamOutput, error) {
 	nm.mu.RLock()
 	defer nm.mu.RUnlock()
@@ -198,19 +200,32 @@ func (nm *NodeManager) GetTaskStream(taskID string) (*StreamOutput, error) {
 	for _, state := range nm.nodes {
 		if ts, exists := state.Tasks[taskID]; exists {
 			running := ts.Status == "running" || ts.Status == "pending"
-			so := &StreamOutput{
+			stdout := ts.StreamStdout
+			stderr := ts.StreamStderr
+			updated := ts.StreamUpdated
+			exitCode := 0
+			duration := ""
+
+			// If streaming output is empty but we have a final result, use that
+			if ts.Result != nil {
+				if stdout == "" && stderr == "" {
+					stdout = ts.Result.Stdout
+					stderr = ts.Result.Stderr
+				}
+				exitCode = ts.Result.ExitCode
+				duration = ts.Result.Duration
+			}
+
+			return &StreamOutput{
 				TaskID:    taskID,
 				NodeID:    state.Register.NodeID,
-				Stdout:    ts.StreamStdout,
-				Stderr:    ts.StreamStderr,
-				UpdatedAt: ts.StreamUpdated,
+				Stdout:    stdout,
+				Stderr:    stderr,
+				UpdatedAt: updated,
 				Running:   running,
-			}
-			if ts.Result != nil {
-				so.ExitCode = ts.Result.ExitCode
-				so.Duration = ts.Result.Duration
-			}
-			return so, nil
+				ExitCode:  exitCode,
+				Duration:  duration,
+			}, nil
 		}
 	}
 	return nil, fmt.Errorf("task %s not found", taskID)

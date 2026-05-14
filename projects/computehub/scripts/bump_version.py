@@ -17,7 +17,6 @@ ComputeHub 版本号管理脚本
 
 import re
 import sys
-import os
 from pathlib import Path
 
 ROOT = Path("/root/.openclaw/workspace/projects/computehub")
@@ -36,16 +35,13 @@ def bump(part):
     print(f"当前版本: {old_str}")
 
     if part == "major":
-        major += 1
-        minor = 0
-        patch = 0
+        major += 1; minor = 0; patch = 0
     elif part == "minor":
-        minor += 1
-        patch = 0
+        minor += 1; patch = 0
     elif part == "patch":
         patch += 1
     else:
-        print(f"❌ 未知类型: {part}，使用 patch/major/minor")
+        print(f"❌ 未知类型: {part}")
         sys.exit(1)
 
     new_str = f"{major}.{minor}.{patch}"
@@ -57,32 +53,14 @@ def bump(part):
     VERSION_FILE.write_text(content)
     print(f"  ✅ src/version/version.go")
 
-    # 2. 更新 TUI 中的版本引用（改成从 version 包导入）
-    tui_file = ROOT / "cmd/tui/main.go"
-    content = tui_file.read_text()
-    # 如果 TUI 还是硬编码 version，替换它
-    content = content.replace(f'const version = "{old_str}"', f'const version = "{new_str}"')
-    tui_file.write_text(content)
-    print(f"  ✅ cmd/tui/main.go")
-
-    # 3. 更新 Worker 中的硬编码版本
-    worker_file = ROOT / "cmd/worker/main.go"
-    content = worker_file.read_text()
-    content = content.replace(f'v{old_str}', f'v{new_str}')
-    worker_file.write_text(content)
-    print(f"  ✅ cmd/worker/main.go")
-
-    # 4. 更新 fix 脚本
-    for fix_file in ROOT.glob("fix_*.go"):
-        content = fix_file.read_text()
-        if old_str in content:
-            content = content.replace(f'VERSION = "{old_str}"', f'VERSION = "{new_str}"')
-            content = content.replace(old_str, new_str)
-            fix_file.write_text(content)
-            print(f"  ✅ {fix_file.name}")
+    # 2. 更新 version.txt
+    ver_txt = ROOT / "deploy/version.txt"
+    if ver_txt.exists():
+        ver_txt.write_text(f"{new_str}\n")
+        print(f"  ✅ deploy/version.txt")
 
     print(f"\n🎉 版本已更新: {old_str} → {new_str}")
-    print(f"\n提交建议: git commit -m 'chore: bump version to v{new_str}'")
+    print(f"提交建议: git commit -m 'chore: bump version to v{new_str}'")
     return new_str
 
 
@@ -90,25 +68,24 @@ def show():
     old_str, _, _, _ = read_current_version()
     print(f"ComputeHub v{old_str}")
     print(f"  VERSION:    {VERSION_FILE}")
-    print(f"  Gateway:    {ROOT}/cmd/gateway/main.go")
-    print(f"  TUI:        {ROOT}/cmd/tui/main.go")
-    print(f"  Worker:     {ROOT}/cmd/worker/main.go")
+    print(f"  主入口:     {ROOT}/cmd/computehub/main.go")
 
-    # 检查所有组件的版本一致性
-    versions_used = set()
-    versions_used.add(old_str)
+    # 检查所有文件中的版本一致性
+    issues = []
+    for f in sorted(ROOT.rglob("*.go")):
+        text = f.read_text()
+        # 跳过 vendor/generated
+        if "vendor/" in str(f):
+            continue
+        # 检查有没有其他地方硬编码不同的版本号
+        for m in re.finditer(r'VERSION\s*=\s*"(\d+\.\d+\.\d+)"', text):
+            if m.group(1) != old_str:
+                issues.append((f, m.group(1)))
 
-    for pattern in ["**/main.go", "**/*.go"]:
-        for f in ROOT.glob(pattern):
-            text = f.read_text()
-            for m in re.finditer(r'v?(\d+\.\d+\.\d+)', text):
-                v = m.group(1)
-                if v != old_str and v not in text[text.rfind('\n', 0, m.start()):m.start()]:
-                    # Only flag if it's a version constant/string, not in import paths
-                    pass
-
-    if len(versions_used) > 1:
-        print(f"⚠️  版本不一致: {versions_used}")
+    if issues:
+        print(f"⚠️  版本不一致:")
+        for f, v in issues:
+            print(f"     {f.relative_to(ROOT)}: {v}")
     else:
         print(f"✅ 所有组件版本一致")
 
