@@ -217,6 +217,14 @@ func (k *OpcKernel) handleNodeHeartbeat(cmd Command) Response {
 		}); err != nil {
 			return Response{Success: false, Error: err, Duration: time.Since(start).String()}
 		}
+		// Update IP from Gateway-observed connection (injected by handleNodeHeartbeat)
+		if ip, ok := p["ip_address"].(string); ok && ip != "" && ip != "0.0.0.0" {
+			if state, err := k.NodeMgr.GetNodeState(nodeID); err == nil && state.Register.IPAddress != ip {
+				state.Register.IPAddress = ip
+				logWithTimestamp("[Kernel] 📍 Updated node %s IP → %s", nodeID, ip)
+			}
+		}
+
 		// Extract GPU metrics from heartbeat payload
 		var metrics *GPUMetrics
 		if gpuUtil, ok := p["gpu_utilization"].(float64); ok {

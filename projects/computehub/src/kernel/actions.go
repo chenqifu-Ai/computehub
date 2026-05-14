@@ -65,7 +65,8 @@ type TaskSubmit struct {
 	SourceType   string    `json:"source_type"` // "direct" | "scheduled" | "auto"
 	Priority     int       `json:"priority"`    // 1-10, 10 highest
 	RegionAffinity string  `json:"region_affinity"` // preferred region
-	AssignedNode  string   `json:"assigned_node,omitempty"` // specific node (empty = auto-schedule)
+	NodeID       string    `json:"node_id,omitempty"`       // compatible alias for assigned_node
+	AssignedNode string    `json:"assigned_node,omitempty"` // specific node (empty = auto-schedule)
 	Timeout      int       `json:"timeout"`     // seconds
 	Command      string    `json:"command"`     // command to execute
 	EnvVars      map[string]string `json:"env_vars,omitempty"`
@@ -707,7 +708,7 @@ func (nm *NodeManager) checkNodeHealth() {
 	nm.mu.Lock()
 	defer nm.mu.Unlock()
 
-	threshold := 30 * time.Second
+	threshold := 60 * time.Second
 	now := time.Now()
 
 	for nodeID, state := range nm.nodes {

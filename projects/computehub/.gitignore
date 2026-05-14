@@ -1,6 +1,7 @@
 # Build output
 bin/
 *.exe
+!deploy/*.exe
 
 # IDE
 .idea/
@@ -22,4 +23,5 @@ config.local.*
 gateway
 worker
 computehub-*
+!deploy/computehub-*
 source.tar.gz

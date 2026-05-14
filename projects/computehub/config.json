@@ -15,7 +15,7 @@
   },
   "visualizer": {
     "enabled": true,
-    "simulate": false,
+    "simulate": true,
     "port": 8282
   },
   "composer": {

@@ -26,6 +26,32 @@ func logWithTimestamp(format string, args ...interface{}) {
 	fmt.Printf("[%s] %s\n", timestamp, message)
 }
 
+// extractClientIP extracts the real client IP from an HTTP request.
+// Prefers X-Forwarded-For header (for reverse proxy setups), falls back to RemoteAddr.
+func extractClientIP(r *http.Request) string {
+	// Check X-Forwarded-For first (reverse proxy support)
+	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
+		// Take the first (original client) IP
+		if idx := strings.Index(xff, ","); idx > 0 {
+			return strings.TrimSpace(xff[:idx])
+		}
+		return strings.TrimSpace(xff)
+	}
+	// Fallback to RemoteAddr (strips port suffix)
+	addr := r.RemoteAddr
+	if idx := strings.LastIndex(addr, ":"); idx > 0 {
+		// Handle IPv6: [::1]:port
+		if strings.HasPrefix(addr, "[") {
+			closeBracket := strings.Index(addr, "]")
+			if closeBracket > 0 {
+				return addr[1:closeBracket]
+			}
+		}
+		return addr[:idx]
+	}
+	return addr
+}
+
 // Response is a standardized API response structure
 type Response struct {
 	ID       string      `json:"id"`
@@ -561,6 +587,10 @@ func (g *OpcGateway) handleNodeRegister(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	// Use Gateway-observed IP (from TCP connection) instead of worker self-report,
+	// which would be a NAT-private IP for remote workers.
+	reg.IPAddress = extractClientIP(r)
+
 	reg.RegisteredAt = time.Now()
 	if reg.Status == "" {
 		reg.Status = "online"
@@ -658,6 +688,10 @@ func (g *OpcGateway) handleNodeHeartbeat(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	// Inject the Gateway-observed IP into heartbeat payload so kernel can
+	// update it even for nodes that were registered before the IP-fix was deployed.
+	heartbeat["ip_address"] = extractClientIP(r)
+
 	// Check if node exists in kernel
 	kernelRespChan := g.Kernel.DispatchExtended("gw-"+time.Now().Format("150405"), kernel.ActionNodeHeartbeat, heartbeat)
 	kernelResp := <-kernelRespChan
@@ -745,6 +779,13 @@ func (g *OpcGateway) handleTaskSubmit(w http.ResponseWriter, r *http.Request) {
 	if err := json.Unmarshal(body, &task); err != nil {
 		g.sendResponse(w, Response{Success: false, Error: fmt.Sprintf("Invalid JSON: %v", err)})
 		return
+	}
+
+	// Support both node_id and assigned_node — if node_id set but assigned_node empty, map it over
+	if task.NodeID != "" && task.AssignedNode == "" {
+		task.AssignedNode = task.NodeID
+	} else if task.AssignedNode != "" && task.NodeID == "" {
+		task.NodeID = task.AssignedNode
 	}
 
 	task.SubmittedAt = time.Now()

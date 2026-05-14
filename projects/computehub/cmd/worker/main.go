@@ -44,6 +44,7 @@ type Config struct {
 	PollInterval time.Duration
 	HeartbeatInterval time.Duration
 	MaxConcurrent int
+	IPOverride  string
 	ReportDir   string
 }
 
@@ -55,7 +56,7 @@ var defaultConfig = Config{
 	CPUCores:          0,
 	MemoryGB:          0,
 	PollInterval:      500 * time.Millisecond,
-	HeartbeatInterval: 10 * time.Second,
+	HeartbeatInterval: 25 * time.Second,
 	MaxConcurrent:     4,
 	ReportDir:         "/tmp/computehub-worker",
 }
@@ -243,7 +244,10 @@ func runWorker() {
 // ── 注册 ──
 
 func (s *WorkerState) register() error {
-	ip := getLocalIP()
+	ip := s.config.IPOverride
+	if ip == "" {
+		ip = getLocalIP()
+	}
 	req := RegisterReq{
 		NodeID:         s.nodeID,
 		GPUType:        s.config.GPUType,
@@ -742,17 +746,28 @@ func hostname() string {
 }
 
 func getLocalIP() string {
-	addrs, err := net.InterfaceAddrs()
-	if err != nil {
-		return "0.0.0.0"
-	}
-	for _, addr := range addrs {
-		if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() && ipnet.IP.To4() != nil {
-			return ipnet.IP.String()
+	// First try: UDP dial to determine the outbound interface IP
+	// Works in most environments including proot/Termux
+	conn, err := net.Dial("udp", "8.8.8.8:80")
+	if err == nil {
+		defer conn.Close()
+		localAddr := conn.LocalAddr().(*net.UDPAddr)
+		if localAddr != nil && localAddr.IP != nil && !localAddr.IP.IsLoopback() {
+			return localAddr.IP.String()
 		}
 	}
+
+	// Second try: enumerate interfaces
+	addrs, err := net.InterfaceAddrs()
+	if err == nil {
+		for _, addr := range addrs {
+			if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() && ipnet.IP.To4() != nil {
+				return ipnet.IP.String()
+			}
+		}
+	}
+
 	return "0.0.0.0"
-	// We need net - add it
 }
 
 func truncateString(s string, max int) string {
@@ -798,6 +813,11 @@ func parseConfig() Config {
 				}
 				i++
 			}
+		case "--ip", "--address":
+			if i+1 < len(args) {
+				cfg.IPOverride = args[i+1]
+				i++
+			}
 		case "--heartbeat":
 			if i+1 < len(args) {
 				d, _ := time.ParseDuration(args[i+1] + "s")
@@ -832,10 +852,11 @@ func printWorkerHelp() {
 	fmt.Println(bold(""), "参数:", reset())
 	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--gw <url>"), dim("Gateway 地址 (默认: http://localhost:8282)")))
 	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--node-id <id>"), dim("节点 ID (默认: worker-<hostname>)")))
+	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--ip <address>"), dim("手动指定 IP (默认: 自动检测)")))
 	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--gpu-type <type>"), dim("GPU 型号 (默认: 自动检测)")))
 	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--region <region>"), dim("区域 (默认: cn-east)")))
 	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--interval <sec>"), dim("任务轮询间隔秒 (默认: 5)")))
-	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--heartbeat <sec>"), dim("心跳间隔秒 (默认: 10)")))
+	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--heartbeat <sec>"), dim("心跳间隔秒 (默认: 25)")))
 	fmt.Println(fmt.Sprintf("  %-28s %s", bold("--concurrent <n>"), dim("最大并发任务数 (默认: 4)")))
 	fmt.Println("")
 	fmt.Println(green(bold("")), "示例:", reset())

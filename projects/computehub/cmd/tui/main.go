@@ -1073,10 +1073,10 @@ func screenNodes(state *AppState) {
 	fmt.Println()
 	fmt.Println()
 
-	// Table header
-		fmt.Printf(" %s%-24s │ %-12s │ %-10s │ %-8s │ %-6s │ %-9s │ %-10s │ %-12s\n",
-		White+Bold, "Node ID", "Region", "GPU Type", "Health", "Tasks", "CPU Load", "Lat(ms)", "GPU Ut/Temp"+Reset)
-	fmt.Printf(" %s%s%s\n", Dim, strings.Repeat("─", 105), Reset)
+	// Table header (9 columns: NodeID | Region | GPU | Health | Tasks | IP | JoinTime | Lat | GPU)
+		fmt.Printf(" %s%-20s │ %-10s │ %-10s │ %-8s │ %-6s │ %-12s │ %-8s │ %-8s │ %s%s\n",
+		White+Bold, "Node ID", "Region", "GPU Type", "Health", "Tasks", "IP", "Join", "Lat(ms)", "GPU Ut/Temp"+Reset)
+	fmt.Printf(" %s%s%s\n", Dim, strings.Repeat("─", 108), Reset)
 
 	for _, n := range nodes {
 		avgU, avgT := 0.0, 0.0
@@ -1093,12 +1093,24 @@ func screenNodes(state *AppState) {
 		healthStr := n.HealthStatus
 		if healthStr == "" { healthStr = n.Status }
 
-		fmt.Printf(" %s%-24s%s │ %-12s │ %-10s │ %s │ %s%4d%s   │ %s%5.1f%s  │ %s%5.0f%s    │ %s / %s\n",
-			c, truncate(n.ID, 24), Reset,
+		// Extract join time from registered_at (ISO 8601)
+		regTime := "—"
+		if n.RegisteredAt != "" {
+			if t, ok := extractTime(n.RegisteredAt); ok {
+				regTime = t
+			}
+		}
+
+		ip := n.IPAddress
+		if ip == "" { ip = "—" }
+
+		fmt.Printf(" %s%-20s%s │ %-10s │ %-10s │ %s │ %s%4d%s  │ %-12s │ %-8s │ %s%7.0f%s │ %s / %s\n",
+			c, truncate(n.ID, 20), Reset,
 			n.Region, n.GPUType,
 			statusColor(healthStr),
 			Yellow+Bold, n.ActiveTasks, Reset,
-			c, n.Load, Reset,
+			Dim+ip+Reset,
+			Dim+regTime+Reset,
 			c, n.NetworkLatency, Reset,
 			pctColor(avgU), tempColor(avgT))
 	}
@@ -1177,6 +1189,24 @@ func screenNodes(state *AppState) {
 func truncate(s string, n int) string {
 	if len(s) <= n { return s }
 	return s[:n-1] + "…"
+}
+
+// extractTime extracts "MM-DD HH:MM" from an ISO 8601 timestamp like "2026-05-13T18:11:00Z"
+func extractTime(iso string) (string, bool) {
+	// Try parsing standard format
+	t, err := time.Parse(time.RFC3339, iso)
+	if err != nil {
+		// Try with fractional seconds
+		t, err = time.Parse("2006-01-02T15:04:05.000Z07:00", iso)
+		if err != nil {
+			// Fallback: grab substring if it looks like ISO format
+			if len(iso) >= 16 {
+				return iso[11:16], true
+			}
+			return "", false
+		}
+	}
+	return t.Format("01-02 15:04"), true
 }
 
 // ═══════════════════════════════════════════
@@ -1536,18 +1566,22 @@ func screenTasks(state *AppState) {
 		fmt.Printf("\n %s━━━ 节点任务分布 ━━━%s\n\n", Cyan+Bold, Reset)
 
 		type nodeTaskInfo struct {
-			id, region, gpu string
-			active, max     int
+			id, region, gpu, ip string
+			active, max         int
 		}
 		var list []nodeTaskInfo
 		for _, n := range nodes {
-			list = append(list, nodeTaskInfo{n.ID, n.Region, n.GPUType, n.ActiveTasks, n.MaxTasks})
+			ip := n.IPAddress
+			if ip == "" || ip == "0.0.0.0" {
+				ip = "—"
+			}
+			list = append(list, nodeTaskInfo{n.ID, n.Region, n.GPUType, ip, n.ActiveTasks, n.MaxTasks})
 		}
 		sort.Slice(list, func(i, j int) bool { return list[i].active > list[j].active })
 
 		// header
-		fmt.Printf("  │ %-26s │ %-10s │ %-10s │ %-18s │\n", "Node", "Region", "GPU", "Load (active/max)")
-		fmt.Printf("  │%s%s│\n", Dim, strings.Repeat("─", 74))
+		fmt.Printf("  │ %-24s │ %-10s │ %-8s │ %-15s │ %-18s │\n", "Node", "Region", "GPU", "IP", "Load (active/max)")
+		fmt.Printf("  │%s%s│\n", Dim, strings.Repeat("─", 86))
 
 		for _, li := range list {
 			loadStr := fmt.Sprintf("%d/%d", li.active, li.max)
@@ -1561,10 +1595,11 @@ func screenTasks(state *AppState) {
 			} else if pct > 65 {
 				pctColor = Yellow
 			}
-			fmt.Printf("  │ %-26s │ %-10s │ %-10s │ %s%-7s%s %s│\n",
-				truncate(li.id, 26),
+			fmt.Printf("  │ %-24s │ %-10s │ %-8s │ %-15s │ %s%-7s%s %s│\n",
+				truncate(li.id, 24),
 				li.region,
 				li.gpu,
+				li.ip,
 				pctColor, loadStr, Reset,
 				renderBar(float64(li.active), float64(li.max), 10))
 		}
