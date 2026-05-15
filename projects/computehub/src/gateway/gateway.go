@@ -960,6 +960,7 @@ func findDeployDir() string {
 
 	// Search versioned directory first (binary may live in deploy/0.7.4/linux-arm64/)
 	versionCandidates := []string{
+		"deploy/0.7.7",
 		"deploy/0.7.6",
 		"deploy/0.7.5",
 		"deploy/0.7.4",
