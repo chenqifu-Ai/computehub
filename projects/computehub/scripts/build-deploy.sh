@@ -7,7 +7,7 @@ set -eu
 cd "$(dirname "$0")/.."
 PROJECT_DIR=$(pwd)
 
-VERSION=$(grep 'var VERSION' src/version/version.go | awk -F'"' '{print $2}')
+VERSION=$(grep 'VERSION = "' src/version/version.go | awk -F'"' '{print $2}')
 PLATFORMS=("linux-amd64" "linux-arm64" "darwin-amd64" "darwin-arm64" "windows-amd64")
 DEPLOY_DIR="${PROJECT_DIR}/deploy"
 

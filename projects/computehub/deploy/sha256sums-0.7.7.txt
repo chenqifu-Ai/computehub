@@ -1,0 +1,17 @@
+8b824418f45b7b80e72697e3769b1f2330b12d2bbaaa29dd8c7c0b3ec29a2ce8  ./0.7.6/computehub
+efb5d0def25b23cb24232ec6147af86b61ca7f9544cf4155851e5f69358a6957  ./0.7.6/darwin-amd64/computehub
+7bcd23f7cfa909024255bd3997518c8d9a9dce12cc57d82018672eb4dbf8a476  ./0.7.6/darwin-arm64/computehub
+d58e733587eb08bb3b99b370abb17e977cdd34223d023cef59cefb38eb7947f9  ./0.7.6/linux-amd64/computehub
+8b824418f45b7b80e72697e3769b1f2330b12d2bbaaa29dd8c7c0b3ec29a2ce8  ./0.7.6/linux-arm64/computehub
+458d586701392d112e5e18f56d6f0a1505bbb5762cbd6c8410614612e9af5b7a  ./0.7.6/windows-amd64/computehub.exe
+c46d3d5aa685e5d6ce85bbfdd643a25f15b719478a1617eca2d9de07844f428a  ./0.7.7/darwin-amd64/computehub
+9b23739b6b372863ba7038620bdaad041f3a1fbced9b29928bcedf409b49573d  ./0.7.7/darwin-arm64/computehub
+c9dbc1c1a9e63f00c0b9050499743f8b848d13a994780b4c60115a3d91771cdc  ./0.7.7/linux-amd64/computehub
+fd7b48bac328e78ae0eabdfc0ccc5774351e57ad05428a47982cc39cead9cf27  ./0.7.7/linux-arm64/computehub
+d5e16079c53a7e8a02ea93100ed82bcef4e4825507995c7a8d3eed00ff2749e9  ./0.7.7/windows-amd64/computehub.exe
+fd7b48bac328e78ae0eabdfc0ccc5774351e57ad05428a47982cc39cead9cf27  ./computehub
+c46d3d5aa685e5d6ce85bbfdd643a25f15b719478a1617eca2d9de07844f428a  ./darwin-amd64/computehub
+9b23739b6b372863ba7038620bdaad041f3a1fbced9b29928bcedf409b49573d  ./darwin-arm64/computehub
+c9dbc1c1a9e63f00c0b9050499743f8b848d13a994780b4c60115a3d91771cdc  ./linux-amd64/computehub
+fd7b48bac328e78ae0eabdfc0ccc5774351e57ad05428a47982cc39cead9cf27  ./linux-arm64/computehub
+d5e16079c53a7e8a02ea93100ed82bcef4e4825507995c7a8d3eed00ff2749e9  ./windows-amd64/computehub.exe

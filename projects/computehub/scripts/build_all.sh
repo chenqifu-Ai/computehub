@@ -5,7 +5,7 @@
 set -e
 
 cd "$(dirname "$0")/.."
-VERSION=$(grep 'var VERSION' src/version/version.go | awk -F'"' '{print $2}')
+VERSION=$(grep 'VERSION = "' src/version/version.go | awk -F'"' '{print $2}')
 PLATFORMS=("linux-amd64" "linux-arm64" "darwin-amd64" "darwin-arm64" "windows-amd64")
 
 echo "🔨 ComputeHub $VERSION 全平台编译（三合一）"
