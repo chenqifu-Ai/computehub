@@ -1,0 +1,28 @@
+name: Build ComputeHub
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Build computehub
+        run: |
+          cd .
+          go mod tidy
+          go build -o computehub -ldflags="-s -w" .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: computehub-binary
+          path: computehub
+          retention-days: 1

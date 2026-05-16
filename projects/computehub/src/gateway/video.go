@@ -233,6 +233,7 @@ func (g *OpcGateway) handleVideoList(w http.ResponseWriter, r *http.Request) {
 func findVideoWorkerScript() string {
 	// 搜索路径（按优先级）
 	candidates := []string{
+		"/home/computehub/scripts/video/video_worker.py",
 		"/root/.openclaw/workspace/projects/computehub/scripts/video/video_worker.py",
 		"/var/computehub/scripts/video/video_worker.py",
 		"./scripts/video/video_worker.py",

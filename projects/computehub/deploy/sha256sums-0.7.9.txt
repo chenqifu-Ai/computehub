@@ -1,0 +1,5 @@
+fb98680fe5ed9583611e2cd8c2f92ccf25f4fb4175101d756392634c55e08c86  /root/.openclaw/workspace/projects/computehub/deploy/0.7.9/darwin-amd64/computehub
+cf216cd53c2297acc4522e96f3dd94aaa0fca029be93a9b850bf10dd208f2735  /root/.openclaw/workspace/projects/computehub/deploy/0.7.9/darwin-arm64/computehub
+44246e973e28e7d333671669019d71f9f580519efa36f63ba0ab3fe5e83ac700  /root/.openclaw/workspace/projects/computehub/deploy/0.7.9/linux-amd64/computehub
+e525d0b63a75536ba8a37e484d099b27c9d3c05b832e23fe0c03d5d019f9e4fb  /root/.openclaw/workspace/projects/computehub/deploy/0.7.9/linux-arm64/computehub
+1fa4068bbe957459c8b738c7dcd296723deff0b4c939305b23def0a5183d70c7  /root/.openclaw/workspace/projects/computehub/deploy/0.7.9/windows-amd64/computehub.exe

@@ -554,13 +554,7 @@ const galleryHTML = `<!DOCTYPE html>
         <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
             <div class="icon">📤</div>
             <p>点击或拖拽文件到这里上传（最大 500MB）</p>
-            <input type="file" id="fileInput" multiple onchange="uploadFiles(this.files)">
-        </div>
-        <div style="display:flex;gap:8px;margin-top:8px;justify-content:center;">
-            <button class="filter-btn" onclick="document.getElementById('camInput').click()" style="padding:10px 18px;font-size:14px;">
-                📷 拍照上传
-            </button>
-            <input type="file" id="camInput" accept="image/*" capture="environment" onchange="uploadFiles(this.files)" style="display:none">
+            <input type="file" id="fileInput" accept="image/*,video/*,audio/*" multiple onchange="uploadFiles(this.files)">
         </div>
     </div>
 
@@ -907,13 +901,30 @@ func (h *GalleryHandler) HandleUpload(w http.ResponseWriter, r *http.Request) {
 
 
 // HandleDelete 处理文件删除
+// 支持 URL query (?name=xxx) 和 JSON body 两种方式
 func (h *GalleryHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, `{"error":"Only POST allowed"}`, http.StatusMethodNotAllowed)
 		return
 	}
 
-	filename := r.URL.Query().Get("name")
+	// 优先从 JSON body 读取
+	var filename string
+	body, _ := io.ReadAll(r.Body)
+	defer r.Body.Close()
+	if len(body) > 0 {
+		var req struct {
+			Name string `json:"name"`
+		}
+		if json.Unmarshal(body, &req) == nil && req.Name != "" {
+			filename = req.Name
+		}
+	}
+	// fallback 到 query string
+	if filename == "" {
+		filename = r.URL.Query().Get("name")
+	}
+
 	if filename == "" || strings.Contains(filename, "..") {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
@@ -959,8 +970,9 @@ func RegisterGallery(config *GalleryConfig) {
 	http.HandleFunc("/api/v1/gallery", h.HandleGallery)
 	http.HandleFunc("/api/v1/gallery/upload", h.HandleUpload)
 	http.HandleFunc("/api/v1/gallery/delete", h.HandleDelete)
-	http.HandleFunc("/gallery", h.HandleGallery) // 简洁的页面入口
+	http.HandleFunc("/gallery", h.HandleGallery)
 	http.HandleFunc("/api/v1/files/", h.HandleFile)
+	// Note: "/" route registered in gateway.go to avoid conflict
 
 	logWithTimestamp("🎬 Gallery registered:")
 	formatTime := time.Now().Format("2006-01-02 15:04:05")
@@ -969,6 +981,7 @@ func RegisterGallery(config *GalleryConfig) {
 	logWithTimestamp("   - /api/v1/gallery/upload      → 文件上传 (multipart/form-data)")
 	logWithTimestamp("   - /api/v1/gallery/delete      → 文件删除")
 	logWithTimestamp("   - /gallery                    → 简洁页面入口")
+	logWithTimestamp("   - /                         → 默认页面入口")
 	logWithTimestamp("   - /api/v1/files/*             → 作品文件下载/预览")
 	logWithTimestamp("📂 Gallery root: %s", h.rootDir)
 }
