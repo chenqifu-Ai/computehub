@@ -297,6 +297,12 @@ func (g *OpcGateway) Serve(port int, dashboardDir ...string) {
 	http.HandleFunc("/metrics", prometheus.MetricsHandler(g.Metrics.Registry))
 	logWithTimestamp("📈 Prometheus /metrics endpoint registered")
 
+	// Video generation endpoints (worker built-in video pipeline)
+	http.HandleFunc("/api/v1/video/generate", g.handleVideoGenerate)
+	http.HandleFunc("/api/v1/video/progress", g.handleVideoProgress)
+	http.HandleFunc("/api/v1/video/list", g.handleVideoList)
+	logWithTimestamp("🎬 Video endpoints registered: /api/v1/video/*")
+
 	// File download endpoint (self-bootstrap transport for workers)
 	http.HandleFunc("/api/v1/download", g.handleFileDownload)
 	logWithTimestamp("📦 Download endpoint registered: /api/v1/download")
@@ -349,6 +355,12 @@ func (g *OpcGateway) ServeWithServer(port int, dashboardDir ...string) *http.Ser
 
 	// Prometheus metrics endpoint
 	http.HandleFunc("/metrics", prometheus.MetricsHandler(g.Metrics.Registry))
+
+	// Video generation endpoints (worker built-in video pipeline)
+	http.HandleFunc("/api/v1/video/generate", g.handleVideoGenerate)
+	http.HandleFunc("/api/v1/video/progress", g.handleVideoProgress)
+	http.HandleFunc("/api/v1/video/list", g.handleVideoList)
+	logWithTimestamp("🎬 Video endpoints registered: /api/v1/video/*")
 
 	// File download endpoint (self-bootstrap transport for workers)
 	http.HandleFunc("/api/v1/download", g.handleFileDownload)
