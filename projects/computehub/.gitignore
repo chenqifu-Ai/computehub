@@ -25,3 +25,8 @@ worker
 computehub-*
 !deploy/computehub-*
 source.tar.gz
+
+# Deploy binaries (too large for git)
+deploy/*/computehub
+deploy/*/computehub.exe
+deploy/computehub
