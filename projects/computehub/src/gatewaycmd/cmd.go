@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 
@@ -52,6 +53,9 @@ type Config struct {
 		Port     int  `json:"port"`
 	} `json:"visualizer"`
 	Composer ComposerConfig `json:"composer"`
+	Gallery struct {
+		RootDir string `json:"root_dir"`
+	} `json:"gallery"`
 }
 
 func loadConfig() (Config, error) {
@@ -67,6 +71,8 @@ func loadConfig() (Config, error) {
 	config.Visualizer.Port = 8282
 	config.Composer.MaxConcurrency = 8
 	config.Composer.TimeoutSeconds = 120
+	config.Gallery.RootDir = "~/gallery"
+
 
 	var configFile string
 	homeDir, err := os.UserHomeDir()
@@ -179,9 +185,19 @@ func Run(args []string) {
 	}
 
 	// 注册作品广场 Gallery
+	galleryDir := config.Gallery.RootDir
+	if strings.HasPrefix(galleryDir, "~/") {
+		homeDir, _ := os.UserHomeDir()
+		galleryDir = filepath.Join(homeDir, galleryDir[2:])
+	}
+	if galleryDir == "" {
+		homeDir, _ := os.UserHomeDir()
+		galleryDir = filepath.Join(homeDir, "gallery")
+	}
 	gateway.RegisterGallery(&gateway.GalleryConfig{
-		RootDir: "/var/computehub/gallery",
+		RootDir: galleryDir,
 	})
+	logWithTimestamp("🎨 Gallery root: %s", galleryDir)
 
 	logWithTimestamp("🌐 ComputeHub Gateway v%s listening on :%d", version.Short(), port)
 	srv := gw.ServeWithServer(port, "./code/dashboard")
