@@ -231,23 +231,46 @@ func (nm *NodeManager) GetTaskStream(taskID string) (*StreamOutput, error) {
 	return nil, fmt.Errorf("task %s not found", taskID)
 }
 
-// RegisterNode registers a new compute node
+// RegisterNode registers (or updates) a compute node
 func (nm *NodeManager) RegisterNode(reg *NodeRegister) error {
 	nm.mu.Lock()
 	defer nm.mu.Unlock()
 
-	if _, exists := nm.nodes[reg.NodeID]; exists {
-		return fmt.Errorf("node %s already registered", reg.NodeID)
-	}
-
 	if len(nm.nodes) >= nm.maxNodes {
-		return fmt.Errorf("max nodes reached (%d)", nm.maxNodes)
+		// Allow update even at max nodes — only block new entries
+		if _, exists := nm.nodes[reg.NodeID]; !exists {
+			return fmt.Errorf("max nodes reached (%d)", nm.maxNodes)
+		}
 	}
 
 	// Default MaxConcurrency to 8 if not specified
 	maxTasks := reg.MaxConcurrency
 	if maxTasks <= 0 {
 		maxTasks = 8
+	}
+
+	if existing, exists := nm.nodes[reg.NodeID]; exists {
+		// 🔄 Upsert: update register fields, preserve tasks & metrics
+		existing.Register = reg
+		if existing.Metrics != nil {
+			existing.Metrics.Region = reg.Region
+			existing.Metrics.MaxTasks = maxTasks
+		} else {
+			existing.Metrics = &NodeMetrics{
+				NodeID:        reg.NodeID,
+				Region:        reg.Region,
+				MaxTasks:      maxTasks,
+				ActiveTasks:   0,
+				SuccessRate:   1.0,
+				LastHeartbeat: time.Now(),
+			}
+		}
+		if existing.Tasks == nil {
+			existing.Tasks = make(map[string]*TaskState)
+		}
+		logWithTimestamp("[NodeMgr] 🔄 Updated register info for node %s (region=%s, gpu=%s)",
+			reg.NodeID, reg.Region, reg.GPUType)
+		return nil
 	}
 
 	nm.nodes[reg.NodeID] = &NodeManagerState{

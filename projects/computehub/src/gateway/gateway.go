@@ -651,14 +651,11 @@ func (g *OpcGateway) handleNodeUnregister(w http.ResponseWriter, r *http.Request
 	respChan := g.Kernel.DispatchExtended("gw-"+time.Now().Format("150405"), kernel.ActionNodeUnregister, req.NodeID)
 	resp := <-respChan
 
-	// If kernel didn't find it and we have a sim fallback, try that
-	if !resp.Success && g.unregisterSimFallback != nil {
+	// ⚠️ 同步清理 visualizer GlobalPowerMap — 无论 kernel 找没找到
+	// 因为 kernel 和 visualizer 是独立的节点存储，删除必须同步
+	if g.unregisterSimFallback != nil {
 		if fbErr := g.unregisterSimFallback(req.NodeID); fbErr == nil {
-			g.sendResponse(w, Response{
-				Success: true,
-				Data:    map[string]string{"message": "node removed", "node_id": req.NodeID},
-			})
-			return
+			logWithTimestamp("[Gateway] 🗑️ Visualizer data cleaned for node %s", req.NodeID)
 		}
 	}
 

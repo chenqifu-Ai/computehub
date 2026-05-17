@@ -62,8 +62,16 @@ func TestRegisterDuplicateNode(t *testing.T) {
 		t.Fatalf("First registration failed: %v", err)
 	}
 
-	if err := nm.RegisterNode(reg); err == nil {
-		t.Fatal("Expected error for duplicate node registration")
+	// Now supports upsert — duplicate registration should succeed and update fields
+	regUpdated := *reg
+	regUpdated.Region = "us-east"
+	if err := nm.RegisterNode(&regUpdated); err != nil {
+		t.Fatalf("Upsert of duplicate node failed: %v", err)
+	}
+
+	// Verify region was updated
+	if nm.nodes["test-node-dup"].Register.Region != "us-east" {
+		t.Fatalf("Expected region 'us-east', got '%s'", nm.nodes["test-node-dup"].Register.Region)
 	}
 }
 

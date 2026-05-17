@@ -25,13 +25,20 @@ func (vg *VisualizerGateway) SyncFromKernel() {
 	}
 
 	realNodes := nm.ListNodes()
-	if len(realNodes) == 0 {
-		return
-	}
 
 	vg.kernelMu.Lock()
 	defer vg.kernelMu.Unlock()
 
+	// Step 1: 收集 kernel 中存在的 nodeID
+	activeIDs := make(map[string]bool, len(realNodes))
+	for _, state := range realNodes {
+		activeIDs[state.Register.NodeID] = true
+	}
+
+	// Step 2: 清理 visualizer 中已被 kernel 删除的节点
+	vg.gpm.RemoveStaleNodes(activeIDs)
+
+	// Step 3: 同步/更新 kernel 中存在的节点
 	for _, state := range realNodes {
 		node := NodeVisual{
 			ID:           state.Register.NodeID,

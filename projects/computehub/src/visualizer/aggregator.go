@@ -320,11 +320,43 @@ func (gpm *GlobalPowerMap) RegisterNodeDiscovery(node *discover.NodeInfo) {
 }
 
 // RegisterNodeFromKernel 从 kernel 节点管理器注册节点
+// 跨 region 去重：同一 nodeID 不会出现在多个 region 下
 func (gpm *GlobalPowerMap) RegisterNodeFromKernel(nv *NodeVisual) {
 	gpm.mu.Lock()
 	defer gpm.mu.Unlock()
 
 	region := nv.Region
+
+	// ⚠️ 跨 region 去重：先查所有 region 是否有同ID节点
+	// 如果节点换了 region（例: 首次注册带了 cn-east，重启后没传 region），
+	// 从旧 region 移除，加到新 region
+	for rName, rData := range gpm.regions {
+		if rName == region {
+			continue // 同 region 内去重在下面处理
+		}
+		for i, existing := range rData.Nodes {
+			if existing.ID == nv.ID {
+				// 从旧 region 移除
+				if existing.Status == "online" {
+					gpm.totalGPUs -= len(existing.GPUs)
+					gpm.totalCPU -= existing.CPUCores
+					gpm.totalRAM -= existing.MemoryGB
+					rData.TotalGPUs -= len(existing.GPUs)
+					rData.TotalCPU -= existing.CPUCores
+					rData.TotalRAMGB -= existing.MemoryGB
+					rData.OnlineNodes--
+				}
+				rData.TotalNodes--
+				rData.Nodes = append(rData.Nodes[:i], rData.Nodes[i+1:]...)
+				if rData.TotalNodes == 0 {
+					delete(gpm.regions, rName)
+				}
+				log.Printf("[Visualizer] ♻️ Moved node %s from region '%s' to '%s'", nv.ID, rName, region)
+				break
+			}
+		}
+	}
+
 	if _, exists := gpm.regions[region]; !exists {
 		gpm.regions[region] = &RegionData{
 			Name:    region,
@@ -336,7 +368,7 @@ func (gpm *GlobalPowerMap) RegisterNodeFromKernel(nv *NodeVisual) {
 
 	rd := gpm.regions[region]
 
-	// 查重：同ID节点只更新，不重复累加
+	// 同 region 内查重：同ID节点只更新，不重复累加
 	found := false
 	for i, existing := range rd.Nodes {
 		if existing.ID == nv.ID {
@@ -879,6 +911,39 @@ func localIP() string {
 		}
 	}
 	return "127.0.0.1"
+}
+
+// RemoveStaleNodes 清理 visualizer 中不在 activeIDs 中的节点
+func (gpm *GlobalPowerMap) RemoveStaleNodes(activeIDs map[string]bool) {
+	gpm.mu.Lock()
+	defer gpm.mu.Unlock()
+
+	for region, rd := range gpm.regions {
+		filtered := make([]NodeVisual, 0, len(rd.Nodes))
+		for _, n := range rd.Nodes {
+			if activeIDs[n.ID] {
+				filtered = append(filtered, n)
+			} else {
+				rd.TotalNodes--
+				if n.Status == "online" {
+					rd.OnlineNodes--
+					gpm.totalGPUs -= len(n.GPUs)
+					gpm.totalCPU -= n.CPUCores
+					gpm.totalRAM -= n.MemoryGB
+					rd.TotalGPUs -= len(n.GPUs)
+					rd.TotalCPU -= n.CPUCores
+					rd.TotalRAMGB -= n.MemoryGB
+				}
+				gpm.totalNodes--
+				log.Printf("[Visualizer] 🗑️ Removed stale node %s from region '%s'", n.ID, region)
+			}
+		}
+		rd.Nodes = filtered
+		// 清理空的 region
+		if len(rd.Nodes) == 0 {
+			delete(gpm.regions, region)
+		}
+	}
 }
 
 // RemoveNode 从模拟/视觉数据中删除节点

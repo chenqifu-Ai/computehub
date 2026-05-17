@@ -195,20 +195,20 @@ func runWorker(args []string) {
 	}
 	state.nodeID = cfg.NodeID
 
-	fmt.Printf("%s ComputeHub Worker Agent v%s%s\n", green(bold("╔══════════════════════════════════════╗")), version.Short(), reset())
-	fmt.Printf("%s  Node:     %s%s", green(bold("║")), cyan(cfg.NodeID), reset())
+	fmt.Printf("%s %s ComputeHub Worker Agent v%s%s\n", tscolor(), green(bold("╔══════════════════════════════════════╗")), version.Short(), reset())
+	fmt.Printf("%s %s  Node:     %s%s", tscolor(), green(bold("║")), cyan(cfg.NodeID), reset())
 	fmt.Println()
-	fmt.Printf("%s  Gateway:  %s%s", green(bold("║")), cyan(cfg.GatewayURL), reset())
+	fmt.Printf("%s %s  Gateway:  %s%s", tscolor(), green(bold("║")), cyan(cfg.GatewayURL), reset())
 	fmt.Println()
-	fmt.Printf("%s  GPU:      %s%s", green(bold("║")), cyan(fmt.Sprintf("%s (%dx)", cfg.GPUType, state.lastGPUStats.Count)), reset())
+	fmt.Printf("%s %s  GPU:      %s%s", tscolor(), green(bold("║")), cyan(fmt.Sprintf("%s (%dx)", cfg.GPUType, state.lastGPUStats.Count)), reset())
 	fmt.Println()
-	fmt.Printf("%s  Region:   %s%s", green(bold("║")), cyan(cfg.Region), reset())
+	fmt.Printf("%s %s  Region:   %s%s", tscolor(), green(bold("║")), cyan(cfg.Region), reset())
 	fmt.Println()
-	fmt.Printf("%s  CPU:      %s%s", green(bold("║")), cyan(fmt.Sprintf("%d cores", cfg.CPUCores)), reset())
+	fmt.Printf("%s %s  CPU:      %s%s", tscolor(), green(bold("║")), cyan(fmt.Sprintf("%d cores", cfg.CPUCores)), reset())
 	fmt.Println()
-	fmt.Printf("%s  Memory:   %s%s", green(bold("║")), cyan(fmt.Sprintf("%.0f GB", cfg.MemoryGB)), reset())
+	fmt.Printf("%s %s  Memory:   %s%s", tscolor(), green(bold("║")), cyan(fmt.Sprintf("%.0f GB", cfg.MemoryGB)), reset())
 	fmt.Println()
-	fmt.Printf("%s╚══════════════════════════════════════╝%s\n", green(bold("")), reset())
+	fmt.Printf("%s %s╚══════════════════════════════════════╝%s\n", tscolor(), green(bold("")), reset())
 
 	// Step 1: Register
 	if err := state.register(); err != nil {
@@ -283,8 +283,8 @@ func (s *WorkerState) register() error {
 		return fmt.Errorf("注册被拒: %s", result.Error)
 	}
 
-	fmt.Printf("\n %s✅ 节点已注册: %s (%s | %s | %dc/%dGB)%s\n",
-		green(bold("")), cyan(s.nodeID), cyan(s.config.GPUType), cyan(s.config.Region),
+	fmt.Printf("\n%s %s✅ 节点已注册: %s (%s | %s | %dc/%dGB)%s\n",
+		tscolor(), green(bold("")), cyan(s.nodeID), cyan(s.config.GPUType), cyan(s.config.Region),
 		s.config.CPUCores, int(s.config.MemoryGB), reset())
 	return nil
 }
@@ -366,7 +366,7 @@ func (s *WorkerState) taskPollLoop() {
 		// Poll Gateway for a pending task
 		task, err := s.pollTask()
 		if err != nil {
-			fmt.Printf(" %s⚠️ poll 失败: %v%s\n", yellow(""), err, reset())
+			fmt.Printf("%s %s⚠️ poll 失败: %v%s\n", tscolor(), yellow(""), err, reset())
 			time.Sleep(s.config.PollInterval)
 			continue
 		}
@@ -377,8 +377,8 @@ func (s *WorkerState) taskPollLoop() {
 			continue
 		}
 
-		fmt.Printf("\n %s📋 认领到任务: %s%s\n", yellow(bold("")), cyan(task.TaskID), reset())
-		fmt.Printf("   命令: %s%s%s\n", dim(""), task.Command, reset())
+		fmt.Printf("\n%s %s📋 认领到任务: %s%s\n", tscolor(), yellow(bold("")), cyan(task.TaskID), reset())
+		fmt.Printf("%s   命令: %s%s%s\n", tscolor(), dim(""), task.Command, reset())
 
 		// Execute in background
 		go s.executeTask(&TaskDetail{
@@ -467,13 +467,13 @@ type TaskDetail struct {
 
 func (s *WorkerState) executeTask(task *TaskDetail) {
 	if task.Command == "" {
-		fmt.Printf(" %s⚠️ 任务 %s 没有命令，回传错误结果%s\n", yellow(""), task.TaskID, reset())
+		fmt.Printf(" %s⚠️ 任务 %s 没有命令，回传错误结果%s\n", tscolor(), yellow(""), task.TaskID, reset())
 		s.submitTaskError(task.TaskID, "empty command")
 		return
 	}
 
-	fmt.Printf("\n %s⚡ 执行任务: %s (超时: %ds)%s\n", green(bold("")), cyan(task.TaskID), task.Timeout, reset())
-	fmt.Printf("   命令: %s%s%s\n", dim(""), task.Command, reset())
+	fmt.Printf("\n%s %s⚡ 执行任务: %s (超时: %ds)%s\n", tscolor(), green(bold("")), cyan(task.TaskID), task.Timeout, reset())
+	fmt.Printf("%s   命令: %s%s%s\n", tscolor(), dim(""), task.Command, reset())
 
 	start := time.Now()
 
@@ -660,8 +660,8 @@ func (s *WorkerState) executeTask(task *TaskDetail) {
 		statusColor = red
 	}
 
-	fmt.Printf(" %s%s 任务 %s 完成 [%s] %s (%s)%s\n",
-		statusColor(bold("")), statusIcon, cyan(task.TaskID),
+	fmt.Printf("%s %s%s 任务 %s 完成 [%s] %s (%s)%s\n",
+		tscolor(), statusColor(bold("")), statusIcon, cyan(task.TaskID),
 		statusColor(fmt.Sprintf("exit=%d", exitCode)),
 		duration.Round(time.Millisecond), reset(), reset())
 
@@ -876,6 +876,13 @@ func red(s string) string   { return "\033[31m" + s }
 func green(s string) string { return "\033[32m" + s }
 func yellow(s string) string { return "\033[33m" + s }
 func cyan(s string) string  { return "\033[36m" + s }
+
+func ts() string {
+	return time.Now().Format("15:04:05")
+}
+func tscolor() string {
+	return dim("[" + ts() + "]")
+}
 
 func pctColor(v float64) string {
 	if v > 90 { return fmt.Sprintf("\033[31m\033[1m%.1f%%\033[0m", v) }

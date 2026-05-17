@@ -20,7 +20,6 @@ Thumbs.db
 config.local.*
 
 # Binaries
-gateway
 worker
 computehub-*
 !deploy/computehub-*
@@ -30,3 +29,10 @@ source.tar.gz
 deploy/*/computehub
 deploy/*/computehub.exe
 deploy/computehub
+
+# Deploy versioned binaries (too large for git)
+deploy/*/*/computehub
+deploy/*/*/computehub.exe
+/computehub
+/worker
+/gateway
