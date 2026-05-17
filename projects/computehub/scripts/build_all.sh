@@ -36,7 +36,7 @@ for PLATFORM in "${PLATFORMS[@]}"; do
     echo "[$((PASS+FAIL+1))/$TOTAL] computehub → $PLATFORM"
 
     if CGO_ENABLED=0 GOOS=$os GOARCH=$arch \
-        go build -ldflags="-X github.com/computehub/opc/src/version.VERSION=${VERSION}" \
+        go build -ldflags="-s -w -X github.com/computehub/opc/src/version.VERSION=${VERSION}" \
         -o "$tmp" "./cmd/computehub/" 2>&1; then
         mkdir -p "$(dirname "$out")"
         mv "$tmp" "$out"
