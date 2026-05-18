@@ -84,34 +84,36 @@
 
 ## 🚨 系统状态监控
 
-### 实时系统状态 (2026-05-17 18:58 心跳)
-- **系统负载**: ✅ 轻负载 (load 0.02/0.05/0.06, 4核ECS)
-- **ECS 内存**: ✅ 充裕 (271M/7.76G, swap 0K/4G)
-- **本机负载**: 之前偏高问题已解决（ECS 跑 main 任务，本机轻载）
+### 实时系统状态 (2026-05-18 15:55 心跳)
+- **系统负载**: ✅ 轻负载 (load 0.04/0.06/0.05, 4核ECS)
+- **ECS 内存**: ✅ 充裕 (300M/7.76G)
+- **本机负载**: ✅ 正常
 - **本地磁盘**: ⚠️ 82% (380G/463G) — 同前
 - **当前模型**: ollama-cloud-2/deepseek-v4-flash
 - **本机 Gateway**: ❌ 未运行（未接入集群即可）
 
-### ComputeHub 组件状态 (2026-05-17 22:40 更新)
+### ComputeHub 组件状态 (2026-05-18 15:55 更新)
 - **远程服务器 36.250.122.43 (ecs-p2ph)**: ✅ v0.7.10 运行中
-  - 版本: **v0.7.10** ✅ 已升级 (从 v0.7.9)
-  - Gateway: ✅ PID 26847, 端口 8282
-  - Worker: ✅ PID 27040, concurrent=8, heartbeat=10s
-  - 进程: ✅ 1 gateway + 1 worker，无重复 (已清理旧进程)
-  - 旧备份: ✅ 已清理 (只剩当前 + 存档各1份)
-  - GitHub: ✅ v0.7.10 已提交推送 (commit 4d5ae87)
-  - gallery 二进制: 待重新上传 linux-arm64/amd64
+  - Gateway: ✅ 端口 8282
+  - Worker: ✅ concurrent=8, heartbeat=10s
+  - 脚本已同步: ✅ video/ 全套管线脚本已 scp 到 ECS（doc_parser, tts_engine, video_pipeline, video_worker）
+  - Pipeline OUTPUT_DIR: ✅ 改为 /home/computehub/gallery（与 Gallery Web 统一）
+
+### 视频生产管线测试 (2026-05-18 15:38~15:54)
+- **测试内容**: 8页测试PPTX → 全自动视频生成（含语音）
+- **结果**: ✅ **全部成功**（解析8页→渲染8页→语音8段→编码8段→拼接完成）
+- **产出**:
+  - `test_8page_154850.mp4` — 752KB, 81秒, 1920×1080, H.264+MP3
+  - `api_test_video.mp4` — 752KB, 81秒（通过 Gateway API 提交）
+- **耗时**: 115秒（8页含语音）
+- **Gallery 访问**: ✅ http://36.250.122.43:8282/api/v1/gallery（2个视频在线）
+- **API 提交**: ✅ POST /api/v1/video/generate 可用，后台异步执行
 
 ### 集群节点状态
 - **ecs-p2ph**: ✅ online (concurrent=8)
 - **Xiaomi-table-01**: ✅ online
 - **~~worker-ecs-p2ph~~**: 🗑️ 已删除（旧worker残留）
 - **140 集群**: ⏸️ 待验证
-
-### 最近完成
-- **5/17**: ECS SSH 故障全链路修复 + Worker 升级 concurrent=8 + 节点清理
-- **5/16**: 碳中和基地 PPT→视频（27页→400秒MP3视频，上传Gallery），踩坑12个记录
-- **5/15**: ComputeHub v0.7.7 升级，Gallery 14→20作品
 
 ## 📋 待办事项
 
