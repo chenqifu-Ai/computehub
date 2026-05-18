@@ -6,6 +6,16 @@
 - **备用邮箱**：3198880764@qq.com
 - **时区**：Asia/Shanghai (GMT+8)
 
+## 📦 Windows软件安装标准 WIN-STD-001 (2026-05-18)
+**核心教训**: 远程 Windows 安装软件，PATH 不会自动更新、引号嵌套问题、msiexec 任务挂死
+**详情见**: `memory/topics/执行规则/WIN-STD-001_Windows软件安装标准流程.md`
+**关键规则**:
+- 验证用完整路径 `C:\\Progra~1\\...` 而非 `python --version`
+- ≥5 步的安装流程写 .py 文件 scp 到 ECS
+- MSI 安装 timeout ≥ 120s
+- 安装后手动 setx 补 PATH
+- Go 1.26.3 + Python 3.11.6 已验证装在 `Windows-mobile-01`
+
 ## 🐛 技术经验：文件编辑精确匹配陷阱 (2026-04-20)
 **核心教训**: `edit`工具要求完全精确匹配，包括所有空格和格式
 **详情见**: `memory/topics/技术经验/文件编辑精确匹配陷阱.md`

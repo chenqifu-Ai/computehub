@@ -59,6 +59,20 @@ Don't ask permission. Just do it.
 - **代码目录**: `/root/.openclaw/workspace/ai_agent/code/`
 - **结果目录**: `/root/.openclaw/workspace/ai_agent/results/`
 
+### 📦 Windows远程软件安装标准 (WIN-STD-001)
+
+向 Windows 节点安装软件时，**必须**遵循标准流程：
+
+- **标准文档**: `memory/topics/执行规则/WIN-STD-001_Windows软件安装标准流程.md`
+- **核心原则**: 
+  - 验证用**完整路径**（不依赖 PATH）
+  - 安装脚本 ≥5 行时，**写入 .py 文件再 scp**
+  - MSI 安装 timeout ≥ 120s
+  - 安装后手动补 PATH（安装程序不可靠）
+  - 分步执行，不链式 curl && msiexec
+
+> ⚠️ **任何远程 Windows 软件安装都要走这个标准**，否则很可能踩 PATH 不生效 / 引号嵌套 / 任务挂死等坑。
+
 ### 📐 模型配置修改标准 (MCP-STD-001)
 
 修改 OpenClaw 模型配置前，**必须**遵循标准流程：
