@@ -32,7 +32,9 @@ type memoryStatusEx struct {
 
 func runCommand(cmd string) *exec.Cmd {
 	// 自动切换 UTF-8 编码，解决中文乱码问题
-	return exec.Command("cmd", "/c", "chcp 65001 >nul && "+cmd)
+	c := exec.Command("cmd", "/c", "chcp 65001 >nul && "+cmd)
+	c.Stdin = nil // 显式断开终端 stdin，避免后台任务阻塞在控制台输入
+	return c
 }
 
 func killProcess(p *os.Process) {
