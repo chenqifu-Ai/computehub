@@ -185,20 +185,78 @@ func (h *GalleryHandler) updateTask(taskID, title, stage string, percent int, me
 
 func (h *GalleryHandler) getTasks() []*TaskProgress {
 	h.tasksMu.RLock()
-	defer h.tasksMu.RUnlock()
 
+	// 先从内存 task 列表读取
 	result := make([]*TaskProgress, 0, len(h.tasks))
 	for _, t := range h.tasks {
-		// 只返回 5 分钟内的活跃任务
 		if t.Stage == "completed" || t.Stage == "failed" {
 			updated, err := time.Parse(time.RFC3339, t.Updated)
 			if err == nil && time.Since(updated) > 5*time.Minute {
-				continue // 已完成的任务 5 分钟后不再显示
+				continue
 			}
 		}
 		result = append(result, t)
 	}
-	// 最新在前
+	h.tasksMu.RUnlock()
+
+	// 再从磁盘进度目录读取（兼容旧 API 提交的任务）
+	progressDir := "/tmp/computehub-video/progress"
+	if entries, err := os.ReadDir(progressDir); err == nil {
+		seen := make(map[string]bool)
+		for _, t := range result {
+			seen[t.TaskID] = true
+		}
+		for _, entry := range entries {
+			name := entry.Name()
+			if !strings.HasSuffix(name, ".json") || strings.HasSuffix(name, "_gw.log.json") || strings.HasSuffix(name, "_worker.log.json") {
+				continue
+			}
+			taskID := strings.TrimSuffix(name, ".json")
+			if seen[taskID] {
+				continue
+			}
+			data, readErr := os.ReadFile(filepath.Join(progressDir, name))
+			if readErr != nil {
+				continue
+			}
+			var prog map[string]interface{}
+			if json.Unmarshal(data, &prog) != nil {
+				continue
+			}
+			title := ""
+			if t, ok := prog["title"]; ok {
+				title, _ = t.(string)
+			}
+			stage := ""
+			if s, ok := prog["stage"]; ok {
+				stage, _ = s.(string)
+			}
+			pct := 0
+			if p, ok := prog["percent"]; ok {
+				if pf, ok := p.(float64); ok {
+					pct = int(pf)
+				}
+			}
+			msg := ""
+			if m, ok := prog["message"]; ok {
+				msg, _ = m.(string)
+			}
+			// 只显示非 completed/failed 的任务
+			// 或者 5 分钟内完成的
+			if stage == "completed" || stage == "failed" {
+				continue
+			}
+			result = append(result, &TaskProgress{
+				TaskID:  taskID,
+				Title:   title,
+				Stage:   stage,
+				Percent: pct,
+				Message: msg,
+				Updated: time.Now().Format(time.RFC3339),
+			})
+		}
+	}
+
 	sort.Slice(result, func(i, j int) bool {
 		return result[i].Updated > result[j].Updated
 	})
@@ -240,109 +298,71 @@ func (h *GalleryHandler) handleGalleryHTML(w http.ResponseWriter, r *http.Reques
 	})
 }
 
-// HandleGenerateFromGallery 从 Gallery 上传文件并触发视频生成
-// 接收 multipart/form-data: files[] (多个文件)
+// HandleGenerateFromGallery 从已经上传到 Gallery 的文件生成视频
+// 接收 JSON: {"filenames": ["xxx.pdf", "voice.wav", "cover.jpg"]}
 func (h *GalleryHandler) HandleGenerateFromGallery(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, `{"success":false,"error":"Only POST allowed"}`, http.StatusMethodNotAllowed)
+		writeJSON(w, map[string]interface{}{"success": false, "error": "Only POST allowed"})
 		return
 	}
 
-	r.Body = http.MaxBytesReader(w, r.Body, 500<<20) // 500MB
+	body, _ := io.ReadAll(r.Body)
+	defer r.Body.Close()
 
-	if err := r.ParseMultipartForm(64 << 20); err != nil {
-		writeJSON(w, map[string]interface{}{"success": false, "error": fmt.Sprintf("Parse error: %v", err)})
+	var req struct {
+		Filenames []string `json:"filenames"`
+	}
+	if err := json.Unmarshal(body, &req); err != nil {
+		writeJSON(w, map[string]interface{}{"success": false, "error": fmt.Sprintf("Invalid JSON: %v", err)})
 		return
 	}
 
-	// 收集所有上传的文件
-	files := r.MultipartForm.File["files[]"]
-	if len(files) == 0 {
-		// 也支持 "file" 字段（向后兼容）
-		file, header, err := r.FormFile("file")
-		if err != nil {
-			writeJSON(w, map[string]interface{}{"success": false, "error": "No files uploaded"})
-			return
-		}
-		files = append(files, header)
-		file.Close()
-		// 单个文件也走保存流程
-		_ = file
+	if len(req.Filenames) == 0 {
+		writeJSON(w, map[string]interface{}{"success": false, "error": "filenames is required"})
+		return
 	}
 
-	var uploaded []UploadedFileInfo
+	// 从 gallery 目录中找这些文件
 	var docPath string
 	var docTitle string
+	var selected []UploadedFileInfo
 
-	for _, fh := range files {
-		filename := filepath.Base(fh.Filename)
-		if filename == "." || filename == "/" || strings.Contains(filename, "..") {
+	for _, name := range req.Filenames {
+		name = filepath.Base(name)
+		if name == "." || name == "/" || strings.Contains(name, "..") {
 			continue
 		}
-
-		// 读取文件
-		file, err := fh.Open()
+		fullPath := filepath.Join(h.rootDir, name)
+		info, err := os.Stat(fullPath)
 		if err != nil {
 			continue
 		}
-
-		// 保存到 gallery 目录
-		destPath := filepath.Join(h.rootDir, filename)
-		if _, err := os.Stat(destPath); err == nil {
-			ext := filepath.Ext(filename)
-			base := strings.TrimSuffix(filename, ext)
-			filename = fmt.Sprintf("%s_%d%s", base, time.Now().Unix(), ext)
-			destPath = filepath.Join(h.rootDir, filename)
-		}
-
-		dst, err := os.Create(destPath)
-		if err != nil {
-			file.Close()
-			continue
-		}
-
-		written, _ := io.Copy(dst, file)
-		file.Close()
-		dst.Close()
-
-		fileType, role := classifyFile(filename)
-
-		info := UploadedFileInfo{
-			Name:     filename,
-			Size:     written,
+		fileType, role := classifyFile(name)
+		selected = append(selected, UploadedFileInfo{
+			Name:     name,
+			Size:     info.Size(),
 			FileType: fileType,
 			Role:     role,
-			Ext:      strings.ToLower(filepath.Ext(filename)),
-		}
-		uploaded = append(uploaded, info)
-
-		// 第一个文档作为视频源
+			Ext:      strings.ToLower(filepath.Ext(name)),
+		})
 		if fileType == "document" && docPath == "" {
-			docPath = destPath
-			docTitle = strings.TrimSuffix(filename, filepath.Ext(filename))
+			docPath = fullPath
+			docTitle = strings.TrimSuffix(name, filepath.Ext(name))
 		}
-
-		h.refresh()
 	}
 
-	if docPath == "" && len(uploaded) > 0 {
-		// 没有文档，用第一个文件
-		docPath = filepath.Join(h.rootDir, uploaded[0].Name)
-		docTitle = strings.TrimSuffix(uploaded[0].Name, uploaded[0].Ext)
+	if docPath == "" && len(selected) > 0 {
+		docPath = filepath.Join(h.rootDir, selected[0].Name)
+		docTitle = strings.TrimSuffix(selected[0].Name, selected[0].Ext)
 	}
 
-	if len(uploaded) == 0 {
-		writeJSON(w, map[string]interface{}{"success": false, "error": "No files could be saved"})
+	if docPath == "" {
+		writeJSON(w, map[string]interface{}{"success": false, "error": "No valid files found in gallery"})
 		return
 	}
 
-	// 生成 task_id
 	taskID := fmt.Sprintf("video_%d", time.Now().UnixNano()/1000000)
-
-	// 记录任务
 	h.updateTask(taskID, docTitle, "pending", 0, "任务已提交，等待处理...")
-
-	// 后台触发视频管线
 	go h.runVideoPipeline(taskID, docPath, docTitle)
 
 	writeJSON(w, map[string]interface{}{
@@ -350,9 +370,9 @@ func (h *GalleryHandler) HandleGenerateFromGallery(w http.ResponseWriter, r *htt
 		"data": map[string]interface{}{
 			"task_id":    taskID,
 			"title":      docTitle,
-			"files":      uploaded,
-			"file_count": len(uploaded),
-			"message":    fmt.Sprintf("已接收 %d 个文件，开始生成视频", len(uploaded)),
+			"files":      selected,
+			"file_count": len(selected),
+			"message":    fmt.Sprintf("已用 %d 个文件生成视频", len(selected)),
 		},
 	})
 }
@@ -990,7 +1010,7 @@ const galleryHTML = `<!DOCTYPE html>
 
     <!-- ════ 上传 + 生成区 ════ -->
     <div class="upload-section">
-        <div class="upload-zone" id="uploadZone">
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
             <div class="icon">📤</div>
             <p>点击上传或拖拽文件到此处</p>
             <p style="font-size:12px;color:#555;margin-top:2px;">
@@ -1074,8 +1094,8 @@ const galleryHTML = `<!DOCTYPE html>
     let currentSearch = '';
     let deleteTarget = null;
 
-    // 待上传的文件列表
-    let pendingFiles = [];
+    // 已上传到 Gallery 的文件列表（前端缓存）
+    let uploadedFiles = [];
 
     // 文件类型识别
     const FILE_TYPES = {
@@ -1107,8 +1127,9 @@ const galleryHTML = `<!DOCTYPE html>
     }
 
     // ══════════════════════════════════════════
-    // 上传
+    // 上传（拖入→立刻上传到Gallery）
     // ══════════════════════════════════════════
+    let uploadedFiles = [];
     const uploadZone = document.getElementById('uploadZone');
     uploadZone.addEventListener('dragover', function(e) {
         e.preventDefault(); this.classList.add('dragover');
@@ -1123,20 +1144,48 @@ const galleryHTML = `<!DOCTYPE html>
 
     function handleFileSelect(files) {
         for (let f of files) {
-            // 去重
-            if (pendingFiles.some(p => p.name === f.name && p.size === f.size)) continue;
-            pendingFiles.push(f);
+            uploadToGallery(f);
         }
+    }
+
+    async function uploadToGallery(file) {
+        const fd = new FormData();
+        fd.append('file', file);
+        try {
+            const r = await fetch('/api/v1/gallery/upload', { method: 'POST', body: fd });
+            const d = await r.json();
+            if (d.success) {
+                const info = d.data;
+                uploadedFiles.push({
+                    name: info.name,
+                    size: info.size,
+                    size_str: info.size_str,
+                    file_type: info.file_type,
+                    role: info.role,
+                    checked: true
+                });
+                renderFileList();
+                refreshData();
+            } else {
+                showToast('❌ ' + file.name + ' 上传失败');
+            }
+        } catch(e) {
+            showToast('❌ ' + file.name + ' 网络错误');
+        }
+    }
+
+    function toggleFile(index) {
+        uploadedFiles[index].checked = !uploadedFiles[index].checked;
         renderFileList();
     }
 
     function removeFile(index) {
-        pendingFiles.splice(index, 1);
+        uploadedFiles.splice(index, 1);
         renderFileList();
     }
 
     function clearFiles() {
-        pendingFiles = [];
+        uploadedFiles = [];
         renderFileList();
     }
 
@@ -1146,23 +1195,26 @@ const galleryHTML = `<!DOCTYPE html>
         const countSpan = document.getElementById('fileCount');
         const btn = document.getElementById('btnGenerate');
 
-        if (pendingFiles.length === 0) {
+        if (uploadedFiles.length === 0) {
             container.classList.add('hidden');
             btn.disabled = true;
             return;
         }
 
         container.classList.remove('hidden');
-        btn.disabled = false;
-        countSpan.textContent = '已选 ' + pendingFiles.length + ' 个文件';
+        const checked = uploadedFiles.filter(f => f.checked).length;
+        btn.disabled = checked === 0;
+        countSpan.textContent = '已上传 ' + uploadedFiles.length + ' 个，勾选 ' + checked + ' 个';
 
         let html = '';
-        pendingFiles.forEach((f, i) => {
+        uploadedFiles.forEach((f, i) => {
             const info = classifyFile(f.name);
             html += '<div class="file-item">' +
+                '<input type="checkbox" ' + (f.checked ? 'checked' : '') +
+                ' onchange="toggleFile('+i+')" style="width:16px;height:16px;accent-color:#f7971e;cursor:pointer;">' +
                 '<span class="icon">' + info.label.charAt(0) + '</span>' +
                 '<span class="name" title="'+f.name+'">' + escapeHtml(f.name) + '</span>' +
-                '<span class="size">' + formatSize(f.size) + '</span>' +
+                '<span class="size">' + f.size_str + '</span>' +
                 '<span class="badge ' + info.badge + '">' + info.label + '</span>' +
                 '<span class="badge badge-success">✅</span>' +
                 '<button onclick="removeFile('+i+')" style="background:none;border:none;color:#ef5350;cursor:pointer;font-size:14px;">✕</button>' +
@@ -1175,32 +1227,26 @@ const galleryHTML = `<!DOCTYPE html>
     // 生成视频
     // ══════════════════════════════════════════
     async function generateVideo() {
-        if (pendingFiles.length === 0) return;
+        const checked = uploadedFiles.filter(f => f.checked);
+        if (checked.length === 0) return;
 
         const btn = document.getElementById('btnGenerate');
         btn.disabled = true;
         btn.textContent = '⏳ 提交中...';
 
-        const formData = new FormData();
-        for (let f of pendingFiles) {
-            formData.append('files[]', f);
-        }
-
         try {
             const r = await fetch('/api/v1/gallery/generate', {
                 method: 'POST',
-                body: formData
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filenames: checked.map(f => f.name) })
             });
             const d = await r.json();
 
             if (d.success) {
                 showToast('✅ ' + d.data.message);
-                // 清空文件列表
-                pendingFiles = [];
+                uploadedFiles = [];
                 renderFileList();
-                // 立即刷新任务
                 refreshTasks();
-                // 刷新作品列表
                 refreshData();
             } else {
                 showToast('❌ ' + (d.error || '生成失败'));
@@ -1247,7 +1293,10 @@ const galleryHTML = `<!DOCTYPE html>
                     '<div class="task-progress-bar">' +
                         '<div class="task-progress-fill" style="width:' + t.percent + '%"></div>' +
                     '</div>' +
-                    (t.message ? '<div class="task-message">' + escapeHtml(t.message) + '</div>' : '') +
+                    '<div style="display:flex;justify-content:space-between;margin-top:4px;">' +
+                        (t.message ? '<span class="task-message" style="margin:0;">' + escapeHtml(t.message) + '</span>' : '<span></span>') +
+                        '<span style="font-size:12px;color:#f7971e;font-weight:600;">' + t.percent + '%</span>' +
+                    '</div>' +
                     '</div>';
             }).join('');
         } catch(e) {}

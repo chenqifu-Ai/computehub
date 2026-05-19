@@ -65,6 +65,7 @@ type TaskSubmit struct {
 	SourceType   string    `json:"source_type"` // "direct" | "scheduled" | "auto"
 	Priority     int       `json:"priority"`    // 1-10, 10 highest
 	RegionAffinity string  `json:"region_affinity"` // preferred region
+	Node         string    `json:"node,omitempty"`               // simple node alias (maps to assigned_node)
 	NodeID       string    `json:"node_id,omitempty"`       // compatible alias for assigned_node
 	AssignedNode string    `json:"assigned_node,omitempty"` // specific node (empty = auto-schedule)
 	Timeout      int       `json:"timeout"`     // seconds

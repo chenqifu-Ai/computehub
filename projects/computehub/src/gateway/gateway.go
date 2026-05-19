@@ -790,10 +790,20 @@ func (g *OpcGateway) handleTaskSubmit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Support both node_id and assigned_node — if node_id set but assigned_node empty, map it over
+	// Support node, node_id, and assigned_node — map everything to AssignedNode
+	// Priority: node > node_id > assigned_node
+	if task.Node != "" {
+		if task.AssignedNode == "" {
+			task.AssignedNode = task.Node
+		}
+		if task.NodeID == "" {
+			task.NodeID = task.Node
+		}
+	}
 	if task.NodeID != "" && task.AssignedNode == "" {
 		task.AssignedNode = task.NodeID
-	} else if task.AssignedNode != "" && task.NodeID == "" {
+	}
+	if task.AssignedNode != "" && task.NodeID == "" {
 		task.NodeID = task.AssignedNode
 	}
 
