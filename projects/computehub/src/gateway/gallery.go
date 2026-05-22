@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -426,9 +427,9 @@ func (h *GalleryHandler) HandleGenerateFromText(w http.ResponseWriter, r *http.R
 	})
 }
 
-// runTextPipeline 后台运行文字转视频（直接调 ffmpeg drawtext，不依赖 Python 管线）
+// runTextPipeline 后台运行文字转视频（ffmpeg drawtext + edge-tts 语音合成）
 func (h *GalleryHandler) runTextPipeline(taskID, textFile, title string, duration int, bg string) {
-	h.updateTask(taskID, title, "rendering", 20, "正在渲染文字视频...")
+	h.updateTask(taskID, title, "tts", 20, "正在合成语音...")
 
 	// 读文字内容
 	data, err := os.ReadFile(textFile)
@@ -438,35 +439,97 @@ func (h *GalleryHandler) runTextPipeline(taskID, textFile, title string, duratio
 	}
 	rawText := strings.TrimSpace(string(data))
 
-	// 构建输出路径
-	outputName := fmt.Sprintf("%s_%s.mp4", title, taskID)
-	outputName = strings.Map(func(r rune) rune {
-		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '-' || r == '_' || r == '.' {
-			return r
-		}
-		return '_'
-	}, outputName)
-	outputPath := filepath.Join(h.rootDir, outputName)
-	outputPath = strings.ReplaceAll(outputPath, "//", "/")
-
 	logFile := fmt.Sprintf("/tmp/computehub-video/progress/%s_gw.log", taskID)
 	os.MkdirAll("/tmp/computehub-video/progress", 0755)
 	logF, _ := os.Create(logFile)
 
-	logWithTimestamp("📝 Text video task: task_id=%s text=%q duration=%d bg=%s output=%s", taskID, rawText[:min(len(rawText), 50)], duration, bg, outputPath)
+	logWithTimestamp("📝 Text video task: task_id=%s text=%q duration=%d bg=%s", taskID, rawText[:min(len(rawText), 50)], duration, bg)
 
 	if logF != nil {
-		fmt.Fprintf(logF, "📝 Text video task: task_id=%s\ntext: %s\nduration: %d\nbg: %s\noutput: %s\n", taskID, rawText, duration, bg, outputPath)
+		fmt.Fprintf(logF, "📝 Text video task: task_id=%s\ntext: %s\nduration: %d\nbg: %s\n", taskID, rawText, duration, bg)
 	}
 
-	// 直接用 ffmpeg 渲染文字视频：彩色背景 + 居中文字，自动换行
+	// ── 1. 语音合成（edge-tts） ──
+	ttsAudio := fmt.Sprintf("/tmp/computehub-video/text/%s_tts.mp3", taskID)
+	os.MkdirAll("/tmp/computehub-video/text", 0755)
+
+	ttsVoice := "zh-CN-XiaoxiaoNeural"
+	// 检测是否包含英文/数字较多，可切换混合语音，暂时固定用 Xiaoxiao
+	ttsCmd := exec.Command("python3", "-m", "edge_tts",
+		"--text", rawText,
+		"--voice", ttsVoice,
+		"--write-media", ttsAudio,
+	)
+	if logF != nil {
+		ttsCmd.Stdout = logF
+		ttsCmd.Stderr = logF
+	}
+
+	logWithTimestamp("🎤 TTS: voice=%s", ttsVoice)
+	if logF != nil {
+		fmt.Fprintf(logF, "🎤 TTS: voice=%s\n", ttsVoice)
+	}
+
+	if err := ttsCmd.Run(); err != nil {
+		h.updateTask(taskID, title, "failed", 0, fmt.Sprintf("❌ 语音合成失败: %v", err))
+		return
+	}
+
+	// ── 2. 获取音频时长 ──
+	audioDuration := float64(duration)
+	if stat, err := os.Stat(ttsAudio); err == nil && stat.Size() > 0 {
+		// 用 ffprobe 获取时长
+		probe := exec.Command("ffprobe", "-v", "error", "-show_entries", "format=duration",
+			"-of", "default=noprint_wrappers=1:nokey=1", ttsAudio)
+		out, err := probe.Output()
+		if err == nil {
+			durStr := strings.TrimSpace(string(out))
+			if d, parseErr := strconv.ParseFloat(durStr, 64); parseErr == nil && d > 1 {
+				audioDuration = d
+			}
+		}
+	}
+	// 视频时长 = 音频时长（至少 3 秒）
+	videoDuration := int(audioDuration) + 1
+	if videoDuration < 3 {
+		videoDuration = 3
+	}
+
+	h.updateTask(taskID, title, "rendering", 50, fmt.Sprintf("正在渲染视频（%.0f秒）...", audioDuration))
+
+	// 构建输出路径 — 保留中文/字母/数字，其他特殊字符替换为 _
+	outputName := fmt.Sprintf("%s_%s.mp4", title, taskID)
+	ext := ".mp4"
+	safeBase := strings.TrimSuffix(outputName, ext)
+	safeBase = strings.Map(func(r rune) rune {
+		if r >= 0x4e00 && r <= 0x9fff {
+			return r
+		}
+		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') {
+			return r
+		}
+		if r == '-' || r == '_' {
+			return r
+		}
+		return '_'
+	}, safeBase)
+	for strings.Contains(safeBase, "__") {
+		safeBase = strings.ReplaceAll(safeBase, "__", "_")
+	}
+	safeBase = strings.Trim(safeBase, "._")
+	if safeBase == "" {
+		safeBase = taskID
+	}
+	outputName = safeBase + ext
+	outputPath := filepath.Join(h.rootDir, outputName)
+	outputPath = strings.ReplaceAll(outputPath, "//", "/")
+
+	// ── 3. 渲染视频（带动画背景 + 居中文字 + 配音） ──
 	fontFile := "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"
 	if _, err := os.Stat(fontFile); err != nil {
-		// fallback to DejaVu for non-Chinese
 		fontFile = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 	}
 
-	// 按段落拆分行
 	lines := breakLines(rawText, 36, 42)
 	if len(lines) == 0 {
 		lines = []string{" "}
@@ -487,7 +550,6 @@ func (h *GalleryHandler) runTextPipeline(taskID, textFile, title string, duratio
 		if yPos > 1040 {
 			yPos = 1040
 		}
-		// ffmpeg drawtext escaping: \ → \\\\, : → \\:, ' → \\'
 		escaped := strings.ReplaceAll(line, "\\", "\\\\\\\\")
 		escaped = strings.ReplaceAll(escaped, ":", "\\\\:")
 		escaped = strings.ReplaceAll(escaped, "'", "\\\\'")
@@ -498,21 +560,21 @@ func (h *GalleryHandler) runTextPipeline(taskID, textFile, title string, duratio
 		drawtextFilters = append(drawtextFilters, filter)
 	}
 
-	// 构建 ffmpeg 命令
+	// 先渲染无声音视频
+	rawVideo := fmt.Sprintf("/tmp/computehub-video/text/%s_nosound.mp4", taskID)
 	ffmpegArgs := []string{
 		"-y",
 		"-f", "lavfi",
-		"-i", fmt.Sprintf("color=c=%s:s=1920x1080:d=%d:r=30", bg, duration),
+		"-i", fmt.Sprintf("color=c=%s:s=1920x1080:d=%d:r=30", bg, videoDuration),
 		"-vf", strings.Join(drawtextFilters, ","),
 		"-c:v", "libx264",
 		"-preset", "ultrafast",
 		"-pix_fmt", "yuv420p",
-		outputPath,
+		rawVideo,
 	}
 
-	logWithTimestamp("🎬 ffmpeg: %s", strings.Join(ffmpegArgs, " "))
 	if logF != nil {
-		fmt.Fprintf(logF, "ffmpeg args: %s\n", strings.Join(ffmpegArgs, " "))
+		fmt.Fprintf(logF, "🎬 ffmpeg video: %s\n", strings.Join(ffmpegArgs, " "))
 	}
 
 	cmd := exec.Command("ffmpeg", ffmpegArgs...)
@@ -520,45 +582,61 @@ func (h *GalleryHandler) runTextPipeline(taskID, textFile, title string, duratio
 		cmd.Stdout = logF
 		cmd.Stderr = logF
 	}
-
-	if err := cmd.Start(); err != nil {
-		h.updateTask(taskID, title, "failed", 0, fmt.Sprintf("❌ 启动 ffmpeg 失败: %v", err))
+	if err := cmd.Run(); err != nil {
+		h.updateTask(taskID, title, "failed", 0, fmt.Sprintf("❌ 视频渲染失败: %v", err))
 		return
 	}
 
-	go func() {
-		err := cmd.Wait()
-		if logF != nil {
-			logF.Close()
-		}
+	// ── 4. 混合配音 ──
+	h.updateTask(taskID, title, "rendering", 80, "正在合成配音...")
 
-		if err != nil {
-			h.updateTask(taskID, title, "failed", 0, fmt.Sprintf("❌ 渲染失败: %v", err))
-			return
-		}
+	muxArgs := []string{
+		"-y",
+		"-i", rawVideo,
+		"-i", ttsAudio,
+		"-c:v", "copy",
+		"-c:a", "aac",
+		"-b:a", "128k",
+		"-map", "0:v:0",
+		"-map", "1:a:0",
+		"-shortest",
+		outputPath,
+	}
 
-		// 检查输出文件
-		if stat, statErr := os.Stat(outputPath); statErr == nil && stat.Size() > 0 {
-			h.recordToPipelineRepo(taskID, title, textFile, outputName)
-			h.updateTask(taskID, title, "completed", 100, fmt.Sprintf("✅ 视频已生成: %s", outputName))
-			h.refresh()
-			os.Remove(textFile)
-			return
-		}
+	if logF != nil {
+		fmt.Fprintf(logF, "🎬 ffmpeg mux: %s\n", strings.Join(muxArgs, " "))
+	}
 
-		h.refresh()
-		items := h.getItems()
-		if len(items) > 0 && items[0].IsVideo {
-			h.recordToPipelineRepo(taskID, title, textFile, items[0].Name)
-			h.updateTask(taskID, title, "completed", 100, fmt.Sprintf("✅ 视频已生成: %s", items[0].Name))
-			os.Remove(textFile)
-			return
-		}
+	muxCmd := exec.Command("ffmpeg", muxArgs...)
+	if logF != nil {
+		muxCmd.Stdout = logF
+		muxCmd.Stderr = logF
+	}
+	if err := muxCmd.Run(); err != nil {
+		h.updateTask(taskID, title, "failed", 0, fmt.Sprintf("❌ 配音合成失败: %v", err))
+		return
+	}
 
-		h.updateTask(taskID, title, "completed", 100, "✅ 处理完成，请刷新作品列表")
+	// ── 5. 清理临时文件 ──
+	os.Remove(ttsAudio)
+	os.Remove(rawVideo)
+	if logF != nil {
+		logF.Close()
+	}
+
+	// 检查输出
+	if stat, statErr := os.Stat(outputPath); statErr == nil && stat.Size() > 0 {
+		h.recordToPipelineRepo(taskID, title, textFile, outputName)
+		h.updateTask(taskID, title, "completed", 100, fmt.Sprintf("✅ 配音视频已生成: %s", outputName))
 		h.refresh()
 		os.Remove(textFile)
-	}()
+		return
+	}
+
+	h.refresh()
+	h.updateTask(taskID, title, "completed", 100, "✅ 处理完成，请刷新作品列表")
+	h.refresh()
+	os.Remove(textFile)
 }
 
 // breakLines 简单换行算法：按中英文混合拆分
@@ -730,7 +808,7 @@ func (h *GalleryHandler) recordToPipelineRepo(taskID, title, docPath, outputName
 
 func (h *GalleryHandler) HandleFile(w http.ResponseWriter, r *http.Request) {
 	filename := strings.TrimPrefix(r.URL.Path, "/api/v1/files/")
-	if filename == "" || strings.Contains(filename, "..") {
+	if filename == "" || strings.HasPrefix(filename, ".") || strings.Contains(filename, "../") || strings.Contains(filename, "..\\") {
 		http.Error(w, "Invalid filename", http.StatusBadRequest)
 		return
 	}
@@ -848,7 +926,7 @@ func (h *GalleryHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 		filename = r.URL.Query().Get("name")
 	}
 
-	if filename == "" || strings.Contains(filename, "..") {
+	if filename == "" || strings.HasPrefix(filename, ".") || strings.Contains(filename, "../") || strings.Contains(filename, "..\\") {
 		writeJSON(w, map[string]interface{}{"success": false, "error": "Invalid filename"})
 		return
 	}

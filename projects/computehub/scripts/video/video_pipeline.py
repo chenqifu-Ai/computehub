@@ -55,7 +55,7 @@ import visual_templates as vt
 
 # ── 常量 ──────────────────────────────────────────────────────
 
-OUTPUT_DIR = "/var/computehub/gallery"
+OUTPUT_DIR = "/home/computehub/gallery"
 WORK_DIR_BASE = "/tmp/computehub-video"
 MAX_PAGES = 50
 MAX_DISK_MB = 500
@@ -97,6 +97,9 @@ class ProgressReporter:
 
     def encoding(self, pct=80):
         self._report("encoding", pct, "编码视频")
+
+    def exec_progress(self, stage: str, pct: int, msg: str):
+        self._report(stage, pct, msg)
 
     def concat_progress(self, pct=90):
         self._report("concat", pct, "拼接+过渡")
@@ -199,25 +202,33 @@ def find_font() -> str:
 
 # ── 过渡效果 ──────────────────────────────────────────────────
 
-def encode_segment_with_transition(
-    prev_seg: str,
+def encode_segment(
     page_image: str,
     audio_path: str,
     output_path: str,
     duration: float,
-    has_prev: bool,
     transition_duration: float = 0.5,
 ) -> bool:
-    """编码单个视频段，带淡入淡出效果
+    """编码单段视频（图片+语音+淡入淡出）
 
-    方案: 每个段渲染后，对首帧加淡入、尾帧加淡出，
-          然后 concat 拼接（不依赖 xfade 跨帧复合滤镜）
+    ★ 每段独立编码，不做累加拼接。最终拼接由调用者统一处理。
+      旧版在函数内部做了累计 concat → 导致片段重复 bug。
+
+    Args:
+        page_image: 渲染好的页面图片
+        audio_path: 语音音频路径（可能为 None）
+        output_path: 输出路径
+        duration: 段时长
+        transition_duration: 淡入淡出时长
+
+    Returns:
+        bool: 是否成功
     """
     if not os.path.exists(page_image):
         return False
 
     # 渲染单段视频（图片+语音）
-    seg_raw = output_path.replace(".mp4", "_raw.mp4")
+    # ★ 强制 -ar 44100 统一采样率，避免 edge-tts(16kHz) 被误读为 44kHz 导致快进
     cmd = [
         "ffmpeg", "-y",
         "-loop", "1",
@@ -228,12 +239,13 @@ def encode_segment_with_transition(
         cmd.extend([
             "-c:v", "libx264",
             "-c:a", "libmp3lame",
+            "-ar", "44100",
             "-t", str(duration),
             "-pix_fmt", "yuv420p",
             "-preset", "fast",
             "-crf", "23",
             "-shortest",
-            seg_raw,
+            output_path,
         ])
     else:
         cmd.extend([
@@ -242,62 +254,36 @@ def encode_segment_with_transition(
             "-pix_fmt", "yuv420p",
             "-preset", "fast",
             "-crf", "23",
-            seg_raw,
+            output_path,
         ])
 
     ok = run_ffmpeg(cmd, f"编码段 {os.path.basename(page_image)} ({duration:.1f}s)", timeout=120)
     if not ok:
         return False
 
-    # 对单段加淡入淡出滤镜，稳定跨版本兼容
-    # fade=t=in:st=0:d=td 加淡入, fade=t=out:st=(dur-td):d=td 加淡出
-    with_fades = output_path.replace(".mp4", "_faded.mp4")
-    td = min(transition_duration, duration / 4)  # 不超过总长的 1/4
+    # 对单段加淡入淡出滤镜
+    td = min(transition_duration, duration / 4)
+    faded_path = output_path.replace(".mp4", "_faded.mp4")
     fade_filter = f"fade=t=in:st=0:d={td},fade=t=out:st={duration - td}:d={td}"
-
     fade_cmd = [
         "ffmpeg", "-y",
-        "-i", seg_raw,
+        "-i", output_path,
         "-vf", fade_filter,
         "-c:a", "copy",
         "-preset", "fast",
         "-crf", "23",
-        with_fades,
+        faded_path,
     ]
     ok = run_ffmpeg(fade_cmd, f"淡入淡出 ({td:.1f}s)", timeout=60)
-    os.remove(seg_raw)
+    os.remove(output_path)
 
-    if not ok:
-        shutil.copy2(seg_raw.replace("_raw.mp4", ".mp4"), output_path) if os.path.exists(seg_raw.replace("_raw.mp4", ".mp4")) else None
-        return False
+    if ok:
+        os.rename(faded_path, output_path)
+    else:
+        # fallback: 用原视频
+        pass
 
-    # 有前一段？用 concat 简单拼接（不用 xfade 避免兼容问题）
-    if has_prev and os.path.exists(prev_seg):
-        concat_file = os.path.join(os.path.dirname(output_path), "concat_seg.txt")
-        with open(concat_file, "w") as f:
-            for vf in [prev_seg, with_fades]:
-                if os.path.exists(vf) and os.path.getsize(vf) > 0:
-                    f.write(f"file '{os.path.abspath(vf)}'\n")
-        concat_cmd = [
-            "ffmpeg", "-y",
-            "-f", "concat", "-safe", "0",
-            "-i", concat_file,
-            "-c:v", "libx264",
-            "-c:a", "libmp3lame",
-            "-preset", "fast", "-crf", "23",
-            output_path,
-        ]
-        ok = run_ffmpeg(concat_cmd, "拼接前段+本段", timeout=120)
-        if os.path.exists(concat_file):
-            os.remove(concat_file)
-        if ok:
-            os.remove(with_fades)
-            return True
-
-    # fallback: 直接返回本段（第一段或拼接失败）
-    shutil.copy2(with_fades, output_path)
-    os.remove(with_fades)
-    return True
+    return ok
 
 
 # ── 字幕生成 ──────────────────────────────────────────────────
@@ -359,6 +345,9 @@ def burn_subtitles(video_path: str, srt_path: str, output_path: str) -> bool:
     if not os.path.exists(srt_path):
         return False
 
+    # 预估视频时长决定超时（1min 视频 ≈ 10s 烧录，2h 视频需要 1200s）
+    dur = get_media_duration(video_path)
+    timeout_sec = max(180, int(dur * 0.3))
     cmd = [
         "ffmpeg", "-y",
         "-i", video_path,
@@ -368,7 +357,7 @@ def burn_subtitles(video_path: str, srt_path: str, output_path: str) -> bool:
         "-crf", "23",
         output_path,
     ]
-    return run_ffmpeg(cmd, "烧录字幕", timeout=180)
+    return run_ffmpeg(cmd, "烧录字幕", timeout=timeout_sec)
 
 
 # ── 品牌片头片尾 ──────────────────────────────────────────────
@@ -409,11 +398,14 @@ def create_intro(duration: float = 3.0, output_path: str = None,
     intro_img = "/tmp/intro_bg.jpg"
     bg.save(intro_img, "JPEG", quality=92)
 
-    # 编码为视频
+    # 编码为视频（加静音音频轨道，避免 concat 时丢掉音轨）
     cmd = [
         "ffmpeg", "-y",
         "-loop", "1", "-i", intro_img,
+        "-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono",
         "-c:v", "libx264",
+        "-c:a", "libmp3lame",
+        "-shortest",
         "-t", str(duration),
         "-pix_fmt", "yuv420p",
         "-preset", "fast",
@@ -461,7 +453,10 @@ def create_outro(duration: float = 3.0, output_path: str = None,
     cmd = [
         "ffmpeg", "-y",
         "-loop", "1", "-i", outro_img,
+        "-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono",
         "-c:v", "libx264",
+        "-c:a", "libmp3lame",
+        "-shortest",
         "-t", str(duration),
         "-pix_fmt", "yuv420p",
         "-preset", "fast",
@@ -496,19 +491,59 @@ def mix_background_music(video_path: str, bgm_path: str, output_path: str,
     if bgm_dur <= 0:
         return False
 
+    # ★ 用 areverse / atrim + concat 做纯 BGM 循环，避免 -stream_loop + aloop 双循环叠加导致的音频错位
     if bgm_dur < video_dur:
-        # 音乐短于视频，需要循环
+        # 截取足够 bgm 循环 + concat 文件
+        loops = int(video_dur / bgm_dur) + 2
+        concat_bgm = os.path.join(os.path.dirname(video_path), "_bgm_loop.txt")
+        with open(concat_bgm, "w") as f:
+            for _ in range(loops):
+                f.write(f"file '{os.path.abspath(bgm_path)}'\n")
+        looped_bgm = os.path.join(os.path.dirname(video_path), "_bgm_loop.mp3")
+        loop_cmd = [
+            "ffmpeg", "-y",
+            "-f", "concat", "-safe", "0",
+            "-i", concat_bgm,
+            "-c", "copy",
+            "-t", str(video_dur),
+            looped_bgm,
+        ]
+        subprocess.run(loop_cmd, capture_output=True, timeout=60)
+
+        if os.path.exists(concat_bgm):
+            os.remove(concat_bgm)
+
+        if os.path.exists(looped_bgm) and os.path.getsize(looped_bgm) > 0:
+            cmd = [
+                "ffmpeg", "-y",
+                "-i", video_path,
+                "-i", looped_bgm,
+                "-filter_complex",
+                f"[1:a]volume={music_volume}[music];"
+                f"[0:a][music]amix=inputs=2:duration=first:dropout_transition=2[outa]",
+                "-map", "0:v", "-map", "[outa]",
+                "-c:v", "copy",
+                "-c:a", "libmp3lame",
+                "-ar", "44100",
+                "-shortest",
+                output_path,
+            ]
+            ok = run_ffmpeg(cmd, "混音背景音乐", timeout=180)
+            if os.path.exists(looped_bgm):
+                os.remove(looped_bgm)
+            return ok
+        # fallback: 用简单方案
         cmd = [
             "ffmpeg", "-y",
             "-i", video_path,
-            "-stream_loop", "-1", "-i", bgm_path,
+            "-i", bgm_path,
             "-filter_complex",
-            f"[1:a]volume={music_volume},aloop=loop=-1:size=44100*{int(bgm_dur)}[music];"
+            f"[1:a]volume={music_volume}[music];"
             f"[0:a][music]amix=inputs=2:duration=first:dropout_transition=2[outa]",
             "-map", "0:v", "-map", "[outa]",
             "-c:v", "copy",
             "-c:a", "libmp3lame",
-            "-t", str(video_dur),
+            "-ar", "44100",
             "-shortest",
             output_path,
         ]
@@ -524,6 +559,7 @@ def mix_background_music(video_path: str, bgm_path: str, output_path: str,
             "-map", "0:v", "-map", "[outa]",
             "-c:v", "copy",
             "-c:a", "libmp3lame",
+            "-ar", "44100",
             "-shortest",
             output_path,
         ]
@@ -668,14 +704,18 @@ def generate_video(doc_path: str,
             text = page.get("text", "")
             if text.strip() and i < len(rendered_images):
                 audio_path = os.path.join(task_dir, f"speech_{i:04d}.mp3")
-                # 限制文本长度（edge-tts 长文本可能超时）
-                tts_text = text[:2000]  # 单段最多 2000 字符
+                # ★ 文本长度决定语音时长。中文阅读 ~4字/秒。
+                # 每页控制在 ~20秒 ≈ 80字，太长语音会撑爆视频。
+                tts_text = text[:80]
+                # 如果截断后不是结尾，加句号让语音自然结束
+                if len(text) > 80 and not tts_text.rstrip().endswith(("。", "！", "？", ".")):
+                    tts_text = tts_text.rstrip() + "。"
                 ok = tts_engine.generate_speech(tts_text, audio_path, voice=voice, rate=tts_rate)
                 if ok:
                     audio_segments[i] = audio_path
                     dur = tts_engine.get_audio_duration(audio_path)
                     audio_durations[i] = dur
-                    print(f"  ✅ 语音{i+1}: {text[:40]}... ({dur:.1f}s)")
+                    print(f"  ✅ 语音{i+1}: {tts_text[:40]}... ({dur:.1f}s)")
                 else:
                     print(f"  ⚠️ 语音{i+1} 生成失败")
 
@@ -684,11 +724,14 @@ def generate_video(doc_path: str,
     print(f"🎬 编码 {len(rendered_images)} 个视频段 (过渡: {transition_duration}s)")
     print(f"{'='*60}")
 
-    reporter.encoding()
+    total_segs = len(rendered_images)
 
     video_segments = []
-    prev_seg = None
     for i, img_path in enumerate(rendered_images):
+        # 每段编码更新进度: 80% → 80 + 10 * (i/total)
+        encode_pct = 80 + int(10 * (i + 1) / total_segs)
+        msg = f"编码视频段 {i+1}/{total_segs}"
+        reporter.exec_progress("encoding", encode_pct, msg)
         seg_path = os.path.join(task_dir, f"seg_{i:04d}.mp4")
 
         dur = page_duration
@@ -696,17 +739,21 @@ def generate_video(doc_path: str,
             dur = audio_durations[i]
         if dur is None or dur <= 0:
             dur = 4.0
+        # 每页最长限制（安全网），源头上已限制 TTS 文本80字 ≈ 20秒
+        max_dur = 45.0
+        if dur > max_dur:
+            print(f"  ⚠️ 第{i+1}页语音 {dur:.0f}s 过长，截断至 {max_dur}s")
+            dur = max_dur
 
         audio_path = audio_segments[i] if i < len(audio_segments) else None
-        has_prev = prev_seg is not None
 
-        ok = encode_segment_with_transition(
-            prev_seg, img_path, audio_path, seg_path,
-            dur, has_prev, transition_duration,
+        # ★ 单段独立编码，不做累加拼接。最终拼接在 Step 4.5 统一处理。
+        ok = encode_segment(
+            img_path, audio_path, seg_path,
+            dur, transition_duration,
         )
         if ok:
             video_segments.append(seg_path)
-            prev_seg = seg_path
             print(f"  ✅ 段{i+1}: {dur:.1f}s")
         else:
             print(f"  ❌ 段{i+1} 编码失败")
@@ -721,7 +768,7 @@ def generate_video(doc_path: str,
     print(f"🔗 拼接 {len(video_segments)} 个视频段")
     print(f"{'='*60}")
 
-    reporter.concat_progress()
+    reporter.exec_progress("encoding", 91, "拼接视频段...")
 
     middle_video = os.path.join(task_dir, "middle.mp4")
     if len(video_segments) == 1:
@@ -736,12 +783,10 @@ def generate_video(doc_path: str,
             "ffmpeg", "-y",
             "-f", "concat", "-safe", "0",
             "-i", concat_file,
-            "-c:v", "libx264",
-            "-c:a", "libmp3lame",
-            "-preset", "fast", "-crf", "23",
+            "-c", "copy",
             middle_video,
         ]
-        ok = run_ffmpeg(cmd, "拼接视频", timeout=300)
+        ok = run_ffmpeg(cmd, "拼接视频", timeout=120)
         if not ok:
             reporter.error("视频拼接失败")
             cleanup_work_dir(task_id)
@@ -749,6 +794,7 @@ def generate_video(doc_path: str,
 
     # ── Step 5: 加片头片尾 ──
     current_video = middle_video
+    reporter.exec_progress("encoding", 92, "添加片头...")
     if enable_intro:
         print(f"\n{'='*60}")
         print(f"🏷️ 添加品牌片头")
@@ -795,6 +841,7 @@ def generate_video(doc_path: str,
 
     # ── Step 6: 烧录字幕 ──
     if enable_subtitles and tts_enabled:
+        reporter.exec_progress("encoding", 95, "烧录字幕...")
         print(f"\n{'='*60}")
         print(f"📝 生成并烧录字幕")
         print(f"{'='*60}")

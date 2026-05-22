@@ -66,20 +66,22 @@ def submit(params: dict) -> dict:
     log_file = os.path.join(PROGRESS_DIR, f"{task_id}_worker.log")
     os.makedirs(os.path.dirname(log_file), exist_ok=True)
 
-    # nohup 后台执行
-    nohup_cmd = f'nohup {" ".join(cmd)} > {log_file} 2>&1 &'
-    print(f"  🚀 提交任务 [{task_id}]: {nohup_cmd[:200]}...")
+    # Gallery handler 已经用 nohup 包装了，这里直接同步执行
+    # （否则 submit() 秒退，handler Wait() 误判完成）
+    print(f"  🚀 启动任务 [{task_id}]: {' '.join(cmd)}")
 
-    subprocess.Popen(
-        ["nohup", sys.executable, PIPELINE] + cmd[2:] + ["--progress"],
-        stdout=open(log_file, "w"),
-        stderr=subprocess.STDOUT,
-    )
+    with open(log_file, "w") as lf:
+        proc = subprocess.Popen(cmd, stdout=lf, stderr=subprocess.STDOUT)
+        proc.wait()
+
+    exit_code = proc.returncode
+    success = exit_code == 0
+    print(f"  {'✅' if success else '❌'} 任务 [{task_id}] 退出码={exit_code}")
 
     return {
-        "success": True,
+        "success": success,
         "task_id": task_id,
-        "message": "任务已提交后台执行",
+        "message": "任务已完成" if success else f"任务失败 (exit={exit_code})",
     }
 
 
