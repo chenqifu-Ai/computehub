@@ -104,13 +104,29 @@
 - **NewAPI key**: ✅ 正常
 
 ### ECS-2 (36.250.122.43) 生产状态
-- **ComputeHub Gateway**: ✅ **v1.3.3** (8282端口) — Phase 3 test-register 升级
-- **Worker (ecs-p2ph)**: ✅ v1.3.2 (linux/amd64) — 等待自动检测升级到 v1.3.3
-- **Worker (Windows-mobile)**: 🔴 离线 (升级尝试失败后被kill)
+- **ComputeHub Gateway**: ✅ **v1.3.5** (8282端口)
+- **Worker (ecs-p2ph)**: ✅ v1.3.5 (linux/amd64)
+- **Worker (Windows-mobile)**: ✅ **v1.3.5** (windows/amd64) — Agent在线，health/status正常
 - **SSH**: ✅ 8022端口 (computehub 用户，ed25519 key)
 - **活跃任务**: 0 tasks
 
 ---
+
+### ✅ 今日完成 (2026-06-02 18:00-19:00)
+- 🎯 **Agent 智能度评估 + 三大卡点修复** ✅
+- 📄 Agent 智能度评估报告 → 发到 19525456@qq.com ✅
+- 🔧 修复 #1: **30s硬超时** — `execShell` 的 `maxWait` 从硬编码30s改为 `step.Timeout`(默认300s) ✅
+- 🔧 修复 #2: **JSON解析脆弱** — 新增 `extractJSON()`：去代码块包裹 + 括号平衡法截取 ✅
+- 🌐 新增 #3: **web_search 工具** — DuckDuckGo免费API，Agent能联网查资料 ✅
+- 📊 改动: 2 files, +218/-16 lines, `go build ✅`
+
+### ✅ 今日完成 (2026-06-02 20:15-20:46)
+- 🗔 **Windows-mobile v1.3.4→v1.3.5 升级** ✅
+- 📝 **WIN-UPG-002 标准流程** — 精简版，`&`链黄金规则 + Phase2超时45s
+- 📧 WIN-UPG-002 → 已发邮件到 19525456@qq.com
+- 📦 WIN-UPG-002 → git commit `ace167d` + push ✅
+- 🤖 **Windows-mobile Worker Agent 沟通测试** — health✅ status✅ think✅(LLM超时，Agent本体正常)
+- 📝 踩坑记录：cmd转义地狱，最终certutil解码payload绕开JSON嵌套问题
 
 ### ✅ 今日完成 (2026-06-02 16:00-17:00)
 - 🎯 **v1.3.3: Phase 3 Zero-Downtime 升级 (test-register模式)** ✅
