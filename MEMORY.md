@@ -1,5 +1,14 @@
 # MEMORY.md - 长期记忆（精简版）
 
+## 📧 邮件发送标准 STD-003 (2026-05-21 定稿)
+**核心**: 所有发邮件任务统一走 `scripts/send_email.py`，禁止用其他方式
+**配置文件**: `config/email.conf`（授权码来源）
+**主授权码（QQ）**: `bzgwylbbrocdbiie`
+**备用授权码（163）**: `AWZBPidhza74EbV8`
+**自动切换机制**: QQ优先 → 163自动备选
+**用法**: `python3 scripts/send_email.py <收件人> <主题> <内容文件路径>`
+**规则**: 任何需要发邮件的场景（合同、报告、通知等）都调用此脚本，不再新建发送代码
+
 ## 用户信息
 - **称呼**：老大
 - **邮箱**：19525456@qq.com
@@ -47,7 +56,34 @@
 - **原因**: 2026-04-25 审计确认不可用
 - **旧问题**: content 始终为 null，需适配层
 
-## 服务器信息
+## ✅ ActiveTasks 双倍递增 Bug 修复 (2026-06-02)
+**根因**: `gateway_worker.go` 中 Worker 轮询时 `pending→running` 重复 `ActiveTasks++`
+**修复**: 删除多余的那行 `state.Metrics.ActiveTasks++`
+**文件**: `src/gateway/gateway_worker.go`
+
+## ✅ Windows 节点升级为统一 binary (2026-06-02)
+- **旧**: 旧 WMI agent（独立 binary，无自动升级）  
+- **新**: `computehub.exe worker --agent` (v1.3.1, 10.6MB)
+- **deploy 目录更新**: version.txt→1.3.1, sha256sums-1.3.1.txt, linux-amd64+windows-amd64 binary
+- **结果**: `platform=windows/amd64` ✅，自带30分钟自动升级检查
+- **关键教训**: Windows cmd 的 `&` 会截断 URL 参数，必须用 `"URL"` 包裹
+
+## 🚀 OPC 主工程 (2026-06-01 锁定)
+**🔒 老大明确锁定：所有精力集中于此工程**
+
+- **路径**: `/data/data/com.termux/files/home/OPC/`
+- **版本**: v1.2.3
+- **分支**: master
+- **最新commit**: `31acc57` — findDeployDir 修复（今天16:02）
+- **待提交修改**: `auto_upgrade.go` + `worker_agent.go` + `worker_main.go`（405行变更中）
+- **结构**: cmd/ src/ deploy/ scripts/，独立 Go 工程
+- **项目范围**: Gateway + Worker + TUI 一体化，全平台（linux/darwin/windows + amd64/arm64）
+- **vs workspace/computehub**: 后者已停用，老大不再关注
+- **代码量**: 26,510 行（生产 19,576 + 测试 6,934）
+- **外部依赖**: 仅 2 个（`golang.org/x/term` + `x/sys`）
+- **部署**: ECS 36.250.122.43:8282 (Gateway v1.2.3) + ecs-p2ph Worker + Windows Worker
+
+**注意**: 此 OPC 工程在 termux 路径下，不是 workspace 里的 projects/computehub
 - **本机IP**: 192.168.1.17
 - **Ollama主服务器**: http://192.168.1.7:11434
 - **Gateway配置**: 端口18789, Token: 2159c9affb69a78acdef02bc0e0c68824bedcc8ccf11bc5b

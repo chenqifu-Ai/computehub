@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 小智影业 · 作品广场</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+         
+        .header {
+            padding: 24px 32px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .header h1 {
+            font-size: 26px;
+            background: linear-gradient(90deg, #f7971e, #ffd200);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header .subtitle { color: #888; margin-top: 4px; font-size: 13px; }
+        .header .stats {
+            display: flex; gap: 16px; margin-top: 8px; font-size: 12px; color: #aaa;
+        }
+        .header .stats strong, .header .stats em { color: #f7971e; font-style: normal; }
+
+         
+
+        .upload-section {
+            margin: 16px 32px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .upload-zone {
+            padding: 28px;
+            border: 2px dashed rgba(255,255,255,0.12);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: #f7971e;
+            background: rgba(247,151,30,0.06);
+        }
+        .upload-zone .icon { font-size: 32px; }
+        .upload-zone p { color: #888; font-size: 13px; margin-top: 4px; }
+        .upload-zone input[type=file] { display: none; }
+
+         
+        .file-list { margin-top: 12px; }
+        .file-list.hidden { display: none; }
+        .file-item {
+            display: flex; align-items: center;
+            padding: 8px 12px; margin-top: 4px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 8px;
+            gap: 10px;
+        }
+        .file-item .icon { font-size: 18px; width: 28px; text-align: center; }
+        .file-item .name { flex: 1; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .file-item .size { font-size: 11px; color: #888; min-width: 60px; text-align: right; }
+        .file-item .badge {
+            display: inline-block; padding: 2px 8px; border-radius: 4px;
+            font-size: 11px; font-weight: 600;
+        }
+        .badge-document { background: rgba(33,150,243,0.18); color: #42a5f5; }
+        .badge-audio { background: rgba(76,175,80,0.18); color: #66bb6a; }
+        .badge-image { background: rgba(255,152,0,0.18); color: #ffa726; }
+        .badge-video { background: rgba(247,151,30,0.18); color: #f7971e; }
+        .badge-binary { background: rgba(156,39,176,0.18); color: #ce93d8; }
+        .badge-success { background: rgba(76,175,80,0.18); color: #66bb6a; font-size: 11px; }
+
+        .file-actions {
+            display: flex; gap: 8px; margin-top: 12px; align-items: center;
+        }
+        .file-actions .file-count { font-size: 13px; color: #888; }
+        .btn {
+            padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer;
+            font-size: 13px; font-weight: 600; transition: all 0.2s;
+        }
+        .btn-generate {
+            background: linear-gradient(90deg, #f7971e, #ffd200);
+            color: #1a1a2e;
+        }
+        .btn-generate:hover { opacity: 0.9; transform: scale(1.02); }
+        .btn-generate:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+        .btn-clear {
+            background: rgba(255,255,255,0.08); color: #ccc;
+        }
+        .btn-clear:hover { background: rgba(255,255,255,0.15); }
+
+         
+        .task-section { margin: 0 32px 16px; }
+        .task-section.hidden { display: none; }
+        .task-section h3 { font-size: 14px; color: #aaa; margin-bottom: 8px; }
+        .task-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px; padding: 14px 16px; margin-bottom: 8px;
+        }
+        .task-card .task-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+        }
+        .task-card .task-title { font-size: 14px; font-weight: 600; }
+        .task-card .task-status {
+            font-size: 12px; padding: 2px 10px; border-radius: 10px;
+        }
+        .task-status.pending { background: rgba(255,152,0,0.15); color: #ffa726; }
+        .task-status.running { background: rgba(33,150,243,0.15); color: #42a5f5; }
+        .task-status.completed { background: rgba(76,175,80,0.15); color: #66bb6a; }
+        .task-status.failed { background: rgba(244,67,54,0.15); color: #ef5350; }
+        .task-progress-bar {
+            height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden;
+        }
+        .task-progress-fill {
+            height: 100%; background: linear-gradient(90deg, #f7971e, #ffd200);
+            transition: width 0.5s ease;
+        }
+        .task-card .task-message { font-size: 12px; color: #888; margin-top: 6px; }
+
+         
+        .toolbar {
+            display: flex; gap: 10px; padding: 12px 32px; flex-wrap: wrap;
+            align-items: center;
+        }
+        .search-box {
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; padding: 8px 14px; color: #e0e0e0;
+            font-size: 13px; min-width: 200px; outline: none;
+        }
+        .search-box:focus { border-color: #f7971e; }
+        .filter-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+        .filter-btn, .sort-btn {
+            background: rgba(255,255,255,0.06); border: none; border-radius: 6px;
+            padding: 6px 12px; color: #999; font-size: 12px; cursor: pointer; transition: all 0.2s;
+        }
+        .filter-btn:hover, .sort-btn:hover { background: rgba(255,255,255,0.12); }
+        .filter-btn.active { background: rgba(247,151,30,0.2); color: #f7971e; }
+
+         
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 14px; padding: 8px 32px 24px;
+        }
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: all 0.25s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(247,151,30,0.25);
+            box-shadow: 0 6px 24px rgba(247,151,30,0.08);
+        }
+        .card-preview {
+            position: relative; background: #1a1a2e;
+            aspect-ratio: 16/9; display: flex;
+            align-items: center; justify-content: center; overflow: hidden;
+        }
+        .card-preview video, .card-preview img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .card-preview .icon { font-size: 40px; opacity: 0.4; }
+        .card-info { padding: 10px 12px; }
+        .card-info .name {
+            font-size: 13px; font-weight: 600;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .card-info .meta {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 4px; font-size: 11px; color: #888;
+        }
+        .card-info .actions {
+            display: flex; gap: 4px; margin-top: 8px;
+        }
+        .card-info .actions a, .card-info .actions button {
+            flex: 1; text-align: center; padding: 6px 8px; border-radius: 6px;
+            font-size: 12px; text-decoration: none; border: none; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-play {
+            background: linear-gradient(90deg, #f7971e, #ffd200);
+            color: #1a1a2e !important; font-weight: 600;
+        }
+        .btn-play:hover { opacity: 0.9; }
+        .btn-download { background: rgba(255,255,255,0.08); color: #bbb !important; }
+        .btn-download:hover { background: rgba(255,255,255,0.15); }
+        .btn-delete {
+            background: rgba(244,67,54,0.12); color: #ef5350 !important;
+            flex: 0 0 auto !important; padding: 6px 10px !important;
+        }
+        .btn-delete:hover { background: rgba(244,67,54,0.25); }
+
+        .empty {
+            grid-column: 1 / -1; text-align: center;
+            padding: 60px 32px; color: #666;
+        }
+        .empty .big-icon { font-size: 56px; margin-bottom: 16px; }
+
+        .footer { text-align: center; padding: 16px; color: #444; font-size: 12px; }
+
+         
+        .modal {
+            display: none; position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.92); z-index: 1000;
+            align-items: center; justify-content: center; padding: 32px;
+        }
+        .modal.active { display: flex; }
+        .modal video { max-width: 100%; max-height: 85vh; border-radius: 8px; }
+        .modal .close {
+            position: absolute; top: 16px; right: 24px;
+            font-size: 28px; color: #fff; cursor: pointer; opacity: 0.6;
+        }
+        .modal .close:hover { opacity: 1; }
+
+         
+        .confirm-dialog {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7); z-index: 2000;
+            display: none; align-items: center; justify-content: center;
+        }
+        .confirm-dialog.active { display: flex; }
+        .confirm-box {
+            background: #1e1e3a; border-radius: 12px;
+            padding: 24px; max-width: 400px; width: 90%;
+            border: 1px solid rgba(244,67,54,0.3);
+        }
+        .confirm-box h3 { font-size: 16px; margin-bottom: 8px; }
+        .confirm-box p { font-size: 13px; color: #888; margin-bottom: 12px; }
+        .confirm-box .name-display { font-size: 14px; color: #ef5350; margin-bottom: 16px; word-break: break-all; }
+        .confirm-box .btns { display: flex; gap: 8px; }
+        .confirm-box .btns button {
+            flex: 1; padding: 10px; border-radius: 8px; border: none;
+            font-size: 13px; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-confirm-delete { background: #ef5350; color: #fff; }
+        .btn-confirm-delete:hover { background: #e53935; }
+        .btn-cancel-delete { background: rgba(255,255,255,0.08); color: #ccc; }
+        .btn-cancel-delete:hover { background: rgba(255,255,255,0.15); }
+
+         
+        .toast {
+            position: fixed; bottom: 24px; right: 24px;
+            background: rgba(0,0,0,0.85); color: #e0e0e0;
+            padding: 12px 20px; border-radius: 8px; font-size: 13px;
+            z-index: 3000; opacity: 0; transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .toast.show { opacity: 1; }
+
+        @media (max-width: 768px) {
+            .header { padding: 16px 20px; }
+    
+        .text-input-section {
+            margin: 16px 32px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 18px 20px;
+        }
+        .text-input-header {
+            display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+        }
+        .text-input-icon { font-size: 20px; }
+        .text-input-title { font-size: 15px; font-weight: 600; color: #e0e0e0; }
+        .text-input-subtitle { font-size: 12px; color: #666; margin-left: 8px; }
+        .text-input-area textarea {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; color: #e0e0e0; font-size: 14px; padding: 12px;
+            resize: vertical; min-height: 80px; max-height: 300px;
+            font-family: inherit; outline: none; transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+        .text-input-area textarea:focus { border-color: #f7971e; }
+        .text-input-area textarea::placeholder { color: #555; }
+        .text-input-controls {
+            display: flex; align-items: center; gap: 14px; margin-top: 12px; flex-wrap: wrap;
+        }
+        .control-group {
+            display: flex; align-items: center; gap: 6px;
+        }
+        .control-group label { font-size: 13px; color: #999; }
+        .control-input {
+            width: 56px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px; color: #e0e0e0; font-size: 13px; padding: 5px 8px;
+            text-align: center; outline: none;
+        }
+        .control-input:focus { border-color: #f7971e; }
+        .control-unit { font-size: 12px; color: #666; }
+        .control-color {
+            width: 32px; height: 32px; border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 6px; cursor: pointer; padding: 0; background: none;
+        }
+        .control-color::-webkit-color-swatch-wrapper { padding: 0; }
+        .control-color::-webkit-color-swatch { border: none; border-radius: 4px; }
+
+        @media (max-width: 768px) {
+            .text-input-section { margin: 12px 16px; padding: 14px; }
+            .text-input-controls { gap: 10px; }
+        }
+        .upload-section { margin: 12px 16px; padding: 14px; }
+            .toolbar { padding: 10px 20px; }
+            .gallery { padding: 8px 16px; grid-template-columns: 1fr; }
+            .modal { padding: 8px; }
+            .file-actions { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-top">
+            <h1>🎬 小智影业 · 作品广场</h1>
+        </div>
+        <p class="subtitle">ComputeHub 集群 · 自动视频生产</p>
+        <div class="stats">
+            <span>📦 共 <strong id="totalCount">36</strong> 件</span>
+            <span>🎬 <em id="videoCount">0</em> 视频</span>
+            <span>🖼 <em id="imageCount">0</em> 图片</span>
+            <span>🎵 <em id="audioCount">0</em> 音频</span>
+        </div>
+    </div>
+
+    
+    <div class="upload-section">
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+            <div class="icon">📤</div>
+            <p>点击上传或拖拽文件到此处</p>
+            <p style="font-size:12px;color:#555;margin-top:2px;">
+                支持 PDF / PPT / 音频 / 图片（最大 500MB）
+            </p>
+            <input type="file" id="fileInput" multiple
+                   accept=".pdf,.pptx,.ppt,.docx,.doc,.mp3,.wav,.aac,.m4a,.flac,.ogg,.jpg,.jpeg,.png,.gif,.webp,.mp4,.mov"
+                   onchange="handleFileSelect(this.files)">
+        </div>
+
+        <div class="file-list hidden" id="fileList">
+            <div id="fileItems"></div>
+        </div>
+        <div class="file-actions" style="margin-top:12px;">
+            <span class="file-count" id="fileCount">已选 0 个文件</span>
+            <button class="btn btn-generate" id="btnGenerate" disabled onclick="generateVideo()">
+                🎬 生成视频
+            </button>
+            <button class="btn btn-clear" onclick="clearFiles()">🗑 清空</button>
+        </div>
+    </div>
+
+    
+    <div class="text-input-section">
+        <div class="text-input-header">
+            <span class="text-input-icon">📝</span>
+            <span class="text-input-title">文字直出视频</span>
+            <span class="text-input-subtitle">输入文字，每行一个字幕画面，自动转视频</span>
+        </div>
+        <div class="text-input-area">
+            <textarea id="textInput" placeholder="输入你的内容...&#10;&#10;例如：&#10;欢迎来到小智影业&#10;这里是一个全新的世界&#10;用 AI 创造无限可能" rows="5"></textarea>
+        </div>
+        <div class="text-input-controls">
+            <div class="control-group">
+                <label>⏱ 每段</label>
+                <input type="number" id="durationInput" value="5" min="3" max="20" class="control-input">
+                <span class="control-unit">秒</span>
+            </div>
+            <div class="control-group">
+                <label>🎨 背景</label>
+                <input type="color" id="bgColor" value="#302b63" class="control-color">
+            </div>
+            <button class="btn btn-generate" id="btnGenerateText" disabled onclick="generateFromText()">
+                🎬 生成视频
+            </button>
+        </div>
+    </div>
+
+    
+    <div class="task-section hidden" id="taskSection">
+        <h3>📊 任务进度</h3>
+        <button class="btn-clear" onclick="clearFailedTasks()" style="margin-left:8px;">🧹 清理失败</button>
+        <div id="taskList"></div>
+    </div>
+
+    
+    <div class="toolbar">
+        <input class="search-box" id="searchBox" type="text" placeholder="🔍 搜索文件名..." oninput="filterGallery()">
+        <div class="filter-btns">
+            <button class="filter-btn active" data-filter="all" onclick="setFilter(this,'all')">全部</button>
+            <button class="filter-btn" data-filter="video" onclick="setFilter(this,'video')">🎬 视频</button>
+            <button class="filter-btn" data-filter="image" onclick="setFilter(this,'image')">🖼 图片</button>
+            <button class="filter-btn" data-filter="audio" onclick="setFilter(this,'audio')">🎵 音频</button>
+        </div>
+        <button class="sort-btn" id="sortBtn" onclick="toggleSort()">📅 最新</button>
+    </div>
+
+    
+    <div class="gallery" id="gallery">
+        
+    </div>
+
+    
+    <div class="modal" id="playerModal" onclick="this.classList.remove('active')">
+        <span class="close" onclick="document.getElementById('playerModal').classList.remove('active')">&times;</span>
+        <video id="playerVideo" controls autoplay></video>
+    </div>
+
+    <div class="confirm-dialog" id="confirmDialog">
+        <div class="confirm-box">
+            <h3>确认删除</h3>
+            <p>确定要删除这个文件吗？此操作不可撤销。</p>
+            <div class="name-display" id="deleteFileName"></div>
+            <div class="btns">
+                <button class="btn-cancel-delete" onclick="closeConfirm()">取消</button>
+                <button class="btn-confirm-delete" id="confirmDeleteBtn">删除</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <div class="footer">ComputeHub Gallery v2 · 小智影业</div>
+
+    <script>
+    
+    
+    
+    let items = [];
+    let currentFilter = 'all';
+    let currentSort = 'date-desc';
+    let currentSearch = '';
+    let deleteTarget = null;
+
+    
+    var uploadedFiles = [];
+
+    
+    const FILE_TYPES = {
+        document: ['.pdf', '.pptx', '.ppt', '.docx', '.doc', '.txt'],
+        audio: ['.mp3', '.wav', '.aac', '.m4a', '.flac', '.ogg', '.wma'],
+        image: ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'],
+        video: ['.mp4', '.webm', '.avi', '.mov', '.mkv', '.flv', '.wmv', '.m4v']
+    };
+
+    function classifyFile(name) {
+        const ext = '.' + name.split('.').pop().toLowerCase();
+        if (FILE_TYPES.document.includes(ext)) return { type: 'document', label: '📄 文档内容', badge: 'badge-document' };
+        if (FILE_TYPES.audio.includes(ext)) return { type: 'audio', label: '🎤 语音配音', badge: 'badge-audio' };
+        if (FILE_TYPES.image.includes(ext)) return { type: 'image', label: '🖼 图片素材', badge: 'badge-image' };
+        if (FILE_TYPES.video.includes(ext)) return { type: 'video', label: '🎬 视频素材', badge: 'badge-video' };
+        return { type: 'binary', label: '📦 文件', badge: 'badge-binary' };
+    }
+
+    function formatSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1048576) return (bytes/1024).toFixed(1) + ' KB';
+        return (bytes/1048576).toFixed(1) + ' MB';
+    }
+
+    function formatDate(ts) {
+        const d = new Date(ts);
+        const pad = n => n.toString().padStart(2,'0');
+        return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes());
+    }
+
+    
+    
+    
+    uploadedFiles = [];
+    const uploadZone = document.getElementById('uploadZone');
+    uploadZone.addEventListener('dragover', function(e) {
+        e.preventDefault(); this.classList.add('dragover');
+    });
+    uploadZone.addEventListener('dragleave', function(e) {
+        e.preventDefault(); this.classList.remove('dragover');
+    });
+    uploadZone.addEventListener('drop', function(e) {
+        e.preventDefault(); this.classList.remove('dragover');
+        if (e.dataTransfer.files.length) handleFileSelect(e.dataTransfer.files);
+    });
+
+    function handleFileSelect(files) {
+        const rejected = [];
+        for (let f of files) {
+            const ext = '.' + f.name.split('.').pop().toLowerCase();
+            if (ext === '.txt' || ext === '.md') {
+                rejected.push(f.name);
+                continue;
+            }
+            uploadToGallery(f);
+        }
+        if (rejected.length > 0) {
+            showToast('❌ 不支持的文件格式: ' + rejected.join(', '));
+        }
+    }
+
+    async function uploadToGallery(file) {
+        const fd = new FormData();
+        fd.append('file', file);
+        try {
+            const r = await fetch('/api/v1/gallery/upload', { method: 'POST', body: fd });
+            const d = await r.json();
+            if (d.success) {
+                const info = d.data;
+                uploadedFiles.push({
+                    name: info.name,
+                    size: info.size,
+                    size_str: info.size_str,
+                    file_type: info.file_type,
+                    role: info.role,
+                    checked: true
+                });
+                renderFileList();
+                refreshData();
+            } else {
+                showToast('❌ ' + file.name + ' 上传失败');
+            }
+        } catch(e) {
+            showToast('❌ ' + file.name + ' 网络错误');
+        }
+    }
+
+    function toggleFile(index) {
+        uploadedFiles[index].checked = !uploadedFiles[index].checked;
+        renderFileList();
+    }
+
+    function removeFile(index) {
+        uploadedFiles.splice(index, 1);
+        renderFileList();
+    }
+
+    function clearFiles() {
+        uploadedFiles = [];
+        renderFileList();
+    }
+
+    function renderFileList() {
+        const itemsDiv = document.getElementById('fileItems');
+        const countSpan = document.getElementById('fileCount');
+        const btn = document.getElementById('btnGenerate');
+
+        if (uploadedFiles.length === 0) {
+            itemsDiv.innerHTML = '';
+            btn.disabled = true;
+            countSpan.textContent = '已选 0 个文件';
+            return;
+        }
+        const checked = uploadedFiles.filter(f => f.checked).length;
+        btn.disabled = checked === 0;
+        countSpan.textContent = '已上传 ' + uploadedFiles.length + ' 个，勾选 ' + checked + ' 个';
+
+        let html = '';
+        uploadedFiles.forEach((f, i) => {
+            const info = classifyFile(f.name);
+            html += '<div class="file-item">' +
+                '<input type="checkbox" ' + (f.checked ? 'checked' : '') +
+                ' onchange="toggleFile('+i+')" style="width:16px;height:16px;accent-color:#f7971e;cursor:pointer;">' +
+                '<span class="icon">' + info.label.charAt(0) + '</span>' +
+                '<span class="name" title="'+f.name+'">' + escapeHtml(f.name) + '</span>' +
+                '<span class="size">' + f.size_str + '</span>' +
+                '<span class="badge ' + info.badge + '">' + info.label + '</span>' +
+                '<span class="badge badge-success">✅</span>' +
+                '<button onclick="removeFile('+i+')" style="background:none;border:none;color:#ef5350;cursor:pointer;font-size:14px;">✕</button>' +
+                '</div>';
+        });
+        itemsDiv.innerHTML = html;
+    }
+
+    
+    
+    
+    
+    async function generateFromText() {
+        const text = document.getElementById('textInput').value.trim();
+        if (!text) return;
+        const btn = document.getElementById('btnGenerateText');
+        btn.disabled = true;
+        btn.textContent = '⏳ 提交中...';
+        try {
+            const r = await fetch('/api/v1/gallery/generate-text', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    text: text,
+                    duration: parseInt(document.getElementById('durationInput').value) || 5,
+                    bg: document.getElementById('bgColor').value
+                })
+            });
+            const d = await r.json();
+            if (d.success) {
+                showToast('✅ ' + d.data.message);
+                document.getElementById('textInput').value = '';
+                btn.disabled = true;
+                refreshTasks();
+                refreshData();
+            } else {
+                showToast('❌ ' + (d.error || '生成失败'));
+            }
+        } catch(e) {
+            showToast('❌ 网络错误');
+        }
+        btn.disabled = false;
+        btn.textContent = '🎬 生成视频';
+        checkTextInput();
+    }
+
+    
+    function checkTextInput() {
+        const text = document.getElementById('textInput').value.trim();
+        document.getElementById('btnGenerateText').disabled = !text;
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const ta = document.getElementById('textInput');
+        if (ta) {
+            ta.addEventListener('input', checkTextInput);
+            checkTextInput();
+        }
+    });
+
+    async function generateVideo() {
+        const checked = uploadedFiles.filter(f => f.checked);
+        if (checked.length === 0) return;
+
+        const btn = document.getElementById('btnGenerate');
+        btn.disabled = true;
+        btn.textContent = '⏳ 提交中...';
+
+        try {
+            const r = await fetch('/api/v1/gallery/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filenames: checked.map(f => f.name) })
+            });
+            const d = await r.json();
+
+            if (d.success) {
+                showToast('✅ ' + d.data.message);
+                uploadedFiles = [];
+                renderFileList();
+                refreshTasks();
+                refreshData();
+            } else {
+                showToast('❌ ' + (d.error || '生成失败'));
+            }
+        } catch(e) {
+            showToast('❌ 网络错误');
+        }
+
+        btn.disabled = false;
+        btn.textContent = '🎬 生成视频';
+    }
+
+    
+    
+    
+    
+    async function clearFailedTasks() {
+        try {
+            const r = await fetch('/api/v1/gallery/tasks');
+            const d = await r.json();
+            const tasks = d.data || [];
+            const failed = tasks.filter(t => t.stage === 'error' || t.stage === 'failed');
+            if (failed.length === 0) {
+                showToast('✅ 没有失败任务需要清理');
+                return;
+            }
+            if (!confirm('确定要清理 ' + failed.length + ' 个失败任务吗？')) return;
+            for (const t of failed) {
+                try {
+                    await fetch('/api/v1/gallery/tasks/' + t.task_id, { method: 'DELETE' });
+                } catch(e) {}
+            }
+            showToast('✅ 已清理 ' + failed.length + ' 个失败任务');
+            refreshTasks();
+        } catch(e) {
+            showToast('❌ 清理失败: ' + e.message);
+        }
+    }
+
+async function refreshTasks() {
+        try {
+            const r = await fetch('/api/v1/gallery/tasks');
+            const d = await r.json();
+            const tasks = d.data || [];
+
+            const section = document.getElementById('taskSection');
+            const list = document.getElementById('taskList');
+
+            if (tasks.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+
+            section.classList.remove('hidden');
+            list.innerHTML = tasks.map(t => {
+                const statusClass = t.stage === 'completed' ? 'completed' :
+                    (t.stage === 'failed' ? 'failed' : 'running');
+                const stageLabel = {
+                    'pending': '排队中', 'parsing': '解析文档', 'tts': '语音合成',
+                    'rendering': '合成视频', 'completed': '✅ 完成', 'failed': '❌ 失败'
+                }[t.stage] || t.stage;
+
+                return '<div class="task-card">' +
+                    '<div class="task-header">' +
+                        '<span class="task-title">' + escapeHtml(t.title) + '</span>' +
+                        '<span class="task-status ' + statusClass + '">' + stageLabel + '</span>' +
+                    '</div>' +
+                    '<div class="task-progress-bar">' +
+                        '<div class="task-progress-fill" style="width:' + t.percent + '%"></div>' +
+                    '</div>' +
+                    '<div style="display:flex;justify-content:space-between;margin-top:4px;">' +
+                        (t.message ? '<span class="task-message" style="margin:0;">' + escapeHtml(t.message) + '</span>' : '<span></span>') +
+                        '<span style="font-size:12px;color:#f7971e;font-weight:600;">' + t.percent + '%</span>' +
+                    '</div>' +
+                    '</div>';
+            }).join('');
+        } catch(e) {}
+    }
+
+    
+    
+    
+    async function refreshData() {
+        try {
+            const r = await fetch('/api/v1/gallery?format=json');
+            const d = await r.json();
+            items = d.data || [];
+            render();
+        } catch(e) {}
+    }
+
+    function getType(item) {
+        if (item.is_video) return 'video';
+        if (item.is_audio) return 'audio';
+        if (item.is_image) return 'image';
+        return 'binary';
+    }
+
+    function getBadgeHtml(type) {
+        if (type==='video') return '<span class="badge badge-video">🎬 视频</span>';
+        if (type==='audio') return '<span class="badge badge-audio">🎵 音频</span>';
+        if (type==='image') return '<span class="badge badge-image">🖼 图片</span>';
+        return '<span class="badge badge-binary">📦 文件</span>';
+    }
+
+    function render() {
+        let filtered = items.filter(item => {
+            if (currentFilter !== 'all' && getType(item) !== currentFilter) return false;
+            if (currentSearch && !item.name.toLowerCase().includes(currentSearch.toLowerCase())) return false;
+            return true;
+        });
+
+        filtered.sort((a,b) => {
+            if (currentSort === 'date-desc') return b.mod_time.localeCompare(a.mod_time);
+            if (currentSort === 'date-asc') return a.mod_time.localeCompare(b.mod_time);
+            if (currentSort === 'name') return a.name.localeCompare(b.name);
+            if (currentSort === 'size-desc') return b.size - a.size;
+            if (currentSort === 'size-asc') return a.size - b.size;
+            return 0;
+        });
+
+        const vc = items.filter(i=>i.is_video).length;
+        const ic = items.filter(i=>i.is_image).length;
+        const ac = items.filter(i=>i.is_audio).length;
+        document.getElementById('totalCount').textContent = items.length;
+        document.getElementById('videoCount').textContent = vc;
+        document.getElementById('imageCount').textContent = ic;
+        document.getElementById('audioCount').textContent = ac;
+
+        const container = document.getElementById('gallery');
+
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="empty"><div class="big-icon">🔍</div><p>没有匹配的作品</p></div>';
+            return;
+        }
+
+        container.innerHTML = filtered.map(item => {
+            const type = getType(item);
+            const badgeHtml = getBadgeHtml(type);
+
+            let previewHtml = '';
+            if (type === 'video') {
+                previewHtml = '<video muted preload="metadata" src="'+item.url+'#t=0.5" ' +
+                    'onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video>';
+            } else if (type === 'image') {
+                previewHtml = '<img src="'+item.url+'" loading="lazy">';
+            } else if (type === 'audio') {
+                previewHtml = '<div class="icon">🎵</div>';
+            } else {
+                previewHtml = '<div class="icon">📦</div>';
+            }
+
+            let actionsHtml = '';
+            if (type === 'video' || type === 'audio') {
+                actionsHtml += '<a href="#" class="btn-play" onclick="playMedia(\''+item.url+'\');return false;">▶ 播放</a>';
+            }
+            actionsHtml += '<a href="'+item.url+'" download class="btn-download">⬇ 下载</a>';
+            actionsHtml += '<button class="btn-delete" onclick="confirmDelete(\''+encodeURIComponent(item.name)+'\')">🗑</button>';
+
+            return '<div class="card">' +
+                '<div class="card-preview">'+previewHtml+'</div>' +
+                '<div class="card-info">' +
+                    '<div class="name" title="'+escapeHtml(item.name)+'">'+escapeHtml(item.name)+'</div>' +
+                    '<div class="meta"><span>'+badgeHtml+'</span><span>'+item.size_human+'</span></div>' +
+                    '<div class="meta" style="margin-top:1px;font-size:11px;color:#555;">'+formatDate(item.mod_time)+'</div>' +
+                    '<div class="actions">'+actionsHtml+'</div>' +
+                '</div></div>';
+        }).join('');
+    }
+
+    function escapeHtml(s) {
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function playMedia(url) {
+        const modal = document.getElementById('playerModal');
+        const video = document.getElementById('playerVideo');
+        modal.classList.add('active');
+        video.src = url;
+        video.play();
+    }
+
+    
+    
+    
+    function setFilter(btn, filter) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = filter;
+        render();
+    }
+
+    function filterGallery() {
+        currentSearch = document.getElementById('searchBox').value;
+        render();
+    }
+
+    function toggleSort() {
+        const modes = ['date-desc','date-asc','name','size-desc','size-asc'];
+        const labels = ['📅 最新','📅 最旧','📝 名称','📈 最大','📉 最小'];
+        const idx = modes.indexOf(currentSort);
+        currentSort = modes[(idx+1) % modes.length];
+        document.getElementById('sortBtn').textContent = labels[(idx+1) % modes.length];
+        render();
+    }
+
+    
+    
+    
+    function confirmDelete(name) {
+        deleteTarget = decodeURIComponent(name);
+        document.getElementById("deleteFileName").textContent = decodeURIComponent(name);
+        document.getElementById('confirmDialog').classList.add('active');
+        document.getElementById('confirmDeleteBtn').onclick = doDelete;
+    }
+
+    function closeConfirm() {
+        document.getElementById('confirmDialog').classList.remove('active');
+        deleteTarget = null;
+    }
+
+    async function doDelete() {
+        if (!deleteTarget) return;
+        try {
+            const r = await fetch('/api/v1/gallery/delete?name='+encodeURIComponent(deleteTarget), {method:'POST'});
+            const d = await r.json();
+            if (d.success) {
+                showToast('✅ 已删除: '+deleteTarget);
+                closeConfirm();
+                await refreshData();
+            } else {
+                showToast('❌ '+(d.error||'删除失败'));
+            }
+        } catch(e) {
+            showToast('❌ 网络错误');
+        }
+    }
+
+    
+    
+    
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    
+    
+    
+    refreshData();
+    refreshTasks();
+    setInterval(refreshData, 15000);
+    setInterval(refreshTasks, 3000);
+    </script>
+</body>
+</html>

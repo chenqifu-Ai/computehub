@@ -1,0 +1,52 @@
+{
+  "date": "2026-05-30",
+  "tomorrow": "2026-05-31",
+  "total_cost": 69569.4,
+  "total_value": 68500.0,
+  "total_profit": -1069.4,
+  "total_profit_pct": -1.54,
+  "cash": 930430.6,
+  "position_ratio": 6.9,
+  "positions": [
+    {
+      "code": "600460",
+      "name": "士兰微",
+      "cost": 29.364,
+      "current": 34.6,
+      "volume": 57576885837.0,
+      "profit": 5236.0,
+      "profit_pct": 17.83,
+      "today_change": -9.99,
+      "high": 38.28,
+      "low": 34.6,
+      "open": 38.0,
+      "prev_close": 38.44,
+      "amount": 57576885837.0,
+      "has_data": true
+    },
+    {
+      "code": "000882",
+      "name": "华联股份",
+      "cost": 1.779,
+      "current": 1.5,
+      "volume": 4106027920.5,
+      "profit": -6305.4000000000015,
+      "profit_pct": -15.68,
+      "today_change": 0.0,
+      "high": 1.55,
+      "low": 1.48,
+      "open": 1.49,
+      "prev_close": 1.5,
+      "amount": 4102821399.0,
+      "has_data": true
+    }
+  ],
+  "next_day_plan": [
+    "🟢 士兰微(600460): 盈利+17.83%，可考虑在¥32.30上方分批止盈",
+    "🔴 华联股份(000882): ¥1.50 跌破止损位¥1.60，累计亏损-15.68%，今日+0.00%，⚠️ 建议严格执行止损",
+    "💼 仓位0.0%，现金¥0，当前仓位偏低",
+    "⚠️ 严格执行止损纪律，不心存侥幸"
+  ],
+  "generated_at": "2026-05-30 20:00:41",
+  "data_source": "东方财富API"
+}

@@ -11,7 +11,11 @@ cd "$(dirname "$0")/.."
 PROJECT_DIR=$(pwd)
 BIN_DIR="${PROJECT_DIR}/bin"
 DEPLOY_DIR="${PROJECT_DIR}/deploy"
-VERSION=$(grep 'VERSION = "' src/version/version.go | awk -F'"' '{print $2}')
+# 版本号自动检测（Git tag 优先，无 tag 则取简短 commit hash）
+VERSION=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//')
+if [ -z "$VERSION" ]; then
+    VERSION=$(git rev-parse --short HEAD 2>/dev/null || echo "dev")
+fi
 
 echo "🔁 Sync deploy (v${VERSION})"
 echo "===================================="
@@ -311,13 +315,32 @@ fi
 echo ""
 echo "📤 Step 6: Gallery 上传 (供其他 Worker 下载)"
 GALLERY_URL="${GATEWAY_GALLERY_URL:-http://36.250.122.43:8282}"
-for plat in linux-amd64 linux-arm64; do
+
+# 平台 → Gallery 文件名映射（固定名称，避免后端冲突重命名加时间戳）
+declare -A GALLERY_NAMES
+GALLERY_NAMES["linux-amd64"]="computehub-linux-amd64"
+GALLERY_NAMES["linux-arm64"]="computehub-linux-arm64"
+GALLERY_NAMES["windows-amd64"]="computehub-windows-amd64.exe"
+
+for plat in linux-amd64 linux-arm64 windows-amd64; do
   src_bin=$(find_binary "$plat") || continue
-  echo "  📦 ${plat}..."
-  RESP=$(curl -s --connect-timeout 5 -F "file=@${src_bin}" "${GALLERY_URL}/api/v1/gallery/upload" 2>/dev/null)
+  gallery_name="${GALLERY_NAMES[$plat]}"
+  echo "  📦 ${plat} → ${gallery_name}..."
+
+  # 先删旧的（避免 Gallery 追加时间戳重命名）
+  curl -s --connect-timeout 3 -X POST \
+    "${GALLERY_URL}/api/v1/gallery/delete?name=${gallery_name}" > /dev/null 2>&1 || true
+
+  # 上传时通过 filename= 指定固定名称
+  TEMP_LINK=$(mktemp)
+  cp "$src_bin" "$TEMP_LINK"
+  RESP=$(curl -s --connect-timeout 5 \
+    -F "file=@${TEMP_LINK};filename=${gallery_name}" \
+    "${GALLERY_URL}/api/v1/gallery/upload" 2>/dev/null)
+  rm -f "$TEMP_LINK"
+
   if echo "$RESP" | grep -q '"success":true'; then
-    NAME=$(echo "$RESP" | python3 -c "import json,sys; print(json.load(sys.stdin)['data']['name'])" 2>/dev/null)
-    echo "     ✅ 已上传: ${GALLERY_URL}/api/v1/files/${NAME}"
+    echo "     ✅ 已上传: ${GALLERY_URL}/api/v1/files/${gallery_name}"
   else
     echo "     ⚠️  Gallery 上传失败（Gateway 可能未运行）"
   fi
