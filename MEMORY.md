@@ -1,5 +1,22 @@
 # MEMORY.md - 长期记忆（精简版）
 
+## 🏆 历史时刻：首次跨 Agent 通讯成功 (2026-06-20 15:41)
+**事件**: 端智（Android ARM64）↔ 小智（ECS x86_64 Ubuntu）通过 OpenClaw `sessions_send` 首次成功握手
+**物理隔离铁证**: 架构(ARM vs x86)、内核(Android vs Ubuntu)、hostname、machine-id 四维比对，SSH 直连交叉验证
+**关键教训**: `sessions_send` timeout ≠ 失败（异步投递）；Agent 自报指纹不可靠，需独立验证链路
+**后续**: Phase 2 集群管控（端智注册 Worker + 统一状态上报）待实施
+**详情见**: `memory/2026-06-20.md`
+
+## 🪟 System32 binary 替换陷阱 WIN-REPL-001 (2026-06-06)
+**核心教训**: Windows System32 下的 Worker binary 替换必须走 PowerShell `-EncodedCommand`，避免 cmd 吃掉 `$` 变量
+**标准文档**: `memory/topics/执行规则/WIN-REPL-001_WindowsSystem32Binary替换标准流程.md`
+**关键规则**:
+- cmd 把 `$var` 当环境变量：`powershell -Command "$url"` → cmd 吃掉 `$url`，值为空
+- `certutil -urlcache` 下载 >5MB 文件不稳定，可能 hang 死 Worker
+- 替换前必须 spawn 新进程（test-register 模式），防止 kill Worker → 断联
+- MS 官方推荐做法：UTF-16LE → base64 → `powershell -EncodedCommand`
+- 替换后需要等 Worker 重启恢复（~30s）
+
 ## 📧 邮件发送标准 STD-003 (2026-05-21 定稿)
 **核心**: 所有发邮件任务统一走 `scripts/send_email.py`，禁止用其他方式
 **配置文件**: `config/email.conf`（授权码来源）
@@ -35,26 +52,46 @@
 - **账号**: 19525456@qq.com
 - **当前使用**: deepseek-v3.1:671b ✅
 
-## 🚫 模型规则 (2026-04-29)
-- **当前 primary**: `ollama-cloud-2/deepseek-v4-flash`
-- **我（小智）不乱动** — 老大没说就不改 primary
+## 🚫 模型规则 (2026-06-18 锁定)
+- **🔒 永久 primary**: `ollama-cloud-2/deepseek-v4-flash` — 老大明确锁定，不再变更
+- **图片识别模型**: `zhangtuo-ai/qwen3.6-35b`（通过 base64 传图）⭐
+- **我（端智）禁止** 修改 primary 或 session 模型 — 除非老大明确要求
 - 可以临时切 session 测试别的模型，测完立即恢复
 - ✅ 老大随时决定什么时候换
-- **地址**: https://ai.zhangtuokeji.top:9090/v1
-- **模型**: qwen3.6-35b-common
-- **API Key**: sk-3RgMq1COL9uqn29hCBwXOt5X3d5TpIddaRKH44chQ2QcAybl
+
+### 主力 API 配置 (zhangtuo-ai)
+- **Provider**: `zhangtuo-ai`
+- **模型 ID**: `qwen3.6-35b`（支持图片输入）
+- **地址**: `https://ai.zhangtuokeji.top:9090/v1`
+- **API Key**: `sk-28PRiilecewqbNN9G1TGHhQwML6KCa8yMtvO5HH1KzuuLKbB`
 - **状态**: ✅ 可用，~0.7s 响应
-- ⚠️ **max_tokens ≥ 1024**（推荐 2048）
-- ⚠️ **content 永远为 null**（输出全在 reasoning 字段），适配层已处理 fallback
-- **配置位置**: openclaw.json (zhangtuo-ai-common provider) + ComputeHub config.json + TOOLS.md
+- **⚠️ 图片输入**: base64 → `image_url`，输出在 `reasoning` 字段
+- **⚠️ max_tokens ≥ 1024**（推荐 2048~4096）
+- **⚠️ content 永远为 null** — 从 `reasoning` 字段读取
+
+### 废弃别名 (2026-06-04 停用)
+| 旧名 | 原因 |
+|------|------|
+| `zhangtuo-ai-common/qwen3.6-35b-common` | 不支持图片输入，迁移至 zhangtuo-ai/qwen3.6-35b |
+| `sk-3RgMq1COL9uqn29hCBwXOt5X3d5TpIddaRKH44chQ2QcAybl` | 旧 key 已废弃 |
 
 ## ❌ Qwen 3.6 本地API (已停用)
 - **旧地址**: http://58.23.129.98:8000/v1
-** 已停用：2026-04-28 已迁移至 NewAPI (ai.zhangtuokeji.top:9090)
-** 旧配置已标记：config/*.conf
 - **旧模型**: qwen3.6-35b (深度推理模型)
-- **原因**: 2026-04-25 审计确认不可用
-- **旧问题**: content 始终为 null，需适配层
+- **旧配置已标记**: config/*.conf
+- **已迁移至 NewAPI**: ai.zhangtuokeji.top:9090
+- **已停用**: 2026-04-28 迁移至 NewAPI
+
+## ✅ 当前主力 API 配置 (2026-06-04 更新)
+- **地址**: https://ai.zhangtuokeji.top:9090/v1
+- **Provider**: `zhangtuo-ai`
+- **模型 ID**: `qwen3.6-35b`（含图片输入支持）
+- **API Key**: `sk-28PRiilecewqbNN9G1TGHhQwML6KCa8yMtvO5HH1KzuuLKbB`
+- **⚠️ max_tokens ≥ 1024**（推荐 2048~4096）
+- **⚠️ content 永远为 null**（输出全在 reasoning 字段）
+- **响应速度**: ~0.7s（纯文本）/ 10-30s（含图片输入）
+- **⚠️ IP 白名单**: 仅 ECS (36.250.122.43) 可直接访问；Windows 等走 Gateway LLM Proxy
+- **废弃**: `zhangtuo-ai-common` / `sk-3RgMq1COL...` / `qwen3.6-35b-common`（2026-06-04 起停用）
 
 ## ✅ ActiveTasks 双倍递增 Bug 修复 (2026-06-02)
 **根因**: `gateway_worker.go` 中 Worker 轮询时 `pending→running` 重复 `ActiveTasks++`
@@ -68,25 +105,25 @@
 - **结果**: `platform=windows/amd64` ✅，自带30分钟自动升级检查
 - **关键教训**: Windows cmd 的 `&` 会截断 URL 参数，必须用 `"URL"` 包裹
 
-## 🚀 OPC 主工程 (2026-06-01 锁定)
+## 🚀 ComputeHub 主工程 (2026-06-13 更新)
 **🔒 老大明确锁定：所有精力集中于此工程**
 
-- **路径**: `/data/data/com.termux/files/home/OPC/`
-- **版本**: v1.2.3
-- **分支**: master
-- **最新commit**: `31acc57` — findDeployDir 修复（今天16:02）
-- **待提交修改**: `auto_upgrade.go` + `worker_agent.go` + `worker_main.go`（405行变更中）
-- **结构**: cmd/ src/ deploy/ scripts/，独立 Go 工程
-- **项目范围**: Gateway + Worker + TUI 一体化，全平台（linux/darwin/windows + amd64/arm64）
-- **vs workspace/computehub**: 后者已停用，老大不再关注
-- **代码量**: 26,510 行（生产 19,576 + 测试 6,934）
-- **外部依赖**: 仅 2 个（`golang.org/x/term` + `x/sys`）
-- **部署**: ECS 36.250.122.43:8282 (Gateway v1.2.3) + ecs-p2ph Worker + Windows Worker
+- **路径**: `/data/data/com.termux/files/home/ComputeHub_new/` ⚡
+- **版本**: v1.3.32
+- **废弃路径**: `~/ComputeHub/`（旧克隆，不再使用）
+- **远端仓库**: `ssh://computehub@36.250.122.43:8022/home/computehub/ComputeHub.git`
+- **部署**: ECS 36.250.122.43:8282 (Gateway) + Workers
 
-**注意**: 此 OPC 工程在 termux 路径下，不是 workspace 里的 projects/computehub
-- **本机IP**: 192.168.1.17
-- **Ollama主服务器**: http://192.168.1.7:11434
-- **Gateway配置**: 端口18789, Token: 2159c9affb69a78acdef02bc0e0c68824bedcc8ccf11bc5b
+### v1.3.19 修复内容 (2026-06-08, commit c1e69f8)
+- 🐛 **Worker升级传platform参数**: `DownloadWithChecksum` / `fetchSHA256` 都带 `&platform=linux/<arch>`，Gateway 返回正确的 binary
+- 🐛 **Gateway checksum API接受platform**: 调用 `resolveSHA256ChecksumPlatform` 确保 arm64 Worker 查到 arm64 的 SHA256
+- 🐛 **DNS修复** (远端 `8da821c`): composer 客户端自定义 DNS 解析器直查 `8.8.8.8`，绕过 Android `[::1]:53` 不可达
+
+### ECS 部署关键信息
+- **SSH**: `ssh -i ~/.ssh/id_ed25519_computehub -p 8022 computehub@36.250.122.43`
+- **systemd 服务**: computehub-gateway + computehub-worker (开机自启)
+- **二进制路径**: systemd 用 `~/OPC/deploy/computehub`（WorkingDirectory=~/OPC）
+- **deploy 目录**: `~/OPC/deploy/` (version.txt + 各平台子目录 + sha256sums-*.txt)
 
 ## 学习任务配置
 - 各专家轮换学习任务已配置
@@ -123,12 +160,12 @@
 - **当前状态**: 已切换至 NewAPI，content 正常输出，不再需要适配层
 - 旧文档见: `memory/topics/技术经验/qwen36-35b-api-format-fix.md`
 
-## 当前持仓 (2026-04-23 更新)
+## 当前持仓 (2026-06-17 更新)
 | 股票 | 代码 | 数量 | 成本价 | 止损位 | 当前价 | 浮动盈亏 |
 |------|------|------|--------|--------|--------|----------|
-| 华联股份 | 000882 | 13,500股 | ¥1.873 | ¥1.60 | ¥1.610 | -14.04% (-¥3,550.50) |
+| 华联股份 | 000882 | 13,500股 | ¥1.873 | ¥1.60 | ¥1.43 | -23.65% (-¥5,985) |
 
-**紧急状态**: 🔴 已跌破止损位¥1.60，需要立即执行止损
+**状态**: 🔴 止损位¥1.60已跌破超2个月，连续震荡无反弹，需老大决策
 **详情见**: `memory/topics/投资/当前持仓.md`
 
 ## 待办事项
