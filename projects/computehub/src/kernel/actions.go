@@ -722,7 +722,10 @@ func (td *TaskDispatcher) Start(interval time.Duration) {
 }
 
 func (td *TaskDispatcher) dispatch() {
-	// Placeholder: dispatch pending tasks
+	// Dispatch pending tasks from priority queue to available nodes
+	if td.kernel != nil && td.kernel.NodeMgr != nil {
+		td.kernel.NodeMgr.dispatchFromQueue()
+	}
 }
 
 // ====== Heartbeat Monitor ======

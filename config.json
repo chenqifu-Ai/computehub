@@ -1,0 +1,7 @@
+{
+  "composer": {
+    "api_url": "http://36.250.122.43:8282/api/v1/llm",
+    "api_key": "",
+    "model": "qwen3.6-35b"
+  }
+}

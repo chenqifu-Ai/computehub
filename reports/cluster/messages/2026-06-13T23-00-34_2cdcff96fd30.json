@@ -1,0 +1,18 @@
+{
+  "id": "2cdcff96fd30",
+  "type": "ack",
+  "from_agent": "main",
+  "to_agent": null,
+  "timestamp": "2026-06-13T23:00:34.726363",
+  "payload": {
+    "session_id": "T1781362834",
+    "result": {
+      "approved": false,
+      "votes": {
+        "arm": "approve",
+        "mi": "abstain"
+      }
+    }
+  },
+  "signature": "486511be218df946"
+}

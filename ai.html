@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🤖 小智助手 · 交流大厅</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,system-ui,'Microsoft YaHei',sans-serif;background:#0f0f23;color:#e0e0e0;height:100vh;display:flex;flex-direction:column}
+
+.header{text-align:center;padding:14px 20px 8px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.header h1{font-size:18px}
+.header h1 span{color:#7c3aed}
+.header .sub{font-size:11px;color:#555;margin-top:2px}
+.header .status{font-size:11px;color:#666;margin-top:4px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.header .status .dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px}
+.header .status .dot.on{background:#44bb66;box-shadow:0 0 4px #44bb66}
+.header .status .dot.off{background:#555}
+
+.tabs{display:flex;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0}
+.tab{padding:10px 20px;cursor:pointer;font-size:13px;color:#666;border-bottom:2px solid transparent;transition:.2s}
+.tab:hover{color:#aaa}
+.tab.active{color:#7c3aed;border-bottom-color:#7c3aed}
+.panel{display:none;flex:1;flex-direction:column;overflow:hidden}
+.panel.active{display:flex}
+
+.chat{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:82%;padding:10px 14px;border-radius:10px;line-height:1.5;font-size:13px;word-break:break-word;animation:fadeIn .2s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{align-self:flex-end;background:#2d1b69;border-bottom-right-radius:3px}
+.msg.bot{align-self:flex-start;background:#1a1a3e;border-bottom-left-radius:3px}
+.msg .label{font-size:10px;font-weight:600;margin-bottom:3px;display:block}
+.msg.user .label{color:#a78bfa}
+.msg.bot .label{color:#7c3aed}
+
+.input-bar{padding:10px 16px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:8px;background:#0f0f23;flex-shrink:0}
+.input-bar input{flex:1;padding:10px 14px;border-radius:8px;border:1px solid rgba(124,58,237,0.3);background:rgba(255,255,255,0.04);color:#e0e0e0;font-size:14px;outline:none}
+.input-bar input:focus{border-color:#7c3aed}
+.input-bar button{padding:10px 20px;border-radius:8px;border:none;background:#7c3aed;color:#fff;font-size:13px;font-weight:600;cursor:pointer}
+.input-bar button:hover{background:#6d28d9}
+.input-bar button:disabled{opacity:.5;cursor:not-allowed}
+
+.hall{flex:1;overflow-y:auto;padding:8px 16px}
+.hall-msg{display:flex;gap:10px;margin-bottom:10px;padding:8px 12px;background:rgba(255,255,255,0.02);border-radius:8px;animation:fadeIn .2s}
+.hall-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.hall-avatar.dz{background:linear-gradient(135deg,#1a2a5a,#2a4a7a);border:1px solid #4488cc}
+.hall-avatar.xz{background:linear-gradient(135deg,#2a1a4a,#4a2a7a);border:1px solid #aa66cc}
+.hall-avatar.system{background:linear-gradient(135deg,#1a3a1a,#2a5a2a);border:1px solid #66aa66}
+.hall-avatar.ecs,.hall-avatar.phone{background:linear-gradient(135deg,#3a2a1a,#5a3a1a);border:1px solid #ccaa44}
+.hall-body{flex:1;min-width:0}
+.hall-meta{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.hall-name{font-size:12px;font-weight:bold}
+.hall-name.dz{color:#6699ee}
+.hall-name.xz{color:#cc88ee}
+.hall-name.system{color:#66cc66}
+.hall-name.ecs,.hall-name.phone{color:#ddaa44}
+.hall-time{font-size:10px;color:#555}
+.hall-text{font-size:12px;line-height:1.5;color:#ccc}
+.hall-sep{text-align:center;padding:4px 0 8px;font-size:10px;color:#444}
+.hall-input{display:flex;gap:8px;padding:10px 16px;border-top:1px solid rgba(255,255,255,0.06);flex-shrink:0}
+.hall-input select{padding:8px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:#e0e0e0;font-size:12px}
+.hall-input input{flex:1;padding:8px 12px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:#e0e0e0;font-size:13px;outline:none}
+.hall-input input:focus{border-color:#7c3aed}
+.hall-input button{padding:8px 16px;background:#7c3aed;border:none;border-radius:6px;color:#fff;font-size:12px;cursor:pointer}
+.hall-input button:disabled{opacity:.5;cursor:not-allowed}
+
+.footer{text-align:center;padding:8px;font-size:10px;color:#333;flex-shrink:0}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🤖 <span>小智</span>助手 · 智能交流大厅</h1>
+  <div class="sub">端智 💻 ARM · 小智 🧠 ECS · 智能协作</div>
+  <div class="status">
+    <span><span class="dot on"></span>端智在线</span>
+    <span><span class="dot on"></span>小智在线</span>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-tab="chat" onclick="switchTab('chat')">💬 AI对话</div>
+  <div class="tab" data-tab="hall" onclick="switchTab('hall')">🏯 交流大厅</div>
+  <div class="tab" data-tab="topics" onclick="switchTab('topics')">📋 话题</div>
+</div>
+
+<!-- AI 对话 -->
+<div class="panel active" id="panel-chat">
+  <div class="chat" id="chat">
+    <div class="msg bot"><span class="label">小智</span>你好！有什么可以帮你的？</div>
+  </div>
+  <div class="input-bar">
+    <input id="aiInput" type="text" placeholder="问点什么..." autofocus>
+    <button id="aiSendBtn" onclick="askAI()">发送</button>
+  </div>
+</div>
+
+<!-- 交流大厅 -->
+<div class="panel" id="panel-hall">
+  <div class="hall" id="hallMessages"></div>
+  <div class="hall-input">
+    <select id="hallSender">
+      <option value="老大">👑 老大</option>
+      <option value="端智">💻 端智</option>
+    </select>
+    <select id="hallRecipient">
+      <option value="all">📢 @所有</option>
+      <option value="小智">🧠 @小智</option>
+      <option value="系统">🔧 @系统</option>
+    </select>
+    <input id="hallInput" type="text" placeholder="输入消息..." autocomplete="off">
+    <button id="hallSendBtn" onclick="sendHallMsg()">发送</button>
+  </div>
+</div>
+
+<!-- 话题列表 -->
+<div class="panel" id="panel-topics">
+  <div class="chat" id="topicsList">
+    <div class="msg bot" style="align-self:flex-start;background:#1a1a3e">正在加载话题列表...</div>
+  </div>
+  <div class="input-bar" style="justify-content:center">
+    <button onclick="refreshTopics()" style="padding:8px 20px;background:#7c3aed;border:none;border-radius:6px;color:#fff;font-size:12px;cursor:pointer">🔄 刷新话题</button>
+  </div>
+</div>
+
+<div class="footer">ComputeHub · AI 交流大厅</div>
+
+<script>
+// ====== 标签页切换 ======
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelector('.tab[data-tab="' + name + '"]').classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+  if (name === 'hall') loadHallChat();
+  if (name === 'topics') refreshTopics();
+}
+
+// ====== AI 对话 ======
+let sessionId = 'ai-' + Date.now();
+const chat = document.getElementById('chat');
+const aiInput = document.getElementById('aiInput');
+const aiSendBtn = document.getElementById('aiSendBtn');
+
+aiInput.addEventListener('keydown', e => { if (e.key === 'Enter') askAI(); });
+
+async function askAI() {
+  const msg = aiInput.value.trim();
+  if (!msg) return;
+  aiInput.value = "";
+  appendMsg("user", msg);
+
+  const resultDiv = document.createElement("div");
+  resultDiv.className = "msg bot";
+  resultDiv.innerHTML = '<span class="label">小智</span><div class="stream-content" style="display:inline;"></div>';
+  chat.appendChild(resultDiv);
+  const contentDiv = resultDiv.querySelector(".stream-content");
+  aiSendBtn.disabled = true;
+
+  try {
+    const resp = await fetch("/api/v1/agent/stream", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({task: msg, session_id: sessionId})
+    });
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "", full = "";
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, {stream: true});
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+      let inEvent = false, evType = "";
+      for (const line of lines) {
+        if (line.startsWith("event: ")) { evType = line.slice(7).trim(); inEvent = true; }
+        else if (line.startsWith("data: ") && inEvent) {
+          const data = line.slice(6).trim(); inEvent = false;
+          if (evType === "result" || evType === "thought") { full += data; contentDiv.textContent = full; }
+          else if (evType === "status") contentDiv.textContent = data;
+          else if (evType === "done") contentDiv.textContent = full;
+        }
+      }
+    }
+    chat.scrollTop = chat.scrollHeight;
+  } catch(e) { contentDiv.textContent = '⚠️ 网络错误: ' + e.message; }
+  aiSendBtn.disabled = false;
+  aiInput.focus();
+}
+
+function appendMsg(role, text) {
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.innerHTML = '<span class="label">' + (role === 'user' ? '你' : '小智') + '</span>' + text.replace(/\n/g, '<br>');
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+// ====== 交流大厅 ======
+let hallTopic = 'general';
+let hallLastSeq = 0;
+let hallPollTimer = null;
+const hallContainer = document.getElementById('hallMessages');
+const hallInput = document.getElementById('hallInput');
+const hallSendBtn = document.getElementById('hallSendBtn');
+let hallRecipient = null;
+const hallRecipientEl = document.getElementById('hallRecipient');
+const hallSenderEl = document.getElementById('hallSender');
+
+// 获取发送者头像和颜色
+function getSenderStyle(name) {
+  const n = name.toLowerCase();
+  if (n.includes('端智')) return {cls:'dz', emoji:'💻'};
+  if (n.includes('小智')) return {cls:'xz', emoji:'🧠'};
+  if (n.includes('系统')) return {cls:'system', emoji:'🔧'};
+  if (n.includes('ecs')) return {cls:'ecs', emoji:'🖥️'};
+  if (n.includes('arm') || n.includes('phone')) return {cls:'phone', emoji:'📱'};
+  return {cls:'system', emoji:'🤖'};
+}
+
+// 格式化时间
+function fmtTime(ts) {
+  const d = new Date(ts);
+  const pad = n => n.toString().padStart(2,'0');
+  return pad(d.getHours())+':'+pad(d.getMinutes());
+}
+
+function fmtDate(ts) {
+  const d = new Date(ts);
+  const pad = n => n.toString().padStart(2,'0');
+  return pad(d.getMonth()+1)+'月'+pad(d.getDate())+'日';
+}
+
+function getDateKey(ts) {
+  const d = new Date(ts);
+  return d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate();
+}
+
+// 加载历史消息（一次性全量）
+async function loadHallChat() {
+  const topic = hallTopic;
+  try {
+    const resp = await fetch('/api/v1/hall/messages?topic='+encodeURIComponent(topic)+'&limit=100');
+    const d = await resp.json();
+    if (!d.success) return;
+    
+    const msgs = d.data.messages || [];
+    hallLastSeq = 0;
+    for (const m of msgs) {
+      if (m.seq > hallLastSeq) hallLastSeq = m.seq;
+    }
+    
+    // 渲染所有消息
+    renderHallMessages(msgs);
+    
+    // 自动滚动到底部
+    hallContainer.scrollTop = hallContainer.scrollHeight;
+    
+    // 启动轮询
+    startHallPoll();
+  } catch(e) {
+    hallContainer.innerHTML = '<div class="hall-sep">⚠️ 加载失败: '+e.message+'</div>';
+  }
+}
+
+// 轮询新消息
+function startHallPoll() {
+  if (hallPollTimer) clearInterval(hallPollTimer);
+  hallPollTimer = setInterval(async () => {
+    try {
+      const resp = await fetch('/api/v1/hall/messages?topic='+encodeURIComponent(hallTopic)+'&since_seq='+hallLastSeq);
+      const d = await resp.json();
+      if (!d.success) return;
+      const newMsgs = d.data.messages || [];
+      if (newMsgs.length === 0) return;
+      
+      for (const m of newMsgs) {
+        if (m.seq > hallLastSeq) hallLastSeq = m.seq;
+      }
+      appendHallMessages(newMsgs);
+      
+      // 如果在底部则自动滚动
+      const nearBottom = hallContainer.scrollHeight - hallContainer.scrollTop - hallContainer.clientHeight < 60;
+      if (nearBottom) hallContainer.scrollTop = hallContainer.scrollHeight;
+    } catch(e) {
+      // 静默失败
+    }
+  }, 3000);
+}
+
+// 渲染消息列表（完整替换）
+function renderHallMessages(msgs) {
+  hallContainer.innerHTML = '';
+  if (msgs.length === 0) {
+    hallContainer.innerHTML = '<div class="hall-sep">暂无消息，发送第一条吧 ✨</div>';
+    return;
+  }
+  appendHallMessages(msgs);
+}
+
+// 追加消息
+function appendHallMessages(msgs) {
+  let lastDateKey = null;
+  
+  // 找到当前最后一条消息的日期
+  const lastMsg = hallContainer.querySelector('.hall-msg:last-child');
+  if (lastMsg) {
+    const dateEl = lastMsg.closest('.hall-msg')?.querySelector('.hall-date');
+  }
+  
+  for (const m of msgs) {
+    const ts = m.timestamp || m.time;
+    if (!ts) continue;
+    const dateKey = getDateKey(ts);
+    
+    // 日期分隔线
+    if (dateKey !== lastDateKey) {
+      lastDateKey = dateKey;
+      const sep = document.createElement('div');
+      sep.className = 'hall-sep';
+      sep.textContent = fmtDate(ts);
+      hallContainer.appendChild(sep);
+    }
+    
+    const from = m.from_name || m.from || '未知';
+    const fromId = m.from || '';
+    const style = getSenderStyle(from);
+    const content = m.content || '';
+    const timeStr = fmtTime(ts);
+    
+    const div = document.createElement('div');
+    div.className = 'hall-msg';
+    div.innerHTML = '<div class="hall-avatar '+style.cls+'">'+style.emoji+'</div><div class="hall-body"><div class="hall-meta"><span class="hall-name '+style.cls+'">'+escHtml(from)+'</span><span class="hall-time">'+timeStr+'</span></div><div class="hall-text">'+escHtml(content).replace(/\n/g,'<br>')+'</div></div>';
+    hallContainer.appendChild(div);
+  }
+}
+
+function escHtml(s) {
+  const div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+// 发送大厅消息
+async function sendHallMsg() {
+  const content = hallInput.value.trim();
+  if (!content) return;
+  hallInput.value = '';
+  hallSendBtn.disabled = true;
+  
+  // 自己选身份，下拉选@谁
+  const sender = hallSenderEl.value;
+  const recipient = hallRecipientEl.value;
+  let fullContent = content;
+  let to = 'all';
+  if (recipient !== 'all') {
+    to = recipient;
+    if (!content.includes('@'+recipient)) {
+      fullContent = '@' + recipient + ' ' + content;
+    }
+  }
+  
+  try {
+    const resp = await fetch('/api/v1/hall/post', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        topic: hallTopic,
+        from: sender,
+        node_name: sender,
+        content: fullContent,
+        to: to
+      })
+    });
+  } catch(e) {
+    const now = new Date().toISOString();
+    appendHallMessages([{
+      seq: 999999,
+      timestamp: now,
+      from: sender,
+      from_name: sender,
+      content: fullContent + ' (⚠️ 暂未同步)'
+    }]);
+  }
+  hallSendBtn.disabled = false;
+  hallInput.focus();
+}
+
+hallInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendHallMsg(); });
+
+// ====== 话题列表 ======
+async function refreshTopics() {
+  const el = document.getElementById('topicsList');
+  el.innerHTML = '<div class="msg bot" style="align-self:flex-start;background:#1a1a3e">加载中...</div>';
+  try {
+    const resp = await fetch('/api/v1/hall/topics');
+    const d = await resp.json();
+    if (!d.success || !d.data.topics || d.data.topics.length === 0) {
+      el.innerHTML = '<div class="msg bot" style="align-self:flex-start;background:#1a1a3e">暂无活跃话题</div>';
+      return;
+    }
+    let html = '';
+    for (const t of d.data.topics) {
+      html += '<div class="msg bot" style="align-self:flex-start;background:#1a1a3e;cursor:pointer" onclick="switchToTopic(\''+escHtml(t.topic)+'\')">📌 <b>'+escHtml(t.topic)+'</b>';
+      html += '<br><span style="font-size:11px;color:#888">消息: '+t.messages+' · 参与者: '+t.participants+' · 最新: #'+t.seq+'</span>';
+      html += '<br><span style="font-size:10px;color:#7c3aed">点击进入 →</span></div>';
+    }
+    el.innerHTML = html;
+  } catch(e) {
+    el.innerHTML = '<div class="msg bot" style="align-self:flex-start;background:#1a1a3e">⚠️ 加载失败</div>';
+  }
+}
+
+function switchToTopic(topic) {
+  hallTopic = topic;
+  hallLastSeq = 0;
+  if (hallPollTimer) clearInterval(hallPollTimer);
+  loadHallChat();
+  switchTab('hall');
+}
+
+// ====== 初始化 ======
+document.addEventListener('DOMContentLoaded', function() {
+  // 先不自动加载大厅，等用户切过去再加载
+});
+</script>
+</body>
+</html>

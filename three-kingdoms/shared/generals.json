@@ -1,0 +1,47 @@
+{
+  "generals": [
+    {"id":1,"name":"曹操","faction":"wei","title":"乱世奸雄","lead":98,"strength":72,"intelli":96,"politics":95,"charm":94,"skill":"奸雄·魏武挥鞭","desc":"挟天子以令诸侯，奠定曹魏基业"},
+    {"id":2,"name":"夏侯惇","faction":"wei","title":"独目苍狼","lead":92,"strength":95,"intelli":68,"politics":62,"charm":73,"skill":"刚烈·拔矢啖睛","desc":"曹魏元勋，独目奋战一生"},
+    {"id":3,"name":"夏侯渊","faction":"wei","title":"虎步关右","lead":91,"strength":93,"intelli":65,"politics":55,"charm":70,"skill":"神速·三日五百","desc":"曹魏名将，千里奔袭如风"},
+    {"id":4,"name":"张辽","faction":"wei","title":"威震逍遥","lead":95,"strength":94,"intelli":78,"politics":60,"charm":80,"skill":"突袭·威震江东","desc":"八百破十万，逍遥津之战封神"},
+    {"id":5,"name":"许褚","faction":"wei","title":"虎痴","lead":85,"strength":98,"intelli":42,"politics":35,"charm":58,"skill":"裸衣·虎威","desc":"曹操贴身护卫，裸衣战马超"},
+    {"id":6,"name":"典韦","faction":"wei","title":"恶来","lead":83,"strength":99,"intelli":38,"politics":30,"charm":55,"skill":"死战·逐虎过涧","desc":"宛城之战为救曹操战死，力战不退"},
+    {"id":7,"name":"司马懿","faction":"wei","title":"冢虎","lead":96,"strength":48,"intelli":100,"politics":97,"charm":72,"skill":"隐忍·冢虎噬主","desc":"隐忍多年，最终篡夺曹魏江山"},
+    {"id":8,"name":"荀彧","faction":"wei","title":"王佐之才","lead":72,"strength":18,"intelli":98,"politics":99,"charm":90,"skill":"驱虎·王佐","desc":"曹操首席谋士，官渡之功首推荀彧"},
+    {"id":9,"name":"郭嘉","faction":"wei","title":"鬼才","lead":65,"strength":15,"intelli":99,"politics":85,"charm":88,"skill":"遗计·鬼谋","desc":"天妒英才，十胜十败论奠定官渡"},
+    {"id":10,"name":"张郃","faction":"wei","title":"巧变","lead":90,"strength":89,"intelli":75,"politics":58,"charm":68,"skill":"巧变·街亭破敌","desc":"五子良将之一，街亭之战大破马谡"},
+    {"id":11,"name":"徐晃","faction":"wei","title":"周亚夫之风","lead":89,"strength":91,"intelli":72,"politics":55,"charm":72,"skill":"沉着·樊城解围","desc":"五子良将，以治军严谨著称"},
+    {"id":12,"name":"程昱","faction":"wei","title":"刚戾谋主","lead":70,"strength":25,"intelli":93,"politics":88,"charm":65,"skill":"智囊·运筹帷幄","desc":"曹操五大谋士之一，老谋深算"},
+
+    {"id":13,"name":"刘备","faction":"shu","title":"仁德之主","lead":82,"strength":68,"intelli":74,"politics":78,"charm":100,"skill":"仁德·桃园结义","desc":"汉室宗亲，以仁义得天下三分"},
+    {"id":14,"name":"关羽","faction":"shu","title":"武圣","lead":97,"strength":98,"intelli":75,"politics":62,"charm":92,"skill":"武圣·威震华夏","desc":"万人敌，水淹七军擒于禁斩庞德"},
+    {"id":15,"name":"张飞","faction":"shu","title":"万人敌","lead":90,"strength":99,"intelli":48,"politics":22,"charm":45,"skill":"咆哮·当阳断后","desc":"长坂坡一声吼，曹军无人敢近"},
+    {"id":16,"name":"赵云","faction":"shu","title":"常胜将军","lead":92,"strength":96,"intelli":80,"politics":65,"charm":88,"skill":"一身是胆·万军救主","desc":"长坂坡七进七出，一生无败绩"},
+    {"id":17,"name":"诸葛亮","faction":"shu","title":"卧龙","lead":95,"strength":35,"intelli":100,"politics":98,"charm":96,"skill":"空城·神机妙算","desc":"三分天下，鞠躬尽瘁死而后已"},
+    {"id":18,"name":"庞统","faction":"shu","title":"凤雏","lead":68,"strength":22,"intelli":97,"politics":82,"charm":70,"skill":"连环·献计取蜀","desc":"卧龙凤雏得一可安天下，惜落凤坡"},
+    {"id":19,"name":"黄忠","faction":"shu","title":"老当益壮","lead":88,"strength":94,"intelli":62,"politics":52,"charm":72,"skill":"百步穿杨·定军山","desc":"定军山斩夏侯渊，老将威名"},
+    {"id":20,"name":"马超","faction":"shu","title":"锦马超","lead":91,"strength":97,"intelli":52,"politics":38,"charm":82,"skill":"铁骑·渭水六战","desc":"杀得曹操割须弃袍，西凉铁骑之威"},
+    {"id":21,"name":"魏延","faction":"shu","title":"镇北将军","lead":87,"strength":90,"intelli":70,"politics":55,"charm":52,"skill":"子午谷·奇谋","desc":"蜀汉中后期大将，性格高傲"},
+    {"id":22,"name":"姜维","faction":"shu","title":"麒麟儿","lead":90,"strength":85,"intelli":92,"politics":70,"charm":78,"skill":"九伐中原·继志","desc":"诸葛衣钵传人，九伐中原志在兴汉"},
+    {"id":23,"name":"马谡","faction":"shu","title":"参军","lead":58,"strength":28,"intelli":88,"politics":72,"charm":62,"skill":"纸上谈兵·街亭","desc":"才气过人但实战不足，街亭失守"},
+
+    {"id":24,"name":"孙权","faction":"wu","title":"碧眼紫髯","lead":88,"strength":48,"intelli":85,"politics":92,"charm":90,"skill":"坐断东南·江东之主","desc":"守成之主，坐领江东五十二年"},
+    {"id":25,"name":"周瑜","faction":"wu","title":"美周郎","lead":96,"strength":62,"intelli":97,"politics":85,"charm":95,"skill":"赤壁·火烧连营","desc":"赤壁一把火，奠定三分天下"},
+    {"id":26,"name":"鲁肃","faction":"wu","title":"东吴大管家","lead":85,"strength":45,"intelli":92,"politics":94,"charm":88,"skill":"榻上策·联刘抗曹","desc":"战略家，为孙权定下榻上之策"},
+    {"id":27,"name":"吕蒙","faction":"wu","title":"白衣渡江","lead":93,"strength":80,"intelli":90,"politics":72,"charm":68,"skill":"士别三日·白衣渡江","desc":"士别三日当刮目相看，白衣渡江夺荆州"},
+    {"id":28,"name":"陆逊","faction":"wu","title":"书生拜大将","lead":94,"strength":58,"intelli":96,"politics":88,"charm":82,"skill":"夷陵·火烧连营七百里","desc":"夷陵之战一把火，大破刘备大军"},
+    {"id":29,"name":"甘宁","faction":"wu","title":"锦帆贼","lead":90,"strength":95,"intelli":65,"politics":40,"charm":65,"skill":"奇袭·百骑劫营","desc":"百骑劫曹营，浪里白条威震天下"},
+    {"id":30,"name":"太史慈","faction":"wu","title":"信义侠士","lead":88,"strength":93,"intelli":60,"politics":45,"charm":78,"skill":"弦无虚发·北海救孔","desc":"神射手，信义为先，北海单骑救孔融"},
+    {"id":31,"name":"黄盖","faction":"wu","title":"苦肉计","lead":86,"strength":88,"intelli":72,"politics":62,"charm":80,"skill":"苦肉·赤壁火攻","desc":"周瑜打黄盖，一个愿打一个愿挨"},
+    {"id":32,"name":"孙策","faction":"wu","title":"小霸王","lead":94,"strength":97,"intelli":68,"politics":58,"charm":85,"skill":"小霸王·横扫江东","desc":"以孙坚遗物借兵，五年平定江东"},
+    {"id":33,"name":"张昭","faction":"wu","title":"江东文胆","lead":62,"strength":12,"intelli":90,"politics":96,"charm":74,"skill":"内政·治世能臣","desc":"孙权首席文臣，主理内政数十年"},
+
+    {"id":34,"name":"吕布","faction":"wei","title":"飞将","lead":88,"strength":100,"intelli":32,"politics":18,"charm":38,"skill":"无双·人中吕布","desc":"武力天下第一，三姓家奴反复无常"},
+    {"id":35,"name":"袁绍","faction":"wei","title":"四世三公","lead":78,"strength":55,"intelli":72,"politics":65,"charm":75,"skill":"名门·四世三公","desc":"官渡之战一败涂地，家底丰厚"},
+    {"id":36,"name":"董卓","faction":"wei","title":"废立暴君","lead":80,"strength":88,"intelli":58,"politics":35,"charm":22,"skill":"暴虐·废少立献","desc":"进京废帝，火烧洛阳，三国乱世始"},
+    {"id":37,"name":"华佗","faction":"shu","title":"神医","lead":20,"strength":15,"intelli":95,"politics":40,"charm":90,"skill":"青囊·刮骨疗毒","desc":"外科鼻祖，关公刮骨疗毒不觉痛"},
+    {"id":38,"name":"貂蝉","faction":"wei","title":"闭月","lead":35,"strength":8,"intelli":88,"politics":65,"charm":100,"skill":"离间·连环计","desc":"巧施连环计，离间董卓吕布"},
+    {"id":39,"name":"左慈","faction":"wei","title":"遁甲天师","lead":40,"strength":25,"intelli":98,"politics":20,"charm":60,"skill":"幻术·御剑飞行","desc":"道术通天，戏弄曹操于殿前"},
+    {"id":40,"name":"张角","faction":"wei","title":"大贤良师","lead":82,"strength":38,"intelli":92,"politics":78,"charm":88,"skill":"苍天已死·黄天当立","desc":"黄巾起义领袖，掀开三国序幕"}
+  ]
+}

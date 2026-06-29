@@ -1,0 +1,111 @@
+{
+  "wanlida-opc01": {
+    "name": "Wanlida Opc01",
+    "host": "183.251.21.92",
+    "role": "compute",
+    "capabilities": [
+      "compute",
+      "remote_control"
+    ],
+    "status": "healthy",
+    "last_heartbeat": "2026-06-14T00:51:52.616568",
+    "metadata": {
+      "node": "wanlida-opc01",
+      "ip": "183.251.21.92",
+      "region": "",
+      "gpu": "",
+      "version": "1.3.25",
+      "active_tasks": 0,
+      "max_tasks": 8,
+      "load": "0/8"
+    }
+  },
+  "worker-arm": {
+    "name": "Worker Arm",
+    "host": "36.248.233.174",
+    "role": "compute",
+    "capabilities": [
+      "compute",
+      "remote_control"
+    ],
+    "status": "healthy",
+    "last_heartbeat": "2026-06-14T00:51:52.616619",
+    "metadata": {
+      "node": "worker-arm",
+      "ip": "36.248.233.174",
+      "region": "",
+      "gpu": "",
+      "version": "1.3.33",
+      "active_tasks": 0,
+      "max_tasks": 8,
+      "load": "0/8"
+    }
+  },
+  "ecs-p2ph": {
+    "name": "Ecs P2Ph",
+    "host": "36.250.122.43",
+    "role": "coordinator",
+    "capabilities": [
+      "health_check",
+      "remote_exec",
+      "config_update",
+      "cluster_management"
+    ],
+    "status": "healthy",
+    "last_heartbeat": "2026-06-14T00:51:52.616637",
+    "metadata": {
+      "node": "ecs-p2ph",
+      "ip": "36.250.122.43",
+      "region": "cn-east",
+      "gpu": "CPU",
+      "version": "1.3.34",
+      "active_tasks": 0,
+      "max_tasks": 8,
+      "load": "0/8"
+    }
+  },
+  "windows-mobile": {
+    "name": "Windows Mobile",
+    "host": "112.48.104.210",
+    "role": "compute",
+    "capabilities": [
+      "windows_exec",
+      "gpu_tasks",
+      "remote_control"
+    ],
+    "status": "healthy",
+    "last_heartbeat": "2026-06-14T00:51:52.616649",
+    "metadata": {
+      "node": "windows-mobile",
+      "ip": "112.48.104.210",
+      "region": "",
+      "gpu": "",
+      "version": "1.3.30",
+      "active_tasks": 0,
+      "max_tasks": 8,
+      "load": "0/8"
+    }
+  },
+  "wanlida-temp": {
+    "name": "Wanlida Temp",
+    "host": "183.251.21.92",
+    "role": "gpu_compute",
+    "capabilities": [
+      "gpu_tasks",
+      "high_perf_compute",
+      "training"
+    ],
+    "status": "healthy",
+    "last_heartbeat": "2026-06-14T00:51:52.616661",
+    "metadata": {
+      "node": "wanlida-temp",
+      "ip": "183.251.21.92",
+      "region": "cn-east",
+      "gpu": "NVIDIA GeForce RTX 4060",
+      "version": "1.3.34",
+      "active_tasks": -2,
+      "max_tasks": 8,
+      "load": "-2/8"
+    }
+  }
+}

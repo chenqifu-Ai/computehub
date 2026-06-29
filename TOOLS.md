@@ -87,7 +87,8 @@ python scripts/git-memory-search.py history "MEMORY.md"
 - **Qwen 3.6 35B (推理模型)**: http://58.23.129.98:8000/v1 (Key: sk-78sadn09bjawde123e) ⭐ 默认
 - **Ollama 云端**: https://ollama.com (Key: 8e6253b418564cd4b4a3428f927ee6f0.3g95X2YSoELm9knHxHNci1ii)
 - **OpenClaw 本地**: ollama/qwen3.6-35b (备选)
-- **NewAPI (ai.zhangtuokeji.top)**: https://ai.zhangtuokeji.top:9090 (Key: sk-3RgMq1COL9uqn29hCBwXOt5X3d5TpIddaRKH44chQ2QcAybl) ⭐ 当前主力
+- **NewAPI (ai.zhangtuokeji.top)**: https://ai.zhangtuokeji.top:9090 (Key: sk-lthqkgFRv5bJIW2d9bAqwB2xWo8acV2U0fo5tFikDlBxn0nC) ⭐ 当前主力
+  - ⚠️ **IP 白名单**: 只认 ECS (36.250.122.43)，Windows 等节点必须通过 **Gateway LLM Proxy** 中转
   - ⚠️ **max_tokens ≥ 1024**，推荐 2048
   - ⚠️ **content 字段永远为 null**（所有输出在 reasoning 字段）
   - ✅ 适配层已处理 fallback（读取 reasoning）
@@ -98,13 +99,22 @@ python scripts/git-memory-search.py history "MEMORY.md"
 
 ### AI 使用规则
 
-#### NewAPI qwen3.6-35b-common 规则
-1. **max_tokens 必须 ≥ 1024**（推荐 2048）
-2. **content 永远为 null**，适配层从 reasoning 字段读取
-3. **temperature 0-1 都可用**，代码生成建议 0.7+
-4. **模型 ID**: `qwen3.6-35b-common`（不是 `qwen3.6-35b`）
-5. **API Key**: `sk-3RgMq1COL9uqn29hCBwXOt5X3d5TpIddaRKH44chQ2QcAybl`
-6. **Provider**: `zhangtuo-ai-common`
+#### zhangtuo-ai/qwen3.6-35b 规则（2026-06-04 更新）
+1. **模型 ID**: `qwen3.6-35b`（非 `qwen3.6-35b-common`）— 支持图片输入 ⭐
+2. **Provider**: `zhangtuo-ai`（非 `zhangtuo-ai-common`）
+3. **API Key**: `sk-28PRiilecewqbNN9G1TGHhQwML6KCa8yMtvO5HH1KzuuLKbB`
+4. **⚠️ IP 白名单**: 仅 ECS 36.250.122.43 可直连；Windows 等走 Gateway LLM Proxy
+5. **⚠️ max_tokens 必须 ≥ 1024**（推荐 2048~4096）
+6. **⚠️ content 永远为 null** — 从 `reasoning` 字段读取
+7. **⚠️ 图片输入** — base64 → `image_url`，参考 IMG-REC-001 v3.0
+8. **temperature**: 0-1 都可用，图片识别建议 0.3，代码生成建议 0.7+
+
+#### 废弃配置（2026-06-04 起停用）
+| 旧配置 | 原因 | 替代 |
+|--------|------|------|
+| `qwen3.6-35b-common` | 不支持图片 | → `qwen3.6-35b` |
+| `zhangtuo-ai-common` provider | 统一 | → `zhangtuo-ai` |
+| `sk-3RgMq1COL9...` key | 旧 key 废弃 | → `sk-28PRiilece...` |
 
 ### 设备标识
 

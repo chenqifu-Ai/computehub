@@ -1,0 +1,8 @@
+{
+  "coordinator": "main",
+  "heartbeat_interval": 60,
+  "failover_threshold": 3,
+  "status": "running",
+  "started_at": "2026-06-14T17:58:35.141758",
+  "last_check": null
+}

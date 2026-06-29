@@ -1,0 +1,38 @@
+{
+  "timestamp": "2026-06-20T23:40:19.193797",
+  "results": {
+    "local": {
+      "status": "alive",
+      "code": 200,
+      "detail": "HTTP 200"
+    },
+    "main": {
+      "status": "alive",
+      "code": 0,
+      "detail": "HTTP \"503\""
+    },
+    "win": {
+      "status": "alive",
+      "code": 0,
+      "detail": "HTTP \"000\""
+    }
+  },
+  "state": {
+    "checks": {
+      "main_down_count": 0,
+      "main_up_count": 97,
+      "win_down_count": 0,
+      "win_up_count": 655,
+      "mi_down_count": 0,
+      "mi_up_count": 1,
+      "local_down_count": 0,
+      "local_up_count": 937,
+      "win_alerted": false,
+      "win_resolved": true,
+      "main_resolved": true,
+      "main_alerted": false,
+      "lastCheck": "2026-06-20T07:59:13.099993+08:00"
+    },
+    "lastCheck": "2026-06-20T23:40:19.187489"
+  }
+}

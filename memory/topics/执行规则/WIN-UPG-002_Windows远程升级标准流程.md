@@ -1,6 +1,9 @@
 # WIN-UPG-001 Windows 远程升级标准流程
 
-> v1.2 · 最后更新: 2026-06-02
+> v1.3 · 最后更新: 2026-06-19
+> 
+> **🚨 新增铁律**: 见下方「五、自动升级禁令 (WANLIDA-ACCIDENT-002)」
+> Windows 节点绝对禁止开启自动升级，必须人工手动两步走
 
 ---
 
@@ -97,3 +100,60 @@ curl -s http://<GW>:8282/api/v1/nodes/list | python3 -c "import json,sys; [print
 **v1.3.4→v1.3.5**: `&&`+`start` 挂死→`&` 链全部独立 ✅
 
 **核心教训**: Windows 远程执行 = 信任降级。任何复杂度都能压缩成"下载 + 替换重启"两条命令。
+
+---
+
+## 五、自动升级禁令 (WANLIDA-ACCIDENT-002, 2026-06-19)
+
+### 🚫 绝对禁止
+
+❌ **禁止 Windows Worker 开启 `auto` 升级策略**
+❌ **禁止 UpgradeManager 在 Windows 节点上自行下载→kill→替换**
+
+### 💀 为什么
+
+Worker 自动升级的坑：
+
+```
+旧 Worker 活着 → Gateway "有新版本" → 下载新 binary → 旧 Worker 自杀 (exit)
+  ↓
+新 binary 损坏/certutil hang/SHA256 不匹配 → 新 Worker 起不来
+  ↓
+❌ 节点变砖！旧 Worker 已死，无回滚，需人工物理接触恢复
+```
+
+**WANLIDA-ACCIDENT-002**（2026-06-19, wanlida-temp v1.3.35→v1.3.38）就是完美触发这个死循环。
+
+### ✅ 正确做法：两步手动升级
+
+**Step 1: 下载 + 验证（不杀旧进程）**
+
+```
+cmd /c "curl -sf -o C:\tmp\ch_new.exe "http://<GW>:8282/api/v1/download?file=computehub.exe&platform=windows/amd64" && certutil -hashfile C:\tmp\ch_new.exe SHA256 | findstr /i "<SHA256>" && echo VERIFIED || echo SHA_MISMATCH"
+```
+
+**Step 2: 确认版本后替换（确保新 binary 完好）**
+
+```
+C:\tmp\ch_new.exe version 2>&1 | findstr "1.3.38" && (
+  taskkill /f /im computehub.exe
+  move /y C:\tmp\ch_new.exe C:\computehub.exe
+  start /b C:\computehub.exe worker --gw ... --node-id ...
+)
+```
+
+### ⚙️ 配置
+
+Windows Worker 必须设：
+```
+set COMPUTEHUB_UPGRADE_STRATEGY=manual
+```
+或在启动参数中加 `--upgrade-strategy manual`
+
+### 📎 历史教训
+
+| 事故 | 日期 | 归因 |
+|------|------|------|
+| WANLIDA-ACCIDENT-002 | 2026-06-19 | Worker 自动升级导致节点变砖 |
+| WIN-UPG-001 v1.0→v1.1 | 2026-06-02 | `&&`+`start` 挂死陷阱 |
+| v1.3.3→v1.3.4 | 2026-06-02 | bat 中转转义爆炸 |

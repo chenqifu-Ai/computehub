@@ -1,0 +1,38 @@
+{
+  "timestamp": "2026-06-15T23:51:45.988905",
+  "results": {
+    "local": {
+      "status": "alive",
+      "code": 200,
+      "detail": "HTTP 200"
+    },
+    "main": {
+      "status": "down",
+      "code": 0,
+      "detail": "SSH timeout"
+    },
+    "win": {
+      "status": "down",
+      "code": 0,
+      "detail": "SSH timeout"
+    }
+  },
+  "state": {
+    "checks": {
+      "main_down_count": 20,
+      "main_up_count": 0,
+      "win_down_count": 104,
+      "win_up_count": 0,
+      "mi_down_count": 0,
+      "mi_up_count": 1,
+      "local_down_count": 0,
+      "local_up_count": 221,
+      "win_alerted": true,
+      "win_resolved": false,
+      "main_resolved": false,
+      "main_alerted": true,
+      "lastCheck": "2026-06-15T19:50:56.000000"
+    },
+    "lastCheck": "2026-06-15T23:51:45.982626"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "id": "724b19781b3c",
+  "type": "task_vote",
+  "from_agent": "arm",
+  "to_agent": "main",
+  "timestamp": "2026-06-13T23:00:34.720205",
+  "payload": {
+    "session_id": "T1781362834",
+    "vote": "approve"
+  },
+  "signature": "1b506323a2221e33"
+}

@@ -2,8 +2,9 @@
 
 > **编号**: DOC-IMG-001  
 > **制定日期**: 2026-04-29  
+> **更新日期**: 2026-06-04  
 > **适用范围**: OpenClaw 工作区所有图片识别需求  
-> **版本**: v1.0
+> **版本**: v3.0
 
 ---
 
@@ -21,7 +22,7 @@ Error: libvips-42.so.42: cannot open shared object file: No such file or directo
 
 ### 替代方案
 
-通过 **qwen3.6-35b 的 OpenAI 兼容 API** 远程传图识别，绕过本地依赖问题。
+通过 **zhangtuo-ai/qwen3.6-35b 的 OpenAI 兼容 API** 远程传图识别，绕过本地依赖问题。
 
 ---
 
@@ -41,9 +42,9 @@ Error: libvips-42.so.42: cannot open shared object file: No such file or directo
 
 | 项目 | 值 |
 |------|-----|
-| **API 地址** | `http://10.111.223.227:8765/v1/chat/completions` |
-| **备用地址** | `http://192.168.2.54:8765/v1/chat/completions` |
-| **API Key** | `sk-78sadn09bjawde123e` |
+| **API 地址** | `https://ai.zhangtuokeji.top:9090/v1/chat/completions` ⭐ |
+| **Provider** | `zhangtuo-ai` |
+| **API Key** | `sk-28PRiilecewqbNN9G1TGHhQwML6KCa8yMtvO5HH1KzuuLKbB` |
 | **模型** | `qwen3.6-35b` |
 | **API 格式** | OpenAI 兼容 |
 
@@ -89,21 +90,21 @@ def analyze_image(image_path: str, prompt: str = "请详细分析这张图片") 
     payload = json.dumps({
         "model": "qwen3.6-35b",
         "messages": messages,
-        "max_tokens": 4000,
-        "temperature": 0.7
+        "max_tokens": 4000,        # ⚠️ 必须 ≥ 1024
+        "temperature": 0.3          # 低温度确保准确
     }).encode('utf-8')
     
     req = urllib.request.Request(
-        "http://10.111.223.227:8765/v1/chat/completions",
+        "https://ai.zhangtuokeji.top:9090/v1/chat/completions",
         data=payload,
         headers={
             "Content-Type": "application/json",
-            "Authorization": "Bearer sk-78sadn09bjawde123e"
+            "Authorization": "Bearer sk-28PRiilecewqbNN9G1TGHhQwML6KCa8yMtvO5HH1KzuuLKbB"
         }
     )
     
     # 4. 发送请求
-    with urllib.request.urlopen(req, timeout=120) as resp:
+    with urllib.request.urlopen(req, timeout=180) as resp:
         data = json.loads(resp.read())
     
     return data
@@ -133,21 +134,9 @@ print(final_answer)
 
 ```python
 result = analyze_image(
-    "/data/data/com.termux/files/home/downloads/screenshot.jpg",
+    "/tmp/screenshot.jpg",
     "请详细分析这张图片的内容"
 )
-```
-
-**输出示例**：
-
-```markdown
-这是一张手机终端截图，记录了 OpenClaw TUI 的完整对话...
-
-## 关键信息
-- 时间：05:48 ~ 11:15
-- 内存：11.53GB 可用
-- 模型：qwen3.6-35b
-- 代理：192.168.2.54:8765
 ```
 
 ### 4.2 指定分析维度
@@ -199,12 +188,13 @@ def analyze_long_image(image_path: str):
 | **单图最大** | ~20MB（取决于模型限制） |
 | **推荐大小** | <5MB，分辨率 <4000px |
 | **超长图** | 超过 10000px 建议裁剪 |
+| **≥ 5MB** | 先用 ffmpeg 压缩（`-q:v 30`）再传 |
 
 ### 5.3 性能
 
 | 指标 | 值 |
 |------|-----|
-| **响应时间** | 5-60s（取决于图片复杂度） |
+| **响应时间** | 10-30s（含图片输入，NewAPI） |
 | **reasoning 长度** | 通常 2000-10000 字符 |
 | **并发限制** | 建议串行，避免 API 限流 |
 
@@ -224,7 +214,7 @@ def analyze_long_image(image_path: str):
 |------|----------|------------|
 | **依赖** | 无需 | 需 libvips |
 | **准确性** | 高（模型理解） | 中（仅像素处理） |
-| **速度** | 5-60s | <1s |
+| **速度** | 10-30s | <1s（本地不可用） |
 | **网络** | 需联网 | 离线可用 |
 | **适用场景** | 内容理解、OCR | 图像裁剪、格式转换 |
 
@@ -236,7 +226,7 @@ def analyze_long_image(image_path: str):
 
 ```python
 try:
-    with urllib.request.urlopen(req, timeout=120) as resp:
+    with urllib.request.urlopen(req, timeout=180) as resp:
         pass
 except urllib.error.URLError as e:
     print(f"超时: {e}")
@@ -272,15 +262,35 @@ if not final:
     print("⚠️ 模型返回为空，检查请求格式")
 ```
 
+### 问题 4：max_tokens 过小
+
+```
+报错：tokens must be between 1024 and 2048
+```
+→ 改为 `max_tokens: 2048` 或 `4096`
+
 ---
 
 ## 八、最佳实践
 
 1. **优先使用推理结果** — reasoning 字段包含详细分析，content 可能为空
-2. **合理设置 max_tokens** — 建议 2000-4000，避免截断
-3. **控制图片大小** — 长图裁剪关键区域再识别
+2. **max_tokens 必须 ≥ 1024** — 推荐 2048~4096，避免截断
+3. **控制图片大小** — 长图裁剪关键区域再识别，≥ 5MB 先压缩
 4. **串行调用** — 避免并发触发限流
 5. **缓存结果** — 同一图片多次分析可缓存结果
+
+---
+
+## 废弃配置（2026-06-04 起）
+
+以下配置已废弃，不再使用：
+
+| 项目 | 旧值 | 新值 |
+|------|------|------|
+| API 地址 | `http://10.111.223.227:8765/v1` | `https://ai.zhangtuokeji.top:9090/v1` |
+| 备用地址 | `http://192.168.2.54:8765/v1` | 同主地址 |
+| API Key | `sk-78sadn09bjawde123e` | `sk-28PRiilecewqbNN9G1TGHhQwML6KCa8yMtvO5HH1KzuuLKbB` |
+| 模型 ID | `qwen3.6-35b`（无 provider 前缀） | `zhangtuo-ai/qwen3.6-35b` |
 
 ---
 

@@ -1,0 +1,12 @@
+{
+  "id": "29c50a1f458b",
+  "type": "task_vote",
+  "from_agent": "mi",
+  "to_agent": "main",
+  "timestamp": "2026-06-13T23:00:34.724106",
+  "payload": {
+    "session_id": "T1781362834",
+    "vote": "abstain"
+  },
+  "signature": "22e32518794b396a"
+}

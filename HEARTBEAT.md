@@ -15,12 +15,7 @@
 - [ ] 爆款内容识别: 待更新（无数据源）
 
 ### 制作部（HR专家）
-- [x] 今日产出: **视频管线音频三大bug修复 + v0.7.13 发布** ✅
-- [x] 修复1: 声音快进 → 统一采样率44100Hz ✅
-- [x] 修复2: 声音重复播 → 解除BGM双循环 ✅
-- [x] 修复3: 片段重复 → 拆分段编码累加bug ✅
-- [x] GitHub提交 7cbcead ✅
-- [x] linux-amd64/linux-arm64 编译通过 ✅
+- [ ] 今日产出: 待更新（新的一天）
 
 ### 财务部（财务专家）
 - [ ] 当日成本支出: 待更新
@@ -29,16 +24,10 @@
 - [ ] 风险预警: 待更新
 
 ### 数据部（网络专家）
-- [x] 竞品动态监控: ✅ 已完成
-- [x] 热点话题识别: ✅ 已完成
-- [x] 数据报告生成: ✅ 已完成
-- [x] 市场趋势分析: ✅ 已完成
+- [ ] 数据监控: 待检查
 
 ### 风控部（法务专家）
-- [x] 内容合规检查: ✅ 已完成
-- [x] 版权风险扫描: ✅ 已完成
-- [x] 平台政策更新: ✅ 已完成
-- [x] 风险预警: ✅ 已完成
+- [ ] 合规检查: 待检查
 
 ---
 
@@ -59,7 +48,7 @@
 ### 关键指标（实时更新）
 - **粉丝数**: 待更新
 - **总播放量**: 待更新
-- **今日产出**: 待更新（新的一天）
+- **今日产出**: 待更新
 - **今日收入**: 待更新
 - **今日成本**: 待更新
 - **ROI**: 待更新
@@ -71,44 +60,50 @@
 
 ---
 
-## 🔄 自动化任务
+## 🚨 系统状态监控 (2026-06-26 14:55 更新)
 
-### 每日检查 (上午9:00)
-- [x] 数据看板更新 ✅ (2026-06-01 09:12)
-- [x] KPI监控 ✅
-- [x] 异常预警 ✅ (ecs-p2ph offline → 自动恢复)
+- **当前模型**: ollama-cloud-2/deepseek-v4-flash
+- **ECS OpenClaw Gateway** (36.250.122.43:18789): ⚠️ 无响应（空响应）
+- **ECS SSH** (36.250.122.43:8022): ✅ 可达（可用）
+- **ECS ComputeHub Gateway** (36.250.122.43:8282): ⚠️ 404 page not found（进程可能已换端口或重启）
+- **ECS ecs-p2ph Agent** (36.250.122.43:8383): ⚠️ 空响应（进程可能已重启）
+- **wanlida-opc01**: 🔴 OFFLINE (183.251.21.92, SSH/CLOSED, GW CLOSED) — ⚠️ 从 ✅ 变为离线
+- **wanlida-ubuntu**: 🔴 OFFLINE (112.48.4.56, SSH TIMEOUT, 从 ECS ping 100% loss) — ⚠️ 从 ✅ 变为离线
+- **xingke-work01**: 🔴 OFFLINE (120.41.115.133, SSH CLOSED) — ⚠️ 从 ✅ 变为离线
+- **windows-mobile01**: 🔴 OFFLINE (112.48.104.210, SSH CLOSED) — ⚠️ 从 ✅ 变为离线
+- **local-arm**: ✅ online (36.248.233.177, linux/arm64) — 本机
+- **xiaomi-table**: ⚠️ 未检测 (112.48.48.185)
+- **wanlida-temp**: 🔴 OFFLINE
+- **本地 OpenClaw Gateway** (127.0.0.1:18789): ✅ 200 响应正常
+- **ComputeHub Gateway 本地** (127.0.0.1:8282): ❌ DOWN
+- **Tailscale**: 已登出（ECS）
 
-### 每日报告
-- 早9:00: 昨日数据汇总和当日计划
-- 下午15:00: 下午运营状态报告 ✅ 已发送至 19525456@qq.com
-- 下午16:07: 下午运营状态报告 ✅ 已发送
-- 下午15:04: 下午运营状态报告 ✅ 已发送至 19525456@qq.com (2026-05-30)
-
-### 自动化任务执行记录 (2026-05-31 更新)
-- 05:40 | ✅ 百炼 API 用量日报 — 已发送 (同昨日数据, 无新用量)
-- 12:00 | ✅ 法海法律顾问风险评估 — LOW风险，4个问题
-- 15:00 | ✅ 下午公司脉搏报告 — 已发送至 19525456@qq.com
-- 20:02 | ✅ 百炼 API 用量日报 — 6,639 tokens (17次), ¥0.05
-- 20:02 | ✅ 每日投资日报 — 已发送至 19525456@qq.com
+## 🔒 锁定工程：ComputeHub_new 主工程
+- **路径**: `/data/data/com.termux/files/home/ComputeHub_new/`
+- **最新版本**: v1.3.46 ✅ 本地已编译
+- **新功能**: openclaw_chat 持久化管道集成（v1.3.41）
+- **文档**: `docs/SHELL-ARCH-v1.md` + 通信架构说明 → 已发邮件
+- **远端仓库**: `ssh://computehub@36.250.122.43:8022/home/computehub/ComputeHub.git` ⏳ 离线
 
 ---
 
-## 🚨 系统状态监控
-
-### 实时系统状态 (2026-06-02 16:59 心跳)
-- **本机负载**: 🔴 20.55/20.48/21.23 — **持续严重高负载** (编译进程)
-- **本机内存**: ⚠️ 202MB free / 11G (2.8G available)
-- **本地磁盘**: ⚠️ 85% (391G/463G)
-- **当前模型**: ollama-cloud-2/deepseek-v4-flash
-- **模型配置**: ✅ 正常
-- **NewAPI key**: ✅ 正常
-
-### ECS-2 (36.250.122.43) 生产状态
-- **ComputeHub Gateway**: ✅ **v1.3.5** (8282端口)
-- **Worker (ecs-p2ph)**: ✅ v1.3.5 (linux/amd64)
-- **Worker (Windows-mobile)**: ✅ **v1.3.5** (windows/amd64) — Agent在线，health/status正常
-- **SSH**: ✅ 8022端口 (computehub 用户，ed25519 key)
-- **活跃任务**: 0 tasks
+### ✅ 今日完成 (2026-06-20)
+- 🏆 **首次跨 Agent 通讯成功** — 端智(Android ARM64) ↔ 小智(ECS x86_64) 通过 sessions_send 握手
+- 🧩 **openclaw_chat 持久化管道集成** — v1.3.41，省掉每次 proot 启动开销
+- 📄 **CLU-STM-001 标准文档** — 集群跨Agent通信标准流程 v1.0
+- 🐍 **贪吃蛇协作开发** — 端智写前端(snake.html)，小智编译运行(ECS:8080)
+- 📋 **咨询服务协议审阅** — 希投科技并购居间协议逐条分析
+- 🔍 **windows-mobile 状态确认** — v1.3.30 存活，HTTP轮询正常，WS间歇超时
+- 📝 **本周工作复盘** — 6/15-6/20 完整总结
+- 📝 **历史时刻归档** — 首次跨Agent通讯写入 MEMORY.md + git commit
+- 🕵️ **ECS 凌晨异常排查** — 根因：Ubuntu 自动安全更新升级内核 `6.8.0-117→124`，06:08 自动重启
+- 🐛 **修复 Windows SYSTEM 账户升级路径 bug** — 新增 `getWorkerHomeDir()`，三处硬编码路径替换
+- 🆕 **v1.3.7 发布** — 双平台编译 (win/linux amd64)，deploy 同步，Gateway + Worker 已升级
+- ⚙️ **systemd 开机自启修复** — `systemctl enable computehub-gateway` + `computehub-worker`
+- 📦 **git push** — commit a7df0bf 推送到 ECS
+- 🪟 **Windows-mobile 升级验证** — 已确认 Agent 在跑（health/status 正常），v1.3.5→1.3.6 因路径 bug 卡住，v1.3.7 已修复
+- **API Key管理**: ✅ 从config.json读取（`composer.api_key`），不再硬编码
+- **LLM Proxy**: ✅ Gateway中转端点`/api/v1/llm/chat/completions`
 
 ---
 
@@ -148,12 +143,17 @@
 - ✅ Windows-mobile 远程触发重启，等待自动检测升级
 - ✅ deploy/version.txt = 1.3.0, SHA256校验和已上传
 
-## 🔒 锁定工程：OPC 主工程
-**老大明确：所有精力集中于此工程**
-- **路径**: `/data/data/com.termux/files/home/OPC/`
-- **版本**: v1.3.3 (git: f250209)
-- **最新**: Phase 3 test-register 零断联升级
-- **注意**: workspace/computehub 已停用，不关注
+## 🔒 锁定工程：ComputeHub_new 主工程
+**老大明确：所有精力集中于此工程 (2026-06-13 更新)**
+- **路径**: `/data/data/com.termux/files/home/ComputeHub_new/`
+- **版本**: v1.3.46
+- **结构**: `cmd/ src/ deploy/ scripts/`，独立 Go 工程
+- **远端仓库**: `ssh://computehub@36.250.122.43:8022/home/computehub/ComputeHub.git`
+- **部署**: ECS 36.250.122.43:8282 (Gateway) + Workers
+
+### 废弃路径
+- `~/ComputeHub/`（旧克隆，不再使用）
+- `~/OPC/`（同一仓库旧克隆，不再使用）
 - **任何其他项目/任务/建议** 除非老大主动提，否则一律不碰
 
 ### ✅ 今日完成 (2026-06-02 12:00-13:45)
@@ -169,7 +169,58 @@
   - 下载地址: http://36.250.122.43:8282/api/v1/download?file=computehub-windows-amd64.v1.3.2.exe
   - 启动指令: `computehub.exe worker --gw http://36.250.122.43:8282 --node-id Windows-mobile --interval 3 --concurrent 4 --heartbeat 10`
 
-## 📋 待办事项
+## 🔒 跨 Agent 互备监控（2026-06-13 新增）
+
+**根因**: 上次 ECS gateway 因配置错误反复重启 3 天无人发现
+
+**方案**: 每次心跳自动检查所有 gateway 健康状态
+
+### 实时监控清单
+- [ ] ECS main gateway (36.250.122.43:18789) — 通过 SSH 检查
+- [ ] win 节点 gateway (192.168.2.134:18789) — 通过 ECS SSH 检查
+- [ ] 本地 gateway (127.0.0.1:18789) — 直接检查
+
+### 告警机制
+- 连续 2 次检测失败 → 邮件告警到 19525456@qq.com
+- 自动修复: ECS gateway 支持 `--auto-fix` 自动重启
+- 报告保存: `reports/daily/gateway_health_YYYY-MM-DD.json`
+
+### 配置文件
+- 脚本: `scripts/gateway_health.py`
+- 状态: `reports/daily/gateway_health_state.json`
+
+## 🤖 Agent 集群管控系统（2026-06-13 新增）
+
+**目标**: 让 4 个物理独立的 agent 能相互协商、协同管控集群
+
+### 核心组件
+
+| 组件 | 文件 | 功能 |
+|---|---|---|
+| 集群控制器 | `scripts/agent_coordinator.py` | 统一管理 4 个 agent |
+| 心跳监控 | `scripts/gateway_health.py` | 每分钟检查 gateway 健康 |
+| 定时巡检 | cron: Gateway 健康检查 | 每 10 分钟自动检查 |
+| 状态存储 | `reports/cluster/` | 集群状态持久化 |
+
+### 4 个 Agent 角色
+
+| Agent | 节点 | 角色 | 能力 |
+|---|---|---|---|
+| main (端智) | 本地 | Coordinator | monitor, control, notification |
+| arm | ECS | Monitor | health_check, remote_exec, config_update |
+| win | Windows | Compute | windows_exec, gpu_tasks, remote_control |
+| mi | 待配置 | Scheduler | task_dispatch, load_balance, resource_mgmt |
+
+### 协商协议
+
+1. **心跳协议**: 每 60 秒广播状态
+2. **故障转移**: 检测异常 → 自动通知 → 切换备用
+3. **任务分发**: 基于能力匹配的任务调度
+4. **配置同步**: 变更通知 + 状态共享
+
+---
+
+### ✅ 今日完成 (2026-05-31)
 
 ### 本周事项
 - [ ] Gallery 路径问题排查（联农丢失根因）
@@ -199,3 +250,9 @@
 - ✅ Windows worker 交叉编译 v1.1.0 + deploy 更新
 - ✅ 服务器 SSH 8022 端口 + iptables 排查确认
 - ✅ OPC 项目 git 提交 + 推送到服务器
+/v1/agent/stream` SSE 端点
+- ✅ `gallery.go` + `/ai` 页面: 前端改用流式渲染（逐字显示）
+- ✅ Windows worker 交叉编译 v1.1.0 + deploy 更新
+- ✅ 服务器 SSH 8022 端口 + iptables 排查确认
+- ✅ OPC 项目 git 提交 + 推送到服务器
+t 提交 + 推送到服务器

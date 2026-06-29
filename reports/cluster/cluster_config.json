@@ -1,0 +1,9 @@
+{
+  "cluster_id": "computehub-cluster",
+  "coordinator": "main",
+  "heartbeat_interval": 60,
+  "failover_threshold": 3,
+  "auto_failover": true,
+  "message_ttl": 3600,
+  "voting_quorum": 0.5
+}

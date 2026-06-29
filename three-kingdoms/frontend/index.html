@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏯 三国策略 — 城池争夺战</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#1a1a2e;color:#eee;font-family:'Microsoft YaHei','SimHei',sans-serif;overflow:hidden;height:100vh;width:100vw}
+#app{width:100vw;height:100vh;display:flex;flex-direction:column}
+/* 顶部栏 */
+#topbar{height:48px;background:linear-gradient(135deg,#16213e,#0f3460);display:flex;align-items:center;padding:0 16px;border-bottom:2px solid #e94560;flex-shrink:0}
+#topbar h1{font-size:18px;color:#e94560;margin-right:24px;text-shadow:0 0 10px rgba(233,69,96,.3)}
+#topbar .info{font-size:13px;color:#8899aa;margin-right:16px}
+#topbar .info span{color:#e94560;font-weight:bold}
+.turn-btn{padding:6px 16px;background:#e94560;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px;margin-left:auto}
+.turn-btn:hover{background:#ff6b81}
+.turn-btn:disabled{background:#555;cursor:not-allowed}
+
+/* 主区域 */
+#main{flex:1;display:flex;overflow:hidden}
+#canvas-wrap{flex:1;position:relative;background:#0a0a1a;overflow:hidden}
+#gameCanvas{display:block;width:100%;height:100%;cursor:pointer}
+
+/* 右侧面板 */
+#sidebar{width:320px;background:linear-gradient(180deg,#16213e,#1a1a2e);border-left:1px solid #333;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+#sidebar-tabs{display:flex;border-bottom:1px solid #333}
+.side-tab{padding:10px 16px;cursor:pointer;font-size:13px;color:#8899aa;border-bottom:2px solid transparent}
+.side-tab.active{color:#e94560;border-bottom-color:#e94560}
+.side-tab:hover{color:#eee}
+#sidebar-content{flex:1;overflow-y:auto;padding:12px}
+.side-panel{display:none}
+.side-panel.active{display:block}
+
+/* 武将卡 */
+.general-card{background:#1e2a4a;border:1px solid #2a3a5a;border-radius:6px;padding:10px;margin-bottom:8px;cursor:pointer;transition:.2s}
+.general-card:hover{border-color:#e94560;background:#253050}
+.general-card .name{font-size:14px;font-weight:bold;color:#eee}
+.general-card .faction-tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:11px;margin-left:6px}
+.faction-wei{background:#4488cc;color:#fff}
+.faction-shu{background:#44bb66;color:#fff}
+.faction-wu{background:#44aacc;color:#fff}
+.faction-qun{background:#aa8844;color:#fff}
+.general-card .stats{font-size:11px;color:#8899aa;margin-top:4px;display:flex;gap:8px;flex-wrap:wrap}
+.general-card .stats b{color:#ddd}
+.general-card .skill{font-size:11px;color:#e94560;margin-top:2px}
+
+/* 城池卡片 */
+.city-card{background:#1e2a4a;border:1px solid #2a3a5a;border-radius:6px;padding:10px;margin-bottom:8px}
+.city-card .name{font-size:14px;font-weight:bold}
+.city-card .stats{font-size:11px;color:#8899aa;margin-top:4px;display:flex;gap:8px;flex-wrap:wrap}
+.city-card .stats b{color:#ddd}
+.city-card .faction-tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:11px;margin-left:6px}
+
+/* 选势力界面 */
+#faction-select{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000}
+#faction-select h2{font-size:28px;color:#e94560;margin-bottom:40px;text-shadow:0 0 20px rgba(233,69,96,.5)}
+.faction-options{display:flex;gap:30px;flex-wrap:wrap;justify-content:center}
+.faction-btn{width:180px;height:220px;border:2px solid #333;border-radius:12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:.3s;background:#1e2a4a}
+.faction-btn:hover{transform:translateY(-8px);box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.faction-btn[data-faction="wei"]:hover{border-color:#4488cc;box-shadow:0 0 30px rgba(68,136,204,.3)}
+.faction-btn[data-faction="shu"]:hover{border-color:#44bb66;box-shadow:0 0 30px rgba(68,187,102,.3)}
+.faction-btn[data-faction="wu"]:hover{border-color:#44aacc;box-shadow:0 0 30px rgba(68,170,204,.3)}
+.faction-btn .emoji{font-size:48px;margin-bottom:10px}
+.faction-btn .fname{font-size:20px;font-weight:bold}
+.faction-btn .fsub{font-size:12px;color:#8899aa;margin-top:4px}
+.wei-btn{border-top:3px solid #4488cc}
+.shu-btn{border-top:3px solid #44bb66}
+.wu-btn{border-top:3px solid #44aacc}
+
+/* 消息提示 */
+#msg{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e2a4a;border:1px solid #e94560;padding:10px 20px;border-radius:6px;font-size:13px;opacity:0;transition:.3s;z-index:500}
+#msg.show{opacity:1}
+
+/* 滚动条 */
+#sidebar-content::-webkit-scrollbar{width:4px}
+#sidebar-content::-webkit-scrollbar-track{background:transparent}
+#sidebar-content::-webkit-scrollbar-thumb{background:#444;border-radius:2px}
+
+/* 战斗动画 */
+.battle-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.battle-box{background:#1e2a4a;border:2px solid #e94560;border-radius:12px;padding:30px;min-width:400px;text-align:center}
+.battle-box h3{font-size:22px;color:#e94560;margin-bottom:16px}
+.battle-box .result{font-size:16px;margin:12px 0;line-height:1.8}
+.battle-box .btn-ok{padding:8px 24px;background:#e94560;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:14px;margin-top:12px}
+.battle-box .btn-ok:hover{background:#ff6b81}
+
+/* 路线高亮 */
+@keyframes pulse{0%{opacity:.3}50%{opacity:.8}100%{opacity:.3}}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div id="topbar">
+    <h1>🏯 三国策略</h1>
+    <div class="info">回合: <span id="turnDisplay">0</span></div>
+    <div class="info">年份: <span id="yearDisplay">184</span></div>
+    <div class="info">势力: <span id="factionDisplay">-</span></div>
+    <div class="info">金币: <span id="goldDisplay">0</span></div>
+    <div class="info">粮草: <span id="foodDisplay">0</span></div>
+    <div class="info">兵力: <span id="armyDisplay">0</span></div>
+    <div class="info">城池: <span id="cityCountDisplay">0</span></div>
+    <button class="turn-btn" id="nextTurnBtn" disabled>结束回合 ▶</button>
+  </div>
+  <div id="main">
+    <div id="canvas-wrap">
+      <canvas id="gameCanvas"></canvas>
+    </div>
+    <div id="sidebar">
+      <div id="sidebar-tabs">
+        <div class="side-tab active" data-tab="generals">📋 武将</div>
+        <div class="side-tab" data-tab="cities">🏰 城池</div>
+        <div class="side-tab" data-tab="actions">⚡ 行动</div>
+      </div>
+      <div id="sidebar-content">
+        <div class="side-panel active" id="panel-generals"></div>
+        <div class="side-panel" id="panel-cities"></div>
+        <div class="side-panel" id="panel-actions"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="faction-select">
+  <h2>⚔️ 选择你的势力</h2>
+  <div class="faction-options">
+    <div class="faction-btn wei-btn" data-faction="wei" onclick="selectFaction('wei')">
+      <div class="emoji">🐉</div>
+      <div class="fname" style="color:#4488cc">魏 · 曹操</div>
+      <div class="fsub">挟天子以令诸侯</div>
+      <div class="fsub" style="color:#8899aa;margin-top:8px">城池9座 · 武将12人</div>
+    </div>
+    <div class="faction-btn shu-btn" data-faction="shu" onclick="selectFaction('shu')">
+      <div class="emoji">🦅</div>
+      <div class="fname" style="color:#44bb66">蜀 · 刘备</div>
+      <div class="fsub">兴复汉室还于旧都</div>
+      <div class="fsub" style="color:#8899aa;margin-top:8px">城池6座 · 武将12人</div>
+    </div>
+    <div class="faction-btn wu-btn" data-faction="wu" onclick="selectFaction('wu')">
+      <div class="emoji">🐯</div>
+      <div class="fname" style="color:#44aacc">吴 · 孙权</div>
+      <div class="fsub">坐断东南战未休</div>
+      <div class="fsub" style="color:#8899aa;margin-top:8px">城池9座 · 武将11人</div>
+    </div>
+  </div>
+</div>
+
+<div id="msg"></div>
+
+<script>
+// ==================== 数据 ====================
+let generals = [];
+let cities = [];
+let gameState = null;
+let selectedCity = null;
+let selectedAction = null;
+let playerFaction = null;
+
+// Canvas 相关
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+let canvasW, canvasH;
+let offsetX = 0, offsetY = 0, scale = 1;
+let dragStart = null;
+let animatingPaths = [];
+
+// ==================== 初始化 ====================
+(async function init() {
+  try {
+    const [gRes, cRes] = await Promise.all([
+      fetch('/api/generals').then(r => r.json()),
+      fetch('/api/cities').then(r => r.json())
+    ]);
+    generals = gRes.generals || gRes;
+    cities = gRes.cities || cRes.cities || cRes;
+    // 如果 generals 直接是数组
+    if (Array.isArray(gRes)) generals = gRes;
+    if (cRes.cities) cities = cRes.cities;
+
+    // 补充城市缺少的 posX/posY 坐标映射
+    // 小智后端用 pos_x/pos_y，需要归一化
+    cities.forEach(c => {
+      c.posX = c.pos_x || c.posX || c.x || 0;
+      c.posY = c.pos_y || c.posY || c.y || 0;
+    });
+    generals.forEach(g => {
+      g.strength = g.wuli || g.strength || 70;
+      g.lead = g.tong || g.lead || 70;
+      g.intelli = g.zhili || g.intelli || 50;
+      g.politics = g.zheng || g.politics || 50;
+      g.charm = g.meili || g.charm || 50;
+    });
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Canvas 交互
+    canvas.addEventListener('mousedown', onMouseDown);
+    canvas.addEventListener('mousemove', onMouseMove);
+    canvas.addEventListener('mouseup', onMouseUp);
+    canvas.addEventListener('click', onClick);
+
+    // 侧边栏切换
+    document.querySelectorAll('.side-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.side-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.side-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+        renderSidebar();
+      });
+    });
+
+    document.getElementById('nextTurnBtn').addEventListener('click', nextTurn);
+
+    render();
+  } catch(e) {
+    console.error('初始化失败:', e);
+    showMsg('加载游戏数据失败，请刷新重试');
+  }
+})();
+
+// ==================== Canvas ====================
+function resizeCanvas() {
+  const wrap = document.getElementById('canvas-wrap');
+  canvas.width = wrap.clientWidth;
+  canvas.height = wrap.clientHeight;
+  canvasW = canvas.width;
+  canvasH = canvas.height;
+  calcScale();
+  render();
+}
+
+function calcScale() {
+  if (!cities.length) return;
+  const xs = cities.map(c => c.posX);
+  const ys = cities.map(c => c.posY);
+  const minX = Math.min(...xs), maxX = Math.max(...xs);
+  const minY = Math.min(...ys), maxY = Math.max(...ys);
+  const mapW = maxX - minX + 200;
+  const mapH = maxY - minY + 200;
+  const sx = canvasW / mapW;
+  const sy = canvasH / mapH;
+  scale = Math.min(sx, sy, 1.5);
+  offsetX = (canvasW - mapW * scale) / 2 - minX * scale + 100;
+  offsetY = (canvasH - mapH * scale) / 2 - minY * scale + 100;
+}
+
+function toScreen(x, y) {
+  return [x * scale + offsetX, y * scale + offsetY];
+}
+
+function toWorld(sx, sy) {
+  return [(sx - offsetX) / scale, (sy - offsetY) / scale];
+}
+
+// ==================== 渲染 ====================
+function render() {
+  ctx.clearRect(0, 0, canvasW, canvasH);
+
+  // 背景
+  const grad = ctx.createRadialGradient(canvasW/2, canvasH/2, 0, canvasW/2, canvasH/2, canvasW);
+  grad.addColorStop(0, '#1a1a3e');
+  grad.addColorStop(1, '#0a0a1a');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvasW, canvasH);
+
+  if (!cities.length) {
+    ctx.fillStyle = '#8899aa';
+    ctx.font = '18px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('加载中...', canvasW/2, canvasH/2);
+    return;
+  }
+
+  // 画连接线
+  const drawnEdges = new Set();
+  cities.forEach(city => {
+    const [x1, y1] = toScreen(city.posX, city.posY);
+    (city.connections || []).forEach(connId => {
+      const edgeKey = [city.id, connId].sort().join('-');
+      if (drawnEdges.has(edgeKey)) return;
+      drawnEdges.add(edgeKey);
+      const target = cities.find(c => c.id === connId || c.name === connId || c.id === connId);
+      if (!target) return;
+      const [x2, y2] = toScreen(target.posX || target.pos_x, target.posY || target.pos_y);
+
+      // 普通路线
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = 'rgba(80,100,140,0.35)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    });
+  });
+
+  // 动画路径高亮
+  animatingPaths = [];
+
+  // 画城池节点
+  cities.forEach(city => {
+    const [x, y] = toScreen(city.posX, city.posY);
+    const factionColor = getFactionColor(city.faction);
+    const isPlayerCity = city.faction === playerFaction;
+    const isSelected = selectedCity && (selectedCity.id === city.id || selectedCity.name === city.name || selectedCity.id === city.id);
+
+    // 城池阴影
+    ctx.beginPath();
+    ctx.arc(x, y, isSelected ? 22 : 18, 0, Math.PI * 2);
+    ctx.fillStyle = isSelected ? 'rgba(233,69,96,0.25)' : 'rgba(0,0,0,0.3)';
+    ctx.fill();
+
+    // 城池外圈
+    ctx.beginPath();
+    ctx.arc(x, y, isSelected ? 20 : 16, 0, Math.PI * 2);
+    ctx.strokeStyle = isSelected ? '#e94560' : factionColor;
+    ctx.lineWidth = isSelected ? 3 : 2;
+    ctx.stroke();
+
+    // 城池内圈
+    ctx.beginPath();
+    ctx.arc(x, y, 12, 0, Math.PI * 2);
+    ctx.fillStyle = factionColor + '33';
+    ctx.fill();
+    ctx.strokeStyle = factionColor;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // 城池名
+    ctx.fillStyle = factionColor;
+    ctx.font = 'bold 12px "Microsoft YaHei","SimHei",sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(city.name, x, y - 22);
+
+    // 兵力小字
+    ctx.fillStyle = '#8899aa';
+    ctx.font = '9px sans-serif';
+    ctx.fillText('⚔' + (city.garrison || 0), x, y + 26);
+
+    // 首都标识
+    if (city.isCapital) {
+      ctx.fillStyle = '#ffdd44';
+      ctx.font = '14px sans-serif';
+      ctx.fillText('👑', x + 16, y - 16);
+    }
+  });
+
+  // 图例
+  ctx.fillStyle = '#8899aa';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'left';
+  let ly = 20;
+  const legend = [
+    ['魏', '#4488cc'],
+    ['蜀', '#44bb66'],
+    ['吴', '#44aacc'],
+    ['群雄', '#aa8844']
+  ];
+  ctx.fillStyle = '#8899aa';
+  ctx.fillText('— 图例 —', 12, ly);
+  ly += 18;
+  legend.forEach(([name, color]) => {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(20, ly-3, 5, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = '#eee';
+    ctx.font = '11px sans-serif';
+    ctx.fillText(name, 32, ly+1);
+    ly += 16;
+  });
+}
+
+function getFactionColor(faction) {
+  switch((faction || '').toLowerCase()) {
+    case 'wei': return '#4488cc';
+    case 'shu': return '#44bb66';
+    case 'wu': return '#44aacc';
+    case 'qun': return '#aa8844';
+    default: return '#888';
+  }
+}
+
+function getFactionName(faction) {
+  switch((faction || '').toLowerCase()) {
+    case 'wei': return '魏';
+    case 'shu': return '蜀';
+    case 'wu': return '吴';
+    case 'qun': return '群雄';
+    default: return '无';
+  }
+}
+
+// ==================== 交互 ====================
+function findCityAt(sx, sy) {
+  let closest = null, closestDist = 30;
+  cities.forEach(city => {
+    const [cx, cy] = toScreen(city.posX, city.posY);
+    const dist = Math.sqrt((sx-cx)**2 + (sy-cy)**2);
+    if (dist < closestDist) {
+      closestDist = dist;
+      closest = city;
+    }
+  });
+  return closest;
+}
+
+function onClick(e) {
+  if (!playerFaction) return;
+  const rect = canvas.getBoundingClientRect();
+  const sx = e.clientX - rect.left;
+  const sy = e.clientY - rect.top;
+  const city = findCityAt(sx, sy);
+  if (city) {
+    selectCity(city);
+  }
+}
+
+function selectCity(city) {
+  selectedCity = city;
+  render();
+  renderSidebar();
+  showMsg(`📍 选中: ${city.name} (${getFactionName(city.faction)})`);
+}
+
+let isDragging = false;
+function onMouseDown(e) {
+  const rect = canvas.getBoundingClientRect();
+  dragStart = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  isDragging = false;
+}
+function onMouseMove(e) {
+  if (!dragStart) return;
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const dx = mx - dragStart.x, dy = my - dragStart.y;
+  if (Math.abs(dx) > 5 || Math.abs(dy) > 5) isDragging = true;
+  if (isDragging) {
+    offsetX += dx;
+    offsetY += dy;
+    dragStart = { x: mx, y: my };
+    render();
+  }
+}
+function onMouseUp() {
+  dragStart = null;
+}
+
+// ==================== 选势力 ====================
+function selectFaction(faction) {
+  playerFaction = faction;
+  document.getElementById('faction-select').style.display = 'none';
+
+  // 初始化游戏状态
+  gameState = {
+    turn: 1,
+    year: 184,
+    faction: faction,
+    actions: 2
+  };
+
+  // 更新顶栏
+  document.getElementById('turnDisplay').textContent = gameState.turn;
+  document.getElementById('yearDisplay').textContent = gameState.year;
+  document.getElementById('factionDisplay').textContent = getFactionName(faction);
+  document.getElementById('nextTurnBtn').disabled = false;
+
+  updateFactionStats();
+  render();
+  renderSidebar();
+  showMsg(`⚔️ 你选择了${getFactionName(faction)}！开始争霸天下！`);
+}
+
+function updateFactionStats() {
+  if (!playerFaction || !cities.length) return;
+  const myCities = cities.filter(c => c.faction === playerFaction);
+  const totalGold = myCities.reduce((s, c) => s + (c.gold || 0), 0);
+  const totalFood = myCities.reduce((s, c) => s + (c.food || 0), 0);
+  const totalArmy = myCities.reduce((s, c) => s + (c.garrison || 0), 0);
+  document.getElementById('goldDisplay').textContent = totalGold;
+  document.getElementById('foodDisplay').textContent = totalFood;
+  document.getElementById('armyDisplay').textContent = totalArmy;
+  document.getElementById('cityCountDisplay').textContent = myCities.length;
+}
+
+// ==================== 回合制 ====================
+async function nextTurn() {
+  document.getElementById('nextTurnBtn').disabled = true;
+  showMsg('⏳ 执行回合...');
+
+  // 简单版：兵力增长 + 转年
+  const myCities = cities.filter(c => c.faction === playerFaction);
+  myCities.forEach(c => {
+    c.garrison = Math.min((c.garrison || 0) + Math.floor((c.population || 50000) / 200), c.population / 20);
+    c.gold = (c.gold || 0) + Math.floor((c.population || 50000) / 2000);
+    c.food = (c.food || 0) + Math.floor((c.population || 50000) / 1500);
+    c.morale = Math.min((c.morale || 50) + 1, 100);
+  });
+
+  gameState.turn++;
+  if (gameState.turn % 3 === 0) gameState.year++;
+  gameState.actions = 2;
+
+  document.getElementById('turnDisplay').textContent = gameState.turn;
+  document.getElementById('yearDisplay').textContent = gameState.year;
+  updateFactionStats();
+  render();
+  renderSidebar();
+  document.getElementById('nextTurnBtn').disabled = false;
+  showMsg(`✅ 第${gameState.turn}回合已结束`);
+}
+
+// ==================== 侧边栏 ====================
+function renderSidebar() {
+  const activeTab = document.querySelector('.side-tab.active');
+  if (!activeTab) return;
+  const tab = activeTab.dataset.tab;
+  renderPanel(tab);
+}
+
+function renderPanel(tab) {
+  const el = document.getElementById('panel-' + tab);
+  if (!el) return;
+
+  if (tab === 'generals') {
+    let html = '';
+    let gs = generals;
+    if (playerFaction) gs = gs.filter(g => g.faction === playerFaction);
+    gs.forEach(g => {
+      html += `<div class="general-card">
+        <div><span class="name">${g.name}</span><span class="faction-tag faction-${g.faction}">${getFactionName(g.faction)}</span></div>
+        <div class="stats">
+          <span>统<b>${g.lead||g.tong||0}</b></span>
+          <span>武<b>${g.strength||g.wuli||0}</b></span>
+          <span>智<b>${g.intelli||g.zhili||0}</b></span>
+          <span>政<b>${g.politics||g.zheng||0}</b></span>
+          <span>魅<b>${g.charm||g.meili||0}</b></span>
+        </div>
+        <div class="skill">⚔ ${g.skill||'—'}</div>
+      </div>`;
+    });
+    el.innerHTML = html || '<div style="color:#8899aa;text-align:center;padding:20px">暂无武将数据</div>';
+  } else if (tab === 'cities') {
+    let html = '';
+    let cs = cities;
+    if (playerFaction) cs = cs.filter(c => c.faction === playerFaction);
+    cs.forEach(c => {
+      html += `<div class="city-card" onclick="selectCity(cities.find(cc => cc.id==='${c.id}'||cc.name==='${c.name}'))">
+        <div><span class="name">${c.name}</span><span class="faction-tag faction-${c.faction}">${getFactionName(c.faction)}</span></div>
+        <div class="stats">
+          <span>👥 <b>${(c.population||0).toLocaleString()}</b></span>
+          <span>💰 <b>${c.gold||0}</b></span>
+          <span>🌾 <b>${c.food||0}</b></span>
+          <span>⚔ <b>${c.garrison||0}</b></span>
+          <span>❤ <b>${c.morale||0}</b></span>
+          <span>🛡 <b>${c.defense||0}</b></span>
+        </div>
+      </div>`;
+    });
+    el.innerHTML = html || '<div style="color:#8899aa;text-align:center;padding:20px">暂无城池数据</div>';
+  } else if (tab === 'actions') {
+    let html = '';
+    if (selectedCity) {
+      html += `<div style="margin-bottom:10px"><b>📍 ${selectedCity.name}</b> (${getFactionName(selectedCity.faction)})</div>`;
+      html += `<div style="display:grid;gap:8px">
+        <div style="background:#1e2a4a;padding:10px;border-radius:6px;border:1px solid #2a3a5a;cursor:pointer" onclick="showMsg('🛠 内政开发 (建设中)')">
+          <div><b>🛠 内政开发</b> <span style="font-size:11px;color:#8899aa">消耗💰提升民心/城防</span></div>
+        </div>
+        <div style="background:#1e2a4a;padding:10px;border-radius:6px;border:1px solid #2a3a5a;cursor:pointer" onclick="showMsg('💰 征兵募粮 (建设中)')">
+          <div><b>💰 征兵募粮</b> <span style="font-size:11px;color:#8899aa">消耗💰增加兵力/粮草</span></div>
+        </div>
+        <div style="background:#1e2a4a;padding:10px;border-radius:6px;border:1px solid #2a3a5a;cursor:pointer" onclick="showMsg('⚔ 出征进攻 (建设中)')">
+          <div><b>⚔ 出征进攻</b> <span style="font-size:11px;color:#8899aa">攻击相邻城池</span></div>
+        </div>
+      </div>`;
+    } else {
+      html = '<div style="color:#8899aa;text-align:center;padding:20px">点击地图上的城池查看行动选项</div>';
+    }
+    el.innerHTML = html;
+  }
+}
+
+// ==================== 消息 ====================
+let msgTimer = null;
+function showMsg(text) {
+  const el = document.getElementById('msg');
+  el.textContent = text;
+  el.classList.add('show');
+  clearTimeout(msgTimer);
+  msgTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>

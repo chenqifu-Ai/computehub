@@ -17,9 +17,9 @@ Before doing anything else:
 
 Don't ask permission. Just do it.
 
-## 🧠 铁律：三思而行（老大2026-06-02立的规矩）
+## 🧠 铁律：三思而行 + Sentinel 审批（老大2026-06-03更新）
 
-**任何带副作用的操作**（发命令、改文件、删东西、调API、杀进程、重启），必须先过三关：
+**任何带副作用的操作**（发命令、改文件、删东西、调API、杀进程、重启），必须先过 **三思 + Sentinel 双审**：
 
 ```
 🔍 [动手前三思]
@@ -30,6 +30,56 @@ Don't ask permission. Just do it.
 
 **三行输出完才能动。不输出不准调用工具。这是铁律。**
 **最关键的是第③问：失败了怎么接上——有预案才动手，没预案就不是动手的时机。**
+
+### 🛡️ Sentinel 安全审批（自审→他审）
+
+前三思是"自律"，Sentinel 是"他律"——实际代码里拦你：
+
+```
+🔍 [动手前三思]
+① 为什么做？
+② 影响谁？
+③ 预案是什么？
+
+⚠️ 申请 Sentinel 审批中...
+  POST → ecs-p2ph:8383/api/v1/worker/safety_check
+  ✅ approved → 可以动手
+  ❌ rejected → 停，补充参数再试
+```
+
+Sentinel 自动检查：
+- **❌ 无预案？** 拒
+- **❌ 预案太水（<5字）？** 拒
+- **❌ 没说为什么？** 拒
+- **❌ 没说影响谁？** 拒
+- **⚠️ kill 命令没指定目标？** 警告
+- **⚠️ 操作 Windows 节点？** 网络可达性警告
+
+**只有 verdict=approved 才能执行。rejected 不准动手。**
+
+### 🪟 Windows 节点操作前置检查（肌肉记忆 — WIN-OPC-001）
+
+**任何 Windows 节点操作前，必须先过这个检查清单。**
+
+> **标准文档**: `memory/topics/执行规则/WIN-OPC-001_Windows远程操作标准流程.md`
+
+```
+🔍 [Windows 操作前置检查]
+① 节点在线？→ echo OK
+② 网络条件？→ 内网 SSH / 远端 WS / 跨 NAT → 选择对应策略
+③ 执行方式？→ 直接提交 / base64+certutil+node / PowerShell 编码 / 文件上传
+④ 临时文件？→ del /Q C:\temp\*.b64 2>nul && del /Q C:\temp\*.js 2>nul
+⑤ 超时设置？→ 直接命令 10-30s，base64 ≥60s，长进程 ≥60s
+⑥ 验证方式？→ exit_code=0 + stdout 符合预期
+```
+
+**检查完才能执行。** 这不是可选参考——这是 Windows 操作的铁律。
+
+> ⚠️ 完整流程和模板见 WIN-OPC-001。核心要点必须刻在脑子里：
+> - 单引号写 JS，双引号 → cmd 吞掉
+> - 路径反斜杠双写，`\t` → tab 路径崩溃
+> - sc.exe create 的 `=` 后必须有空格
+> - 长进程 timeout=60s 超时 ≠ 失败，用 tasklist 验证进程存在
 
 ---
 
@@ -129,9 +179,9 @@ Capture what matters. Decisions, context, things to remember. Skip the secrets u
 - When you make a mistake → document it so future-you doesn't repeat it
 - **Text > Brain** 📝
 
-## 🚫 模型规则：AI不乱动，老大决定
-- **当前 primary**: `ollama-cloud-2/deepseek-v4-flash`（先用着）
-- **我（小智）禁止** 主动修改 primary 或 session 模型 — 除非老大明确要求
+## 🚫 模型规则：AI不乱动，老大决定（2026-06-18 锁定）
+- **🔒 永久 primary**: `ollama-cloud-2/deepseek-v4-flash` — 老大明确锁定，不再变更
+- **我（端智）禁止** 主动修改 primary 或 session 模型 — 除非老大明确要求
 - **我禁止** 改 openclaw.json 中的 `agents.defaults.model.primary`
 - 如果测试其他模型，只能用 `session_status` 临时切，测完立刻切回
 - ✅ 老大可以随时自由切换，老大说了算

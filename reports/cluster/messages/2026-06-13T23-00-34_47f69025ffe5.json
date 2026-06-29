@@ -1,0 +1,27 @@
+{
+  "id": "47f69025ffe5",
+  "type": "task_proposal",
+  "from_agent": "main",
+  "to_agent": "arm",
+  "timestamp": "2026-06-13T23:00:34.617946",
+  "payload": {
+    "session_id": "T1781362834",
+    "task": {
+      "name": "\u4fee\u590d ECS Gateway",
+      "description": "\u91cd\u542f ECS \u4e0a\u7684 OpenClaw gateway",
+      "required_capabilities": [
+        "health_check",
+        "remote_exec"
+      ],
+      "priority": "high",
+      "deadline": "2026-06-13T23:00:34.617857"
+    },
+    "participants": [
+      "main",
+      "arm",
+      "mi"
+    ],
+    "deadline": "2026-06-13T23:00:34.617880"
+  },
+  "signature": "4bec1ff75c4e01b7"
+}

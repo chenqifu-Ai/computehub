@@ -1,8 +1,8 @@
 {
   "lastChecks": {
-    "system_status": 1748733120,
-    "cluster_health": 1748733900,
-    "morning_report_sent": 1748733900
+    "gateway": 1718961436,
+    "ecs": 1718961436,
+    "windows": 1718961436
   },
-  "lastUpdate": "2026-06-01 09:25"
+  "lastCheck": "2026-06-21 13:17"
 }
