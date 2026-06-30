@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>🃏 扑克牌桌 — 分布式联机</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#1a472a;color:#fff;min-height:100vh}
+.card{width:52px;height:74px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,0.4);animation:deal 0.3s ease-out;transition:transform 0.2s;position:relative}
+.card:hover{transform:translateY(-8px)}
+.card.red{background:linear-gradient(135deg,#fff,#f0f0f0);color:#e53e3e}
+.card.black{background:linear-gradient(135deg,#fff,#f0f0f0);color:#1a202c}
+.card .suit{font-size:14px;position:absolute;bottom:4px;right:6px}
+.card .val{font-size:16px;font-weight:800}
+.card.back{background:linear-gradient(135deg,#1a237e,#283593);border:2px solid #5c6bc0}
+.card.back .val,.card.back .suit{display:none}
+@keyframes deal{from{opacity:0;transform:translateY(-30px) rotateY(90deg)}to{opacity:1;transform:translateY(0) rotateY(0)}}
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:14px;font-weight:600;margin:4px;transition:all 0.2s}
+.btn-gold{background:linear-gradient(135deg,#ffd700,#f7971e);color:#1a202c}
+.btn-green{background:linear-gradient(135deg,#48bb78,#38a169);color:#fff}
+.btn-blue{background:linear-gradient(135deg,#42a5f5,#1976d2);color:#fff}
+.btn-red{background:linear-gradient(135deg,#ef5350,#c62828);color:#fff}
+.players{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;padding:8px 0}
+.player-card{background:rgba(0,0,0,0.3);border:2px solid rgba(255,215,0,0.2);border-radius:10px;padding:10px;transition:all 0.2s}
+.player-card.active{border-color:#ffd700;box-shadow:0 0 12px rgba(255,215,0,0.3)}
+.player-card .name{font-size:14px;font-weight:700;color:#ffd700}
+.player-card .info{font-size:11px;color:#888;margin-top:2px}
+.player-card .chips{font-size:16px;margin-top:4px}
+.player-card .hand{display:flex;gap:4px;margin-top:6px}
+.mini-card{width:28px;height:40px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;border:1px solid #444}
+.mini-card.red{background:#fff;color:#e53e3e}
+.mini-card.black{background:#fff;color:#1a202c}
+.mini-card.back{background:linear-gradient(135deg,#1a237e,#283593);border-color:#5c6bc0}
+.mini-card.back span{display:none}
+.controls{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:8px}
+input[type="text"]{padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:14px}
+input[type="text"]::placeholder{color:rgba(255,255,255,0.4)}
+.section{padding:8px 16px}
+.section h3{font-size:13px;color:#ffd700;margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.cards-row{display:flex;flex-wrap:wrap;gap:8px;padding:4px 0}
+.msg-box{background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px;font-size:13px;max-height:100px;overflow-y:auto;line-height:1.6}
+.msg-box .msg{margin:2px 0}
+.msg-box .msg.system{color:#ffd700}
+.msg-box .msg.action{color:#66bb6a}
+.msg-box .msg.win{color:#ff6b6b;font-weight:700}
+.phase-badge{display:inline-block;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:600;margin:4px}
+.phase-deal{background:rgba(66,165,245,0.3);color:#42a5f5}
+.phase-flop{background:rgba(76,175,80,0.3);color:#66bb6a}
+.phase-turn{background:rgba(255,167,38,0.3);color:#ffa726}
+.phase-river{background:rgba(224,64,251,0.3);color:#ab47bc}
+.phase-showdown{background:rgba(255,215,0,0.3);color:#ffd700}
+.connect-bar{display:flex;gap:8px;align-items:center;padding:8px 16px;background:rgba(0,0,0,0.3);border-bottom:1px solid rgba(255,255,255,0.1)}
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.status-dot.off{background:#666}
+.status-dot.on{background:#48bb78;box-shadow:0 0 6px #48bb78}
+</style>
+</head>
+<body>
+<h1 style="font-size:20px;text-align:center;padding:10px;background:linear-gradient(90deg,#ffd700,#fff,#ffd700);-webkit-background-clip:text;-webkit-text-fill-color:transparent">🃏 扑克牌桌 — 分布式联机</h1>
+<div class="connect-bar">
+<span class="status-dot" id="connDot"></span>
+<span style="font-size:12px" id="connStatus">未连接</span>
+<input type="text" id="dealerAddr" placeholder="庄家地址 (如 http://127.0.0.1:8383)" value="http://127.0.0.1:8383">
+<button class="btn btn-gold" onclick="connectDealer()" style="padding:6px 12px;font-size:12px">🔗 连接庄家</button>
+</div>
+
+<div class="section">
+<h3>👥 玩家 (<span id="playerCount">0</span>/4)</h3>
+<div class="players" id="players"></div>
+</div>
+
+<div class="section">
+<h3>🌍 公共牌 (<span id="phaseText">等待发牌</span>)</h3>
+<div class="cards-row" id="tableCards"><span style="color:#555">等待发牌...</span></div>
+</div>
+
+<div class="section">
+<h3>🎴 我的手牌</h3>
+<div class="cards-row" id="myCards"><span style="color:#555">未发牌</span></div>
+</div>
+
+<div class="section">
+<h3>🎮 控制</h3>
+<div class="controls">
+<button class="btn btn-gold" onclick="startGame()" id="btnStart">🃏 开局</button>
+<button class="btn btn-green" onclick="gameAction('bet')" id="btnBet">💰 下注 ¥10</button>
+<button class="btn btn-blue" onclick="gameAction('stand')" id="btnStand">😐 过牌/翻牌</button>
+<button class="btn btn-red" onclick="gameAction('showdown')" id="btnShowdown">🏆 摊牌</button>
+<button class="btn btn-red" onclick="clearAll()" id="btnClear">🗑️ 清桌</button>
+</div>
+</div>
+
+<div class="section">
+<h3>💬 消息</h3>
+<div class="msg-box" id="msgBox"></div>
+</div>
+
+<script>
+const SUITS=['♥','♦','♣','♠'];
+const VALUES=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+let deck=[],dealerAddr='http://127.0.0.1:8383',myPlayerId='',pollTimer=null;
+let currentState=null;
+
+function log(msg,type='system'){
+  const box=document.getElementById('msgBox');
+  box.innerHTML+=`<div class="msg ${type}">${msg}</div>`;
+  box.scrollTop=box.scrollHeight;
+}
+
+function cardHTML(c,show=true){
+  if(!show) return '<div class="mini-card back"><span>🂠</span></div>';
+  const color=(c.suit==='♥'||c.suit==='♦')?'red':'black';
+  return `<div class="mini-card ${color}">${c.val}${c.suit}</div>`;
+}
+
+function tableCardHTML(c){
+  const color=(c.suit==='♥'||c.suit==='♦')?'red':'black';
+  return `<div class="card ${color}"><span class="val">${c.val}</span><span class="suit">${c.suit}</span></div>`;
+}
+
+function phaseBadge(p){
+  const cls={preflop:'phase-deal',flop:'phase-flop',turn:'phase-turn',river:'phase-river',showdown:'phase-showdown'}[p]||'';
+  const txt={preflop:'_preflop',flop:'Flop',turn:'Turn',river:'River',showdown:'Showdown'}[p]||'等待';
+  return `<span class="phase-badge ${cls}">${txt}</span>`;
+}
+
+function render(){
+  if(!currentState)return;
+  document.getElementById('playerCount').textContent=currentState.players.length;
+  document.getElementById('players').innerHTML=currentState.players.map(p=>{
+    const isMe=p.id===myPlayerId;
+    return `<div class="player-card${isMe?' active':''}">
+      <div class="name">${isMe?'👤 ':''}${p.name}</div>
+      <div class="info">位置 ${p.id===currentState.dealer_id?'庄家':'玩家'}</div>
+      <div class="chips">💰 ${p.chips} | 注: ¥${p.bet}</div>
+      <div class="hand">${p.hand.map(c=>cardHTML(c,isMe||currentState.phase==='showdown')).join('')}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('tableCards').innerHTML=currentState.table.map(c=>tableCardHTML(c)).join('')||'<span style="color:#555">无</span>';
+  document.getElementById('phaseText').innerHTML=(currentState.phase?phaseBadge(currentState.phase):'等待');
+  document.getElementById('connDot').className='status-dot '+(currentState?'on':'off');
+  document.getElementById('connStatus').textContent=currentState?'在线 — '+(currentState.phase==='waiting'?'等待开局':'进行中...'):'未连接';
+  // 更新按钮状态
+  const inGame=!!currentState.phase&&currentState.phase!=='waiting';
+  document.getElementById('btnBet').disabled=!inGame;
+  document.getElementById('btnStand').disabled=!inGame;
+  document.getElementById('btnShowdown').disabled=!inGame;
+  document.getElementById('btnStart').disabled=inGame;
+}
+
+async function fetchJSON(url){
+  try{const r=await fetch(url);return await r.json();}
+  catch(e){log('❌ 请求失败: '+e.message,'err');return null;}
+}
+
+async function connectDealer(){
+  dealerAddr=document.getElementById('dealerAddr').value.replace(/\/$/,'');
+  log('🔗 连接庄家: '+dealerAddr,'system');
+  const state=await fetchJSON(dealerAddr+'/api/v1/worker/game_state');
+  if(state){
+    log('✅ 已连接庄家牌局','action');
+    currentState=state;
+    myPlayerId=state.players[0]?.id||'';
+    render();
+    startPoll();
+  }else{
+    // 创建新牌局
+    const res=await fetchJSON(null,{url:dealerAddr+'/api/v1/worker/game_join',method:'POST',body:{player_name:'我'}});
+    if(res&&res.state){
+      log('✅ 创建新牌局','action');
+      currentState=res.state;
+      myPlayerId='dealer';
+      render();
+      startPoll();
+    }else{
+      log('❌ 连接失败，请检查地址','err');
+    }
+  }
+}
+
+async function startGame(){
+  log('🃏 请求发牌...','system');
+  const res=await fetchJSON(null,{url:dealerAddr+'/api/v1/worker/game_action',method:'POST',body:{action:'start'}});
+  if(res){currentState=res.state||res;log('✅ 发牌完成','action');render();}
+}
+
+async function gameAction(action){
+  log('🎮 操作: '+action,'system');
+  const body={action:action};
+  if(action==='bet') body.amount=10;
+  const res=await fetchJSON(null,{url:dealerAddr+'/api/v1/worker/game_action',method:'POST',body});
+  if(res){
+    if(res.winner) log('🏆 '+res.winner+' 赢得 Pot ¥'+currentState.pot,'win');
+    currentState=res.state||res;
+    render();
+  }
+}
+
+async function clearAll(){
+  log('🗑️ 清桌','system');
+  dealerAddr=document.getElementById('dealerAddr').value.replace(/\/$/,'');
+  const res=await fetchJSON(null,{url:dealerAddr+'/api/v1/worker/game_state'});
+  if(res){currentState=null;document.getElementById('players').innerHTML='<span style="color:#555">等待连接...</span>';render();}
+}
+
+function startPoll(){
+  if(pollTimer)clearInterval(pollTimer);
+  pollTimer=setInterval(async()=>{
+    const state=await fetchJSON(dealerAddr+'/api/v1/worker/game_state');
+    if(state){currentState=state;render();}
+  },3000);
+}
+
+// 初始化
+log('🃏 牌桌已就绪','system');
+log('💡 输入庄家地址，点"连接庄家"或"创建新牌局"','system');
+</script>
+</body>
+</html>

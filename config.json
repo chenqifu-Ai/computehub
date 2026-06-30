@@ -1,0 +1,33 @@
+{
+  "gateway": {
+    "port": 8282,
+    "max_connections": 100
+  },
+  "kernel": {
+    "buffer_size": 100,
+    "max_states": 1000
+  },
+  "executor": {
+    "sandbox_path": "/tmp/opc-sandbox"
+  },
+  "gene_store": {
+    "path": "./genes.json"
+  },
+  "visualizer": {
+    "enabled": true,
+    "simulate": true,
+    "port": 8282
+  },
+  "composer": {
+    "api_url": "https://ai.zhangtuokeji.top:9090/v1",
+    "api_key": "sk-28PRiilecewqbNN9G1TGHhQwML6KCa8yMtvO5HH1KzuuLKbB",
+    "model": "qwen3.6-35b",
+    "execute_models": [
+      "qwen3.6-35b",
+      "deepseek-v3.1:671b",
+      "qwen3.6-35b-common"
+    ],
+    "max_concurrency": 8,
+    "timeout_seconds": 30
+  }
+}

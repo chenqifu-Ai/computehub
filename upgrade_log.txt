@@ -1,0 +1,2 @@
+cp: cannot create regular file '/data/data/com.termux/files/home/OPC/bin/linux-arm64/computehub': Text file busy
+DONE
