@@ -670,6 +670,11 @@ func (g *OpcGateway) Serve(port int, dashboardDir ...string) {
 	http.HandleFunc("/api/v1/ollama/chat", g.handleOllamaChat)
 	logWithTimestamp("🦙 Ollama endpoints registered: /api/v1/ollama/*")
 
+	// OCR 文字识别
+	http.HandleFunc("/api/v1/ocr", g.handleOCR)
+	http.HandleFunc("/api/v1/ocr/stats", g.handleOCRStats)
+	logWithTimestamp("📝 OCR endpoints registered: /api/v1/ocr/*")
+
 	// 对话历史 Git 管理
 	http.HandleFunc("/api/v1/chat/save", g.handleChatSave)
 	http.HandleFunc("/api/v1/chat/history", g.handleChatHistory)
@@ -2375,11 +2380,23 @@ func syncGitMemoryToCluster(mem agent.Memory, cm *ClusterMemory, nodeID string) 
 	} else {
 		for _, kn := range knowledge {
 			key := kn.Topic + ":" + nodeID
+			// 从文件读取完整内容
+			content := kn.Topic // fallback: topic 本身
+			kmPath := filepath.Join("/home/computehub/ComputeHub/data", "knowledge", kn.File)
+			if data, readErr := os.ReadFile(kmPath); readErr == nil {
+				if idx := strings.Index(string(data), "## Content\n\n"); idx >= 0 {
+					content = strings.TrimSpace(string(data)[idx+12:])
+				} else if idx := strings.Index(string(data), "## Solution\n"); idx >= 0 {
+					content = strings.TrimSpace(string(data)[idx+len("## Solution\n"):])
+				} else {
+					content = strings.TrimSpace(string(data)[:min(500, len(string(data)))])
+				}
+			}
 			cm.mu.Lock()
 			cm.knowledge[key] = &SharedKnowledge{
 				NodeID:  nodeID,
 				Topic:   kn.Topic,
-				Content: kn.Topic,
+				Content: content,
 				Author:  nodeID,
 				Tags:    []string{kn.Topic, kn.Problem},
 				Timestamp: time.Now(),
