@@ -1,0 +1,43 @@
+From 1733dac75250125e52901f8faa71d3449ef2a954 Mon Sep 17 00:00:00 2001
+From: OpenPC Developer <dev@openpc.system>
+Date: Tue, 30 Jun 2026 20:54:21 +0800
+Subject: [PATCH] =?UTF-8?q?fix:=20.strengths.json=20nil=20slice=20?=
+ =?UTF-8?q?=E2=86=92=20'null'=20bug=20+=20format=20string=20fix?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ src/agent/memory.go    | 2 +-
+ src/gateway/gateway.go | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/agent/memory.go b/src/agent/memory.go
+index dabbddb..f3aa966 100644
+--- a/src/agent/memory.go
++++ b/src/agent/memory.go
+@@ -1608,7 +1608,7 @@ func (gm *GitMemory) loadStrengths() {
+ }
+ 
+ func (gm *GitMemory) saveStrengths() {
+-	var all []memStrength
++	all := make([]memStrength, 0, len(gm.strengths))
+ 	for _, s := range gm.strengths {
+ 		all = append(all, *s)
+ 	}
+diff --git a/src/gateway/gateway.go b/src/gateway/gateway.go
+index 5698c2d..79b72f8 100644
+--- a/src/gateway/gateway.go
++++ b/src/gateway/gateway.go
+@@ -726,7 +726,7 @@ func (g *OpcGateway) ServeWithServer(port int, dashboardDir ...string) *http.Ser
+ 	// 初始化交流大厅持久化
+ 	exeDir := filepath.Dir(os.Args[0])
+ 	InitHallData(exeDir)
+-	logWithTimestamp("🏛️ AI Hall data persistence: " + hallDataFile)
++	logWithTimestamp("🏛️ AI Hall data persistence: %s", hallDataFile)
+ 
+ 	// Ollama 本地模型对话
+ 	http.HandleFunc("/api/v1/ollama/status", g.handleOllamaStatus)
+-- 
+2.54.0
+

@@ -1,0 +1,46 @@
+# Build output
+bin/
+*.exe
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Config (local overrides)
+config.local.*
+
+# Binaries
+worker
+computehub-*
+source.tar.gz
+
+# ═══════════════════════════════════════════
+# deploy/ — 只跟踪 version.txt + sha256sums
+# ═══════════════════════════════════════════
+
+# 排除所有 deploy/ 下的文件
+deploy/*
+
+# 但保留这些
+!deploy/version.txt
+!deploy/sha256sums-*.txt
+!deploy/upgrade.bat
+
+# OPC Agent Memory (独立 Git 仓库)
+memory/
+
+# 根目录编译产物
+/computehub
+/worker
+/gateway
+*.arm64
+*.v2

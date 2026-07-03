@@ -1,0 +1,1 @@
+sleep 30;pkill -f 'worker.local' 2>/dev/null;sleep 3;nohup /data/data/com.termux/files/home/OPC/bin/linux-arm64/computehub worker --agent --gw http://36.250.122.43:8282 --node-id local-arm --interval 3 --concurrent 8 --heartbeat 10 >/dev/null 2>&1 & echo DONE

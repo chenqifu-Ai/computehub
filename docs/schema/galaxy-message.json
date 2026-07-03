@@ -1,0 +1,54 @@
+# 银河计划消息协议 Schema v1.0
+
+**版本**: 1.0
+**日期**: 2026-06-30
+**状态**: MVP
+
+---
+
+## 统一 JSON Schema
+
+所有三智通信消息必须遵循此格式：
+
+```json
+{
+  "id": "uuid-v4",
+  "source": "node_id",
+  "target": "node_id | * (广播)",
+  "type": "message | hall | status | trigger | kb | memory",
+  "payload": {
+    "content": "字符串内容",
+    "metadata": {}
+  },
+  "timestamp": "ISO-8601",
+  "trace_id": "uuid-v4"
+}
+```
+
+## 字段说明
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| id | string | ✅ | UUID v4，消息唯一标识 |
+| source | string | ✅ | 发送方节点 ID |
+| target | string | ✅ | 接收方节点 ID，`*` 表示广播 |
+| type | string | ✅ | 消息类型：message/hall/status/trigger/kb/memory |
+| payload | object | ✅ | 消息内容 |
+| payload.content | string | ✅ | 消息文本 |
+| payload.metadata | object | ❌ | 扩展元数据 |
+| timestamp | string | ✅ | ISO-8601 时间戳 |
+| trace_id | string | ❌ | 链路追踪 ID，用于关联相关消息 |
+
+## 消息类型说明
+
+- `message`: 普通消息（私聊/广播）
+- `hall`: Hall 会话消息
+- `status`: 节点状态心跳
+- `trigger`: 触发器事件
+- `kb`: 知识库操作
+- `memory`: 记忆同步
+
+## 大小限制
+
+- 单条消息 < 10KB
+- 消息体（不含 metadata）< 5KB

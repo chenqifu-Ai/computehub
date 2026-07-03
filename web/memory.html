@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧠 共享记忆管理</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', sans-serif;
+    background: #0a0a1a;
+    color: #d0d0d0;
+    min-height: 100vh;
+}
+.app { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+/* ── Header ── */
+.header {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 20px;
+}
+.header h1 { font-size: 22px; background: linear-gradient(90deg, #f7971e, #ffd200); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.header .subtitle { color: #666; font-size: 12px; }
+.header .nav-links { margin-left: auto; display: flex; gap: 12px; }
+.header .nav-links a { color: #666; text-decoration: none; font-size: 13px; padding: 4px 10px; border-radius: 4px; transition: all 0.12s; }
+.header .nav-links a:hover { color: #f7971e; background: rgba(247,151,30,0.08); }
+
+/* ── Stats Dashboard ── */
+.stats-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px; margin-bottom: 20px;
+}
+.stat-card {
+    padding: 16px; border-radius: 8px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    text-align: center;
+}
+.stat-card .value { font-size: 28px; font-weight: 700; color: #f7971e; }
+.stat-card .label { font-size: 11px; color: #666; margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+.stat-card .sub { font-size: 10px; color: #444; margin-top: 2px; }
+
+/* ── Tabs ── */
+.tabs {
+    display: flex; gap: 2px; margin-bottom: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.tab {
+    padding: 8px 20px; cursor: pointer; font-size: 13px;
+    color: #666; border-bottom: 2px solid transparent;
+    transition: all 0.12s;
+}
+.tab:hover { color: #999; }
+.tab.active { color: #f7971e; border-bottom-color: #f7971e; }
+.tab .count { font-size: 10px; color: #555; margin-left: 4px; }
+
+/* ── Search ── */
+.search-bar {
+    display: flex; gap: 8px; margin-bottom: 16px;
+}
+.search-bar input {
+    flex: 1; padding: 8px 14px; border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03); color: #d0d0d0;
+    font-size: 14px; outline: none;
+}
+.search-bar input:focus { border-color: rgba(247,151,30,0.4); }
+.search-bar select {
+    padding: 8px 12px; border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03); color: #d0d0d0;
+    font-size: 13px; outline: none; cursor: pointer;
+}
+.search-bar button {
+    padding: 8px 20px; border-radius: 6px; border: none;
+    background: linear-gradient(135deg, #f7971e, #e67e22);
+    color: #0a0a1a; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.search-bar button:hover { opacity: 0.9; }
+
+/* ── Memory Cards ── */
+.mem-list { display: flex; flex-direction: column; gap: 6px; }
+.mem-card {
+    padding: 12px 16px; border-radius: 6px;
+    background: rgba(255,255,255,0.01);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-left: 3px solid #333;
+    transition: all 0.12s;
+    position: relative;
+}
+.mem-card:hover { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.08); }
+.mem-card .meta {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px; color: #555; margin-bottom: 4px;
+}
+.mem-card .meta .type-badge {
+    padding: 1px 6px; border-radius: 3px; font-size: 10px;
+    font-weight: 600;
+}
+.mem-card .meta .type-badge.episode { background: rgba(59,130,246,0.15); color: #60a5fa; }
+.mem-card .meta .type-badge.knowledge { background: rgba(16,185,129,0.15); color: #34d399; }
+.mem-card .meta .node { color: #888; }
+.mem-card .meta .time { color: #444; margin-left: auto; }
+.mem-card .meta .success { font-size: 12px; }
+.mem-card .title {
+    font-size: 13px; color: #ccc; font-weight: 500;
+    margin-bottom: 4px;
+}
+.mem-card .content {
+    font-size: 12px; color: #888; line-height: 1.5;
+    max-height: 60px; overflow: hidden;
+    position: relative;
+}
+.mem-card .content.expanded { max-height: none; }
+.mem-card .content .fade {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 20px; background: linear-gradient(transparent, rgba(10,10,26,0.95));
+}
+.mem-card .content.expanded .fade { display: none; }
+.mem-card .tags {
+    display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px;
+}
+.mem-card .tags .tag {
+    padding: 1px 6px; border-radius: 3px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.04);
+    font-size: 10px; color: #666;
+}
+.mem-card .actions {
+    position: absolute; top: 8px; right: 8px;
+    display: none; gap: 4px;
+}
+.mem-card:hover .actions { display: flex; }
+.mem-card .actions button {
+    padding: 2px 8px; border-radius: 3px; border: none;
+    background: rgba(255,255,255,0.04); color: #666;
+    font-size: 11px; cursor: pointer; transition: all 0.1s;
+}
+.mem-card .actions button:hover { background: rgba(239,68,68,0.15); color: #f87171; }
+.mem-card .actions .expand-btn:hover { background: rgba(247,151,30,0.1); color: #f7971e; }
+
+/* ── Tags Cloud ── */
+.tag-cloud {
+    display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 0;
+}
+.tag-cloud .tag-item {
+    padding: 4px 12px; border-radius: 12px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    cursor: pointer; font-size: 12px; color: #888;
+    transition: all 0.12s;
+}
+.tag-cloud .tag-item:hover { background: rgba(247,151,30,0.08); border-color: rgba(247,151,30,0.2); color: #f7971e; }
+.tag-cloud .tag-item .count { color: #555; margin-left: 4px; font-size: 10px; }
+
+/* ── Node Sync ── */
+.node-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px; margin-bottom: 16px;
+}
+.node-card {
+    padding: 12px; border-radius: 6px;
+    background: rgba(255,255,255,0.01);
+    border: 1px solid rgba(255,255,255,0.04);
+    display: flex; align-items: center; gap: 10px;
+}
+.node-card .dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.node-card .dot.synced { background: #34d399; box-shadow: 0 0 6px rgba(52,211,153,0.3); }
+.node-card .dot.old { background: #f59e0b; }
+.node-card .info { flex: 1; }
+.node-card .info .name { font-size: 13px; color: #ccc; }
+.node-card .info .time { font-size: 10px; color: #555; }
+
+/* ── Pagination ── */
+.pagination {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; padding: 16px 0;
+}
+.pagination button {
+    padding: 6px 14px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.02); color: #888;
+    font-size: 12px; cursor: pointer; transition: all 0.1s;
+}
+.pagination button:hover { background: rgba(247,151,30,0.08); border-color: rgba(247,151,30,0.2); color: #f7971e; }
+.pagination button:disabled { opacity: 0.3; cursor: not-allowed; }
+.pagination .page-info { font-size: 12px; color: #666; }
+
+/* ── Empty / Loading ── */
+.empty { text-align: center; padding: 40px; color: #444; font-size: 13px; }
+.loading { text-align: center; padding: 24px; color: #555; font-size: 12px; }
+
+/* ── Toast ── */
+.toast {
+    position: fixed; bottom: 20px; right: 20px;
+    background: rgba(0,0,0,0.85); color: #ccc;
+    padding: 10px 16px; border-radius: 6px; font-size: 13px;
+    z-index: 3000; opacity: 0; transition: opacity 0.25s;
+    pointer-events: none; border: 1px solid rgba(255,255,255,0.06);
+}
+.toast.show { opacity: 1; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius: 2px; }
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+    .app { padding: 12px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .search-bar { flex-wrap: wrap; }
+    .search-bar select { flex: 1; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+    <!-- Header -->
+    <div class="header">
+        <h1>🧠 共享记忆管理</h1>
+        <span class="subtitle">集群分布式记忆 · 跨节点检索</span>
+        <div class="nav-links">
+            <a href="/ai">🏛️ 大厅</a>
+            <a href="/gallery">🖼️ 作品广场</a>
+        </div>
+    </div>
+
+    <!-- Stats Dashboard -->
+    <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="value" id="statEpisodes">-</div><div class="label">经验</div></div>
+        <div class="stat-card"><div class="value" id="statKnowledge">-</div><div class="label">知识</div></div>
+        <div class="stat-card"><div class="value" id="statNodes">-</div><div class="label">节点</div></div>
+        <div class="stat-card"><div class="value" id="statIndex">-</div><div class="label">索引词</div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('browse')" id="tabBrowse">📋 浏览</div>
+        <div class="tab" onclick="switchTab('search')" id="tabSearch">🔍 搜索</div>
+        <div class="tab" onclick="switchTab('tags')" id="tabTags">🏷️ 标签</div>
+        <div class="tab" onclick="switchTab('nodes')" id="tabNodes">🖥️ 节点</div>
+    </div>
+
+    <!-- Tab: Browse -->
+    <div id="panelBrowse" class="tab-panel">
+        <div class="search-bar">
+            <select id="browseType" onchange="browseMemories(1)">
+                <option value="all">全部</option>
+                <option value="episode">📖 经验</option>
+                <option value="knowledge">📚 知识</option>
+            </select>
+            <span style="color:#555;font-size:12px;display:flex;align-items:center;" id="browseInfo">加载中...</span>
+            <button onclick="browseMemories(1)" style="margin-left:auto;">⟳ 刷新</button>
+        </div>
+        <div class="mem-list" id="browseList">
+            <div class="loading">⏳ 加载记忆数据...</div>
+        </div>
+        <div class="pagination" id="browsePagination"></div>
+    </div>
+
+    <!-- Tab: Search -->
+    <div id="panelSearch" class="tab-panel" style="display:none;">
+        <div class="search-bar">
+            <input id="searchInput" type="text" placeholder="搜索记忆内容..." onkeydown="if(event.key==='Enter')doSearch()">
+            <select id="searchType">
+                <option value="all">全部</option>
+                <option value="episode">📖 经验</option>
+                <option value="knowledge">📚 知识</option>
+            </select>
+            <button onclick="doSearch()">🔍 搜索</button>
+        </div>
+        <div class="mem-list" id="searchList">
+            <div class="empty">输入关键词搜索共享记忆</div>
+        </div>
+    </div>
+
+    <!-- Tab: Tags -->
+    <div id="panelTags" class="tab-panel" style="display:none;">
+        <div class="search-bar">
+            <span style="color:#888;font-size:13px;">🏷️ 标签云 · 点击标签搜索相关记忆</span>
+            <button onclick="loadTags()" style="margin-left:auto;">⟳ 刷新</button>
+        </div>
+        <div class="tag-cloud" id="tagCloud">
+            <div class="loading">⏳ 加载标签...</div>
+        </div>
+        <div style="margin-top:16px;">
+            <div style="font-size:12px;color:#888;margin-bottom:8px;">📂 话题统计</div>
+            <div class="tag-cloud" id="topicCloud"></div>
+        </div>
+    </div>
+
+    <!-- Tab: Nodes -->
+    <div id="panelNodes" class="tab-panel" style="display:none;">
+        <div class="search-bar">
+            <span style="color:#888;font-size:13px;">🖥️ 节点同步状态</span>
+            <button onclick="loadNodes()" style="margin-left:auto;">⟳ 刷新</button>
+        </div>
+        <div class="node-grid" id="nodeGrid">
+            <div class="loading">⏳ 加载节点状态...</div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════
+// State
+// ═══════════════════════════════════════════
+let currentPage = 1;
+let currentTab = 'browse';
+
+// ═══════════════════════════════════════════
+// Init
+// ═══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+    loadStats();
+    browseMemories(1);
+    loadTags();
+    loadNodes();
+});
+
+// ═══════════════════════════════════════════
+// Tab Switching
+// ═══════════════════════════════════════════
+function switchTab(name) {
+    currentTab = name;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+    document.getElementById('tab' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
+    document.getElementById('panel' + name.charAt(0).toUpperCase() + name.slice(1)).style.display = 'block';
+}
+
+// ═══════════════════════════════════════════
+// Stats
+// ═══════════════════════════════════════════
+async function loadStats() {
+    try {
+        const r = await fetch('/api/v1/memory/stats');
+        const d = await r.json();
+        if (!d.success) return;
+        const s = d.data || {};
+        document.getElementById('statEpisodes').textContent = s.episodes || 0;
+        document.getElementById('statKnowledge').textContent = s.knowledge || 0;
+        document.getElementById('statNodes').textContent = s.nodes || 0;
+        const idxTotal = (s.index_episodes || 0) + (s.index_knowledge || 0);
+        document.getElementById('statIndex').textContent = idxTotal;
+    } catch(e) {}
+}
+
+// ═══════════════════════════════════════════
+// Browse
+// ═══════════════════════════════════════════
+async function browseMemories(page) {
+    currentPage = page || 1;
+    const type = document.getElementById('browseType').value;
+    const list = document.getElementById('browseList');
+    const info = document.getElementById('browseInfo');
+    const pagination = document.getElementById('browsePagination');
+
+    list.innerHTML = '<div class="loading">⏳ 加载中...</div>';
+    info.textContent = '加载中...';
+
+    try {
+        const r = await fetch(`/api/v1/memory/list?page=${currentPage}&page_size=50`);
+        const d = await r.json();
+        if (!d.success) { list.innerHTML = '<div class="empty">⚠️ 加载失败</div>'; return; }
+
+        const data = d.data;
+        let episodes = data.episodes || [];
+        let knowledge = data.knowledge || [];
+        const totalEp = data.total_ep || 0;
+        const totalKn = data.total_kn || 0;
+        const totalPagesEp = data.total_pages_ep || 1;
+        const totalPagesKn = data.total_pages_kn || 1;
+
+        // Filter by type
+        if (type === 'episode') knowledge = [];
+        if (type === 'knowledge') episodes = [];
+
+        const total = episodes.length + knowledge.length;
+        const grandTotal = type === 'episode' ? totalEp : type === 'knowledge' ? totalKn : totalEp + totalKn;
+        const totalPages = type === 'episode' ? totalPagesEp : type === 'knowledge' ? totalPagesKn : Math.max(totalPagesEp, totalPagesKn);
+        info.textContent = `共 ${grandTotal} 条 · 第 ${currentPage}/${totalPages} 页`;
+
+        if (total === 0) {
+            list.innerHTML = '<div class="empty">📭 暂无记忆数据</div>';
+            pagination.innerHTML = '';
+            return;
+        }
+
+        let html = '';
+        // Episodes
+        for (const ep of episodes) {
+            const icon = ep.success === false ? '❌' : '✅';
+            const time = ep.timestamp ? new Date(ep.timestamp).toLocaleString('zh-CN') : '';
+            const key = ep.node_id + ':' + ep.task;
+            const learned = ep.learned || '';
+            const result = ep.result || '';
+            const content = learned + (result ? '\n结果: ' + result : '');
+            html += renderCard('episode', key, icon, ep.node_id, time, ep.task, content, [], ep.strength);
+        }
+        // Knowledge
+        for (const kn of knowledge) {
+            const time = kn.timestamp ? new Date(kn.timestamp).toLocaleString('zh-CN') : '';
+            const key = kn.topic + ':' + kn.node_id;
+            html += renderCard('knowledge', key, '📚', kn.node_id, time, kn.topic, kn.content, kn.tags || []);
+        }
+
+        list.innerHTML = html;
+
+        // Pagination
+        let pgHtml = '';
+        pgHtml += `<button onclick="browseMemories(1)" ${currentPage <= 1 ? 'disabled' : ''}>« 首页</button>`;
+        pgHtml += `<button onclick="browseMemories(${currentPage - 1})" ${currentPage <= 1 ? 'disabled' : ''}>‹ 上一页</button>`;
+        pgHtml += `<span class="page-info">${currentPage} / ${totalPages}</span>`;
+        pgHtml += `<button onclick="browseMemories(${currentPage + 1})" ${currentPage >= totalPages ? 'disabled' : ''}>下一页 ›</button>`;
+        pgHtml += `<button onclick="browseMemories(${totalPages})" ${currentPage >= totalPages ? 'disabled' : ''}>末页 »</button>`;
+        pagination.innerHTML = pgHtml;
+
+    } catch(e) {
+        list.innerHTML = `<div class="empty">⚠️ 网络错误: ${e.message}</div>`;
+    }
+}
+
+function renderCard(type, key, icon, nodeId, time, title, content, tags, strength) {
+    const typeLabel = type === 'episode' ? '经验' : '知识';
+    const typeClass = type === 'episode' ? 'episode' : 'knowledge';
+    const strengthHtml = strength ? `<span style="color:#555;font-size:10px;margin-left:4px;">强度 ${strength.toFixed(1)}</span>` : '';
+    const tagsHtml = tags.length > 0 ? '<div class="tags">' + tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('') + '</div>' : '';
+    const contentPreview = (content || '').substring(0, 200);
+    const hasMore = (content || '').length > 200;
+
+    return `<div class="mem-card" data-key="${escapeAttr(key)}" data-type="${type}">
+        <div class="actions">
+            <button class="expand-btn" onclick="toggleExpand(this)" title="展开/收起">📖</button>
+            <button onclick="deleteMemory('${type}','${escapeAttr(key)}')" title="删除">🗑️</button>
+        </div>
+        <div class="meta">
+            <span class="type-badge ${typeClass}">${typeLabel}</span>
+            <span class="success">${icon}</span>
+            <span class="node">${escapeHtml(nodeId)}</span>
+            ${strengthHtml}
+            <span class="time">${time}</span>
+        </div>
+        <div class="title">${escapeHtml(title)}</div>
+        <div class="content" onclick="toggleExpandFromContent(this)">
+            ${escapeHtml(contentPreview)}${hasMore ? '<span style="color:#555;font-size:11px;"> ...</span>' : ''}
+            <div class="fade"></div>
+        </div>
+        ${tagsHtml}
+    </div>`;
+}
+
+function toggleExpand(btn) {
+    const card = btn.closest('.mem-card');
+    const content = card.querySelector('.content');
+    content.classList.toggle('expanded');
+    btn.textContent = content.classList.contains('expanded') ? '📕' : '📖';
+}
+
+function toggleExpandFromContent(el) {
+    el.classList.toggle('expanded');
+}
+
+// ═══════════════════════════════════════════
+// Search
+// ═══════════════════════════════════════════
+async function doSearch() {
+    const q = document.getElementById('searchInput').value.trim();
+    const type = document.getElementById('searchType').value;
+    const list = document.getElementById('searchList');
+
+    if (!q) { list.innerHTML = '<div class="empty">请输入搜索关键词</div>'; return; }
+
+    list.innerHTML = '<div class="loading">⏳ 搜索中...</div>';
+
+    try {
+        const r = await fetch(`/api/v1/memory/search?q=${encodeURIComponent(q)}&type=${type}&limit=50`);
+        const d = await r.json();
+        if (!d.success) { list.innerHTML = '<div class="empty">⚠️ 搜索失败</div>'; return; }
+
+        const episodes = d.data.episodes || [];
+        const knowledge = d.data.knowledge || [];
+
+        if (episodes.length === 0 && knowledge.length === 0) {
+            list.innerHTML = '<div class="empty">🔍 未找到匹配的记忆</div>';
+            return;
+        }
+
+        let html = '';
+        for (const ep of episodes) {
+            const icon = ep.success === false ? '❌' : '✅';
+            const time = ep.timestamp ? new Date(ep.timestamp).toLocaleString('zh-CN') : '';
+            const key = ep.node_id + ':' + ep.task;
+            const learned = ep.learned || '';
+            const result = ep.result || '';
+            const content = highlightMatch(q, learned + (result ? '\n结果: ' + result : ''));
+            html += `<div class="mem-card" style="border-left-color:#3b82f6;">
+                <div class="meta">
+                    <span class="type-badge episode">经验</span>
+                    <span class="success">${icon}</span>
+                    <span class="node">${escapeHtml(ep.node_id)}</span>
+                    <span class="time">${time}</span>
+                </div>
+                <div class="title">${highlightMatch(q, ep.task)}</div>
+                <div class="content" style="max-height:none;">${content}</div>
+            </div>`;
+        }
+        for (const kn of knowledge) {
+            const time = kn.timestamp ? new Date(kn.timestamp).toLocaleString('zh-CN') : '';
+            html += `<div class="mem-card" style="border-left-color:#10b981;">
+                <div class="meta">
+                    <span class="type-badge knowledge">知识</span>
+                    <span class="node">${escapeHtml(kn.node_id)}</span>
+                    <span class="time">${time}</span>
+                </div>
+                <div class="title">${highlightMatch(q, kn.topic)}</div>
+                <div class="content" style="max-height:none;">${highlightMatch(q, kn.content)}</div>
+            </div>`;
+        }
+
+        list.innerHTML = html;
+    } catch(e) {
+        list.innerHTML = `<div class="empty">⚠️ 网络错误: ${e.message}</div>`;
+    }
+}
+
+function highlightMatch(query, text) {
+    if (!text) return '';
+    const escaped = escapeHtml(text);
+    const words = query.split(/\s+/).filter(w => w.length > 0);
+    let result = escaped;
+    for (const w of words) {
+        const re = new RegExp(escapeRegExp(escapeHtml(w)), 'gi');
+        result = result.replace(re, m => `<span style="background:rgba(247,151,30,0.2);color:#f7971e;border-radius:2px;">${m}</span>`);
+    }
+    return result.replace(/\n/g, '<br>');
+}
+
+function escapeRegExp(s) {
+    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// ═══════════════════════════════════════════
+// Tags
+// ═══════════════════════════════════════════
+async function loadTags() {
+    try {
+        const r = await fetch('/api/v1/memory/tags');
+        const d = await r.json();
+        if (!d.success) return;
+
+        const tags = d.data.tags || {};
+        const topics = d.data.topics || {};
+
+        // Tag cloud
+        const tagCloud = document.getElementById('tagCloud');
+        const sortedTags = Object.entries(tags).sort((a, b) => b[1] - a[1]);
+        if (sortedTags.length === 0) {
+            tagCloud.innerHTML = '<div class="empty">暂无标签</div>';
+        } else {
+            const maxCount = Math.max(...sortedTags.map(t => t[1]));
+            tagCloud.innerHTML = sortedTags.map(([tag, count]) => {
+                const size = 12 + (count / maxCount) * 10;
+                return `<span class="tag-item" onclick="searchTag('${escapeAttr(tag)}')" style="font-size:${size}px;">
+                    ${escapeHtml(tag)}<span class="count">${count}</span>
+                </span>`;
+            }).join('');
+        }
+
+        // Topic cloud
+        const topicCloud = document.getElementById('topicCloud');
+        const sortedTopics = Object.entries(topics).sort((a, b) => b[1] - a[1]);
+        if (sortedTopics.length === 0) {
+            topicCloud.innerHTML = '<div class="empty">暂无话题</div>';
+        } else {
+            topicCloud.innerHTML = sortedTopics.map(([topic, count]) => {
+                return `<span class="tag-item" onclick="searchTag('${escapeAttr(topic)}')">
+                    📂 ${escapeHtml(topic)}<span class="count">${count}</span>
+                </span>`;
+            }).join('');
+        }
+
+    } catch(e) {}
+}
+
+function searchTag(tag) {
+    document.getElementById('searchInput').value = tag;
+    switchTab('search');
+    doSearch();
+}
+
+// ═══════════════════════════════════════════
+// Nodes
+// ═══════════════════════════════════════════
+async function loadNodes() {
+    try {
+        const r = await fetch('/api/v1/memory/stats');
+        const d = await r.json();
+        if (!d.success) return;
+
+        const nodeSync = d.data.node_sync || {};
+        const grid = document.getElementById('nodeGrid');
+
+        const entries = Object.entries(nodeSync);
+        if (entries.length === 0) {
+            grid.innerHTML = '<div class="empty">暂无节点同步数据</div>';
+            return;
+        }
+
+        const now = new Date();
+        grid.innerHTML = entries.map(([nodeId, timeStr]) => {
+            const [h, m, s] = timeStr.split(':').map(Number);
+            const syncTime = new Date();
+            syncTime.setHours(h, m, s);
+            const diffMin = (now - syncTime) / 60000;
+            const isRecent = diffMin < 30;
+            return `<div class="node-card">
+                <span class="dot ${isRecent ? 'synced' : 'old'}"></span>
+                <div class="info">
+                    <div class="name">${escapeHtml(nodeId)}</div>
+                    <div class="time">最后同步: ${timeStr}${isRecent ? '' : ' ⚠️ 超过30分钟'}</div>
+                </div>
+            </div>`;
+        }).join('');
+
+    } catch(e) {}
+}
+
+// ═══════════════════════════════════════════
+// Delete
+// ═══════════════════════════════════════════
+async function deleteMemory(type, key) {
+    if (!confirm(`确定删除这条${type === 'episode' ? '经验' : '知识'}？`)) return;
+
+    try {
+        const r = await fetch('/api/v1/memory/delete', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({type, key})
+        });
+        const d = await r.json();
+        if (d.success) {
+            showToast('✅ 已删除');
+            // Remove card from DOM
+            const card = document.querySelector(`.mem-card[data-key="${CSS.escape(key)}"]`);
+            if (card) card.remove();
+            loadStats();
+        } else {
+            showToast('❌ 删除失败: ' + (d.error || ''));
+        }
+    } catch(e) {
+        showToast('❌ 网络错误: ' + e.message);
+    }
+}
+
+// ═══════════════════════════════════════════
+// Helpers
+// ═══════════════════════════════════════════
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function escapeHtml(s) {
+    if (!s) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function escapeAttr(s) {
+    if (!s) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+</script>
+</body>
+</html>

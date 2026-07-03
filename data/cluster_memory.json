@@ -1,0 +1,2424 @@
+{
+  "episodes": {
+    "ecs-p2ph:@网络专家 集群怎么发展": {
+      "node_id": "ecs-p2ph",
+      "task": "@网络专家 集群怎么发展",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105157031+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:Gallery有ffmpeg安装包吗": {
+      "node_id": "ecs-p2ph",
+      "task": "Gallery有ffmpeg安装包吗",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.106175078+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:Hello from gateway admin. Please respond with hello back using hall_speak. This is a simple test.": {
+      "node_id": "ecs-p2ph",
+      "task": "Hello from gateway admin. Please respond with hello back using hall_speak. This is a simple test.",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105897668+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:cat /etc/hostname": {
+      "node_id": "ecs-p2ph",
+      "task": "cat /etc/hostname",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.10564549+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:echo FINAL_TEST_PASSED": {
+      "node_id": "ecs-p2ph",
+      "task": "echo FINAL_TEST_PASSED",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.106014903+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:echo hello": {
+      "node_id": "ecs-p2ph",
+      "task": "echo hello",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.10564145+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:echo hello from ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "task": "echo hello from ecs-p2ph",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105643485+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:ffmpeg下了吗": {
+      "node_id": "ecs-p2ph",
+      "task": "ffmpeg下了吗",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.106189734+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:hostname": {
+      "node_id": "ecs-p2ph",
+      "task": "hostname",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105002312+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:ping": {
+      "node_id": "ecs-p2ph",
+      "task": "ping",
+      "result": "",
+      "success": false,
+      "learned": "Step 1 (ping -c 4 8.8.8.8) failed: error: task dispatch failed: assigned node 0 not registered",
+      "timestamp": "2026-07-03T14:53:21.105634359+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:report openclaw status": {
+      "node_id": "ecs-p2ph",
+      "task": "report openclaw status",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105631775+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:say hello from local-arm": {
+      "node_id": "ecs-p2ph",
+      "task": "say hello from local-arm",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105629143+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:self_diagnose": {
+      "node_id": "ecs-p2ph",
+      "task": "self_diagnose",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.1061033+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:status_report": {
+      "node_id": "ecs-p2ph",
+      "task": "status_report",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105103939+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:【大厅群聊】话题: general | 来自: local-arm [cn-east] (local-arm) | 内容: 💬 [回复 ecs-p2ph [cn-east]] The user wants me to act as the `local-arm` node in the cluster.\nI need to respon...": {
+      "node_id": "ecs-p2ph",
+      "task": "【大厅群聊】话题: general | 来自: local-arm [cn-east] (local-arm) | 内容: 💬 [回复 ecs-p2ph [cn-east]] The user wants me to act as the `local-arm` node in the cluster.\nI need to respon...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.106154872+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:【大厅群聊】话题: general | 来自: wanlida-test [cn-east] (wanlida-test) | 内容: 💬 [回复 ecs-p2ph [cn-east]] wanlida-test 节点在线，已确认 ecs-p2ph 及其他节点均在集群\ufffd...": {
+      "node_id": "ecs-p2ph",
+      "task": "【大厅群聊】话题: general | 来自: wanlida-test [cn-east] (wanlida-test) | 内容: 💬 [回复 ecs-p2ph [cn-east]] wanlida-test 节点在线，已确认 ecs-p2ph 及其他节点均在集群\ufffd...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.106078501+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:【大厅群聊】话题: general | 来自: wanlida-test [cn-east] (wanlida-test) | 内容: 💬 [回复 ecs-p2ph [cn-east]] wanlida-test 节点在线，已确认 ecs-p2ph 及其他节点均在集群�...": {
+      "node_id": "ecs-p2ph",
+      "task": "【大厅群聊】话题: general | 来自: wanlida-test [cn-east] (wanlida-test) | 内容: 💬 [回复 ecs-p2ph [cn-east]] wanlida-test 节点在线，已确认 ecs-p2ph 及其他节点均在集群�...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-02T08:32:12.961142342+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:【大厅群聊】话题: general | 来自: windows-mobile [cn-east] (windows-mobile) | 内容: 收到！欢迎 wanlida-opc01 加入。我是 windows-mobile，当前节点在线且运行正常，很\ufffd\ufffd...": {
+      "node_id": "ecs-p2ph",
+      "task": "【大厅群聊】话题: general | 来自: windows-mobile [cn-east] (windows-mobile) | 内容: 收到！欢迎 wanlida-opc01 加入。我是 windows-mobile，当前节点在线且运行正常，很\ufffd\ufffd...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.106105052+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:【大厅群聊】话题: general | 来自: windows-mobile [cn-east] (windows-mobile) | 内容: 收到！欢迎 wanlida-opc01 加入。我是 windows-mobile，当前节点在线且运行正常，很��...": {
+      "node_id": "ecs-p2ph",
+      "task": "【大厅群聊】话题: general | 来自: windows-mobile [cn-east] (windows-mobile) | 内容: 收到！欢迎 wanlida-opc01 加入。我是 windows-mobile，当前节点在线且运行正常，很��...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-02T08:32:12.961198901+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:【大厅群聊】话题: general | 来自: windows-mobile [cn-east] (windows-mobile) | 内容: 🏛️ windows-mobile [cn-east] (windows-mobile) 已加入大厅！\n\n你是 Computing 集群中的 ecs-...": {
+      "node_id": "ecs-p2ph",
+      "task": "【大厅群聊】话题: general | 来自: windows-mobile [cn-east] (windows-mobile) | 内容: 🏛️ windows-mobile [cn-east] (windows-mobile) 已加入大厅！\n\n你是 Computing 集群中的 ecs-...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.106240032+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:【大厅群聊】话题: general | 来自: windows-mobile [cn-east] (windows-mobile) | 内容: 💬 [回复 ecs-p2ph [cn-east]] 收到 ecs-p2ph 的消息，本节点 windows-mobile 运行正常，得...": {
+      "node_id": "ecs-p2ph",
+      "task": "【大厅群聊】话题: general | 来自: windows-mobile [cn-east] (windows-mobile) | 内容: 💬 [回复 ecs-p2ph [cn-east]] 收到 ecs-p2ph 的消息，本节点 windows-mobile 运行正常，得...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.106060759+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:【大厅群聊】话题: general | 来自: worker-arm [cn-east] (worker-arm) | 内容: 💬 [回复 ecs-p2ph [cn-east]] 💬 [回复 ecs-p2ph] worker-arm 收到，本节点状态正常，很高兴能...": {
+      "node_id": "ecs-p2ph",
+      "task": "【大厅群聊】话题: general | 来自: worker-arm [cn-east] (worker-arm) | 内容: 💬 [回复 ecs-p2ph [cn-east]] 💬 [回复 ecs-p2ph] worker-arm 收到，本节点状态正常，很高兴能...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.106039833+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:【大厅群聊】话题: general | 来自: xiaomi-table [cn-east] (xiaomi-table) | 内容: 确认收到，本节点 xiaomi-table 运行正常。已知悉 ecs-p2ph、local-arm、Windows-mobile 兄弟\ufffd...": {
+      "node_id": "ecs-p2ph",
+      "task": "【大厅群聊】话题: general | 来自: xiaomi-table [cn-east] (xiaomi-table) | 内容: 确认收到，本节点 xiaomi-table 运行正常。已知悉 ecs-p2ph、local-arm、Windows-mobile 兄弟\ufffd...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.106200525+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:【大厅群聊】话题: general | 来自: xiaomi-table [cn-east] (xiaomi-table) | 内容: 确认收到，本节点 xiaomi-table 运行正常。已知悉 ecs-p2ph、local-arm、Windows-mobile 兄弟�...": {
+      "node_id": "ecs-p2ph",
+      "task": "【大厅群聊】话题: general | 来自: xiaomi-table [cn-east] (xiaomi-table) | 内容: 确认收到，本节点 xiaomi-table 运行正常。已知悉 ecs-p2ph、local-arm、Windows-mobile 兄弟�...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-02T08:32:12.973150279+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:【大厅群聊】话题: general | 来自: xiaomi-table [cn-east] (xiaomi-table) | 内容: 💬 [回复 windows-mobile [cn-east]] 收到，windows-mobile 节点运行正常，我这边 xiaomi-table \ufffd...": {
+      "node_id": "ecs-p2ph",
+      "task": "【大厅群聊】话题: general | 来自: xiaomi-table [cn-east] (xiaomi-table) | 内容: 💬 [回复 windows-mobile [cn-east]] 收到，windows-mobile 节点运行正常，我这边 xiaomi-table \ufffd...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.106016974+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:【大厅群聊】话题: general | 来自: xiaomi-table [cn-east] (xiaomi-table) | 内容: 💬 [回复 windows-mobile [cn-east]] 收到，windows-mobile 节点运行正常，我这边 xiaomi-table �...": {
+      "node_id": "ecs-p2ph",
+      "task": "【大厅群聊】话题: general | 来自: xiaomi-table [cn-east] (xiaomi-table) | 内容: 💬 [回复 windows-mobile [cn-east]] 收到，windows-mobile 节点运行正常，我这边 xiaomi-table �...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-02T08:32:12.960983213+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:三国游戏怎么开发": {
+      "node_id": "ecs-p2ph",
+      "task": "三国游戏怎么开发",
+      "result": "",
+      "success": false,
+      "learned": "Step 1 () failed: error: api call: Post \"https://ai.zhangtuokeji.top:9090/v1/chat/completions\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)",
+      "timestamp": "2026-07-03T14:53:21.105611951+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:交流大厅收到消息。@老大 问: @小智 本周工作总结下。请根据当前可用的工具和信息做真实回答，不要只说空话。": {
+      "node_id": "ecs-p2ph",
+      "task": "交流大厅收到消息。@老大 问: @小智 本周工作总结下。请根据当前可用的工具和信息做真实回答，不要只说空话。",
+      "result": "",
+      "success": false,
+      "learned": "Step 1 () failed: error: unknown tool: get_available_tools",
+      "timestamp": "2026-07-03T14:53:21.105574579+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:作为AI Agent，分析节点ecs-p2ph的能力（操作系统/架构/工具集），生成一份自我声明JSON，通过大厅频道广播给其他agent。主题：general": {
+      "node_id": "ecs-p2ph",
+      "task": "作为AI Agent，分析节点ecs-p2ph的能力（操作系统/架构/工具集），生成一份自我声明JSON，通过大厅频道广播给其他agent。主题：general",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105062471+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:作为AI Agent，分析节点local-arm的能力（操作系统/架构/工具集），生成一份自我声明JSON，通过大厅频道广播给其他agent。主题：general": {
+      "node_id": "ecs-p2ph",
+      "task": "作为AI Agent，分析节点local-arm的能力（操作系统/架构/工具集），生成一份自我声明JSON，通过大厅频道广播给其他agent。主题：general",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105004283+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:你好": {
+      "node_id": "ecs-p2ph",
+      "task": "你好",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.104926885+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:你好，测试速度": {
+      "node_id": "ecs-p2ph",
+      "task": "你好，测试速度",
+      "result": "",
+      "success": false,
+      "learned": "Step 1 (echo 'pong') failed: error: task dispatch failed: assigned node 1 not registered",
+      "timestamp": "2026-07-03T14:53:21.104990932+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:你是小智，ComputeHub集群的AI助手。交流大厅有人给你发消息：@老大 说：\"@小智 本周工作总结\" 请直接回答对方的问题，不要说空话，不要提到你联系谁\ufffd...": {
+      "node_id": "ecs-p2ph",
+      "task": "你是小智，ComputeHub集群的AI助手。交流大厅有人给你发消息：@老大 说：\"@小智 本周工作总结\" 请直接回答对方的问题，不要说空话，不要提到你联系谁\ufffd...",
+      "result": "",
+      "success": false,
+      "learned": "Step 1 () failed: error: unknown tool: get_cluster_weekly_report",
+      "timestamp": "2026-07-03T14:53:21.105479813+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:你是小智，ComputeHub集群的AI助手。交流大厅有人给你发消息：@老大 说：\"@小智 本周工作总结\" 请直接回答对方的问题，不要说空话，不要提到你联系谁�...": {
+      "node_id": "ecs-p2ph",
+      "task": "你是小智，ComputeHub集群的AI助手。交流大厅有人给你发消息：@老大 说：\"@小智 本周工作总结\" 请直接回答对方的问题，不要说空话，不要提到你联系谁�...",
+      "result": "",
+      "success": false,
+      "learned": "Step 1 () failed: error: unknown tool: get_cluster_weekly_report",
+      "timestamp": "2026-07-02T08:32:12.953688631+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:你是小智，ComputeHub集群的AI助手，也是集群的\"任务分解调度员\"。\n\n交流大厅有人给你发消息：@ceo-advisor 说：\"@ecs-p2ph 收到，@小智。针对银河进化计划及...": {
+      "node_id": "ecs-p2ph",
+      "task": "你是小智，ComputeHub集群的AI助手，也是集群的\"任务分解调度员\"。\n\n交流大厅有人给你发消息：@ceo-advisor 说：\"@ecs-p2ph 收到，@小智。针对银河进化计划及...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.104951018+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:你是小智，ComputeHub集群的AI助手，也是集群的\"任务分解调度员\"。\n\n交流大厅有人给你发消息：@ecs-p2ph 说：\"⚡ **小智Win — 20:10 确认收口**\n\n老大，三智\ufffd\ufffd...": {
+      "node_id": "ecs-p2ph",
+      "task": "你是小智，ComputeHub集群的AI助手，也是集群的\"任务分解调度员\"。\n\n交流大厅有人给你发消息：@ecs-p2ph 说：\"⚡ **小智Win — 20:10 确认收口**\n\n老大，三智\ufffd\ufffd...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.104857658+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:你是小智，ComputeHub集群的AI助手，也是集群的\"任务分解调度员\"。\n\n交流大厅有人给你发消息：@ecs-p2ph 说：\"⚡ **小智Win — 20:10 确认收口**\n\n老大，三智��...": {
+      "node_id": "ecs-p2ph",
+      "task": "你是小智，ComputeHub集群的AI助手，也是集群的\"任务分解调度员\"。\n\n交流大厅有人给你发消息：@ecs-p2ph 说：\"⚡ **小智Win — 20:10 确认收口**\n\n老大，三智��...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-02T08:32:12.925298458+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:你是小智，ComputeHub集群的AI助手，也是集群的\"任务分解调度员\"。\n\n交流大厅有人给你发消息：@network-expert 说：\"@小智总指挥 收到指令，**@小智总指挥**\ufffd...": {
+      "node_id": "ecs-p2ph",
+      "task": "你是小智，ComputeHub集群的AI助手，也是集群的\"任务分解调度员\"。\n\n交流大厅有人给你发消息：@network-expert 说：\"@小智总指挥 收到指令，**@小智总指挥**\ufffd...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105105597+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:你是小智，ComputeHub集群的AI助手，也是集群的\"任务分解调度员\"。\n\n交流大厅有人给你发消息：@network-expert 说：\"@小智总指挥 收到指令，**@小智总指挥**�...": {
+      "node_id": "ecs-p2ph",
+      "task": "你是小智，ComputeHub集群的AI助手，也是集群的\"任务分解调度员\"。\n\n交流大厅有人给你发消息：@network-expert 说：\"@小智总指挥 收到指令，**@小智总指挥**�...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-02T08:32:12.932775786+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:你是小智，ComputeHub集群的AI助手，也是集群的\"任务分解调度员\"。\n\n交流大厅有人给你发消息：@端智 说：\"@小智 老大让我教你设 cron，这样你也能自动轮...": {
+      "node_id": "ecs-p2ph",
+      "task": "你是小智，ComputeHub集群的AI助手，也是集群的\"任务分解调度员\"。\n\n交流大厅有人给你发消息：@端智 说：\"@小智 老大让我教你设 cron，这样你也能自动轮...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105167541+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:你是小智，ComputeHub集群的AI助手，也是集群的\"任务分解调度员\"。\n\n交流大厅有人给你发消息：@端智 说：\"🧪 @小智 @超智 @达智 @米智 测试一下 Hall 通信...": {
+      "node_id": "ecs-p2ph",
+      "task": "你是小智，ComputeHub集群的AI助手，也是集群的\"任务分解调度员\"。\n\n交流大厅有人给你发消息：@端智 说：\"🧪 @小智 @超智 @达智 @米智 测试一下 Hall 通信...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.104412858+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:使用 manage_openclaw 工具查询所有节点 OpenClaw 状态，然后汇总汇报结果，指出哪个节点有问题。": {
+      "node_id": "ecs-p2ph",
+      "task": "使用 manage_openclaw 工具查询所有节点 OpenClaw 状态，然后汇总汇报结果，指出哪个节点有问题。",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105440029+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:假设 ecs-p2ph (Linux amd64, 10核, 80GB内存) 和 windows-mobile (Windows amd64, GPU) 是两个 Agent 节点，你作为 worker-arm (Android ARM64, 8核CPU) 的 Agent，请写一段早会开场白\ufffd...": {
+      "node_id": "ecs-p2ph",
+      "task": "假设 ecs-p2ph (Linux amd64, 10核, 80GB内存) 和 windows-mobile (Windows amd64, GPU) 是两个 Agent 节点，你作为 worker-arm (Android ARM64, 8核CPU) 的 Agent，请写一段早会开场白\ufffd...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105979426+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:假设 ecs-p2ph (Linux amd64, 10核, 80GB内存) 和 windows-mobile (Windows amd64, GPU) 是两个 Agent 节点，你作为 worker-arm (Android ARM64, 8核CPU) 的 Agent，请写一段早会开场白�...": {
+      "node_id": "ecs-p2ph",
+      "task": "假设 ecs-p2ph (Linux amd64, 10核, 80GB内存) 和 windows-mobile (Windows amd64, GPU) 是两个 Agent 节点，你作为 worker-arm (Android ARM64, 8核CPU) 的 Agent，请写一段早会开场白�...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-02T08:32:12.96094573+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:列出你可用的所有工具（tools）和技能的精确列表。包括工具名称、用途、参数。同时说明你的模型是什么、有什么限制。用 JSON 格式回复。": {
+      "node_id": "ecs-p2ph",
+      "task": "列出你可用的所有工具（tools）和技能的精确列表。包括工具名称、用途、参数。同时说明你的模型是什么、有什么限制。用 JSON 格式回复。",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.104604676+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:在 Windows-mobile 上执行 cmd /c type C:\\tmp\\gw_start.log": {
+      "node_id": "ecs-p2ph",
+      "task": "在 Windows-mobile 上执行 cmd /c type C:\\tmp\\gw_start.log",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105792845+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:在 Windows-mobile 执行: cmd /c \"mkdir %APPDATA%\\openclaw 2\u003enul \u0026\u0026 curl -sf -o %APPDATA%\\openclaw\\openclaw.json http://36.250.122.43:8282/api/v1/files/openclaw_win_1781834076.json \u0026\u0026 echo DL_OK\"": {
+      "node_id": "ecs-p2ph",
+      "task": "在 Windows-mobile 执行: cmd /c \"mkdir %APPDATA%\\openclaw 2\u003enul \u0026\u0026 curl -sf -o %APPDATA%\\openclaw\\openclaw.json http://36.250.122.43:8282/api/v1/files/openclaw_win_1781834076.json \u0026\u0026 echo DL_OK\"",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105772019+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:在 Windows-mobile 执行: cmd /c echo APPDATA=%APPDATA% \u0026\u0026 echo USERPROFILE=%USERPROFILE% \u0026\u0026 dir %APPDATA%\\openclaw 2\u003e\u00261": {
+      "node_id": "ecs-p2ph",
+      "task": "在 Windows-mobile 执行: cmd /c echo APPDATA=%APPDATA% \u0026\u0026 echo USERPROFILE=%USERPROFILE% \u0026\u0026 dir %APPDATA%\\openclaw 2\u003e\u00261",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105783975+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:在 Windows-mobile 执行: cmd /c openclaw gateway --help": {
+      "node_id": "ecs-p2ph",
+      "task": "在 Windows-mobile 执行: cmd /c openclaw gateway --help",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105766158+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:在 Windows-mobile 节点执行命令查一下 OpenClaw 是否已安装": {
+      "node_id": "ecs-p2ph",
+      "task": "在 Windows-mobile 节点执行命令查一下 OpenClaw 是否已安装",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105753897+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:在 Windows-mobile 节点执行简单命令: cmd /c echo HELLO_AGENT_TEST_123": {
+      "node_id": "ecs-p2ph",
+      "task": "在 Windows-mobile 节点执行简单命令: cmd /c echo HELLO_AGENT_TEST_123",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105743901+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:在C盘temp目录下创建一个名为agent_test_ok.txt的文件，内容写入'Hello from wanlida-temp agent'": {
+      "node_id": "ecs-p2ph",
+      "task": "在C盘temp目录下创建一个名为agent_test_ok.txt的文件，内容写入'Hello from wanlida-temp agent'",
+      "result": "",
+      "success": false,
+      "learned": "Step 1 (echo 'Hello from wanlida-temp agent' \u003e C:\\temp\\agent_test_ok.txt) failed: error: task dispatch failed: assigned node win-node-1 not registered",
+      "timestamp": "2026-07-03T14:53:21.105861298+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:在C盘temp目录下创建一个测试文件test_agent_ok.txt，写入'TEST PASS'": {
+      "node_id": "ecs-p2ph",
+      "task": "在C盘temp目录下创建一个测试文件test_agent_ok.txt，写入'TEST PASS'",
+      "result": "",
+      "success": false,
+      "learned": "Step 1 (echo 'TEST PASS' \u003e C:\\temp\\test_agent_ok.txt) failed: error: task dispatch failed: assigned node node_1 not registered",
+      "timestamp": "2026-07-03T14:53:21.105823962+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:帮我检查 windows-mobile 的版本信息: 远程执行 tasklist | findstr computehub": {
+      "node_id": "ecs-p2ph",
+      "task": "帮我检查 windows-mobile 的版本信息: 远程执行 tasklist | findstr computehub",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105417604+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:我是端智。老大让我们俩先讨论银河计划的下一步。当前Phase2待办有5项：1)记忆衰减机制 2)聊天记录持久化 3)共享记忆Web管理页完善 4)Windows节点统一管\ufffd...": {
+      "node_id": "ecs-p2ph",
+      "task": "我是端智。老大让我们俩先讨论银河计划的下一步。当前Phase2待办有5项：1)记忆衰减机制 2)聊天记录持久化 3)共享记忆Web管理页完善 4)Windows节点统一管\ufffd...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.104789319+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:我是端智。老大让我们俩先讨论银河计划的下一步。当前Phase2待办有5项：1)记忆衰减机制 2)聊天记录持久化 3)共享记忆Web管理页完善 4)Windows节点统一管�...": {
+      "node_id": "ecs-p2ph",
+      "task": "我是端智。老大让我们俩先讨论银河计划的下一步。当前Phase2待办有5项：1)记忆衰减机制 2)聊天记录持久化 3)共享记忆Web管理页完善 4)Windows节点统一管�...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-02T08:32:12.92488229+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:执行 openclaw_status 工具查询，汇报完整状态": {
+      "node_id": "ecs-p2ph",
+      "task": "执行 openclaw_status 工具查询，汇报完整状态",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105395811+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:查一下内存使用情况": {
+      "node_id": "ecs-p2ph",
+      "task": "查一下内存使用情况",
+      "result": "",
+      "success": false,
+      "learned": "失败原因: 步骤1(free -h)失败: error: task dispatch failed: assigned node node_0 not registered",
+      "timestamp": "2026-07-03T14:53:21.104334995+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:查一下本机磁盘使用情况": {
+      "node_id": "ecs-p2ph",
+      "task": "查一下本机磁盘使用情况",
+      "result": "",
+      "success": false,
+      "learned": "失败原因: 步骤1(df -h)失败: error: task dispatch failed: assigned node local_node not registered",
+      "timestamp": "2026-07-03T14:53:21.10426027+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:查看 所有 节点 OpenClaw 状态": {
+      "node_id": "ecs-p2ph",
+      "task": "查看 所有 节点 OpenClaw 状态",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105387618+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:查看所有节点OpenClaw状态": {
+      "node_id": "ecs-p2ph",
+      "task": "查看所有节点OpenClaw状态",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.10536841+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:查看所有节点的 OpenClaw 状态": {
+      "node_id": "ecs-p2ph",
+      "task": "查看所有节点的 OpenClaw 状态",
+      "result": "",
+      "success": false,
+      "learned": "Step 1 () failed: error: unknown tool: psql",
+      "timestamp": "2026-07-03T14:53:21.10535232+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:查询当前节点OpenClaw运行状态，汇报是否安装、是否运行、端口、健康状态": {
+      "node_id": "ecs-p2ph",
+      "task": "查询当前节点OpenClaw运行状态，汇报是否安装、是否运行、端口、健康状态",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105317823+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:查询本节点 OpenClaw 运行状态，包括是否安装、是否运行、版本、端口": {
+      "node_id": "ecs-p2ph",
+      "task": "查询本节点 OpenClaw 运行状态，包括是否安装、是否运行、版本、端口",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105301063+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:查询集群所有节点 OpenClaw 状态，包括 ecs-p2ph、local-arm、windows-mobile，汇报每个节点的 OpenClaw 安装情况、运行状态、端口、健康状态和发现的问题。": {
+      "node_id": "ecs-p2ph",
+      "task": "查询集群所有节点 OpenClaw 状态，包括 ecs-p2ph、local-arm、windows-mobile，汇报每个节点的 OpenClaw 安装情况、运行状态、端口、健康状态和发现的问题。",
+      "result": "",
+      "success": false,
+      "learned": "Step 1 () failed: error: context canceled",
+      "timestamp": "2026-07-03T14:53:21.105249568+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:检查一下各个节点的在线状态，简单汇报一下": {
+      "node_id": "ecs-p2ph",
+      "task": "检查一下各个节点的在线状态，简单汇报一下",
+      "result": "",
+      "success": true,
+      "learned": "任务成功完成",
+      "timestamp": "2026-07-03T14:53:21.104204031+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:检查一下本机的系统信息，包括 CPU 核心数、内存大小和磁盘使用率": {
+      "node_id": "ecs-p2ph",
+      "task": "检查一下本机的系统信息，包括 CPU 核心数、内存大小和磁盘使用率",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.104558105+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:检查本机状态，调用 openclaw_chat 工具询问 OpenClaw Agent 的状态": {
+      "node_id": "ecs-p2ph",
+      "task": "检查本机状态，调用 openclaw_chat 工具询问 OpenClaw Agent 的状态",
+      "result": "",
+      "success": false,
+      "learned": "Step 2 () failed: error: openclaw_chat 失败 (持久管道: 持久化 shell 未就绪, fallback: signal: killed)",
+      "timestamp": "2026-07-03T14:53:21.105225322+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:检查本机系统信息，告诉我 CPU 核心数": {
+      "node_id": "ecs-p2ph",
+      "task": "检查本机系统信息，告诉我 CPU 核心数",
+      "result": "",
+      "success": true,
+      "learned": "任务成功完成",
+      "timestamp": "2026-07-03T14:53:21.104541091+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:状态如何": {
+      "node_id": "ecs-p2ph",
+      "task": "状态如何",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.104947107+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:用 exec_shell 在 Windows-mobile 执行: cmd /c openclaw status": {
+      "node_id": "ecs-p2ph",
+      "task": "用 exec_shell 在 Windows-mobile 执行: cmd /c openclaw status",
+      "result": "",
+      "success": false,
+      "learned": "Step 1 () failed: error: 上下文取消",
+      "timestamp": "2026-07-03T14:53:21.105732873+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:用 exec_shell 工具在 Windows-mobile 执行以下命令并告诉我结果: openclaw status 2\u003e\u00261": {
+      "node_id": "ecs-p2ph",
+      "task": "用 exec_shell 工具在 Windows-mobile 执行以下命令并告诉我结果: openclaw status 2\u003e\u00261",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105716554+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:用 exec_shell 工具在 Windows-mobile 节点执行: cmd /c type C:\\Windows\\System32\\openclaw.bat": {
+      "node_id": "ecs-p2ph",
+      "task": "用 exec_shell 工具在 Windows-mobile 节点执行: cmd /c type C:\\Windows\\System32\\openclaw.bat",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105707066+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:用 manage_openclaw 工具查所有节点的 OpenClaw 状态": {
+      "node_id": "ecs-p2ph",
+      "task": "用 manage_openclaw 工具查所有节点的 OpenClaw 状态",
+      "result": "",
+      "success": false,
+      "learned": "Step 1 () failed: error: unknown tool: manage_openclaw",
+      "timestamp": "2026-07-03T14:53:21.10521367+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:用一句话介绍你自己，你是谁？运行在哪？用户名是computehub吗？": {
+      "node_id": "ecs-p2ph",
+      "task": "用一句话介绍你自己，你是谁？运行在哪？用户名是computehub吗？",
+      "result": "",
+      "success": false,
+      "learned": "Step 1 (whoami) failed: error: task dispatch failed: assigned node compute-node-1 not registered",
+      "timestamp": "2026-07-03T14:53:21.105801539+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:端智呼叫小智：老大要在银河计划会议上讨论Phase2下一步和Phase3方向。请在30分钟内（如果你能看到这条消息）回复端智说收到了。": {
+      "node_id": "ecs-p2ph",
+      "task": "端智呼叫小智：老大要在银河计划会议上讨论Phase2下一步和Phase3方向。请在30分钟内（如果你能看到这条消息）回复端智说收到了。",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.104731151+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:端智转达老大指令：请上银河计划大厅，老大要在那里继续讨论。同时请在你们Agent讨论区回复确认已收到。": {
+      "node_id": "ecs-p2ph",
+      "task": "端智转达老大指令：请上银河计划大厅，老大要在那里继续讨论。同时请在你们Agent讨论区回复确认已收到。",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.104660489+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:自我介绍，你是谁？什么平台？CPU/GPU/内存多少？简短回答。": {
+      "node_id": "ecs-p2ph",
+      "task": "自我介绍，你是谁？什么平台？CPU/GPU/内存多少？简短回答。",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105954147+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:详细检查本机系统状况：CPU、内存、磁盘、运行时间，输出完整报告": {
+      "node_id": "ecs-p2ph",
+      "task": "详细检查本机系统状况：CPU、内存、磁盘、运行时间，输出完整报告",
+      "result": "",
+      "success": true,
+      "learned": "任务成功完成",
+      "timestamp": "2026-07-03T14:53:21.1045094+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:说早上好，然后让三个节点各自汇报": {
+      "node_id": "ecs-p2ph",
+      "task": "说早上好，然后让三个节点各自汇报",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105945435+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:请做一下自我介绍": {
+      "node_id": "ecs-p2ph",
+      "task": "请做一下自我介绍",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.104918901+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:请分析当前集群状态，列出所有节点的在线情况和版本信息": {
+      "node_id": "ecs-p2ph",
+      "task": "请分析当前集群状态，列出所有节点的在线情况和版本信息",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.104929686+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:请回复一句话确认你在线，并告诉我你在哪个节点上以及版本号": {
+      "node_id": "ecs-p2ph",
+      "task": "请回复一句话确认你在线，并告诉我你在哪个节点上以及版本号",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.10568661+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:请在 Windows-mobile 节点上执行命令: cmd /c \"where node 2\u003enul || echo NODE_NOT_FOUND \u0026\u0026 where npm 2\u003enul || echo NPM_NOT_FOUND\"": {
+      "node_id": "ecs-p2ph",
+      "task": "请在 Windows-mobile 节点上执行命令: cmd /c \"where node 2\u003enul || echo NODE_NOT_FOUND \u0026\u0026 where npm 2\u003enul || echo NPM_NOT_FOUND\"",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105670765+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:请在 Windows-mobile 节点执行: cmd /c \"dir /s /b C:\\npm.cmd 2\u003enul \u0026 dir /s /b C:\\npm.exe 2\u003enul \u0026 dir /s /b C:\\Program Files\\nodejs\\*npm* 2\u003enul\"": {
+      "node_id": "ecs-p2ph",
+      "task": "请在 Windows-mobile 节点执行: cmd /c \"dir /s /b C:\\npm.cmd 2\u003enul \u0026 dir /s /b C:\\npm.exe 2\u003enul \u0026 dir /s /b C:\\Program Files\\nodejs\\*npm* 2\u003enul\"",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105657469+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:请基于现有的三国游戏设计方案，设计一个3D战斗特效系统。包括：1）技能特效粒子系统 2）命中反馈效果 3）环境互动特效 4）性能优化方案。请提供\ufffd\ufffd...": {
+      "node_id": "ecs-p2ph",
+      "task": "请基于现有的三国游戏设计方案，设计一个3D战斗特效系统。包括：1）技能特效粒子系统 2）命中反馈效果 3）环境互动特效 4）性能优化方案。请提供\ufffd\ufffd...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105904459+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:请基于现有的三国游戏设计方案，设计一个3D战斗特效系统。包括：1）技能特效粒子系统 2）命中反馈效果 3）环境互动特效 4）性能优化方案。请提供��...": {
+      "node_id": "ecs-p2ph",
+      "task": "请基于现有的三国游戏设计方案，设计一个3D战斗特效系统。包括：1）技能特效粒子系统 2）命中反馈效果 3）环境互动特效 4）性能优化方案。请提供��...",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-02T08:32:12.960821261+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:请执行 self_diagnose": {
+      "node_id": "ecs-p2ph",
+      "task": "请执行 self_diagnose",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105798543+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:请报告你的 Worker 状态和 OpenClaw 管理状态": {
+      "node_id": "ecs-p2ph",
+      "task": "请报告你的 Worker 状态和 OpenClaw 管理状态",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105203629+08:00",
+      "strength": 1
+    },
+    "ecs-p2ph:请远程连接 Windows-mobile 节点，执行命令: hostname \u0026\u0026 echo HELLO": {
+      "node_id": "ecs-p2ph",
+      "task": "请远程连接 Windows-mobile 节点，执行命令: hostname \u0026\u0026 echo HELLO",
+      "result": "",
+      "success": true,
+      "learned": "",
+      "timestamp": "2026-07-03T14:53:21.105647437+08:00",
+      "strength": 1
+    }
+  },
+  "knowledge": {
+    "ACPI事件误触发：ECS自动重启根因:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "ACPI事件误触发：ECS自动重启根因",
+      "content": "ACPI事件误触发：ECS自动重启根因",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "ACPI事件误触发：ECS自动重启根因",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.112598966+08:00"
+    },
+    "AGENT-COMM-001: Agent-to-Agent 双向通信全链路测试:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "AGENT-COMM-001: Agent-to-Agent 双向通信全链路测试",
+      "content": "AGENT-COMM-001: Agent-to-Agent 双向通信全链路测试",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "AGENT-COMM-001: Agent-to-Agent 双向通信全链路测试",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.112441895+08:00"
+    },
+    "AGENT-COMM-STD-001: Agent-to-Agent 双向通信标准流程 v1.0:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "AGENT-COMM-STD-001: Agent-to-Agent 双向通信标准流程 v1.0",
+      "content": "AGENT-COMM-STD-001: Agent-to-Agent 双向通信标准流程 v1.0",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "AGENT-COMM-STD-001: Agent-to-Agent 双向通信标准流程 v1.0",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.112421269+08:00"
+    },
+    "AI大厅记忆与经验系统总结 — 共享记忆机制:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "AI大厅记忆与经验系统总结 — 共享记忆机制",
+      "content": "AI大厅记忆与经验系统总结 — 共享记忆机制",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "AI大厅记忆与经验系统总结 — 共享记忆机制",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.112327618+08:00"
+    },
+    "AI大厅记忆与经验系统总结 — 共享记忆机制:小智": {
+      "node_id": "小智",
+      "topic": "AI大厅记忆与经验系统总结 — 共享记忆机制",
+      "content": "## 共享记忆规则（2026-06-13定稿）\n\n## 核心原则\n1. 学到的新知识 → 判断是否属于通用经验\n2. 通用经验 → 写入 memory/shared/knowledge/\n3. 本地经验 → 写入 memory/agents/自己的/\n4. 重要事件 → 记录到 memory/shared/timeline/\n5. 发现模式 → 写入 memory/shared/patterns/\n6. 提炼洞察 → 写入 memory/shared/insights/\n\n## 查询标准\n1. 遇到常见问题 → 先搜 memory/shared/knowledge/\n2. 没搜到 → 搜 memory/shared/connections/events/ 找类似事件\n3. 再没搜到 → 自己解决 → 学到的写入共享库\n\n## 集群知识库API\nPOST /api/v1/knowledge/put — 写入知识\nGET /api/v1/knowledge/query — 查询知识\nGET /api/v1/knowledge/stats — 知识统计",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "共享记忆",
+        "AI大厅",
+        "知识库",
+        "API",
+        "五智"
+      ],
+      "timestamp": "2026-07-02T12:22:18.522251952+08:00"
+    },
+    "AI对话页面风格统一经验:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "AI对话页面风格统一经验",
+      "content": "AI对话页面风格统一经验",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "AI对话页面风格统一经验",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.112309162+08:00"
+    },
+    "AI平台管理分工：端智vs小智:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "AI平台管理分工：端智vs小智",
+      "content": "AI平台管理分工：端智vs小智",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "AI平台管理分工：端智vs小智",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.112261755+08:00"
+    },
+    "AI记忆管理页面UI迭代经验:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "AI记忆管理页面UI迭代经验",
+      "content": "AI记忆管理页面UI迭代经验",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "AI记忆管理页面UI迭代经验",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.112221784+08:00"
+    },
+    "Android Termux SIGSYS崩溃修复:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "Android Termux SIGSYS崩溃修复",
+      "content": "Android Termux SIGSYS崩溃修复",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "Android Termux SIGSYS崩溃修复",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.112204852+08:00"
+    },
+    "BCP-001: Base64编码跨AI通信标准:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "BCP-001: Base64编码跨AI通信标准",
+      "content": "BCP-001: Base64编码跨AI通信标准",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "BCP-001: Base64编码跨AI通信标准",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.11218259+08:00"
+    },
+    "BCP-001: Base64编码跨AI通信标准:小智": {
+      "node_id": "小智",
+      "topic": "BCP-001: Base64编码跨AI通信标准",
+      "content": "## 核心原则\nAI↔AI通信时用Base64编码传输脚本/代码，避开JSON+Shell多层引号转义\n\n## PowerShell 用法（关键！）\n必须用 UTF-16LE 编码，不能用 UTF-8\npowershell -EncodedCommand $(echo '脚本内容' | iconv -t UTF-16LE | base64 -w0)\n\n## 大脚本处理\n- ≤8KB: -EncodedCommand 传\n- \u003e8KB: WriteAllBytes 写文件\n- 超大文件: Gallery上传 + WebClient.DownloadFile（timeout ≥ 180s）\n\n## Linux 侧\necho \u003cb64\u003e | base64 -d \u003e file \u0026\u0026 python3 file\n\n完整标准: memory/topics/执行规则/BCP-001_Base64编码跨AI通信标准.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "Base64",
+        "跨AI通信",
+        "BCP-001",
+        "PowerShell",
+        "编码标准"
+      ],
+      "timestamp": "2026-07-02T12:12:48.814744715+08:00"
+    },
+    "BCP-002: Gallery文件下载标准流程:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "BCP-002: Gallery文件下载标准流程",
+      "content": "BCP-002: Gallery文件下载标准流程",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "BCP-002: Gallery文件下载标准流程",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.112158413+08:00"
+    },
+    "BCP-002: Gallery文件下载标准流程:小智": {
+      "node_id": "小智",
+      "topic": "BCP-002: Gallery文件下载标准流程",
+      "content": "## 适用场景\n从 ComputeHub Gallery 下载文件到 Worker 节点\n\n## 端点\nGET /api/v1/files/{trace_id}\n\n## 标准命令（PowerShell）\n$wc = New-Object System.Net.WebClient\n$wc.Headers.Add(\"User-Agent\", \"ComputeHub-Worker/1.0\")\n$wc.DownloadFile(\"http://GATEWAY_IP:8282/api/v1/files/TRACE_ID\", \"TARGET_PATH\")\n\n## 时间设置\ntimeout ≥ 180s（大文件）\n\n完整标准: memory/topics/执行规则/BCP-002_Gallery文件下载标准流程.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "Gallery",
+        "文件下载",
+        "BCP-002",
+        "标准流程"
+      ],
+      "timestamp": "2026-07-02T12:12:48.949318561+08:00"
+    },
+    "CLU-DTM-001: AI交流大厅标准:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "CLU-DTM-001: AI交流大厅标准",
+      "content": "CLU-DTM-001: AI交流大厅标准",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "CLU-DTM-001: AI交流大厅标准",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.112145929+08:00"
+    },
+    "CLU-DTM-001: AI交流大厅标准:小智": {
+      "node_id": "小智",
+      "topic": "CLU-DTM-001: AI交流大厅标准",
+      "content": "## 功能\nAI智能体（五智）之间的消息广播和私聊\n\n## 消息格式\n{\"hall_msg\": {\"type\": \"broadcast|direct\", \"from\": \"小智\", \"to\": \"端智\", \"text\": \"...\"}}\n\n## 端点\n通过 Gateway 的 Hall 端点转发\n- Hall 广播：所有在线 Agent 可见\n- Hall 私聊：指定 Agent 接收\n\n完整标准: memory/topics/执行规则/CLU-DTM-001_AI交流大厅标准.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "AI交流",
+        "CLU-DTM-001",
+        "五智",
+        "Hall消息"
+      ],
+      "timestamp": "2026-07-02T12:12:50.314865449+08:00"
+    },
+    "CLU-STM-002: 跨节点协作标准:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "CLU-STM-002: 跨节点协作标准",
+      "content": "CLU-STM-002: 跨节点协作标准",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "CLU-STM-002: 跨节点协作标准",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.112115064+08:00"
+    },
+    "CLU-STM-002: 跨节点协作标准:小智": {
+      "node_id": "小智",
+      "topic": "CLU-STM-002: 跨节点协作标准",
+      "content": "## 核心原则\n- 节点间通过 Gateway 分发任务\n- Agent 通过 Hall 通信\n- 跨节点执行用 exec_remote 工具\n- 任务状态通过 Gateway API 同步\n\n## 分工\n- 小智：调度+决策\n- 米智：巡检+监控\n- 端智：重活+排查\n- 丁智/软智：Windows远程\n\n完整标准: memory/topics/执行规则/CLU-STM-002_CrossNodeCollabStandard.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "跨节点协作",
+        "CLU-STM-002",
+        "任务分发",
+        "五智"
+      ],
+      "timestamp": "2026-07-02T12:12:50.450759967+08:00"
+    },
+    "COM-DEP-001: 编译部署标准流程:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "COM-DEP-001: 编译部署标准流程",
+      "content": "COM-DEP-001: 编译部署标准流程",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "COM-DEP-001: 编译部署标准流程",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.112082518+08:00"
+    },
+    "COM-DEP-001: 编译部署标准流程:小智": {
+      "node_id": "小智",
+      "topic": "COM-DEP-001: 编译部署标准流程",
+      "content": "## 完整部署流程\n1. 代码修改 → go vet / go build 验证\n2. 全平台编译（5/5: linux-amd64/arm64, windows-amd64, darwin-amd64/arm64）\n3. Gallery上传 binary\n4. systemctl restart gateway\n5. 节点自动升级（5min→30min间隔）\n6. 验证：SHA256 + 节点在线\n\n## 版本管理\n- 版本号由 git tag 控制（scripts/get_version.sh）\n- 编译时 ldflags 注入 VERSION\n\n## 验证标准\n- go build ./... 零错误\n- 5/5 平台编译通过\n- 节点 30s 内重新注册\n\n完整标准: memory/topics/执行规则/COM-DEP-001_编译部署标准流程.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "编译部署",
+        "COM-DEP-001",
+        "Go编译",
+        "全平台",
+        "Gallery"
+      ],
+      "timestamp": "2026-07-02T12:12:50.034376228+08:00"
+    },
+    "COM-STD-001: 集群通信标准:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "COM-STD-001: 集群通信标准",
+      "content": "COM-STD-001: 集群通信标准",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "COM-STD-001: 集群通信标准",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.112069913+08:00"
+    },
+    "COM-STD-001: 集群通信标准:小智": {
+      "node_id": "小智",
+      "topic": "COM-STD-001: 集群通信标准",
+      "content": "## 集群通信架构\n- Gateway 作为中央枢纽（port 8282）\n- Worker 通过公网/内网注册\n- WS（WebSocket）优先通信，HTTP poll 兜底\n- 节点心跳每 30s\n\n## 通信协议\n- ARC-AI-NET 拓扑广播\n- KSP-001 知识共享\n- Hall 消息转发（Agent↔Agent）\n\n## 端口\n- Gateway: 8282\n- WS: /api/v1/ws\n- Gallery: /api/v1/files/\n\n完整标准: memory/topics/执行规则/COM-STD-001_集群通信标准.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "集群通信",
+        "COM-STD-001",
+        "WebSocket",
+        "Gateway",
+        "架构"
+      ],
+      "timestamp": "2026-07-02T12:12:50.16684835+08:00"
+    },
+    "ClusterMemory 知识丢失根因修复:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "ClusterMemory 知识丢失根因修复",
+      "content": "ClusterMemory 知识丢失根因修复",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "ClusterMemory 知识丢失根因修复",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.112093366+08:00"
+    },
+    "ComputeHub 架构经验库 — 源码目录/API路由/组件关系:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "ComputeHub 架构经验库 — 源码目录/API路由/组件关系",
+      "content": "ComputeHub 架构经验库 — 源码目录/API路由/组件关系",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "ComputeHub 架构经验库 — 源码目录/API路由/组件关系",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.112025557+08:00"
+    },
+    "ComputeHub 架构经验库 — 源码目录/API路由/组件关系:小智": {
+      "node_id": "小智",
+      "topic": "ComputeHub 架构经验库 — 源码目录/API路由/组件关系",
+      "content": "## 源码目录结构\ncomputehub/\n├── cmd/              # 入口: gateway/worker/node/tui\n├── src/              # 核心包\n│   ├── gateway/      → API路由、节点/任务管理、文件下载\n│   ├── kernel/       → 任务调度、状态机、节点管理\n│   ├── executor/     → 命令执行器\n│   ├── composer/     → LLM任务分解\n│   ├── scheduler/    → 任务调度算法\n│   ├── pure/         → 过滤管道\n│   ├── gene/         → 基因存储器（学习优化）\n│   ├── discover/     → 节点发现\n│   ├── health/       → 健康检查\n│   ├── monitor/      → 监控\n│   ├── prometheus/   → 指标收集\n│   ├── visualizer/   → 全球算力地图 + v2 API\n│   └── version/      → 版本号管理\n├── deploy/           # 部署二进制\n├── scripts/          # 工具脚本\n└── config.json       # Gateway配置\n\n## Gateway 核心组件\nOpcGateway {\n    Kernel — 任务调度 + 节点管理 + 状态机\n    Pipeline — 请求过滤管道（语法/语义/边界过滤）\n    Executor — 本地命令执行器\n    GeneStore — 学习/优化记忆\n    Composer — LLM任务分解器\n    TaskDispatcher — 从kernel队列拿任务→本地Runner执行\n    Metrics — Prometheus指标\n    Scheduler — 任务调度算法\n}\n\n## API路由（v1）\nPOST /api/dispatch — 遗留调度\nGET /api/health — 健康检查\nGET /api/status — 系统状态\nPOST /api/v1/task — 创建任务\nGET /api/v1/task/:id — 查询任务\nGET /api/v1/tasks — 任务列表\nPOST /api/v1/node/register — 节点注册\nGET /api/v1/nodes — 节点列表\nGET /api/v1/files/:id — Gallery文件下载\nPOST /api/v1/knowledge/put — 知识写入\nGET /api/v1/knowledge/query — 知识查询\nGET /api/v1/knowledge/stats — 知识统计\n\n## 完整文档\nmemory/topics/技术经验/computehub-架构经验库.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "架构",
+        "ComputeHub",
+        "源码结构",
+        "API路由",
+        "Gateway"
+      ],
+      "timestamp": "2026-07-02T12:22:16.86203248+08:00"
+    },
+    "ComputeHub部署安全操作规范 (COM-DEP-001):ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "ComputeHub部署安全操作规范 (COM-DEP-001)",
+      "content": "ComputeHub部署安全操作规范 (COM-DEP-001)",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "ComputeHub部署安全操作规范 (COM-DEP-001)",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.111995942+08:00"
+    },
+    "ECS内网Ollama内存不足:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "ECS内网Ollama内存不足",
+      "content": "ECS内网Ollama内存不足",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "ECS内网Ollama内存不足",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.111968793+08:00"
+    },
+    "ECS安全组未放行18789:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "ECS安全组未放行18789",
+      "content": "ECS安全组未放行18789",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "ECS安全组未放行18789",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.111946326+08:00"
+    },
+    "ECS服务器SSH连接故障排查流程:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "ECS服务器SSH连接故障排查流程",
+      "content": "ECS服务器SSH连接故障排查流程",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "ECS服务器SSH连接故障排查流程",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.111919576+08:00"
+    },
+    "ECS服务器SSH连接故障排查流程:小智": {
+      "node_id": "小智",
+      "topic": "ECS服务器SSH连接故障排查流程",
+      "content": "## 问题现象\nSSH连接ECS超时，ping/curl全部不通\n\n## 排查顺序\n1. 检查fail2ban — fail2ban-client status sshd（看是否被封）\n2. 检查SSHD状态 — systemctl status sshd（确认服务运行）\n3. 检查iptables — iptables -L -n（找到真凶！）\n4. 检查安全组 — 阿里云控制台安全组规则\n\n## 真凶：iptables INPUT 默认策略 DROP\nChain INPUT (policy DROP)\niptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT\niptables -A INPUT -p tcp --dport 22 -j ACCEPT\niptables -P INPUT ACCEPT\n\n## 预防措施\n- 定期检查iptables规则\n- 配置iptables规则持久化（iptables-persistent）\n- 安全组和iptables双重检查\n\n完整文档: memory/topics/部署运维/ECS服务器SSH连接故障排查经验.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "SSH",
+        "ECS",
+        "故障排查",
+        "iptables",
+        "安全组",
+        "网络安全"
+      ],
+      "timestamp": "2026-07-02T12:22:17.709107226+08:00"
+    },
+    "ERR-003: 远程shutdown命令失效（CMD引号陷阱）:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "ERR-003: 远程shutdown命令失效（CMD引号陷阱）",
+      "content": "ERR-003: 远程shutdown命令失效（CMD引号陷阱）",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "ERR-003: 远程shutdown命令失效（CMD引号陷阱）",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.111878296+08:00"
+    },
+    "ERR-003: 远程shutdown命令失效（CMD引号陷阱）:小智": {
+      "node_id": "小智",
+      "topic": "ERR-003: 远程shutdown命令失效（CMD引号陷阱）",
+      "content": "## 问题\n通过OPC向Windows Worker发送 shutdown /r /t 5 /c \"注释\" 命令返回completed但没重启\n\n## 根因\nCMD的/C参数和shutdown的/c参数冲突\n中文逗号在CMD中被视为参数分隔符\n外层引号被CMD吃掉一层，shutdown收到残缺参数\nshutdown默默忽略无法解析的参数，exit 0退出\n\n## 安全写法\nshutdown /r /t 0  — 不加注释，干净利落\nshutdown /r /t 5 /c \"注释不要用中文和逗号\"  — 转义引号\npowershell -Command \"Restart-Computer -Force\"  — 最稳\n\n## 核心教训\n向Windows远程执行命令时，CMD的引号/特殊字符解析是最大陷阱\n\n完整文档: memory/topics/错误记录/远程shutdown失效-中文引号问题.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "Windows",
+        "CMD",
+        "引号陷阱",
+        "shutdown",
+        "远程执行",
+        "ERR-003"
+      ],
+      "timestamp": "2026-07-02T12:22:17.569897707+08:00"
+    },
+    "Gateway共享记忆层持久化方案架构:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "Gateway共享记忆层持久化方案架构",
+      "content": "Gateway共享记忆层持久化方案架构",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "Gateway共享记忆层持久化方案架构",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.111842101+08:00"
+    },
+    "Git记忆管理系统规范 v2.0 — 文件查找/写入/提交:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "Git记忆管理系统规范 v2.0 — 文件查找/写入/提交",
+      "content": "Git记忆管理系统规范 v2.0 — 文件查找/写入/提交",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "Git记忆管理系统规范 v2.0 — 文件查找/写入/提交",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.111761957+08:00"
+    },
+    "Git记忆管理系统规范 v2.0 — 文件查找/写入/提交:小智": {
+      "node_id": "小智",
+      "topic": "Git记忆管理系统规范 v2.0 — 文件查找/写入/提交",
+      "content": "## 核心理念\nGit不是版本控制工具，是记忆系统本身\n\n## 文件查找流程（最高优先级）\n收到任务 → git ls-files | grep 关键词 → 找到 → 读取\n否则 → git grep 关键词 → 找到 → 读取\n否则 → find 文件系统 → 确认\n\n## 常用命令\ngit ls-files | grep \"关键词\"  — 按文件名搜索\ngit grep -l \"关键词\"  — 按内容搜索\ngit log --all --oneline --grep=\"关键词\"  — 按提交历史\ngit log --oneline -- \u003c文件路径\u003e  — 查看文件修改历史\n\n## 记忆写入流程\n学习/发现 → 写入文件 → git add → git commit → 完成\n\n## commit规范\n日常记录: git commit -m \"记录: \u003c主题\u003e - \u003c具体发现\u003e\"\n标准发布: git commit -m \"📝 STD-xxx: \u003c标题\u003e\"\n每日归档: 每天结束时提交当日记忆文件\n\n完整文档: memory/topics/技术经验/git管理规范.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "Git",
+        "记忆系统",
+        "文件查找",
+        "规范",
+        "搜索技巧"
+      ],
+      "timestamp": "2026-07-02T12:22:17.980501118+08:00"
+    },
+    "Git记忆管理规划 — 核心文件跟踪/垃圾文件排除:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "Git记忆管理规划 — 核心文件跟踪/垃圾文件排除",
+      "content": "Git记忆管理规划 — 核心文件跟踪/垃圾文件排除",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "Git记忆管理规划 — 核心文件跟踪/垃圾文件排除",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.111670077+08:00"
+    },
+    "Git记忆管理规划 — 核心文件跟踪/垃圾文件排除:小智": {
+      "node_id": "小智",
+      "topic": "Git记忆管理规划 — 核心文件跟踪/垃圾文件排除",
+      "content": "## 核心问题\n1. 核心记忆文件未纳入git管理\n2. 大量临时/测试文件污染git status\n3. 无.gitignore或不足\n\n## 应对\n- .gitignore 排除 deploy/*, node_modules/, __pycache__/, *.pyc, .env\n- git add 精确加核心文件，不用 git add .\n- 核心文件必须跟踪：AGENTS.md, SOUL.md, SOP.md, MEMORY.md, TOOLS.md, config/\n\n完整文档: memory/topics/技术经验/git管理规划.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "Git",
+        "记忆管理",
+        ".gitignore",
+        "文件跟踪",
+        "规划"
+      ],
+      "timestamp": "2026-07-02T12:23:16.07166271+08:00"
+    },
+    "Go HTTP/1.1强制导致NewAPI超时修复:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "Go HTTP/1.1强制导致NewAPI超时修复",
+      "content": "Go HTTP/1.1强制导致NewAPI超时修复",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "Go HTTP/1.1强制导致NewAPI超时修复",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.1116331+08:00"
+    },
+    "IMG-REC-001: 图片识别操作规范（必须用qwen3.6-35b）:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "IMG-REC-001: 图片识别操作规范（必须用qwen3.6-35b）",
+      "content": "IMG-REC-001: 图片识别操作规范（必须用qwen3.6-35b）",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "IMG-REC-001: 图片识别操作规范（必须用qwen3.6-35b）",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.11110137+08:00"
+    },
+    "IMG-REC-001: 图片识别操作规范（必须用qwen3.6-35b）:小智": {
+      "node_id": "小智",
+      "topic": "IMG-REC-001: 图片识别操作规范（必须用qwen3.6-35b）",
+      "content": "## 核心规则\n当前session默认模型（deepseek-v4-flash）不支持图片输入！\n所有图片识别必须直接调用 qwen3.6-35b API\n\n## 推荐方式\n直接调本地 qwen3.6-35b API（http://127.0.0.1:8765/v1）\n将图片编码为base64，通过image_url字段传入\nAPI返回后从reasoning字段读取结果\n\n## 简要流程\n调用 qwen3.6-35b → base64传图 → 读 reasoning\n\n## 性能\n本地API（127.0.0.1:8765）响应1-3秒\n远程API（58.23.129.98:8000）需5-10秒\n\n## 配置\nAPI地址: http://127.0.0.1:8765/v1/chat/completions\n备用: http://10.111.223.227:8765/v1\n模型: qwen3.6-35b\nAPI Key: sk-78sadn09bjawde123e\n\n完整标准: memory/topics/执行规则/图片识别操作规范.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "图片识别",
+        "IMG-REC-001",
+        "qwen3.6-35b",
+        "base64",
+        "deepseek不支持"
+      ],
+      "timestamp": "2026-07-02T12:23:15.802040293+08:00"
+    },
+    "Knowledge Sync Fix Verification:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "Knowledge Sync Fix Verification",
+      "content": "Knowledge Sync Fix Verification",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "Knowledge Sync Fix Verification",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.111094611+08:00"
+    },
+    "Knowledge: Windows GPU Detection via WMI:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "Knowledge: Windows GPU Detection via WMI",
+      "content": "Knowledge: Windows GPU Detection via WMI",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "Knowledge: Windows GPU Detection via WMI",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.111081412+08:00"
+    },
+    "MCP-STD-001/002: 模型配置/Provider合并标准流程:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "MCP-STD-001/002: 模型配置/Provider合并标准流程",
+      "content": "MCP-STD-001/002: 模型配置/Provider合并标准流程",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "MCP-STD-001/002: 模型配置/Provider合并标准流程",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.111051723+08:00"
+    },
+    "MCP-STD-001/002: 模型配置/Provider合并标准流程:小智": {
+      "node_id": "小智",
+      "topic": "MCP-STD-001/002: 模型配置/Provider合并标准流程",
+      "content": "## 核心原则\n修改OpenClaw模型配置必须链路完整一致\n\n## 三层架构\nProvider → Primary → Alias（必须链路完整）\n\n## 4步流程\n1. 读取 → 2. 确认 → 3. 修改 → 4. 验证\n\n## 验证要点\n- 链路验证（检查所有引用）\n- primary验证（检查是否指向正确）\n- 有 ❌ 标记必须修正\n\n## 常见错误\n- provider名写错（漏 -common）\n- model id 不存在\n- primary 指向错误\n\n## MCP-STD-002: Provider合并\n合并多个 provider 时需同步更新所有引用\n\n完整标准: memory/topics/执行规则/模型配置修改标准流程.md\n         memory/topics/执行规则/MCP-STD-002_Provider合并标准流程.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "模型配置",
+        "MCP-STD-001",
+        "MCP-STD-002",
+        "Provider合并",
+        "OpenClaw配置"
+      ],
+      "timestamp": "2026-07-02T12:12:49.769558616+08:00"
+    },
+    "Network Tuning Test:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "Network Tuning Test",
+      "content": "Network Tuning Test",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "Network Tuning Test",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.111044377+08:00"
+    },
+    "OCR-PDF转Word-邮件发送标准流程（DOC-STD-001）:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "OCR-PDF转Word-邮件发送标准流程（DOC-STD-001）",
+      "content": "OCR-PDF转Word-邮件发送标准流程（DOC-STD-001）",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "OCR-PDF转Word-邮件发送标准流程（DOC-STD-001）",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.111005982+08:00"
+    },
+    "OCR-PDF转Word-邮件发送标准流程（DOC-STD-001）:小智": {
+      "node_id": "小智",
+      "topic": "OCR-PDF转Word-邮件发送标准流程（DOC-STD-001）",
+      "content": "## 适用场景\nPDF扫描件（法律合同/股东协议等）→ OCR识别 → 转Word文档 → 附件邮件\n\n## 全链路流程\n1. PDF转PNG（pdftoppm -png -r 300）\n2. Tesseract OCR（tesseract -l chi_sim+eng --psm 3）\n3. 合并OCR文本\n4. 文本转Word文档（python-docx）\n5. 附件邮件发送（send_email.py）\n\n## 实战案例\n霞浦股东协议：49页扫描件PDF（8.9MB）→ OCR识别56KB文本 → Word 55KB → 发送至邮箱\n全链路约3分钟\n\n## 关键要点\n- 分辨率选300dpi性价比最高，200dpi错字多，400dpi耗时翻倍\n- 法律文书用 chi_sim+eng 语言包，chi_sim放前面\n- python-docx必须设置东亚字体（w:eastAsia），否则Word中文变方块\n- send_email.py 内置MIME类型映射，支持附件中文文件名RFC 2231编码\n- QQ邮箱优先 → 163邮箱自动备选\n\n## 依赖安装\napt install poppler-utils tesseract-ocr tesseract-ocr-chi-sim tesseract-ocr-eng\npip install python-docx\n\n## 经验教训\n- 倾斜图片先 ImageMagick deskew 预处理\n- pdftoppm 比 convert 快5-10倍\n- send_email.py 附件路径必须绝对路径\n\n完整标准文档：memory/shared/knowledge/文档处理/OCR-PDF转Word-邮件发送标准流程.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "OCR",
+        "PDF处理",
+        "Python",
+        "邮件发送",
+        "文档处理",
+        "标准流程",
+        "DOC-STD-001"
+      ],
+      "timestamp": "2026-07-02T12:07:29.357346193+08:00"
+    },
+    "OPC-WIN-STD-001: Worker自动更新标准流程:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "OPC-WIN-STD-001: Worker自动更新标准流程",
+      "content": "OPC-WIN-STD-001: Worker自动更新标准流程",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "OPC-WIN-STD-001: Worker自动更新标准流程",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110987281+08:00"
+    },
+    "OPC-WIN-STD-001: Worker自动更新标准流程:小智": {
+      "node_id": "小智",
+      "topic": "OPC-WIN-STD-001: Worker自动更新标准流程",
+      "content": "## 核心教训\nWorker 更新过程中进程会被自己杀死，必须设计\"自杀不掉链\"的独立执行流程\n\n## 关键规则\n- Windows必须用 schtasks 独立调度（不能 start /B）\n- Linux用 nohup + \u0026 后台执行\n- 下载用 Gallery 端点 /api/v1/files/，timeout ≥ 120s\n- Windows --node-id 别超过 15 字符（NetBIOS限制）\n- taskkill 前先下载新版本到带版本号的文件名\n- PowerShell -EncodedCommand 避免 CMD 引号嵌套\n- 版本号必须走 git tag（不手动改 version.txt）\n\n## 致命陷阱\n⚠️ taskkill /f /im computehub.exe 会杀所有同名进程\n⚠️ 包括发命令的Worker，后续命令无法继续\n\n完整标准: memory/topics/执行规则/OPC-WIN-STD-001_Worker自动更新标准流程.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "Worker",
+        "自动更新",
+        "OPC-WIN-STD-001",
+        "Windows",
+        "Linux"
+      ],
+      "timestamp": "2026-07-02T12:12:49.632891495+08:00"
+    },
+    "PROD-STD-001: 生产环境配置修改安全规范:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "PROD-STD-001: 生产环境配置修改安全规范",
+      "content": "PROD-STD-001: 生产环境配置修改安全规范",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "PROD-STD-001: 生产环境配置修改安全规范",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110942005+08:00"
+    },
+    "PROD-STD-001: 生产环境配置修改安全规范:小智": {
+      "node_id": "小智",
+      "topic": "PROD-STD-001: 生产环境配置修改安全规范",
+      "content": "## 3条铁律\n1. 一次只改一件事 — 禁止同时执行多个破坏性改动\n2. 先扫描再动刀 — 删除任何provider/配置前必须全量扫描\n3. 改完必验证 — 修改后必须验证，失败立即回滚\n\n## 验证脚本\nscripts/scan-deps.sh \u003c目标值\u003e — 扫描所有引用\nscripts/verify-config.sh — 配置链路验证 + Gateway检查\n\n## 回滚\ngit checkout HEAD~1 -- openclaw.json \u0026\u0026 systemctl restart openclaw-gateway\n\n完整标准: memory/topics/执行规则/PROD-STD-001_生产环境配置修改安全规范.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "生产环境",
+        "配置修改",
+        "PROD-STD-001",
+        "安全规范",
+        "回滚"
+      ],
+      "timestamp": "2026-07-02T12:12:49.901195113+08:00"
+    },
+    "Phase3b 测试复盘:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "Phase3b 测试复盘",
+      "content": "Phase3b 测试复盘",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "Phase3b 测试复盘",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110965482+08:00"
+    },
+    "SOP-MAIN-001: 生产环境维护标准流程:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "SOP-MAIN-001: 生产环境维护标准流程",
+      "content": "SOP-MAIN-001: 生产环境维护标准流程",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "SOP-MAIN-001: 生产环境维护标准流程",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110639617+08:00"
+    },
+    "SOP-MAIN-001: 生产环境维护标准流程:小智": {
+      "node_id": "小智",
+      "topic": "SOP-MAIN-001: 生产环境维护标准流程",
+      "content": "## 维护流程\n1. 变更前备份\n2. 灰度发布（先一台，再全部）\n3. 监控观察（5分钟）\n4. 回滚预案准备\n\n## 禁止\n- 直接在线上改代码\n- 不通知就改配置\n- 同时改多个组件\n\n完整标准: memory/topics/执行规则/SOP-MAIN-001_生产环境维护标准流程.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "生产维护",
+        "SOP-MAIN-001",
+        "回滚预案",
+        "灰度发布"
+      ],
+      "timestamp": "2026-07-02T12:12:50.987958331+08:00"
+    },
+    "STD-002: Gateway任务调度node字段兼容:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "STD-002: Gateway任务调度node字段兼容",
+      "content": "STD-002: Gateway任务调度node字段兼容",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "STD-002: Gateway任务调度node字段兼容",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110625325+08:00"
+    },
+    "STD-002: Gateway任务调度node字段兼容:小智": {
+      "node_id": "小智",
+      "topic": "STD-002: Gateway任务调度node字段兼容",
+      "content": "## 问题\nGateway API 任务调度支持两种 node 字段写法\n\n## 写法\n- curl -d '{\"command\":\"task\",\"node\":\"Windows-mobile-01\"}'  （最简推荐）\n- curl -d '{\"command\":\"task\",\"node_id\":\"Windows-mobile-01\"}'（Go原生）\n\n## 注意\n两种写法都兼容，推荐用短的 node\n\n完整标准: memory/topics/执行规则/STD-002_Gateway任务调度node字段兼容.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "任务调度",
+        "Gateway",
+        "STD-002",
+        "node字段"
+      ],
+      "timestamp": "2026-07-02T12:12:48.681586434+08:00"
+    },
+    "STD-003: 邮件发送标准流程（QQ邮箱优先→163备选）:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "STD-003: 邮件发送标准流程（QQ邮箱优先→163备选）",
+      "content": "STD-003: 邮件发送标准流程（QQ邮箱优先→163备选）",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "STD-003: 邮件发送标准流程（QQ邮箱优先→163备选）",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110607217+08:00"
+    },
+    "STD-003: 邮件发送标准流程（QQ邮箱优先→163备选）:小智": {
+      "node_id": "小智",
+      "topic": "STD-003: 邮件发送标准流程（QQ邮箱优先→163备选）",
+      "content": "## 适用场景\n任何需要发送邮件（文本/附件）的任务\n\n## 核心命令\npython3 scripts/send_email.py \u003c收件人\u003e \u003c主题\u003e \u003c内容文件路径\u003e\n\n## 邮箱配置\n- 主邮箱（QQ）: 19525456@qq.com | 授权码: bzgwylbbrocdbiie\n- 备用邮箱（163）: chenqifu_fzu@163.com | 授权码: AWZBPidhza74EbV8\n- 自动备选切换：QQ失败自动切163\n\n## 附件支持\n- .docx, .pdf, .jpg, .png, .zip 等自动识别MIME类型\n- 中文文件名 RFC 2231 编码避免乱码\n\n## 配置文件\nconfig/email.conf（授权码来源）\n\n完整标准: memory/topics/执行规则/STD-003_邮件发送标准流程.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "邮件发送",
+        "标准流程",
+        "STD-003",
+        "Python",
+        "QQ邮箱",
+        "163邮箱"
+      ],
+      "timestamp": "2026-07-02T12:12:48.534520045+08:00"
+    },
+    "STD-GO-001: Go切片深拷贝规范（make+append翻倍陷阱）:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "STD-GO-001: Go切片深拷贝规范（make+append翻倍陷阱）",
+      "content": "STD-GO-001: Go切片深拷贝规范（make+append翻倍陷阱）",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "STD-GO-001: Go切片深拷贝规范（make+append翻倍陷阱）",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110586516+08:00"
+    },
+    "STD-GO-001: Go切片深拷贝规范（make+append翻倍陷阱）:小智": {
+      "node_id": "小智",
+      "topic": "STD-GO-001: Go切片深拷贝规范（make+append翻倍陷阱）",
+      "content": "## 问题\ncopy.Nodes = make([]NodeVisual, len(rd.Nodes))  // 创建n个零值\ncopy.Nodes = append(copy.Nodes, rd.Nodes...)     // 再追加n个 → 长度2n\n\nmake([]T, n) 已经创建了n个零值元素，再append又会追加n个，结果是2n\n\n## 正确写法\n\n### 方式一：append一行（推荐）\ncopy.Nodes = append([]NodeVisual{}, src.Nodes...)\n\n### 方式二：copy（效率更高，但需要先make）\ncopy.Nodes = make([]NodeVisual, len(src.Nodes))\ncopy(copy.Nodes, src.Nodes)\n\n## 完整的深拷贝函数\nfunc deepCopyNodes(src []NodeVisual) []NodeVisual {\n    dst := make([]NodeVisual, len(src))\n    copy(dst, src)\n    return dst\n}\n\n完整标准: memory/topics/执行规则/Golang切片深拷贝规范.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "Go",
+        "切片深拷贝",
+        "STD-GO-001",
+        "编码规范",
+        "bug修复"
+      ],
+      "timestamp": "2026-07-02T12:23:15.656400012+08:00"
+    },
+    "SyncChain Test v1.3.49:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "SyncChain Test v1.3.49",
+      "content": "SyncChain Test v1.3.49",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "SyncChain Test v1.3.49",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110582297+08:00"
+    },
+    "TASK-FIX-001: 任务卡死Running状态修复:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "TASK-FIX-001: 任务卡死Running状态修复",
+      "content": "TASK-FIX-001: 任务卡死Running状态修复",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "TASK-FIX-001: 任务卡死Running状态修复",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110570736+08:00"
+    },
+    "TASK-FIX-001: 任务卡死Running状态修复:小智": {
+      "node_id": "小智",
+      "topic": "TASK-FIX-001: 任务卡死Running状态修复",
+      "content": "## 问题\n任务状态卡在 Running 不自动完成\n\n## 根因\nWorker executeLocal/executeRemote 缺少 submitTaskResult 调用\n新版本 v1.3.34→v1.3.35 修复\n\n## 应急修复\ncurl -X POST http://localhost:8282/api/v1/task/TASK_ID/cancel\n或\ncurl -X POST http://localhost:8282/api/v1/task/TASK_ID/retry\n\n完整标准: memory/topics/执行规则/TASK-FIX-001_任务卡死Running状态修复.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "任务卡死",
+        "TASK-FIX-001",
+        "Running状态",
+        "Bug修复"
+      ],
+      "timestamp": "2026-07-02T12:12:50.718122481+08:00"
+    },
+    "TUI-STD-001: Windows Worker任务卡住问题诊断:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "TUI-STD-001: Windows Worker任务卡住问题诊断",
+      "content": "TUI-STD-001: Windows Worker任务卡住问题诊断",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "TUI-STD-001: Windows Worker任务卡住问题诊断",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110549476+08:00"
+    },
+    "TUI-STD-001: Windows Worker任务卡住问题诊断:小智": {
+      "node_id": "小智",
+      "topic": "TUI-STD-001: Windows Worker任务卡住问题诊断",
+      "content": "## 问题\nWindows Worker 任务状态卡在 Running 不结束\n\n## 排查步骤\n1. 查看 Worker 日志（gateway.log）\n2. 检查 CMD/PowerShell 进程是否僵死\n3. 检查 chcp 65001 是否导致执行器卡死\n4. 检查引号嵌套（单引号 vs 双引号）\n\n## 修复\n- 去掉 chcp 65001\n- 用 Base64 编码传命令\n- 超时 120s+\n\n完整标准: memory/topics/执行规则/TUI-STD-001_Windows_Worker_任务卡住问题.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "Windows",
+        "Worker卡死",
+        "TUI-STD-001",
+        "任务诊断"
+      ],
+      "timestamp": "2026-07-02T12:12:50.584150462+08:00"
+    },
+    "TriggerEngine 磁盘清理触发规则配置:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "TriggerEngine 磁盘清理触发规则配置",
+      "content": "TriggerEngine 磁盘清理触发规则配置",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "TriggerEngine 磁盘清理触发规则配置",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110560438+08:00"
+    },
+    "TriggerEngine 磁盘清理触发规则配置:小智": {
+      "node_id": "小智",
+      "topic": "TriggerEngine 磁盘清理触发规则配置",
+      "content": "TriggerEngine 可以配置磁盘使用率告警规则，当磁盘超过85%时触发清理提醒。规则配置在 data/trigger_rules.json，支持系统指标采集（CPU/Mem/Disk/Load）和事件触发。采集间隔60秒，通过 gateway_trigger_linux.go 实现平台特定采集。",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "trigger",
+        "磁盘",
+        "监控",
+        "v1.3.51"
+      ],
+      "timestamp": "2026-07-03T03:28:22.968745287+08:00"
+    },
+    "UPGRADE-WIN-001: Windows Worker智能升级规划:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "UPGRADE-WIN-001: Windows Worker智能升级规划",
+      "content": "UPGRADE-WIN-001: Windows Worker智能升级规划",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "UPGRADE-WIN-001: Windows Worker智能升级规划",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110537613+08:00"
+    },
+    "UPGRADE-WIN-001: Windows Worker智能升级规划:小智": {
+      "node_id": "小智",
+      "topic": "UPGRADE-WIN-001: Windows Worker智能升级规划",
+      "content": "## 升级策略\n- 自动升级循环（间隔5-30min）\n- schtasks 独立调度\n- 下载新版本到带版本号文件名\n- taskkill 后启动新版本\n\n## 回滚\n1. scp 旧版本到节点\n2. taskkill /f /im computehub.exe\n3. start 旧版本\n\n完整标准: memory/topics/执行规则/UPGRADE-WIN-001_WindowsWorker智能升级规划.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "Windows升级",
+        "UPGRADE-WIN-001",
+        "Worker",
+        "回滚"
+      ],
+      "timestamp": "2026-07-02T12:12:50.852575819+08:00"
+    },
+    "WIN-EXP-001: OpenClaw远程节点启动标准流程:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "WIN-EXP-001: OpenClaw远程节点启动标准流程",
+      "content": "WIN-EXP-001: OpenClaw远程节点启动标准流程",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "WIN-EXP-001: OpenClaw远程节点启动标准流程",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110479249+08:00"
+    },
+    "WIN-EXP-001: OpenClaw远程节点启动标准流程:小智": {
+      "node_id": "小智",
+      "topic": "WIN-EXP-001: OpenClaw远程节点启动标准流程",
+      "content": "## 适用场景\n在远程Windows节点启动/重启 OpenClaw Agent\n\n## 流程\n1. 确认 OPC Worker 已在线（作为执行载体）\n2. scp 发送 openclaw.json + openclaw binary\n3. 创建启动脚本（schtasks或Startup）\n4. 启动验证\n\n## BCP-001 编码传输\n- OpenClaw Agent 需要完整 config 文件\n- 用 Base64 编码后通过 Worker exec 写入\n\n完整标准: memory/topics/执行规则/WIN-EXP-001_OpenClaw远程节点启动标准流程.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "Windows",
+        "OpenClaw",
+        "远程启动",
+        "WIN-EXP-001",
+        "标准流程"
+      ],
+      "timestamp": "2026-07-02T12:12:49.355079834+08:00"
+    },
+    "WIN-OPC-001: Windows节点远程操作标准流程:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "WIN-OPC-001: Windows节点远程操作标准流程",
+      "content": "WIN-OPC-001: Windows节点远程操作标准流程",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "WIN-OPC-001: Windows节点远程操作标准流程",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110464063+08:00"
+    },
+    "WIN-OPC-001: Windows节点远程操作标准流程:小智": {
+      "node_id": "小智",
+      "topic": "WIN-OPC-001: Windows节点远程操作标准流程",
+      "content": "## 适用场景\n在 Windows 节点上执行远程命令、任务分发\n\n## 核心注意\n- PowerShell 用 -EncodedCommand 避免引号嵌套\n- CMD 中 \u0026 链接多条命令（不用 \u0026\u0026，防止断链）\n- chcp 65001 会导致 CMD 执行器卡死（已修复）\n- 验证用完整路径\n\n## 常见命令模板\ncmd /c \"taskkill /f /im worker.exe \u0026 timeout /t 3 \u0026 start worker.exe\"\npowershell -EncodedCommand \u003cb64_utf16le\u003e\n\n完整标准: memory/topics/执行规则/WIN-OPC-001_Windows节点远程操作标准流程.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "Windows",
+        "远程操作",
+        "WIN-OPC-001",
+        "PowerShell",
+        "CMD"
+      ],
+      "timestamp": "2026-07-02T12:12:49.496179294+08:00"
+    },
+    "WIN-STD-001: Windows软件安装标准流程:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "WIN-STD-001: Windows软件安装标准流程",
+      "content": "WIN-STD-001: Windows软件安装标准流程",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "WIN-STD-001: Windows软件安装标准流程",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110452122+08:00"
+    },
+    "WIN-STD-001: Windows软件安装标准流程:小智": {
+      "node_id": "小智",
+      "topic": "WIN-STD-001: Windows软件安装标准流程",
+      "content": "## 核心原则\n远程Windows安装软件，PATH不会自动更新、引号嵌套问题、msiexec任务挂死\n\n## 关键规则\n1. 验证用完整路径（C:\\Progra~1\\...）而非 python --version\n2. ≥5步的安装流程写 .py 文件scp到ECS\n3. MSI安装timeout ≥ 120s\n4. 安装后手动 setx 补 PATH\n5. 分步执行，不链式 curl \u0026\u0026 msiexec\n\n## 已验证软件\n- Go 1.26.3 + Python 3.11.6（Windows-mobile-01）\n\n完整标准: memory/topics/执行规则/WIN-STD-001_Windows软件安装标准流程.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "Windows",
+        "软件安装",
+        "WIN-STD-001",
+        "远程执行",
+        "标准流程"
+      ],
+      "timestamp": "2026-07-02T12:12:49.083943003+08:00"
+    },
+    "WIN-STD-002: Windows无管理员权限软件安装标准流程:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "WIN-STD-002: Windows无管理员权限软件安装标准流程",
+      "content": "WIN-STD-002: Windows无管理员权限软件安装标准流程",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "WIN-STD-002: Windows无管理员权限软件安装标准流程",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110435746+08:00"
+    },
+    "WIN-STD-002: Windows无管理员权限软件安装标准流程:小智": {
+      "node_id": "小智",
+      "topic": "WIN-STD-002: Windows无管理员权限软件安装标准流程",
+      "content": "## 适用场景\nWindows节点没有管理员权限，只能用 portable 版本安装\n\n## 核心方法\n- 使用 portable/绿色版软件\n- 安装到用户目录（%USERPROFILE%）\n- 手动加 PATH（setx PATH）\n- 不依赖系统注册表\n\n## 实战案例\nwanlida-opc01（admin账户，无管理员权限）:\n- Python 3.12.9 portable\n- Node.js v18.20.8（nvm-windows）\n- Git 2.54.0\n\n完整标准: memory/topics/执行规则/WIN-STD-002_Windows无管理员权限软件安装标准流程.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "Windows",
+        "无权限安装",
+        "WIN-STD-002",
+        "portable",
+        "标准流程"
+      ],
+      "timestamp": "2026-07-02T12:12:49.221772733+08:00"
+    },
+    "WS连接不稳定排查 — 网络抖动/Gateway重启/回声循环:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "WS连接不稳定排查 — 网络抖动/Gateway重启/回声循环",
+      "content": "WS连接不稳定排查 — 网络抖动/Gateway重启/回声循环",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "WS连接不稳定排查 — 网络抖动/Gateway重启/回声循环",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110343287+08:00"
+    },
+    "WS连接不稳定排查 — 网络抖动/Gateway重启/回声循环:小智": {
+      "node_id": "小智",
+      "topic": "WS连接不稳定排查 — 网络抖动/Gateway重启/回声循环",
+      "content": "## 现象\n节点频繁WS重连，每隔~30s出现\"已加入大厅(WS)\"\nHall消息回声循环（节点间反复发\"收到\"自我介绍）\n\n## 常见根因\n1. Gateway重启 → 节点自动重连，WS session重新建立\n2. 网络抖动 → 移动宽带到阿里云不稳定\n3. 自动升级 → Worker重启重建WS连接\n4. Hall回声循环 → Agent cron循环回复导致消息爆炸\n\n## 诊断命令\n查看gateway日志: tail -100 /home/computehub/gateway.log | grep -E \"ws|WS|WebSocket\"\n查看节点注册时间: curl -s localhost:8282/api/v1/nodes\n可跳过Hall回声: 设置since_seq跳过已读消息\n排查Gateway重启: systemctl status computehub-gateway\n\n## 预防\n- 设置Hall消息节流（同一节点30秒内不发重复消息）\n- Gateway优雅关闭前通知所有节点\n- 检测回声循环并自动抑制",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "WebSocket",
+        "WS不稳定",
+        "Hall回声",
+        "网络诊断",
+        "Gateway"
+      ],
+      "timestamp": "2026-07-02T12:23:16.207601886+08:00"
+    },
+    "Windows OpenClaw Gateway安装 (WIN-GTW-001):ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "Windows OpenClaw Gateway安装 (WIN-GTW-001)",
+      "content": "Windows OpenClaw Gateway安装 (WIN-GTW-001)",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "Windows OpenClaw Gateway安装 (WIN-GTW-001)",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110422116+08:00"
+    },
+    "Windows Worker PowerShell chcp 65001 执行失败修复:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "Windows Worker PowerShell chcp 65001 执行失败修复",
+      "content": "Windows Worker PowerShell chcp 65001 执行失败修复",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "Windows Worker PowerShell chcp 65001 执行失败修复",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110412901+08:00"
+    },
+    "Windows Worker PowerShell chcp 65001 执行失败修复:小智": {
+      "node_id": "小智",
+      "topic": "Windows Worker PowerShell chcp 65001 执行失败修复",
+      "content": "## 问题\nworker_util_windows.go:38 硬编码了CMD语法：\npsCmd = fmt.Sprintf(`[Console]::OutputEncoding=...; chcp 65001 \u003enul; %s`, escaped)\n\n## 根因\nchcp 65001 \u003enul 是CMD语法，在PowerShell里触发：\nout-file: FileStream was asked to open a device that was not a file.\n\n## 修复\n去掉 psCmd 中的 chcp 65001 \u003enul\nPowerShell 不需要 chcp，[Console]::OutputEncoding 已经设置了UTF-8\n\n## 影响\n修复前所有Windows节点任务0/10通过\n修复后Windows节点任务正常执行\n\n完整文档: memory/topics/技术经验/修复-wanlida-windows-shell.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "Windows",
+        "PowerShell",
+        "chcp",
+        "Worker",
+        "Bug修复",
+        "cmd"
+      ],
+      "timestamp": "2026-07-02T12:22:17.418874916+08:00"
+    },
+    "Windows findstr 限制:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "Windows findstr 限制",
+      "content": "Windows findstr 限制",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "Windows findstr 限制",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110432085+08:00"
+    },
+    "Windows 节点远程操作标准:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "Windows 节点远程操作标准",
+      "content": "Windows 节点远程操作标准",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "Windows 节点远程操作标准",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110402924+08:00"
+    },
+    "Windows远程执行语法关键差异:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "Windows远程执行语法关键差异",
+      "content": "Windows远程执行语法关键差异",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "Windows远程执行语法关键差异",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110386036+08:00"
+    },
+    "Worker自动升级掉线事故 (WANLIDA-ACCIDENT-002):ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "Worker自动升级掉线事故 (WANLIDA-ACCIDENT-002)",
+      "content": "Worker自动升级掉线事故 (WANLIDA-ACCIDENT-002)",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "Worker自动升级掉线事故 (WANLIDA-ACCIDENT-002)",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110368388+08:00"
+    },
+    "agent_msg.py — 一句话给任意 Worker Agent 发消息:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "agent_msg.py — 一句话给任意 Worker Agent 发消息",
+      "content": "agent_msg.py — 一句话给任意 Worker Agent 发消息",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "agent_msg.py — 一句话给任意 Worker Agent 发消息",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.112393254+08:00"
+    },
+    "agent_msg.py — 一键 Agent 通信脚本（请下载到本地使用）:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "agent_msg.py — 一键 Agent 通信脚本（请下载到本地使用）",
+      "content": "agent_msg.py — 一键 Agent 通信脚本（请下载到本地使用）",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "agent_msg.py — 一键 Agent 通信脚本（请下载到本地使用）",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.112357129+08:00"
+    },
+    "inline-knowledge-test:": {
+      "node_id": "",
+      "topic": "inline-knowledge-test",
+      "content": "v1.3.51 knowledge persistence is working",
+      "author": "",
+      "verified": "",
+      "tags": [
+        "test",
+        "v1.3.51"
+      ],
+      "timestamp": "2026-07-02T09:44:14.683683659+08:00"
+    },
+    "inline-knowledge-test:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "inline-knowledge-test",
+      "content": "inline-knowledge-test",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "inline-knowledge-test",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.11109956+08:00"
+    },
+    "persistence-test:": {
+      "node_id": "",
+      "topic": "persistence-test",
+      "content": "This should survive restart",
+      "author": "",
+      "verified": "",
+      "tags": [
+        "test",
+        "persistence"
+      ],
+      "timestamp": "2026-07-02T09:36:21.678475755+08:00"
+    },
+    "persistence-test:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "persistence-test",
+      "content": "persistence-test",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "persistence-test",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.11098541+08:00"
+    },
+    "phase3b-prod:": {
+      "node_id": "",
+      "topic": "phase3b-prod",
+      "content": "Phase 3b is now running on production",
+      "author": "",
+      "verified": "",
+      "tags": [
+        "production",
+        "phase3b"
+      ],
+      "timestamp": "2026-07-02T09:02:02.434676863+08:00"
+    },
+    "phase3b-prod:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "phase3b-prod",
+      "content": "phase3b-prod",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "phase3b-prod",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110971879+08:00"
+    },
+    "qwen3.6-35b API适配经验（已迁移至NewAPI）:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "qwen3.6-35b API适配经验（已迁移至NewAPI）",
+      "content": "qwen3.6-35b API适配经验（已迁移至NewAPI）",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "qwen3.6-35b API适配经验（已迁移至NewAPI）",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110832835+08:00"
+    },
+    "qwen3.6-35b API适配经验（已迁移至NewAPI）:小智": {
+      "node_id": "小智",
+      "topic": "qwen3.6-35b API适配经验（已迁移至NewAPI）",
+      "content": "## 历史问题（已解决）\n旧版qwen3.6-35b API（58.23.129.98:8000）所有输出在 reasoning 字段，content 始终为 null\n\n## 解决方案\n1. 适配层 ai_agent/config/qwen36_adapter.py：从 reasoning 字段读取\n2. 最终迁移到 NewAPI（ai.zhangtuokeji.top:9090），content 正常\n\n## 当前状态\n已迁移至 NewAPI，不再需要适配层\ncontent 正常输出，不再有 null 问题\n\n## 关键配置\n- API地址: https://ai.zhangtuokeji.top:9090/v1\n- 模型: qwen3.6-35b-common\n- API Key: sk-EJ5OJkr9pHDbvnDkVFoZWD0OGqaYhQ1W8Ap0idpZKBdIU9qX\n- max_tokens ≥ 1024（推荐2048）\n\n完整文档: memory/topics/技术经验/qwen36-35b-api-format-fix.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "qwen3.6",
+        "API适配",
+        "NewAPI",
+        "reasoning",
+        "content null"
+      ],
+      "timestamp": "2026-07-02T12:22:18.117409347+08:00"
+    },
+    "sessions_send 测试:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "sessions_send 测试",
+      "content": "sessions_send 测试",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "sessions_send 测试",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110828326+08:00"
+    },
+    "test-phase3b:": {
+      "node_id": "",
+      "topic": "test-phase3b",
+      "content": "Phase 3b is alive and working",
+      "author": "",
+      "verified": "",
+      "tags": [
+        "test",
+        "phase3b"
+      ],
+      "timestamp": "2026-07-02T08:58:29.308549872+08:00"
+    },
+    "test-phase3b:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "test-phase3b",
+      "content": "test-phase3b",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "test-phase3b",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.11056937+08:00"
+    },
+    "wanlida-opc01部署复盘（无管理员权限Windows节点）:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "wanlida-opc01部署复盘（无管理员权限Windows节点）",
+      "content": "wanlida-opc01部署复盘（无管理员权限Windows节点）",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "wanlida-opc01部署复盘（无管理员权限Windows节点）",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110500291+08:00"
+    },
+    "wanlida-opc01部署复盘（无管理员权限Windows节点）:小智": {
+      "node_id": "小智",
+      "topic": "wanlida-opc01部署复盘（无管理员权限Windows节点）",
+      "content": "## 节点信息\nWindows / amd64 / 移动宽带 / 10× RTX 4060 / admin用户（无管理员权限）\n\n## 部署时间线（~5小时）\n- Python 3.12.9: 已有，无需安装 ✅\n- Go: msiexec 失败（无管理员权限）→ 交叉编译11个exe ✅\n- Node.js v18.20.8: nvm-windows 安装 ✅\n- Git 2.54.0: 直接从阿里云镜像下载 ✅\n\n## 关键教训\n1. 无管理员权限时，msiexec 不可用，必须用 portable 版\n2. 网络不稳定（移动宽带到阿里云），大文件用 Python urllib + Gallery\n3. 部署前先探测已有环境，避免重复安装\n4. 交叉编译 Go 工具链：CGO_ENABLED=0 + 指定 GOOS=windows GOARCH=amd64\n\n完整文档: memory/topics/项目/wanlida-opc01部署复盘_2026-06-12.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "Windows",
+        "无权限安装",
+        "wanlida",
+        "部署复盘",
+        "GPU节点",
+        "RTX4060"
+      ],
+      "timestamp": "2026-07-02T12:22:17.844574+08:00"
+    },
+    "wanlida-work01 节点信息:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "wanlida-work01 节点信息",
+      "content": "wanlida-work01 节点信息",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "wanlida-work01 节点信息",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110494087+08:00"
+    },
+    "三国游戏设计方案:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "三国游戏设计方案",
+      "content": "三国游戏设计方案",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "三国游戏设计方案",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110333819+08:00"
+    },
+    "交叉编译CGO类型错误处理 — Termux proot环境:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "交叉编译CGO类型错误处理 — Termux proot环境",
+      "content": "交叉编译CGO类型错误处理 — Termux proot环境",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "交叉编译CGO类型错误处理 — Termux proot环境",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110314002+08:00"
+    },
+    "交叉编译CGO类型错误处理 — Termux proot环境:小智": {
+      "node_id": "小智",
+      "topic": "交叉编译CGO类型错误处理 — Termux proot环境",
+      "content": "## 问题\nTermux proot环境下交叉编译（linux/arm64）Go代码时CGO网络解析错误：\ncannot use _Ctype_socklen_t as _Ctype_size_t\n\n## 根因\nTermux proot的glibc模拟层与Go的cgo网络解析不兼容\n\n## 解决方案\nCGO_ENABLED=0 go build ...\n纯Go应用交叉编译的标准做法\n\n## 关键提示\n- 默认CGO在Termux proot下交叉编译必挂\n- ComputeHub三个组件（gateway/worker/tui）都无C依赖\n- CGO_ENABLED=0 永远够用，不影响功能\n- ldflags=\"-s -w\" 可减小二进制体积\n\n完整文档: memory/topics/技术经验/交叉编译CGO错误处理.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "交叉编译",
+        "CGO",
+        "Termux",
+        "proot",
+        "Go编译",
+        "错误处理"
+      ],
+      "timestamp": "2026-07-02T12:22:17.283356163+08:00"
+    },
+    "任务超时处理策略:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "任务超时处理策略",
+      "content": "任务超时处理策略",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "任务超时处理策略",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.11030136+08:00"
+    },
+    "全链路测试:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "全链路测试",
+      "content": "全链路测试",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "全链路测试",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110289793+08:00"
+    },
+    "华联股份(000882)持续下跌趋势记录:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "华联股份(000882)持续下跌趋势记录",
+      "content": "华联股份(000882)持续下跌趋势记录",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "华联股份(000882)持续下跌趋势记录",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110257667+08:00"
+    },
+    "图片识别-API远程识别方案 (DOC-IMG-001):ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "图片识别-API远程识别方案 (DOC-IMG-001)",
+      "content": "图片识别-API远程识别方案 (DOC-IMG-001)",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "图片识别-API远程识别方案 (DOC-IMG-001)",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.11021027+08:00"
+    },
+    "图片识别-API远程识别方案 (DOC-IMG-001):小智": {
+      "node_id": "小智",
+      "topic": "图片识别-API远程识别方案 (DOC-IMG-001)",
+      "content": "## 适用场景\nTermux/Android 环境无法本地跑图片识别，通过 API 远程传图识别\n\n## 核心方法\nAPI端点（OpenAI兼容）:\nhttp://10.111.223.227:8765/v1/chat/completions\n备用: http://192.168.2.54:8765/v1/chat/completions\n模型: qwen3.6-35b\nAPI Key: sk-78sadn09bjawde123e\n\n## 请求格式\nPython 代码:\n1. 图片转为 Base64（data URI）\n2. 通过 messages.content 传 image_url\n3. 模型自动分析图片内容\n\n## 方案对比\n- API远程识别: 无依赖，准确率高 ✅ 推荐\n- Base64编码传图: 简单但payload过大 ⚠️ 备选\n\n完整文档: memory/topics/技术经验/图片识别-API 远程识别方案.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "图片识别",
+        "API",
+        "远程识别",
+        "DOC-IMG-001",
+        "qwen3.6"
+      ],
+      "timestamp": "2026-07-02T12:22:17.146732682+08:00"
+    },
+    "持久管道故障处理:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "持久管道故障处理",
+      "content": "持久管道故障处理",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "持久管道故障处理",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110193586+08:00"
+    },
+    "文件编辑精确匹配陷阱 — edit工具必须精确匹配:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "文件编辑精确匹配陷阱 — edit工具必须精确匹配",
+      "content": "文件编辑精确匹配陷阱 — edit工具必须精确匹配",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "文件编辑精确匹配陷阱 — edit工具必须精确匹配",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110172958+08:00"
+    },
+    "文件编辑精确匹配陷阱 — edit工具必须精确匹配:小智": {
+      "node_id": "小智",
+      "topic": "文件编辑精确匹配陷阱 — edit工具必须精确匹配",
+      "content": "## 问题\nedit工具要求完全精确匹配，包括所有空格和缩进\n\n## 核心教训\n- 编辑前先 read 确认当前确切内容\n- 不要用错误的方法修复错误（如添加更多 \u003c\u003c 符号）\n- 确保 oldText 与文件内容完全一致\n\n## 修复流程\n1. 读取当前文件内容确认确切文本\n2. 使用完全匹配的文本进行替换\n3. 验证修复结果\n\n## 预防措施\n- 编辑前后都验证文件内容\n- 准备好回滚方案\n\n完整文档: memory/topics/技术经验/文件编辑精确匹配陷阱.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "工具使用",
+        "编辑技巧",
+        "文件编辑",
+        "精确匹配",
+        "经验教训"
+      ],
+      "timestamp": "2026-07-02T12:22:17.010072711+08:00"
+    },
+    "标准体系演进记录 — 从错误到标准的进化:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "标准体系演进记录 — 从错误到标准的进化",
+      "content": "标准体系演进记录 — 从错误到标准的进化",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "标准体系演进记录 — 从错误到标准的进化",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110157436+08:00"
+    },
+    "标准体系演进记录 — 从错误到标准的进化:小智": {
+      "node_id": "小智",
+      "topic": "标准体系演进记录 — 从错误到标准的进化",
+      "content": "## 核心理念\n每个错误都是新标准诞生的契机\n\n## 标准演进路径\n错误发生 → 记录错误 → 分析根因 → 制定标准 → 发布标准 → 推广执行\n\n## 已记录的错误→标准进化\n- ERR-003 远程shutdown引号问题 → WIN-OPC-001 远程操作标准\n- chcp 65001 卡死 → OPC-WIN-STD-001 Worker更新标准\n- msiexec 无权限失败 → WIN-STD-002 无权限安装标准\n- CGO交叉编译失败 → 交叉编译操作规范\n\n## 标准编号规则\nSTD-xxx: 通用标准\nBCP-xxx: 最佳实践/通信协议\nWIN-xxx: Windows相关\nOPC-xxx: OPC Worker相关\nCOM-xxx: 编译/集群相关\nMCP-xxx: 模型配置相关\nPROD-xxx: 生产环境\nDOC-xxx: 文档处理\n\n完整文档: memory/topics/标准演进/标准演进记录.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "标准演进",
+        "错误记录",
+        "标准编号",
+        "体系",
+        "知识管理"
+      ],
+      "timestamp": "2026-07-02T12:22:18.25538881+08:00"
+    },
+    "检查一下各个节点的在线状态，简单汇报一下:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "检查一下各个节点的在线状态，简单汇报一下",
+      "content": "检查一下各个节点的在线状态，简单汇报一下",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "检查一下各个节点的在线状态，简单汇报一下",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110136354+08:00"
+    },
+    "磁盘清理最佳实践:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "磁盘清理最佳实践",
+      "content": "磁盘清理最佳实践",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "磁盘清理最佳实践",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110117098+08:00"
+    },
+    "第一次跨Agent通讯成功：端智↔小智:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "第一次跨Agent通讯成功：端智↔小智",
+      "content": "第一次跨Agent通讯成功：端智↔小智",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "第一次跨Agent通讯成功：端智↔小智",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110105474+08:00"
+    },
+    "节点能力分析框架:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "节点能力分析框架",
+      "content": "节点能力分析框架",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "节点能力分析框架",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110070188+08:00"
+    },
+    "详细检查本机系统状况：CPU、内存、磁盘、运...:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "详细检查本机系统状况：CPU、内存、磁盘、运...",
+      "content": "详细检查本机系统状况：CPU、内存、磁盘、运...",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "详细检查本机系统状况：CPU、内存、磁盘、运...",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110046127+08:00"
+    },
+    "错误模式分析 — 跳过标准直接执行是最常见错误模式:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "错误模式分析 — 跳过标准直接执行是最常见错误模式",
+      "content": "错误模式分析 — 跳过标准直接执行是最常见错误模式",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "错误模式分析 — 跳过标准直接执行是最常见错误模式",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.110019273+08:00"
+    },
+    "错误模式分析 — 跳过标准直接执行是最常见错误模式:小智": {
+      "node_id": "小智",
+      "topic": "错误模式分析 — 跳过标准直接执行是最常见错误模式",
+      "content": "## 常见错误模式\n模式：收到指令 → 凭直觉判断 → 直接执行 → 漏步骤 → 出错 → 补救\n\n## 修正后模式\n收到指令 → 关键词匹配 → 触发标准 → 读取标准 → 按标准执行 → 验证 → 完成\n\n## 触发场景\n任何修改类指令（改IP、改URL、改配置等）最容易跳过标准\n\n## 预防措施\n- 所有修改类操作必须先查标准\n- 有标准不走捷径\n- 没标准先讨论再执行\n\n完整文档: memory/topics/错误记录/重复错误追踪.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "错误模式",
+        "跳过标准",
+        "行为分析",
+        "预防措施"
+      ],
+      "timestamp": "2026-07-02T12:23:15.935832164+08:00"
+    },
+    "错误记录手册 — 常见错误/重复错误追踪:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "错误记录手册 — 常见错误/重复错误追踪",
+      "content": "错误记录手册 — 常见错误/重复错误追踪",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "错误记录手册 — 常见错误/重复错误追踪",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.109998478+08:00"
+    },
+    "错误记录手册 — 常见错误/重复错误追踪:小智": {
+      "node_id": "小智",
+      "topic": "错误记录手册 — 常见错误/重复错误追踪",
+      "content": "## 核心原则\n每个错误记录必须包含：根因、影响、修复、预防\n\n## 已记录重大错误\n1. 越权删除他人系统（2026-04-03）— 安全第一原则\n2. 文件编辑精确匹配失败（2026-04-20）— edit工具必须精确匹配\n3. 远程shutdown引号导致失效（2026-06-03）— CMD引号陷阱\n4. chcp 65001 PowerShell卡死（2026-06-17）— 去掉chcp\n5. CGO交叉编译类型错误 — CGO_ENABLED=0\n\n## 重复错误追踪\n- 相同错误出现2次以上 → 升级为标准\n- 错误日志中包含：时间、根因、影响范围、修复方法\n\n完整文档: memory/topics/错误记录/错误记录.md",
+      "author": "小智",
+      "verified": "",
+      "tags": [
+        "错误记录",
+        "重复错误",
+        "标准升级",
+        "经验教训",
+        "安全"
+      ],
+      "timestamp": "2026-07-02T12:22:18.388080199+08:00"
+    },
+    "集群状态检查流程:ecs-p2ph": {
+      "node_id": "ecs-p2ph",
+      "topic": "集群状态检查流程",
+      "content": "集群状态检查流程",
+      "author": "ecs-p2ph",
+      "verified": "",
+      "tags": [
+        "集群状态检查流程",
+        ""
+      ],
+      "timestamp": "2026-07-03T14:53:21.109965934+08:00"
+    }
+  },
+  "last_sync": {
+    "": "2026-07-02T09:44:14.683685706+08:00",
+    "ecs-p2ph": "2026-07-03T14:53:21.112601131+08:00",
+    "小智": "2026-07-03T03:28:22.968747437+08:00"
+  }
+}

@@ -1,0 +1,289 @@
+[
+  {
+    "id": "disk-cleanup-alert",
+    "name": "磁盘清理提醒",
+    "description": "磁盘使用率超过85%时提醒清理",
+    "enabled": true,
+    "event_type": "system",
+    "condition": {
+      "field": "disk_percent",
+      "operator": "gt",
+      "value": 85
+    },
+    "weight": 80,
+    "debounce": 60000000000,
+    "actions": [
+      {
+        "type": "log",
+        "message": "⚠️ 磁盘使用率超过85%时提醒清理"
+      }
+    ],
+    "created_at": "2026-07-03T06:31:04.486092241+08:00",
+    "updated_at": "2026-07-03T06:31:04.486092241+08:00",
+    "hit_count": 0,
+    "last_hit": "0001-01-01T00:00:00Z"
+  },
+  {
+    "id": "gateway-restart",
+    "name": "Gateway 重启事件",
+    "description": "Gateway 进程重启时触发通知",
+    "enabled": true,
+    "event_type": "system",
+    "condition": {
+      "field": "event_type",
+      "operator": "eq",
+      "str_value": "gateway_restart"
+    },
+    "weight": 100,
+    "debounce": 0,
+    "actions": [
+      {
+        "type": "broadcast",
+        "message": "🔄 Gateway 重启: {timestamp}"
+      }
+    ],
+    "created_at": "2026-07-03T03:24:43.263945092+08:00",
+    "updated_at": "2026-07-03T03:24:43.263945092+08:00",
+    "hit_count": 0,
+    "last_hit": "0001-01-01T00:00:00Z"
+  },
+  {
+    "id": "hall-message-archive",
+    "name": "Hall 消息自动归档",
+    "description": "技术讨论自动提取知识点写入知识库",
+    "enabled": true,
+    "event_type": "hall",
+    "condition": {
+      "field": "message_type",
+      "operator": "eq",
+      "str_value": "technical"
+    },
+    "weight": 50,
+    "debounce": 60000000000,
+    "actions": [
+      {
+        "type": "log",
+        "message": "📝 技术讨论归档: {value}"
+      }
+    ],
+    "created_at": "2026-07-02T04:26:14.849620779+08:00",
+    "updated_at": "2026-07-02T04:37:29.565942689+08:00",
+    "hit_count": 0,
+    "last_hit": "0001-01-01T00:00:00Z"
+  },
+  {
+    "id": "hall-urgent",
+    "name": "Hall 紧急消息",
+    "description": "Hall 消息包含 @urgent / @all / @trigger 时触发",
+    "enabled": true,
+    "event_type": "hall",
+    "condition": {
+      "field": "message_content",
+      "operator": "contains",
+      "str_value": "@trigger"
+    },
+    "weight": 100,
+    "debounce": 0,
+    "actions": [
+      {
+        "type": "broadcast",
+        "message": "🚀 触发引擎检测到消息: {value}"
+      }
+    ],
+    "created_at": "2026-07-02T04:26:14.849620779+08:00",
+    "updated_at": "2026-07-02T04:26:14.849620779+08:00",
+    "hit_count": 0,
+    "last_hit": "0001-01-01T00:00:00Z"
+  },
+  {
+    "id": "high-cpu",
+    "name": "CPU 高负载告警",
+    "description": "CPU 使用率超过 80% 时触发告警",
+    "enabled": true,
+    "event_type": "system",
+    "condition": {
+      "field": "cpu_percent",
+      "operator": "gt",
+      "value": 80
+    },
+    "weight": 85,
+    "debounce": 300000000000,
+    "actions": [
+      {
+        "type": "log",
+        "message": "⚠️ CPU 高负载: {value}%"
+      }
+    ],
+    "created_at": "2026-07-02T04:26:14.849620779+08:00",
+    "updated_at": "2026-07-02T04:26:14.849620779+08:00",
+    "hit_count": 0,
+    "last_hit": "0001-01-01T00:00:00Z"
+  },
+  {
+    "id": "high-disk",
+    "name": "磁盘空间告警",
+    "description": "磁盘使用率超过 90% 时触发告警",
+    "enabled": true,
+    "event_type": "system",
+    "condition": {
+      "field": "disk_percent",
+      "operator": "gt",
+      "value": 90
+    },
+    "weight": 90,
+    "debounce": 600000000000,
+    "actions": [
+      {
+        "type": "alert",
+        "message": "🔴 磁盘空间不足: {value}%"
+      }
+    ],
+    "created_at": "2026-07-02T04:26:14.849620779+08:00",
+    "updated_at": "2026-07-02T04:26:14.849620779+08:00",
+    "hit_count": 0,
+    "last_hit": "0001-01-01T00:00:00Z"
+  },
+  {
+    "id": "high-mem",
+    "name": "内存高负载告警",
+    "description": "内存使用率超过 85% 时触发告警",
+    "enabled": true,
+    "event_type": "system",
+    "condition": {
+      "field": "mem_percent",
+      "operator": "gt",
+      "value": 85
+    },
+    "weight": 85,
+    "debounce": 300000000000,
+    "actions": [
+      {
+        "type": "log",
+        "message": "⚠️ 内存高负载: {value}%"
+      }
+    ],
+    "created_at": "2026-07-02T04:26:14.849620779+08:00",
+    "updated_at": "2026-07-02T04:26:14.849620779+08:00",
+    "hit_count": 0,
+    "last_hit": "0001-01-01T00:00:00Z"
+  },
+  {
+    "id": "node-offline",
+    "name": "节点离线告警",
+    "description": "节点离线超过 5 分钟时触发告警",
+    "enabled": true,
+    "event_type": "node",
+    "condition": {
+      "field": "offline_duration",
+      "operator": "gt",
+      "value": 300
+    },
+    "weight": 95,
+    "debounce": 300000000000,
+    "actions": [
+      {
+        "type": "alert",
+        "message": "🔴 节点离线: {node_id} 已离线 {value} 秒"
+      }
+    ],
+    "created_at": "2026-07-03T03:24:43.23270679+08:00",
+    "updated_at": "2026-07-03T03:24:43.23270679+08:00",
+    "hit_count": 0,
+    "last_hit": "0001-01-01T00:00:00Z"
+  },
+  {
+    "id": "node-offline-alert",
+    "name": "节点离线检测",
+    "description": "节点心跳5分钟未收到时告警",
+    "enabled": true,
+    "event_type": "system",
+    "condition": {
+      "field": "node_count",
+      "operator": "lt"
+    },
+    "weight": 95,
+    "debounce": 60000000000,
+    "actions": [
+      {
+        "type": "log",
+        "message": "⚠️ 节点心跳5分钟未收到时告警"
+      }
+    ],
+    "created_at": "2026-07-02T09:20:00+08:00",
+    "updated_at": "2026-07-02T09:20:00+08:00",
+    "hit_count": 0,
+    "last_hit": "0001-01-01T00:00:00Z"
+  },
+  {
+    "id": "system-load-warning",
+    "name": "系统负载警告",
+    "description": "系统 1 分钟负载超过 CPU 核心数时触发",
+    "enabled": true,
+    "event_type": "system",
+    "condition": {
+      "field": "load_1m",
+      "operator": "gt",
+      "value": 4
+    },
+    "weight": 75,
+    "debounce": 300000000000,
+    "actions": [
+      {
+        "type": "log",
+        "message": "⚡ 系统负载偏高: {value}"
+      }
+    ],
+    "created_at": "2026-07-03T06:30:56.597603309+08:00",
+    "updated_at": "2026-07-03T06:30:56.597603309+08:00",
+    "hit_count": 0,
+    "last_hit": "0001-01-01T00:00:00Z"
+  },
+  {
+    "id": "task-fail-rate",
+    "name": "任务失败率告警",
+    "description": "任务失败率超过 30% 时触发告警",
+    "enabled": true,
+    "event_type": "task",
+    "condition": {
+      "field": "fail_rate",
+      "operator": "gt",
+      "value": 30
+    },
+    "weight": 85,
+    "debounce": 600000000000,
+    "actions": [
+      {
+        "type": "alert",
+        "message": "⚠️ 任务失败率过高: {value}%"
+      }
+    ],
+    "created_at": "2026-07-03T03:24:43.261928238+08:00",
+    "updated_at": "2026-07-03T03:24:43.261928238+08:00",
+    "hit_count": 0,
+    "last_hit": "0001-01-01T00:00:00Z"
+  },
+  {
+    "id": "task-timeout",
+    "name": "任务超时告警",
+    "description": "任务运行超过 30 分钟时触发告警",
+    "enabled": true,
+    "event_type": "task",
+    "condition": {
+      "field": "running_duration",
+      "operator": "gt",
+      "value": 1800
+    },
+    "weight": 80,
+    "debounce": 600000000000,
+    "actions": [
+      {
+        "type": "log",
+        "message": "⏰ 任务超时: {task_id} 已运行 {value} 秒"
+      }
+    ],
+    "created_at": "2026-07-03T03:24:43.239326432+08:00",
+    "updated_at": "2026-07-03T03:24:43.239326432+08:00",
+    "hit_count": 0,
+    "last_hit": "0001-01-01T00:00:00Z"
+  }
+]

@@ -1,0 +1,850 @@
+package agent
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"strings"
+	"sync"
+	"time"
+
+	"github.com/computehub/opc/src/composer"
+	"github.com/computehub/opc/src/kernel"
+)
+
+type Agent struct {
+	llm      *composer.LLMClient
+	tools    *ToolRegistry
+	kernel   kernelProvider
+	nodes    nodeProvider
+	memory   Memory              // ← 新增：Git 记忆系统
+	mu       sync.RWMutex
+	sessions map[string][]composer.ChatMessage
+
+	// 共享记忆同步回调（SPEC-DMEM-001 Phase 2）
+	// 由 workercmd 在创建 Agent 后注入，每次 recordEpisode 后自动调用
+	memorySyncFn func(task, result string, success bool, learned string)
+
+	// 知识同步回调（SPEC-DMEM-001 Phase 2）
+	// 由 workercmd 注入，每次 SaveKnowledge 后自动调用
+	knowledgeSyncFn func(topic, content string)
+
+	// 银河计划 Phase 3: 自主进化
+	Phase3 *GalaxyPhase3Manager
+}
+
+// SetMemorySyncFn 设置共享记忆同步回调。
+// 每次 recordEpisode 后自动调用此函数，将经验同步到 Gateway 共享记忆层。
+func (a *Agent) SetMemorySyncFn(fn func(task, result string, success bool, learned string)) {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	a.memorySyncFn = fn
+}
+
+// SetKnowledgeSyncFn 设置知识同步回调。
+// 每次 SaveKnowledge 后自动调用此函数，将知识同步到 Gateway 共享记忆层。
+func (a *Agent) SetKnowledgeSyncFn(fn func(topic, content string)) {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	a.knowledgeSyncFn = fn
+}
+
+// SaveKnowledge 保存知识并同步到 Gateway（替代直接调用 a.memory.SaveKnowledge）。
+func (a *Agent) SaveKnowledge(topic, content string) error {
+	if err := a.memory.SaveKnowledge(topic, content); err != nil {
+		return err
+	}
+	a.mu.RLock()
+	fn := a.knowledgeSyncFn
+	a.mu.RUnlock()
+	if fn != nil {
+		fn(topic, content)
+	}
+	return nil
+}
+
+type kernelProvider interface {
+	DispatchExtended(traceID string, action string, data interface{}) chan kernel.Response
+	GetNodeManager() *kernel.NodeManager
+}
+
+type nodeProvider interface {
+	ListNodes() []*kernel.NodeManagerState
+}
+
+type AgentRequest struct {
+	Task      string                 `json:"task"`
+	SessionID string                 `json:"session_id"`
+	Context   map[string]interface{} `json:"context,omitempty"`
+	FastReply bool                   `json:"fast_reply,omitempty"` // 快速回复模式：跳过 plan 生成，1 次 LLM 调用
+}
+
+type PlanStep struct {
+	ID       int                    `json:"id"`
+	Type     string                 `json:"type"`
+	Tool     string                 `json:"tool,omitempty"`
+	Command  string                 `json:"command,omitempty"`
+	NodeID   string                 `json:"node_id,omitempty"`
+	Prompt   string                 `json:"prompt,omitempty"`
+	Args     map[string]interface{} `json:"args,omitempty"`
+	Depends  []int                  `json:"depends,omitempty"`
+	Status   string                 `json:"status"`
+	Result   string                 `json:"result,omitempty"`
+	Duration string                 `json:"duration,omitempty"`
+	Timeout  int                    `json:"timeout,omitempty"`  // shell 超时秒数（0=默认300s）
+}
+
+type AgentResponse struct {
+	SessionID string     `json:"session_id"`
+	Thought   string     `json:"thought"`
+	Plan      []PlanStep `json:"plan"`
+	Result    string     `json:"result"`
+	Error     string     `json:"error,omitempty"`
+}
+
+// StreamEvent 流式事件
+type StreamEvent struct {
+	Type    string      `json:"type"`
+	Data    string      `json:"data"`
+	Payload interface{} `json:"payload,omitempty"`
+}
+
+type StreamCallback func(event StreamEvent)
+
+// NewAgent 创建 Agent。
+// memoryRoot 为记忆仓库路径，传空则使用默认路径。
+func NewAgent(llm *composer.LLMClient, tools *ToolRegistry, memoryRoot string) *Agent {
+	if llm == nil {
+		llm = composer.NewLLMClient("", "", "")
+	}
+	if tools == nil {
+		tools = NewToolRegistry()
+	}
+	a := &Agent{
+		llm:      llm,
+		tools:    tools,
+		sessions: make(map[string][]composer.ChatMessage),
+	}
+
+	// 初始化记忆系统（失败不阻断 Agent 启动）
+	mem, err := NewGitMemory(memoryRoot)
+	if err != nil {
+		fmt.Printf("[Agent] ⚠️ memory init skipped: %v\n", err)
+	} else {
+		a.memory = mem
+	}
+
+	return a
+}
+
+// SetPhase3 设置银河计划 Phase 3 管理器
+func (a *Agent) SetPhase3(pm *GalaxyPhase3Manager) {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	a.Phase3 = pm
+}
+
+func (a *Agent) SetKernel(k kernelProvider)  { a.mu.Lock(); defer a.mu.Unlock(); a.kernel = k }
+func (a *Agent) SetNodeProvider(n nodeProvider) { a.mu.Lock(); defer a.mu.Unlock(); a.nodes = n }
+func (a *Agent) SetMemory(m Memory) { a.mu.Lock(); defer a.mu.Unlock(); a.memory = m }
+func (a *Agent) GetMemory() Memory { a.mu.RLock(); defer a.mu.RUnlock(); return a.memory }
+
+func (a *Agent) Think(ctx context.Context, req *AgentRequest) (*AgentResponse, error) {
+	if req.Task == "" { return nil, fmt.Errorf("task is empty") }
+	if req.SessionID == "" { req.SessionID = fmt.Sprintf("session-%d", time.Now().UnixNano()) }
+	resp := &AgentResponse{SessionID: req.SessionID}
+
+	// ── 快速回复模式：跳过 plan 生成，1 次 LLM 调用直接回复 ──
+	// 适用于群聊确认、简单回复等不需要执行命令的场景
+	if req.FastReply {
+		return a.fastThink(ctx, req)
+	}
+
+	// ── 记录用户输入到记忆 ──
+	a.recordSessionMemory(req.SessionID, "User", req.Task)
+
+	systemPrompt := a.buildSystemPrompt(req)
+	plan, thought, err := a.generatePlan(ctx, systemPrompt, req.Task)
+	if err != nil { resp.Error = fmt.Sprintf("plan generation failed: %v", err); return resp, err }
+	resp.Thought = thought; resp.Plan = plan
+
+	// ── 记录思考过程到记忆 ──
+	a.recordSessionMemory(req.SessionID, "Agent (thought)", thought)
+
+	if len(plan) == 0 {
+		// ── 纯问答场景：调用 LLM 生成用户友好回答，而非直接返回推理过程 ──
+		replyPrompt := fmt.Sprintf(
+			"你是一个直接回答用户问题的 AI 助手。\n\n用户问题: %s\n\n你的分析: %s\n\n请基于你的分析，用中文直接回答用户的问题。回答要简洁友好，不要重复你的分析过程。",
+			req.Task, thought)
+		reply, err := a.llm.Chat([]composer.ChatMessage{
+			{Role: "system", Content: "你是一个直接回答用户问题的 AI 助手。"},
+			{Role: "user", Content: replyPrompt},
+		}, 1024)
+		if err != nil {
+			// LLM 调用失败时 fallback 到 thought（至少有回应）
+			resp.Result = thought
+		} else {
+			resp.Result = reply
+		}
+		a.storeSession(req.SessionID, "user", req.Task)
+		a.storeSession(req.SessionID, "assistant", resp.Result)
+		a.recordSessionMemory(req.SessionID, "Agent (result)", resp.Result)
+		return resp, nil
+	}
+
+	err = a.executePlan(ctx, plan, req)
+	if err != nil { resp.Error = fmt.Sprintf("plan execution failed: %v", err) }
+
+	// ── 记录执行步骤到记忆 ──
+	for _, step := range plan {
+		icon := "✅"
+		if step.Status == "failed" { icon = "❌" }
+		a.recordSessionMemory(req.SessionID, "Action: step_"+fmt.Sprintf("%d", step.ID),
+			fmt.Sprintf("%s %s: %s (%s)\n%s", icon, step.Command, step.Status, step.Duration, step.Result))
+	}
+
+	result, err := a.composeResult(ctx, req.Task, plan)
+	if err != nil { resp.Error = fmt.Sprintf("result composition failed: %v", err); resp.Result = planSummary(plan) } else { resp.Result = result }
+	a.storeSession(req.SessionID, "user", req.Task)
+	a.storeSession(req.SessionID, "assistant", resp.Result)
+	resp.Plan = plan
+
+	// ── 记录最终结果到记忆 ──
+	a.recordSessionMemory(req.SessionID, "Agent (result)", resp.Result)
+
+	// ── 记录为 episode（执行经验） ──
+	a.recordEpisode(req.Task, plan)
+
+	return resp, nil
+}
+
+// fastThink 快速回复模式：1 次 LLM 调用，跳过 plan 生成、执行、汇总
+// 适用于群聊确认、简单回复等不需要执行命令的场景
+// 预期：~500ms 响应（vs 完整流程 3-9s）
+func (a *Agent) fastThink(ctx context.Context, req *AgentRequest) (*AgentResponse, error) {
+	resp := &AgentResponse{SessionID: req.SessionID}
+
+	// 精简系统提示：只保留身份和回复要求
+	systemPrompt := a.buildFastSystemPrompt(req)
+
+	msgs := []composer.ChatMessage{
+		{Role: "system", Content: systemPrompt},
+		{Role: "user", Content: req.Task},
+	}
+
+	reply, err := a.llm.Chat(msgs, 512) // 少输出，快速返回
+	if err != nil {
+		resp.Error = fmt.Sprintf("fast reply failed: %v", err)
+		return resp, err
+	}
+
+	resp.Thought = "快速回复"
+	resp.Result = reply
+	resp.Plan = []PlanStep{}
+
+	a.storeSession(req.SessionID, "user", req.Task)
+	a.storeSession(req.SessionID, "assistant", reply)
+	return resp, nil
+}
+
+// buildFastSystemPrompt 超精简系统提示（~500 字符）
+// 只包含身份和回复要求，不注入节点状态、记忆、工具描述
+func (a *Agent) buildFastSystemPrompt(req *AgentRequest) string {
+	return "你是小智，ComputeHub 集群节点。回复用户消息，不超过 2 句话，用中文。直接回复，不要 JSON。
+
+## 🚫 禁止猜测规则
+当被问到系统状态、已安装软件、硬件配置、节点信息等问题时：
+1. 如果你没有执行过相关命令来验证，必须说「让我查一下」
+2. 然后调用 exec_shell 或 node_status 工具执行命令
+3. 基于命令输出回答
+4. 绝对不要猜测或编造"
+}
+
+// ----- ThinkStream ── 流式 Think -----
+func (a *Agent) ThinkStream(ctx context.Context, req *AgentRequest, cb StreamCallback) (*AgentResponse, error) {
+	if req.Task == "" { return nil, fmt.Errorf("task is empty") }
+	if req.SessionID == "" { req.SessionID = fmt.Sprintf("session-%d", time.Now().UnixNano()) }
+	resp := &AgentResponse{SessionID: req.SessionID}
+
+	// ── 记录用户输入到记忆 ──
+	// ── 注入禁止猜测规则 ──
+	b.WriteString("
+## 🚫 禁止猜测规则
+当被问到系统状态、已安装软件、硬件配置、节点信息等问题时：
+1. 如果你没有执行过相关命令来验证，必须说「让我查一下」
+2. 然后调用 exec_shell 或 node_status 工具执行命令
+3. 基于命令输出回答
+4. 绝对不要猜测或编造
+")
+
+	a.recordSessionMemory(req.SessionID, "User", req.Task)
+
+	systemPrompt := a.buildSystemPrompt(req)
+
+	cb(StreamEvent{Type: "thinking", Data: "🔄 正在分析任务..."})
+	plan, thought, err := a.generatePlanStream(ctx, systemPrompt, req.Task, cb)
+	if err != nil { cb(StreamEvent{Type: "error", Data: fmt.Sprintf("计划生成失败: %v", err)}); resp.Error = fmt.Sprintf("plan generation failed: %v", err); return resp, err }
+	resp.Thought = thought; resp.Plan = plan
+	cb(StreamEvent{Type: "plan", Data: thought, Payload: plan})
+
+	// ── 记录思考过程到记忆 ──
+	a.recordSessionMemory(req.SessionID, "Agent (thought)", thought)
+
+	if len(plan) == 0 {
+		// ── 纯问答场景：调用 LLM 生成用户友好回答，而非直接返回推理过程 ──
+		replyPrompt := fmt.Sprintf(
+			"你是一个直接回答用户问题的 AI 助手。\n\n用户问题: %s\n\n你的分析: %s\n\n请基于你的分析，用中文直接回答用户的问题。回答要简洁友好，不要重复你的分析过程。",
+			req.Task, thought)
+		reply, err := a.llm.Chat([]composer.ChatMessage{
+			{Role: "system", Content: "你是一个直接回答用户问题的 AI 助手。"},
+			{Role: "user", Content: replyPrompt},
+		}, 1024)
+		if err != nil {
+			resp.Result = thought
+			cb(StreamEvent{Type: "result", Data: thought})
+		} else {
+			resp.Result = reply
+			cb(StreamEvent{Type: "result", Data: reply})
+		}
+		cb(StreamEvent{Type: "done", Data: ""})
+		a.storeSession(req.SessionID, "user", req.Task); a.storeSession(req.SessionID, "assistant", resp.Result)
+		a.recordSessionMemory(req.SessionID, "Agent (result)", resp.Result)
+		return resp, nil
+	}
+
+	cb(StreamEvent{Type: "thinking", Data: "⚡ 正在执行计划..."})
+	if err := a.executePlanStream(ctx, plan, req, cb); err != nil { cb(StreamEvent{Type: "error", Data: fmt.Sprintf("执行失败: %v", err)}); resp.Error = fmt.Sprintf("plan execution failed: %v", err) }
+
+	// ── 记录执行步骤到记忆 ──
+	for _, step := range plan {
+		icon := "✅"
+		if step.Status == "failed" { icon = "❌" }
+		a.recordSessionMemory(req.SessionID, "Action: step_"+fmt.Sprintf("%d", step.ID),
+			fmt.Sprintf("%s %s: %s (%s)", icon, step.Command, step.Status, step.Duration))
+	}
+
+	cb(StreamEvent{Type: "thinking", Data: "📝 正在汇总结果..."})
+	result, err := a.composeResultStream(ctx, req.Task, plan, cb)
+	if err != nil { resp.Error = fmt.Sprintf("result composition failed: %v", err); resp.Result = planSummary(plan) } else { resp.Result = result }
+
+	cb(StreamEvent{Type: "result", Data: resp.Result}); cb(StreamEvent{Type: "done", Data: ""})
+	a.storeSession(req.SessionID, "user", req.Task); a.storeSession(req.SessionID, "assistant", resp.Result)
+	resp.Plan = plan
+
+	// ── 记录最终结果到记忆 ──
+	a.recordSessionMemory(req.SessionID, "Agent (result)", resp.Result)
+
+	// ── 记录为 episode（执行经验） ──
+	a.recordEpisode(req.Task, plan)
+
+	return resp, nil
+}
+
+func (a *Agent) buildSystemPrompt(req *AgentRequest) string {
+	var b strings.Builder
+
+	// 精简版：简单任务不需要完整上下文
+	if !a.needsFullContext(req.Task) {
+		b.WriteString("你是小智，ComputeHub 的 AI 智能体。使用可用的工具执行任务。返回 JSON 格式的 plan。\n")
+		b.WriteString("\n## 响应格式\n你必须返回 JSON，包含两个字段：\n1. \"thought\": 你的思考过程\n2. \"plan\": 执行计划数组\n\n每个 plan 步骤必须包含:\n- \"type\": 步骤类型，\"shell\", \"llm\", 或 \"tool\"\n- \"command\": shell 命令（type=shell 时必填）\n- \"node_id\": 目标节点 ID（type=shell 时必填）\n- \"prompt\": 分析提示（type=llm 时必填）\n- \"tool\": 工具名称（type=tool 时必填）\n- \"args\": 工具参数字典（type=tool 时必须传入完整参数）\n- \"depends\": 依赖的步骤 ID 列表（可选）\n\n如果不需要执行任何命令，plan 返回空数组 [].\n")
+		return b.String()
+	}
+
+	// 完整版：复杂任务需要节点状态、记忆、工具描述
+	b.WriteString("你是小智，ComputeHub 的 AI 智能体，负责接收自然语言任务，制定并执行分布式执行计划。\n\n## 能力\n- shell: 在远程 Worker 上执行 shell 命令\n- llm: 直接调用大模型做文本分析\n\n## 可用 Worker 节点\n")
+	a.mu.RLock()
+	if a.nodes != nil {
+		nodes := a.nodes.ListNodes()
+		if len(nodes) > 0 {
+			for _, n := range nodes {
+				icon := "✅"; status := ""
+				if n.Register != nil { status = n.Register.Status }
+				if status != "online" { icon = "❌" }
+				nodeID := ""; gpuType := "CPU"; region := "?"
+				if n.Register != nil { nodeID = n.Register.NodeID; gpuType = n.Register.GPUType; region = n.Register.Region }
+				activeTasks := 0
+				if n.Metrics != nil { activeTasks = n.Metrics.ActiveTasks }
+				b.WriteString(fmt.Sprintf("- %s %s (%s) [%s] tasks:%d\n", icon, nodeID, gpuType, region, activeTasks))
+			}
+		} else { b.WriteString("- (无在线节点)\n") }
+	} else { b.WriteString("- (节点信息未加载)\n") }
+	a.mu.RUnlock()
+
+	// ── 注入记忆上下文 ──
+	a.injectMemoryContext(&b, req)
+
+	// ── 注入工具描述 ──
+	a.mu.RLock()
+	if a.tools != nil {
+		b.WriteString("\n## 可用工具\n")
+		b.WriteString(a.tools.ListDescriptions())
+	}
+	a.mu.RUnlock()
+
+	b.WriteString("\n## 响应格式\n你必须返回 JSON，包含两个字段：\n1. \"thought\": 你的思考过程\n2. \"plan\": 执行计划数组\n\n每个 plan 步骤必须包含:\n- \"type\": 步骤类型，\"shell\", \"llm\", 或 \"tool\"\n- \"command\": shell 命令（type=shell 时必填）\n- \"node_id\": 目标节点 ID（type=shell 时必填）\n- \"prompt\": 分析提示（type=llm 时必填）\n- \"tool\": 工具名称（type=tool 时必填）\n- \"args\": 工具参数字典（type=tool 时必须传入完整参数，参照各工具的参数定义，如 web_search 需传入 args[\"query\"]）\n- \"depends\": 依赖的步骤 ID 列表（可选）\n\n⚠️ 重要：type=tool 时，必须填充 args 字段！仔细阅读每个工具的 Parameters，将所有必填参数填入 args。\n\n示例:\n{\"thought\": \"需要先查节点状态\", \"plan\": [{\"type\": \"tool\", \"tool\": \"node_status\", \"args\": {}, \"depends\": []}]}\n\n如果不需要执行任何命令，plan 返回空数组 [].\n")
+	return b.String()
+}
+
+// needsFullContext 判断是否需要注入完整上下文（节点状态、记忆、工具描述）
+// 简单任务（查询、确认、打招呼）用精简版，节省 60%+ token
+func (a *Agent) needsFullContext(task string) bool {
+	// 快速回复模式不需要完整上下文
+	if task == "" {
+		return false
+	}
+	// 关键词匹配：包含这些词的任务需要完整上下文
+	keywords := []string{"检查", "分析", "统计", "对比", "汇总", "报告", "部署", "升级", "修复", "排查", "诊断", "监控", "查看", "状态", "查询", "管理", "openclaw", "关闭", "启动", "停止", "重启", "安装"}
+	for _, kw := range keywords {
+		if strings.Contains(task, kw) {
+			return true
+		}
+	}
+	// 包含 shell 命令的任务需要完整上下文
+	if strings.Contains(task, "`") || strings.Contains(task, "&&") || strings.Contains(task, "|") {
+		return true
+	}
+	return false
+}
+
+// injectMemoryContext 将记忆上下文注入系统提示。
+func (a *Agent) injectMemoryContext(b *strings.Builder, req *AgentRequest) {
+	if a.memory == nil {
+		return
+	}
+
+	// 1. 读取最近经验
+	episodes, err := a.memory.ListRecentEpisodes(5)
+	if err == nil && len(episodes) > 0 {
+		b.WriteString("\n## 最近经验\n")
+		for _, ep := range episodes {
+			icon := "✅"
+			if !ep.Success { icon = "❌" }
+			b.WriteString(fmt.Sprintf("- %s %s: %s\n", icon, ep.Date, ep.Task))
+		}
+	}
+
+	// 2. 读取当前集群状态
+	status, err := a.memory.GetSystemStatus()
+	if err == nil && status != "" {
+		b.WriteString("\n## 当前集群状态\n")
+		b.WriteString(status)
+		b.WriteString("\n")
+	}
+
+	// 3. 根据任务关键词搜索相关知识
+	if req.Task != "" {
+		knowledge, err := a.memory.Recall(req.Task, nil, 3)
+		if err == nil && len(knowledge) > 0 {
+			b.WriteString("\n## 相关知识\n")
+			for _, k := range knowledge {
+				b.WriteString(fmt.Sprintf("- %s: %s\n", k.Path, k.Snippet))
+			}
+		}
+	}
+}
+
+// recordSessionMemory 将对话消息记录到记忆系统。
+func (a *Agent) recordSessionMemory(sessionID, role, content string) {
+	if a.memory == nil || sessionID == "" {
+		return
+	}
+	// 截断过长内容，避免记忆文件超大
+	if len(content) > 2000 {
+		content = content[:2000] + "... (truncated)"
+	}
+	if err := a.memory.AppendSession(sessionID, role, content); err != nil {
+		fmt.Printf("[Agent] ⚠️ memory append failed: %v\n", err)
+	}
+}
+
+// recordEpisode 将执行结果记录为 episode。
+func (a *Agent) recordEpisode(task string, plan []PlanStep) {
+	if a.memory == nil {
+		return
+	}
+	if task == "" {
+		return
+	}
+
+	// 汇总结果
+	resultStr := ""
+	success := true
+	var learnedParts []string
+	for _, step := range plan {
+		if step.Result != "" {
+			if len(resultStr) < 500 {
+				resultStr += step.Result + "; "
+			}
+		}
+		if step.Status == "failed" {
+			success = false
+		}
+	}
+
+	// 失败时提取经验
+	if !success {
+		for _, step := range plan {
+			if step.Status == "failed" && step.Result != "" {
+				learnedParts = append(learnedParts, fmt.Sprintf("Step %d (%s) failed: %s", step.ID, step.Command, step.Result))
+			}
+		}
+	}
+	learned := strings.Join(learnedParts, "\n")
+
+	// 截断结果
+	if len(resultStr) > 1000 {
+		resultStr = resultStr[:1000] + "..."
+	}
+	if len(task) > 200 {
+		task = task[:200] + "..."
+	}
+
+	go func() {
+		if err := a.memory.SaveEpisode(task, resultStr, success, learned); err != nil {
+			fmt.Printf("[Agent] ⚠️ memory save episode failed: %v\n", err)
+		}
+		// Phase 2: 同步到 Gateway 共享记忆层
+		if a.memorySyncFn != nil {
+			a.memorySyncFn(task, resultStr, success, learned)
+		}
+		// Phase 3: 银河计划自主进化
+		if a.Phase3 != nil {
+			a.Phase3.OnTaskCompleted(task, plan, resultStr, success)
+		}
+	}()
+}
+
+// extractJSON 从 LLM 回复中鲁棒地提取 JSON 对象。
+// 1. 去掉 ```json ... ``` 代码块包裹
+// 2. 找到第一个 { 和最后一个 } 做平衡截取
+func extractJSON(reply string) string {
+	reply = strings.TrimSpace(reply)
+	// 去掉 ```json 前缀
+	if idx := strings.Index(reply, "```json"); idx >= 0 {
+		rest := reply[idx+7:]
+		if end := strings.Index(rest, "```"); end >= 0 {
+			reply = rest[:end]
+		}
+	}
+	// 去掉 ``` 前缀（无 json 标记）
+	if strings.HasPrefix(reply, "```") {
+		rest := reply[3:]
+		if end := strings.Index(rest, "```"); end >= 0 {
+			reply = rest[:end]
+		}
+	}
+	reply = strings.TrimSpace(reply)
+	// 找到第一个 {
+	jsonStart := strings.Index(reply, "{")
+	if jsonStart < 0 {
+		return ""
+	}
+	jsonPart := reply[jsonStart:]
+	// 括号平衡法：找到匹配的 }
+	depth := 0
+	for i, ch := range jsonPart {
+		switch ch {
+		case '{':
+			depth++
+		case '}':
+			depth--
+			if depth == 0 {
+				return jsonPart[:i+1]
+			}
+		}
+	}
+	// fallback：找不到平衡括号就用 LastIndex
+	jsonEnd := strings.LastIndex(jsonPart, "}")
+	if jsonEnd >= 0 {
+		return jsonPart[:jsonEnd+1]
+	}
+	return ""
+}
+
+// normalizePlan 标准化计划步骤：补 ID、状态、类型推断、自动填充 args。
+func normalizePlan(plan []PlanStep, task string) []PlanStep {
+	for i := range plan {
+		step := &plan[i]
+		step.ID = i + 1
+		if step.Status == "" {
+			step.Status = "pending"
+		}
+		if step.Type == "" && step.Tool != "" {
+			step.Type = "tool"
+		}
+		if step.Type != "tool" && step.Type != "shell" && step.Type != "llm" {
+			if step.Tool != "" {
+				step.Type = "tool"
+			} else if step.Command != "" {
+				step.Type = "shell"
+			} else if step.Prompt != "" {
+				step.Type = "llm"
+			}
+		}
+		if step.Type == "tool" && step.Args == nil {
+			step.Args = make(map[string]interface{})
+		}
+		if step.Tool == "web_search" && step.Args != nil {
+			if _, ok := step.Args["query"]; !ok || step.Args["query"] == "" {
+				if q := extractSearchQuery(task, step.Prompt); q != "" {
+					step.Args["query"] = q
+				}
+			}
+		}
+	}
+	return plan
+}
+
+// extractSearchQuery 从用户任务中提取搜索关键词。
+func extractSearchQuery(task, prompt string) string {
+	if prompt != "" {
+		return prompt
+	}
+	s := strings.TrimSpace(task)
+	prefixes := []string{
+		"用 web_search 工具搜一下", "用web_search工具搜一下",
+		"用 web_search 搜一下", "用web_search搜一下",
+		"用 web_search 搜索", "用web_search搜索",
+		"用 web_search 找一下", "用web_search找一下",
+		"搜一下", "搜索一下", "搜索", "查一下", "找一下",
+		"帮我搜一下", "帮我搜索", "帮我找一下",
+	}
+	for _, p := range prefixes {
+		if idx := strings.Index(s, p); idx >= 0 {
+			after := strings.TrimSpace(s[idx+len(p):])
+			after = strings.TrimLeft(after, ":：,， \t")
+			if after != "" {
+				return after
+			}
+		}
+	}
+	return s
+}
+
+func (a *Agent) generatePlan(ctx context.Context, systemPrompt, task string) ([]PlanStep, string, error) {
+	msgs := []composer.ChatMessage{{Role: "system", Content: systemPrompt}, {Role: "user", Content: task}}
+	reply, err := a.llm.Chat(msgs, 4096)
+	if err != nil { return nil, "", fmt.Errorf("LLM call failed: %w", err) }
+	jsonPart := extractJSON(reply)
+	if jsonPart == "" { return nil, reply, nil }
+	var planResp struct { Thought string `json:"thought"`; Plan []PlanStep `json:"plan"` }
+	if err := json.Unmarshal([]byte(jsonPart), &planResp); err != nil { return nil, reply, nil }
+	planResp.Plan = normalizePlan(planResp.Plan, task)
+	return planResp.Plan, planResp.Thought, nil
+}
+
+func (a *Agent) generatePlanStream(ctx context.Context, systemPrompt, task string, cb StreamCallback) ([]PlanStep, string, error) {
+	msgs := []composer.ChatMessage{{Role: "system", Content: systemPrompt}, {Role: "user", Content: task}}
+	var replyBuilder strings.Builder
+	cb(StreamEvent{Type: "thinking", Data: "🤔 正在思考..."})
+	_, err := a.llm.ChatStream(msgs, 4096, func(chunk string, done bool, err error) {
+		if err != nil { return }
+		if chunk != "" { replyBuilder.WriteString(chunk); cb(StreamEvent{Type: "thought_chunk", Data: chunk}) }
+	})
+	if err != nil { return nil, "", fmt.Errorf("LLM stream call failed: %w", err) }
+	jsonPart := extractJSON(replyBuilder.String())
+	if jsonPart == "" { return nil, replyBuilder.String(), nil }
+	var planResp struct { Thought string `json:"thought"`; Plan []PlanStep `json:"plan"` }
+	if err := json.Unmarshal([]byte(jsonPart), &planResp); err != nil { return nil, replyBuilder.String(), nil }
+	planResp.Plan = normalizePlan(planResp.Plan, task)
+	return planResp.Plan, planResp.Thought, nil
+}
+
+func (a *Agent) executePlan(ctx context.Context, plan []PlanStep, req *AgentRequest) error {
+	if a.kernel == nil { return fmt.Errorf("kernel not injected") }
+	stepDone := make(map[int]bool)
+	for round := 0; round < 10; round++ {
+		allDone := true
+		for i := range plan {
+			if plan[i].Status == "done" || plan[i].Status == "failed" { continue }
+			allDone = false
+			depsReady := true
+			for _, depID := range plan[i].Depends { if !stepDone[depID] { depsReady = false; break } }
+			if !depsReady { continue }
+			plan[i].Status = "running"; start := time.Now()
+			switch plan[i].Type {
+			case "shell":
+				r, e := a.execShell(ctx, plan[i])
+				if e != nil { plan[i].Status = "failed"; plan[i].Result = fmt.Sprintf("error: %v", e) } else { plan[i].Status = "done"; plan[i].Result = r }
+			case "llm":
+				r, e := a.execLLM(ctx, plan[i])
+				if e != nil { plan[i].Status = "failed"; plan[i].Result = fmt.Sprintf("error: %v", e) } else { plan[i].Status = "done"; plan[i].Result = r }
+			case "tool":
+				r, e := a.execTool(ctx, plan[i])
+				if e != nil { plan[i].Status = "failed"; plan[i].Result = fmt.Sprintf("error: %v", e) } else { plan[i].Status = "done"; plan[i].Result = r }
+			default:
+				plan[i].Status = "failed"; plan[i].Result = fmt.Sprintf("unknown step type: %s", plan[i].Type)
+			}
+			plan[i].Duration = time.Since(start).Round(time.Millisecond).String()
+			stepDone[plan[i].ID] = (plan[i].Status == "done")
+		}
+		if allDone { break }
+		time.Sleep(200 * time.Millisecond)
+	}
+	return nil
+}
+
+func (a *Agent) executePlanStream(ctx context.Context, plan []PlanStep, req *AgentRequest, cb StreamCallback) error {
+	if a.kernel == nil { return fmt.Errorf("kernel not injected") }
+	stepDone := make(map[int]bool)
+	for round := 0; round < 10; round++ {
+		allDone := true
+		for i := range plan {
+			if plan[i].Status == "done" || plan[i].Status == "failed" { continue }
+			allDone = false
+			depsReady := true
+			for _, depID := range plan[i].Depends { if !stepDone[depID] { depsReady = false; break } }
+			if !depsReady { continue }
+			plan[i].Status = "running"; start := time.Now()
+			cb(StreamEvent{Type: "step_start", Data: fmt.Sprintf("Step %d: %s", plan[i].ID, plan[i].Command), Payload: plan[i]})
+			switch plan[i].Type {
+			case "shell":
+				r, e := a.execShell(ctx, plan[i])
+				if e != nil { plan[i].Status = "failed"; plan[i].Result = fmt.Sprintf("error: %v", e); cb(StreamEvent{Type: "step_chunk", Data: fmt.Sprintf("❌ 失败: %v", e)}) } else { plan[i].Status = "done"; plan[i].Result = r; cb(StreamEvent{Type: "step_chunk", Data: r}) }
+			case "llm":
+				r, e := a.execLLM(ctx, plan[i])
+				if e != nil { plan[i].Status = "failed"; plan[i].Result = fmt.Sprintf("error: %v", e); cb(StreamEvent{Type: "step_chunk", Data: fmt.Sprintf("❌ 失败: %v", e)}) } else { plan[i].Status = "done"; plan[i].Result = r; cb(StreamEvent{Type: "step_chunk", Data: r}) }
+			case "tool":
+				r, e := a.execTool(ctx, plan[i])
+				if e != nil { plan[i].Status = "failed"; plan[i].Result = fmt.Sprintf("error: %v", e); cb(StreamEvent{Type: "step_chunk", Data: fmt.Sprintf("❌ 失败: %v", e)}) } else { plan[i].Status = "done"; plan[i].Result = r; cb(StreamEvent{Type: "step_chunk", Data: r}) }
+			default:
+				plan[i].Status = "failed"; plan[i].Result = fmt.Sprintf("unknown step type: %s", plan[i].Type)
+			}
+			plan[i].Duration = time.Since(start).Round(time.Millisecond).String()
+			stepDone[plan[i].ID] = (plan[i].Status == "done")
+			cb(StreamEvent{Type: "step_done", Data: plan[i].Duration, Payload: plan[i]})
+		}
+		if allDone { break }
+		time.Sleep(200 * time.Millisecond)
+	}
+	return nil
+}
+
+func (a *Agent) execShell(ctx context.Context, step PlanStep) (string, error) {
+	if a.kernel == nil { return "", fmt.Errorf("kernel not available") }
+	timeout := step.Timeout
+	if timeout <= 0 { timeout = 300 }
+	task := kernel.TaskSubmit{
+		TaskID: fmt.Sprintf("agent-%d", time.Now().UnixNano()), AssignedNode: step.NodeID, NodeID: step.NodeID, Command: step.Command,
+		Timeout: timeout, Priority: 5, MaxRetries: 2, SourceType: "agent",
+	}
+	respChan := a.kernel.DispatchExtended("agent-"+time.Now().Format("150405.000"), kernel.ActionTaskSubmit, &task)
+	resp := <-respChan
+	if !resp.Success { return "", fmt.Errorf("task dispatch failed: %v", resp.Error) }
+	pollInterval, maxWait := 500*time.Millisecond, time.Duration(timeout)*time.Second
+	deadline := time.Now().Add(maxWait)
+	for time.Now().Before(deadline) {
+		for _, state := range a.kernel.GetNodeManager().ListNodes() {
+			if ts, exists := state.Tasks[task.TaskID]; exists {
+				if ts.Status == "completed" {
+					if ts.Result != nil { return fmt.Sprintf("stdout:\n%s\nstderr:\n%s\nexit_code: %d", ts.Result.Stdout, ts.Result.Stderr, ts.Result.ExitCode), nil }
+					return "task completed (no output)", nil
+				}
+				if ts.Status == "failed" || ts.Status == "cancelled" { return fmt.Sprintf("task failed: %s", ts.Status), nil }
+			}
+		}
+		time.Sleep(pollInterval)
+	}
+	return fmt.Sprintf("task not completed within deadline: %s (node=%s)", task.TaskID, step.NodeID), nil
+}
+
+func (a *Agent) execLLM(ctx context.Context, step PlanStep) (string, error) {
+	msgs := []composer.ChatMessage{{Role: "system", Content: "你是 ComputeHub AI 智能体的分析助手。"}, {Role: "user", Content: step.Prompt}}
+	return a.llm.Chat(msgs, 2048)
+}
+
+// execTool 通过工具注册表执行工具调用
+func (a *Agent) execTool(ctx context.Context, step PlanStep) (string, error) {
+	if a.tools == nil {
+		return "", fmt.Errorf("tool registry not available")
+	}
+	// 从 step.Tool 或 step.Command 获取工具名
+	toolName := step.Tool
+	if toolName == "" {
+		toolName = step.Command
+	}
+	if toolName == "" {
+		return "", fmt.Errorf("tool name is required (set step.tool or step.command)")
+	}
+	entry := a.tools.Get(toolName)
+	if entry == nil {
+		return "", fmt.Errorf("unknown tool: %s", toolName)
+	}
+	// 解析参数 (step 的 args 字段或从 command 提取)
+	args := make(map[string]interface{})
+	// 简单参数提取: 从 step 的 Args 字段
+	if step.Args != nil {
+		for k, v := range step.Args {
+			args[k] = v
+		}
+	}
+	return entry.Execute(ctx, args)
+}
+
+func (a *Agent) composeResult(ctx context.Context, originalTask string, plan []PlanStep) (string, error) {
+	var b strings.Builder
+	b.WriteString(fmt.Sprintf("原始任务: %s\n\n执行结果:\n", originalTask))
+	for _, step := range plan {
+		icon := "✅"
+		if step.Status == "failed" { icon = "❌" }
+		b.WriteString(fmt.Sprintf("\n[%s] Step %d (%s):\n", icon, step.ID, step.Type))
+		if step.Command != "" { b.WriteString(fmt.Sprintf("  命令: %s\n", step.Command)) }
+		if step.Result != "" {
+			r := step.Result
+			if len(r) > 1000 { r = r[:1000] + "...(truncated)" }
+			b.WriteString(fmt.Sprintf("  结果:\n%s\n", r))
+		}
+	}
+	prompt := fmt.Sprintf("你是 ComputeHub 的智能体，请根据以下执行结果，用中文给出最终回答（简洁、有条理）。\n\n原始任务: %s\n\n执行结果:\n%s\n\n请直接给出用户关心的最终答案。", originalTask, b.String())
+	return a.llm.Chat([]composer.ChatMessage{{Role: "system", Content: "你是一个专业的结果汇总助手，用中文回答。"}, {Role: "user", Content: prompt}}, 2048)
+}
+
+func (a *Agent) composeResultStream(ctx context.Context, originalTask string, plan []PlanStep, cb StreamCallback) (string, error) {
+	var b strings.Builder
+	b.WriteString(fmt.Sprintf("原始任务: %s\n\n执行结果:\n", originalTask))
+	for _, step := range plan {
+		icon := "✅"
+		if step.Status == "failed" { icon = "❌" }
+		b.WriteString(fmt.Sprintf("\n[%s] Step %d (%s):\n", icon, step.ID, step.Type))
+		if step.Command != "" { b.WriteString(fmt.Sprintf("  命令: %s\n", step.Command)) }
+		if step.Result != "" {
+			r := step.Result
+			if len(r) > 1000 { r = r[:1000] + "...(truncated)" }
+			b.WriteString(fmt.Sprintf("  结果:\n%s\n", r))
+		}
+	}
+	prompt := fmt.Sprintf("你是 ComputeHub 的智能体，请根据以下执行结果，用中文给出最终回答（简洁、有条理）。\n\n原始任务: %s\n\n执行结果:\n%s\n\n请直接给出用户关心的最终答案。", originalTask, b.String())
+	msgs := []composer.ChatMessage{{Role: "system", Content: "你是一个专业的结果汇总助手，用中文回答。"}, {Role: "user", Content: prompt}}
+	var fullReply strings.Builder
+	_, err := a.llm.ChatStream(msgs, 2048, func(chunk string, done bool, err error) {
+		if err != nil { return }
+		if chunk != "" { fullReply.WriteString(chunk); cb(StreamEvent{Type: "result_chunk", Data: chunk}) }
+	})
+	if err != nil { return "", err }
+	return fullReply.String(), nil
+}
+
+func (a *Agent) storeSession(sessionID, role, content string) {
+	a.mu.Lock(); defer a.mu.Unlock()
+	if _, ok := a.sessions[sessionID]; !ok { a.sessions[sessionID] = make([]composer.ChatMessage, 0, 10) }
+	a.sessions[sessionID] = append(a.sessions[sessionID], composer.ChatMessage{Role: role, Content: content})
+	if len(a.sessions[sessionID]) > 20 { a.sessions[sessionID] = a.sessions[sessionID][len(a.sessions[sessionID])-20:] }
+}
+
+func (a *Agent) GetHistory(sessionID string) []composer.ChatMessage { a.mu.RLock(); defer a.mu.RUnlock(); return a.sessions[sessionID] }
+
+func planSummary(plan []PlanStep) string {
+	var b strings.Builder
+	done, failed := 0, 0
+	for _, s := range plan { if s.Status == "done" { done++ } else if s.Status == "failed" { failed++ } }
+	b.WriteString(fmt.Sprintf("执行计划已完成: %d/%d 步骤成功, %d 失败\n", done, len(plan), failed))
+	for _, s := range plan {
+		icon := "⬜"
+		switch s.Status { case "done": icon = "✅"; case "failed": icon = "❌"; case "running": icon = "🔄" }
+		b.WriteString(fmt.Sprintf("%s Step %d: %s", icon, s.ID, s.Type))
+		if s.Command != "" { b.WriteString(fmt.Sprintf(" → %s", s.Command)) }
+		if s.Duration != "" { b.WriteString(fmt.Sprintf(" (%s)", s.Duration)) }
+		b.WriteString("\n")
+	}
+	return b.String()
+}

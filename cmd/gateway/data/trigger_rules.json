@@ -1,0 +1,145 @@
+[
+  {
+    "id": "hall-message-archive",
+    "name": "Hall 消息自动归档",
+    "description": "技术讨论自动提取知识点写入知识库",
+    "enabled": false,
+    "event_type": "hall",
+    "condition": {
+      "field": "message_type",
+      "operator": "eq",
+      "str_value": "technical"
+    },
+    "weight": 50,
+    "debounce": 60000000000,
+    "actions": [
+      {
+        "type": "log",
+        "message": "📝 技术讨论归档: {value}"
+      }
+    ],
+    "created_at": "2026-07-02T06:18:53.48500801+08:00",
+    "updated_at": "2026-07-02T06:18:53.48500801+08:00",
+    "hit_count": 0,
+    "last_hit": "0001-01-01T00:00:00Z"
+  },
+  {
+    "id": "hall-urgent",
+    "name": "Hall 紧急消息",
+    "description": "Hall 消息包含 @urgent / @all / @trigger 时触发",
+    "enabled": true,
+    "event_type": "hall",
+    "condition": {
+      "field": "message_content",
+      "operator": "contains",
+      "str_value": "@trigger"
+    },
+    "weight": 100,
+    "debounce": 0,
+    "actions": [
+      {
+        "type": "broadcast",
+        "message": "🚀 触发引擎检测到消息: {value}"
+      }
+    ],
+    "created_at": "2026-07-02T06:18:53.48500801+08:00",
+    "updated_at": "2026-07-02T06:18:53.48500801+08:00",
+    "hit_count": 0,
+    "last_hit": "0001-01-01T00:00:00Z"
+  },
+  {
+    "id": "high-cpu",
+    "name": "CPU 高负载告警",
+    "description": "CPU 使用率超过 80% 时触发告警",
+    "enabled": true,
+    "event_type": "system",
+    "condition": {
+      "field": "cpu_percent",
+      "operator": "gt",
+      "value": 80
+    },
+    "weight": 85,
+    "debounce": 300000000000,
+    "actions": [
+      {
+        "type": "log",
+        "message": "⚠️ CPU 高负载: {value}%"
+      }
+    ],
+    "created_at": "2026-07-02T06:18:53.48500801+08:00",
+    "updated_at": "2026-07-02T06:18:53.48500801+08:00",
+    "hit_count": 0,
+    "last_hit": "0001-01-01T00:00:00Z"
+  },
+  {
+    "id": "high-disk",
+    "name": "磁盘空间告警",
+    "description": "磁盘使用率超过 90% 时触发告警",
+    "enabled": true,
+    "event_type": "system",
+    "condition": {
+      "field": "disk_percent",
+      "operator": "gt",
+      "value": 90
+    },
+    "weight": 90,
+    "debounce": 600000000000,
+    "actions": [
+      {
+        "type": "alert",
+        "message": "🔴 磁盘空间不足: {value}%"
+      }
+    ],
+    "created_at": "2026-07-02T06:18:53.48500801+08:00",
+    "updated_at": "2026-07-02T06:18:53.48500801+08:00",
+    "hit_count": 0,
+    "last_hit": "0001-01-01T00:00:00Z"
+  },
+  {
+    "id": "high-mem",
+    "name": "内存高负载告警",
+    "description": "内存使用率超过 85% 时触发告警",
+    "enabled": true,
+    "event_type": "system",
+    "condition": {
+      "field": "mem_percent",
+      "operator": "gt",
+      "value": 85
+    },
+    "weight": 85,
+    "debounce": 300000000000,
+    "actions": [
+      {
+        "type": "log",
+        "message": "⚠️ 内存高负载: {value}%"
+      }
+    ],
+    "created_at": "2026-07-02T06:18:53.48500801+08:00",
+    "updated_at": "2026-07-02T06:18:53.48500801+08:00",
+    "hit_count": 0,
+    "last_hit": "0001-01-01T00:00:00Z"
+  },
+  {
+    "id": "system-load-warning",
+    "name": "系统负载警告",
+    "description": "系统 1 分钟负载超过 CPU 核心数时触发",
+    "enabled": true,
+    "event_type": "system",
+    "condition": {
+      "field": "load_1m",
+      "operator": "gt"
+    },
+    "weight": 75,
+    "debounce": 300000000000,
+    "actions": [
+      {
+        "type": "log",
+        "message": "⚡ 系统负载偏高: {load_1m} (核心数: {cpu_cores})"
+      }
+    ],
+    "created_at": "2026-07-02T06:18:53.48500801+08:00",
+    "updated_at": "2026-07-02T06:18:53.48500801+08:00",
+    "hit_count": 0,
+    "last_hit": "0001-01-01T00:00:00Z"
+  }
+]
