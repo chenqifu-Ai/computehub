@@ -889,6 +889,11 @@ func (g *OpcGateway) ServeWithServer(port int, dashboardDir ...string) *http.Ser
 	http.HandleFunc("/api/v1/ollama/chat", g.handleOllamaChat)
 	logWithTimestamp("🦙 Ollama endpoints registered: /api/v1/ollama/*")
 
+	// OCR 文字识别
+	http.HandleFunc("/api/v1/ocr", g.handleOCR)
+	http.HandleFunc("/api/v1/ocr/stats", g.handleOCRStats)
+	logWithTimestamp("📝 OCR endpoints registered: /api/v1/ocr/*")
+
 	// 对话历史 Git 管理
 	http.HandleFunc("/api/v1/chat/save", g.handleChatSave)
 	http.HandleFunc("/api/v1/chat/history", g.handleChatHistory)
