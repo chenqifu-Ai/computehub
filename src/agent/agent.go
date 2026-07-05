@@ -31,6 +31,9 @@ type Agent struct {
 
 	// 银河计划 Phase 3: 自主进化
 	Phase3 *GalaxyPhase3Manager
+
+	// ClusterSearchFn: 共享记忆搜索回调 (由 workercmd 注入)
+	clusterSearchFn func(query string, limit int) (string, error)
 }
 
 // SetMemorySyncFn 设置共享记忆同步回调。
@@ -39,6 +42,13 @@ func (a *Agent) SetMemorySyncFn(fn func(task, result string, success bool, learn
 	a.mu.Lock()
 	defer a.mu.Unlock()
 	a.memorySyncFn = fn
+}
+
+// SetClusterSearchFn 设置共享记忆搜索回调。
+func (a *Agent) SetClusterSearchFn(fn func(query string, limit int) (string, error)) {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	a.clusterSearchFn = fn
 }
 
 // SetKnowledgeSyncFn 设置知识同步回调。
@@ -51,6 +61,7 @@ func (a *Agent) SetKnowledgeSyncFn(fn func(topic, content string)) {
 
 // SaveKnowledge 保存知识并同步到 Gateway（替代直接调用 a.memory.SaveKnowledge）。
 func (a *Agent) SaveKnowledge(topic, content string) error {
+
 	if err := a.memory.SaveKnowledge(topic, content); err != nil {
 		return err
 	}

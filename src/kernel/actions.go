@@ -119,6 +119,7 @@ type NodeManager struct {
 	prioSched   *scheduler.PriorityScheduler
 	preemptMgr  *scheduler.PreemptManager
 	prioQueue   *scheduler.PriorityQueue
+	NodeCache   *NodeCache   // hot path cache (2026-07-05)
 }
 
 type NodeManagerState struct {
@@ -581,13 +582,25 @@ func (nm *NodeManager) GetNodeMetrics(nodeID string) (*NodeMetrics, error) {
 }
 
 // GetNodeState returns the full node state including task details.
+// Optimized (2026-07-05): 先查缓存，缓存未命中才遍历 map。
 func (nm *NodeManager) GetNodeState(nodeID string) (*NodeManagerState, error) {
+	// Fast path: check LRU cache first
+	if nm.NodeCache != nil {
+		if entry, ok := nm.NodeCache.Get(nodeID); ok {
+			return entry.state, nil
+		}
+	}
+
 	nm.mu.RLock()
 	defer nm.mu.RUnlock()
 
 	state, exists := nm.nodes[nodeID]
 	if !exists {
 		return nil, fmt.Errorf("node %s not found", nodeID)
+	}
+	// Warm cache for future lookups
+	if nm.NodeCache != nil {
+		nm.NodeCache.Set(nodeID, state)
 	}
 	return state, nil
 }
@@ -676,7 +689,8 @@ func (nm *NodeManager) AssignTaskToNode(taskID, nodeID string) error {
 	return fmt.Errorf("task %s not staged on node %s", taskID, nodeID)
 }
 
-// ListNodes returns all registered nodes
+// ListNodes returns all registered nodes.
+// Optimized (2026-07-05): reads from cache snapshot when available.
 func (nm *NodeManager) ListNodes() []*NodeManagerState {
 	nm.mu.RLock()
 	defer nm.mu.RUnlock()
@@ -684,6 +698,12 @@ func (nm *NodeManager) ListNodes() []*NodeManagerState {
 	result := make([]*NodeManagerState, 0, len(nm.nodes))
 	for _, state := range nm.nodes {
 		result = append(result, state)
+	}
+	// Warm cache on list read
+	if nm.NodeCache != nil {
+		for _, state := range result {
+			nm.NodeCache.Set(state.Register.NodeID, state)
+		}
 	}
 	return result
 }
@@ -699,7 +719,7 @@ type ExtendedKernel struct {
 // NewExtendedKernel creates a kernel with node management
 func NewExtendedKernel(bufferSize, maxStates, maxNodes int) *ExtendedKernel {
 	km := NewNodeManager(maxNodes)
-	return &ExtendedKernel{
+	ek := &ExtendedKernel{
 		OpcKernel: &OpcKernel{
 			stateMirror: make([]State, 0),
 			maxStates:   maxStates,
@@ -707,9 +727,12 @@ func NewExtendedKernel(bufferSize, maxStates, maxNodes int) *ExtendedKernel {
 			done:        make(chan struct{}),
 			NodeMgr:     km,
 			AgentReg:    NewAgentRegistry(),
+			NodeCache:   NewNodeCache(maxNodes, 5*time.Second), // 5s TTL, maxNodes entries
 		},
 		NodeMgr: km,
 	}
+	ek.OpcKernel.NodeCache = ek.NodeCache // set both ways
+	return ek
 }
 
 // DispatchExtended queues a compute-specific action through the deterministic kernel

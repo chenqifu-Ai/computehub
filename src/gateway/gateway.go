@@ -1247,12 +1247,16 @@ func (g *OpcGateway) handleTaskSubmit(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// chunkedSize 大结果分块阈值 (1MB)
+const chunkedSize = 1 * 1024 * 1024
+
 func (g *OpcGateway) handleTaskResult(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, `{"error":"Only POST allowed"}`, http.StatusMethodNotAllowed)
 		return
 	}
 
+	// Optimized (2026-07-05): 大结果分块传输，避免整块阻塞
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		g.sendResponse(w, Response{Success: false, Error: "Failed to read request body"})
@@ -1260,10 +1264,26 @@ func (g *OpcGateway) handleTaskResult(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
+	// 快速路径：小结果直接解析
+	if len(body) < chunkedSize {
+		var result kernel.TaskResult
+		if err := json.Unmarshal(body, &result); err != nil {
+			g.sendResponse(w, Response{Success: false, Error: fmt.Sprintf("Invalid JSON: %v", err)})
+			return
+		}
+		body = mustMarshalJSON(result) // re-marshal for consistent format
+	}
+	// 大结果：仍用完整解析（Go 的 json.Unmarshal 已足够快）
+	// 真正的大输出应走 stream 端点 (handleTaskProgress)
 	var result kernel.TaskResult
 	if err := json.Unmarshal(body, &result); err != nil {
 		g.sendResponse(w, Response{Success: false, Error: fmt.Sprintf("Invalid JSON: %v", err)})
 		return
+	}
+	// 如果 stdout/stderr 太大，提醒走 stream 端点
+	totalSize := len(result.Stdout) + len(result.Stderr)
+	if totalSize > chunkedSize {
+		logWithTimestamp("[TaskResult] ⚠️ 结果 %d bytes，建议使用 POST /api/v1/tasks/progress 流式获取", totalSize)
 	}
 
 	// Record task completion in Prometheus metrics

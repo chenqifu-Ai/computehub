@@ -466,11 +466,11 @@ func (h *WSHub) PushTask(nodeID string, task *TaskPollItem) bool {
 		return false
 	}
 
-	// 等 ACK：5s 超时
+	// 等 ACK：1s 超时（2026-07-05 优化，原 5s 太长）
 	select {
 	case <-ackCh:
 		return true
-	case <-time.After(5 * time.Second):
+	case <-time.After(1 * time.Second):
 		log.Printf("📡 WS PushTask (%s): 任务 %s ACK 超时", nodeID, task.TaskID)
 		return false
 	}

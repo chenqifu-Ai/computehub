@@ -29,6 +29,9 @@ type OpcKernel struct {
 	NodeMgr       *NodeManager // node management for extended actions
 	AgentReg      *AgentRegistry // AI agent registry (discovery)
 	done          chan struct{}
+	
+	// Node cache for hot path (2026-07-05 optimization)
+	NodeCache     *NodeCache   // LRU cache of node state
 }
 
 // Command represents a linearized system instruction
@@ -134,9 +137,13 @@ func (k *OpcKernel) handleNodeRegister(cmd Command) Response {
 	}
 
 	if err := k.NodeMgr.RegisterNode(reg); err != nil {
+		// Cache miss on failure — not registered yet
 		return Response{Success: false, Error: err, Duration: time.Since(start).String()}
 	}
-
+	// Cache warm: register is a write → invalidate
+	if k.NodeCache != nil {
+		k.NodeCache.Invalidate(reg.NodeID)
+	}
 	return Response{
 		Success:  true,
 		Data:     map[string]string{"message": "node registered", "node_id": reg.NodeID},
@@ -157,9 +164,13 @@ func (k *OpcKernel) handleNodeUnregister(cmd Command) Response {
 	}
 
 	if err := k.NodeMgr.UnregisterNode(nodeID); err != nil {
+		// Cache miss on failure
 		return Response{Success: false, Error: err, Duration: time.Since(start).String()}
 	}
-
+	// Unregister → invalidate cache
+	if k.NodeCache != nil {
+		k.NodeCache.Invalidate(nodeID)
+	}
 	return Response{
 		Success:  true,
 		Data:     map[string]string{"message": "node removed", "node_id": nodeID},
@@ -255,6 +266,23 @@ func (k *OpcKernel) handleNodeHeartbeat(cmd Command) Response {
 		return Response{Success: false, Error: fmt.Errorf("invalid heartbeat payload type")}
 	}
 
+	// Heartbeat updates node state → invalidate cache (next read will refresh)
+	// NodeID extracted from the payload for cache key
+	var hbNodeID string
+	switch p := cmd.Payload.(type) {
+	case *GPUMetrics:
+		if p != nil {
+			hbNodeID = p.NodeID
+		}
+	case string:
+		hbNodeID = p
+	case map[string]interface{}:
+		hbNodeID, _ = p["node_id"].(string)
+	}
+	if hbNodeID != "" && k.NodeCache != nil {
+		k.NodeCache.Invalidate(hbNodeID)
+	}
+
 	return Response{
 		Success:  true,
 		Data:     map[string]string{"message": "heartbeat acknowledged"},
@@ -309,6 +337,10 @@ func (k *OpcKernel) handleTaskSubmit(cmd Command) Response {
 
 	if err := k.NodeMgr.SubmitTask(task); err != nil {
 		return Response{Success: false, Error: err, Duration: time.Since(start).String()}
+	}
+	// Task assignment changed → invalidate target node cache
+	if task.AssignedNode != "" && k.NodeCache != nil {
+		k.NodeCache.Invalidate(task.AssignedNode)
 	}
 
 	return Response{

@@ -237,7 +237,7 @@ func (te *TriggerEngine) ensureDefaultRules() {
 			Description: "系统 1 分钟负载超过 CPU 核心数时触发",
 			Enabled:     true,
 			EventType:   "system",
-			Condition:   TriggerCondition{Field: "load_1m", Operator: "gt", Value: 0},
+			Condition:   TriggerCondition{Field: "load_1m", Operator: "gt", Value: 4},
 			Weight:      75,
 			Debounce:    300 * time.Second,
 			Actions:     []TriggerAction{{Type: "log", Message: "⚡ 系统负载偏高: {load_1m} (核心数: {cpu_cores})"}},
@@ -335,7 +335,12 @@ func (te *TriggerEngine) matchCondition(cond TriggerCondition, fields map[string
 		}
 		if fval > cond.Value {
 			// 超出的越多分数越高
-			ratio := (fval - cond.Value) / cond.Value * 100
+			var ratio float64
+			if cond.Value > 0 {
+				ratio = (fval - cond.Value) / cond.Value * 100
+			} else {
+				ratio = (fval - cond.Value) * 100
+			}
 			if ratio > 100 {
 				ratio = 100
 			}
@@ -349,7 +354,12 @@ func (te *TriggerEngine) matchCondition(cond TriggerCondition, fields map[string
 			return 0
 		}
 		if fval < cond.Value {
-			ratio := (cond.Value - fval) / cond.Value * 100
+			var ratio float64
+			if cond.Value > 0 {
+				ratio = (cond.Value - fval) / cond.Value * 100
+			} else {
+				ratio = (cond.Value - fval) * 100
+			}
 			if ratio > 100 {
 				ratio = 100
 			}
