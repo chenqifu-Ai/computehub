@@ -4,6 +4,8 @@
 package gateway
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"net/http"
 	"strings"
 )
@@ -19,11 +21,32 @@ var PublicPaths = []string{
 	"/api/v1/upgrade/checksum",
 }
 
+// AuthBearerToken is set from main.go via env var AUTH_BEARER_TOKEN.
+// If empty, authentication is bypassed (dev mode).
+var AuthBearerToken string
+
+// generateRequestID 生成 16 字节随机请求 ID
+func generateRequestID() string {
+	b := make([]byte, 16)
+	rand.Read(b)
+	return hex.EncodeToString(b)
+}
+
+// RequestIDMiddleware 为每个请求注入 X-Request-ID
+func RequestIDMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		rid := r.Header.Get("X-Request-ID")
+		if rid == "" {
+			rid = generateRequestID()
+		}
+		w.Header().Set("X-Request-ID", rid)
+		next.ServeHTTP(w, r)
+	})
+}
+
 // AuthMiddleware returns an http.Handler wrapper that requires
 // Authorization: Bearer <token> for all non-public endpoints.
 // If AuthBearerToken is empty, authentication is bypassed (dev mode).
-var AuthBearerToken string // set from main.go via env var AUTH_BEARER_TOKEN
-
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Skip auth for public paths

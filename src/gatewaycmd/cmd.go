@@ -1,15 +1,12 @@
 package gatewaycmd
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
-	"os/signal"
 	"path/filepath"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/computehub/opc/src/gateway"
@@ -164,6 +161,19 @@ func Run(args []string) {
 		logWithTimestamp("⚠️  Composer not configured (api_url/api_key empty). Task decomposition disabled.")
 	}
 
+	// 环境变量覆盖（12-Factor App）
+	gwConfig.ApplyEnvOverrides()
+
+	// 配置校验
+	if errs := gwConfig.Validate(); len(errs) > 0 {
+		for _, e := range errs {
+			logWithTimestamp("❌ Config validation: %s", e)
+		}
+		logWithTimestamp("❌ Gateway startup aborted due to config errors")
+		os.Exit(1)
+	}
+	logWithTimestamp("✅ Config validation passed")
+
 	gw := gateway.NewOpcGateway(port, gwConfig)
 
 	// Set auth token from environment (dev mode if empty)
@@ -213,19 +223,6 @@ func Run(args []string) {
 	logWithTimestamp("🎨 Gallery root: %s", galleryDir)
 
 	logWithTimestamp("🌐 ComputeHub Gateway v%s listening on :%d", version.Short(), port)
-	srv := gw.ServeWithServer(port, "./code/dashboard")
-
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-
-	logWithTimestamp("Shutting down gateway...")
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
-		logWithTimestamp("❌ Gateway forced shutdown: %v", err)
-	} else {
-		logWithTimestamp("✅ Gateway shut down gracefully")
-	}
-	logWithTimestamp("Gateway service stopped")
+	// ServeWithServer 内部已处理优雅关闭（SIGINT/SIGTERM）
+	gw.Serve(port, "./code/dashboard")
 }

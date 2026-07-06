@@ -584,6 +584,59 @@ type GatewayConfig struct {
 	TriggerRulesPath   string // TriggerEngine 规则文件路径
 }
 
+// Validate 校验配置，返回所有缺失/错误项
+func (c *GatewayConfig) Validate() []string {
+	var errs []string
+	if c.ComposerAPIURL == "" {
+		errs = append(errs, "composer.api_url is required")
+	}
+	if c.ComposerKey == "" {
+		errs = append(errs, "composer.api_key is required")
+	}
+	if c.SandboxPath == "" {
+		errs = append(errs, "executor.sandbox_path is required")
+	}
+	if c.BufferSize <= 0 {
+		errs = append(errs, "kernel.buffer_size must be > 0")
+	}
+	if c.MaxStates <= 0 {
+		errs = append(errs, "kernel.max_states must be > 0")
+	}
+	if c.MaxNodes <= 0 {
+		errs = append(errs, "kernel.max_nodes must be > 0")
+	}
+	if c.ComposerMaxConcurrency <= 0 {
+		errs = append(errs, "composer.max_concurrency must be > 0")
+	}
+	return errs
+}
+
+// ApplyEnvOverrides 用环境变量覆盖配置字段
+// 环境变量格式: CONFIG_<FIELD>，如 CONFIG_COMPOSER_API_URL
+func (c *GatewayConfig) ApplyEnvOverrides() {
+	if v := os.Getenv("CONFIG_COMPOSER_API_URL"); v != "" {
+		c.ComposerAPIURL = v
+	}
+	if v := os.Getenv("CONFIG_COMPOSER_API_KEY"); v != "" {
+		c.ComposerKey = v
+	}
+	if v := os.Getenv("CONFIG_COMPOSER_MODEL"); v != "" {
+		c.ComposerModel = v
+	}
+	if v := os.Getenv("CONFIG_SANDBOX_PATH"); v != "" {
+		c.SandboxPath = v
+	}
+	if v := os.Getenv("CONFIG_DATA_DIR"); v != "" {
+		c.DataDir = v
+	}
+	if v := os.Getenv("CONFIG_GENE_STORE_PATH"); v != "" {
+		c.GeneStorePath = v
+	}
+	if v := os.Getenv("CONFIG_TRIGGER_RULES_PATH"); v != "" {
+		c.TriggerRulesPath = v
+	}
+}
+
 func (g *OpcGateway) Serve(port int, dashboardDir ...string) {
 	g.registerRoutes(port, dashboardDir...)
 	srv := g.serveWithGracefulShutdown(port)
@@ -599,9 +652,12 @@ func (g *OpcGateway) ServeWithServer(port int, dashboardDir ...string) *http.Ser
 
 // serveWithGracefulShutdown 启动 HTTP 服务并注册优雅关闭
 func (g *OpcGateway) serveWithGracefulShutdown(port int) *http.Server {
+	// Middleware 链: RequestID → Auth → DefaultServeMux
+	handler := RequestIDMiddleware(AuthMiddleware(http.DefaultServeMux))
+
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", port),
-		Handler: AuthMiddleware(http.DefaultServeMux),
+		Handler: handler,
 	}
 
 	go func() {
