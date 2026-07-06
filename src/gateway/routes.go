@@ -202,6 +202,7 @@ func (g *OpcGateway) registerRoutes(port int, dashboardDir ...string) {
 	logWithTimestamp("📡 ARC-AI-NET topology sync registered: /api/v1/cluster/topology")
 
 	// ── 分布式共享记忆层（SPEC-DMEM-001 Phase 1） ──
+	http.HandleFunc("/api/v1/memory", g.handleMemorySync) // 兼容: POST /api/v1/memory
 	http.HandleFunc("/api/v1/memory/sync", g.handleMemorySync)
 	http.HandleFunc("/api/v1/memory/search", g.handleMemorySearch)
 	http.HandleFunc("/api/v1/memory/recall", g.handleMemoryRecall)

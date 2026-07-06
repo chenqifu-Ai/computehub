@@ -587,12 +587,6 @@ type GatewayConfig struct {
 // Validate 校验配置，返回所有缺失/错误项
 func (c *GatewayConfig) Validate() []string {
 	var errs []string
-	if c.ComposerAPIURL == "" {
-		errs = append(errs, "composer.api_url is required")
-	}
-	if c.ComposerKey == "" {
-		errs = append(errs, "composer.api_key is required")
-	}
 	if c.SandboxPath == "" {
 		errs = append(errs, "executor.sandbox_path is required")
 	}
@@ -608,6 +602,7 @@ func (c *GatewayConfig) Validate() []string {
 	if c.ComposerMaxConcurrency <= 0 {
 		errs = append(errs, "composer.max_concurrency must be > 0")
 	}
+	// composer.api_url 和 api_key 可选（无 LLM 时降级运行）
 	return errs
 }
 

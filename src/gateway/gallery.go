@@ -1028,6 +1028,7 @@ func RegisterGallery(config *GalleryConfig) {
 
 	http.HandleFunc("/gallery", h.HandleGallery)
 	http.HandleFunc("/api/v1/gallery", h.HandleGallery)
+	http.HandleFunc("/api/v1/gallery/list", h.handleGalleryJSON) // agent tool 兼容（始终返回 JSON）
 	http.HandleFunc("/api/v1/gallery/upload", h.HandleUpload)
 	http.HandleFunc("/api/v1/gallery/delete", h.HandleDelete)
 	http.HandleFunc("/api/v1/gallery/generate", h.HandleGenerateFromGallery)

@@ -141,6 +141,7 @@ func Run(args []string) {
 		SandboxPath:   config.Executor.SandboxPath,
 		BufferSize:    config.Kernel.BufferSize,
 		MaxStates:     config.Kernel.MaxStates,
+		MaxNodes:      50, // 默认最大节点数
 		DataDir:       config.Data.Dir,
 	}
 	if config.Composer.APIURL != "" || config.Composer.APIKey != "" {
