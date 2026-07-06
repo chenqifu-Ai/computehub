@@ -1,0 +1,48 @@
+# =============================================================================
+# ComputeHub — Docker Compose 快速部署
+# =============================================================================
+# 用法:
+#   docker compose up -d              # 启动 Gateway
+#   docker compose up -d --scale worker=3  # 启动 1 Gateway + 3 Worker
+# =============================================================================
+
+services:
+  gateway:
+    build:
+      context: .
+      args:
+        VERSION: 1.4.0
+    image: computehub:latest
+    container_name: computehub-gateway
+    ports:
+      - "8282:8282"
+    volumes:
+      - ./config.json:/app/config.json:ro
+      - ./data:/app/data
+      - ./deploy:/app/deploy
+    environment:
+      - TZ=Asia/Shanghai
+      - AUTH_BEARER_TOKEN=${AUTH_BEARER_TOKEN:-}
+    command: ["gateway", "--port", "8282"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8282/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  worker:
+    build:
+      context: .
+      args:
+        VERSION: 1.4.0
+    image: computehub:latest
+    deploy:
+      replicas: 0  # 默认不启动 Worker，用 --scale worker=N 启动
+    environment:
+      - TZ=Asia/Shanghai
+    command: ["worker", "--gw", "http://gateway:8282", "--node-id", "docker-worker-{{.Task.Slot}}"]
+    depends_on:
+      gateway:
+        condition: service_healthy
+    restart: unless-stopped
