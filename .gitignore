@@ -14,6 +14,17 @@ Thumbs.db
 
 # Logs
 *.log
+gateway.err
+gateway.out
+nul
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Backup files
+*.bak
+*.old
 
 # Config (local overrides)
 config.local.*

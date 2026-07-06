@@ -17,6 +17,10 @@ func (g *OpcGateway) registerRoutes(port int, dashboardDir ...string) {
 	http.HandleFunc("/api/health", g.handleHealth)
 	http.HandleFunc("/api/status", g.handleStatus)
 
+	// ── 深度健康检查 ──
+	http.HandleFunc("/api/v1/health/detailed", g.handleHealthDetailed)
+	logWithTimestamp("🩺 Detailed health endpoint registered: /api/v1/health/detailed")
+
 	// ── ComputeHub API: Nodes ──
 	http.HandleFunc("/api/v1/nodes/register", g.handleNodeRegister)
 	http.HandleFunc("/api/v1/nodes/unregister", g.handleNodeUnregister)

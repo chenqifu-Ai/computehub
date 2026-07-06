@@ -652,8 +652,17 @@ func (g *OpcGateway) ServeWithServer(port int, dashboardDir ...string) *http.Ser
 
 // serveWithGracefulShutdown 启动 HTTP 服务并注册优雅关闭
 func (g *OpcGateway) serveWithGracefulShutdown(port int) *http.Server {
-	// Middleware 链: RequestID → Auth → DefaultServeMux
-	handler := RequestIDMiddleware(AuthMiddleware(http.DefaultServeMux))
+	// Middleware 链: RequestID → CORS → RateLimit → Auth → DefaultServeMux
+	corsCfg := DefaultCORSConfig()
+	rateLimiter := NewRateLimiter(100, 200) // 100 req/s, burst 200
+
+	handler := RequestIDMiddleware(
+		CORSMiddleware(corsCfg)(
+			RateLimitMiddleware(rateLimiter)(
+				AuthMiddleware(http.DefaultServeMux),
+			),
+		),
+	)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", port),
