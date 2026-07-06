@@ -16,7 +16,7 @@ import "fmt"
 
 // VERSION 由 ldflags 在构建时注入，来源为 git tag（由构建脚本解析）。
 // 默认 "dev" — 仅开发环境使用。
-var VERSION = "1.3.52"
+var VERSION = "1.4.0"
 
 // BUILD 是 Unix 时间戳构建标识，由 ldflags 注入。
 // 默认 "dev"。

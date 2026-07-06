@@ -1,17 +1,18 @@
 package gateway
 
 import (
-	"bytes"
 	"context"
-	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/computehub/opc/src/agent"
@@ -24,11 +25,18 @@ import (
 	"github.com/computehub/opc/src/scheduler"
 )
 
-// logWithTimestamp 添加时间戳的日志函数
+// initSlog 初始化结构化日志（JSON 格式，带级别和源位置）
+func initSlog() {
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Level:     slog.LevelInfo,
+		AddSource: true,
+	})))
+}
+
+// logWithTimestamp 向后兼容的日志函数，底层使用 slog
 func logWithTimestamp(format string, args ...interface{}) {
-	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	message := fmt.Sprintf(format, args...)
-	fmt.Printf("[%s] %s\n", timestamp, message)
+	slog.Info("gateway", "msg", message)
 }
 
 // extractClientIP extracts the real client IP from an HTTP request.
@@ -578,28 +586,64 @@ type GatewayConfig struct {
 
 func (g *OpcGateway) Serve(port int, dashboardDir ...string) {
 	g.registerRoutes(port, dashboardDir...)
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), AuthMiddleware(http.DefaultServeMux)); err != nil {
-		logWithTimestamp("Fatal Gateway Error: %v", err)
-	}
+	srv := g.serveWithGracefulShutdown(port)
+	<-g.waitForShutdown(srv)
 }
 
 // ServeWithServer is like Serve but returns *http.Server for graceful shutdown.
 // This is the preferred method for production use.
 func (g *OpcGateway) ServeWithServer(port int, dashboardDir ...string) *http.Server {
 	g.registerRoutes(port, dashboardDir...)
+	return g.serveWithGracefulShutdown(port)
+}
 
+// serveWithGracefulShutdown 启动 HTTP 服务并注册优雅关闭
+func (g *OpcGateway) serveWithGracefulShutdown(port int) *http.Server {
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", port),
-		Handler: nil, // use DefaultServeMux
+		Handler: AuthMiddleware(http.DefaultServeMux),
 	}
 
 	go func() {
+		logWithTimestamp("🌐 ComputeHub Gateway listening on :%d", port)
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			logWithTimestamp("Fatal Gateway Error: %v", err)
 		}
 	}()
 
 	return srv
+}
+
+// waitForShutdown 等待 SIGINT/SIGTERM 并优雅关闭
+func (g *OpcGateway) waitForShutdown(srv *http.Server) chan struct{} {
+	done := make(chan struct{}, 1)
+	go func() {
+		sigCh := make(chan os.Signal, 1)
+		signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+		sig := <-sigCh
+		logWithTimestamp("🛑 Received signal %v, shutting down gracefully...", sig)
+
+		// 给正在处理的请求 30s 宽限期
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+
+		// 关闭 HTTP 服务
+		if err := srv.Shutdown(ctx); err != nil {
+			logWithTimestamp("⚠️ Graceful shutdown error: %v", err)
+		}
+
+		// 关闭内部组件
+		if g.MetricsCollector != nil {
+			g.MetricsCollector.Stop()
+		}
+		if g.wsHub != nil {
+			g.wsHub.Close()
+		}
+
+		logWithTimestamp("✅ Gateway shutdown complete")
+		close(done)
+	}()
+	return done
 }
 
 // ServeHTTP implements http.Handler for test integration
@@ -804,599 +848,13 @@ func (g *OpcGateway) handleDispatch(w http.ResponseWriter, r *http.Request) {
 }
 
 // ==================== ComputeHub API v1 Endpoints ====================
-
-func (g *OpcGateway) handleNodeRegister(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, `{"error":"Only POST allowed"}`, http.StatusMethodNotAllowed)
-		return
-	}
-
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		g.sendResponse(w, Response{Success: false, Error: "Failed to read request body"})
-		return
-	}
-	defer r.Body.Close()
-
-	var reg kernel.NodeRegister
-	if err := json.Unmarshal(body, &reg); err != nil {
-		g.sendResponse(w, Response{Success: false, Error: fmt.Sprintf("Invalid JSON: %v", err)})
-		return
-	}
-
-	// Use Gateway-observed IP (from TCP connection) instead of worker self-report,
-	// which would be a NAT-private IP for remote workers.
-	reg.IPAddress = extractClientIP(r)
-
-	reg.RegisteredAt = time.Now()
-	if reg.Status == "" {
-		reg.Status = "online"
-	}
-	if reg.Region == "" {
-		reg.Region = "unknown"
-	}
-
-	// Warn on node ID length — Windows NetBIOS limits hostnames to 15 chars
-	if len(reg.NodeID) > 15 {
-		logWithTimestamp("⚠️ Node ID too long (%d chars): %q — may be truncated on Windows. Use --node-id with ≤15 chars",
-			len(reg.NodeID), reg.NodeID)
-	}
-
-	respChan := g.Kernel.DispatchExtended("gw-"+time.Now().Format("150405"), kernel.ActionNodeRegister, &reg)
-	resp := <-respChan
-
-	// ARC-NET: 广播节点上线事件
-	if resp.Success {
-		regCopy := reg // copy to avoid race
-		go g.BroadcastNodeEvent(EventTypeNodeJoin, &regCopy)
-	}
-
-	// 审计日志：节点注册
-	g.auditLog(reg.NodeID, AuditNodeRegister, "node", reg.NodeID,
-		fmt.Sprintf("region=%s gpu=%s", reg.Region, reg.GPUType), resp.Success)
-
-	g.sendResponse(w, Response{
-		Success:  resp.Success,
-		Data:     resp.Data,
-		Error:    fmt.Sprintf("%v", resp.Error),
-		Duration: resp.Duration,
-	})
-}
-
-func (g *OpcGateway) handleNodeUnregister(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, `{"error":"Only POST allowed"}`, http.StatusMethodNotAllowed)
-		return
-	}
-
-	var req struct {
-		NodeID string `json:"node_id"`
-	}
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		g.sendResponse(w, Response{Success: false, Error: "Failed to read request body"})
-		return
-	}
-	defer r.Body.Close()
-
-	if err := json.Unmarshal(body, &req); err != nil {
-		g.sendResponse(w, Response{Success: false, Error: fmt.Sprintf("Invalid JSON: %v", err)})
-		return
-	}
-
-	if req.NodeID == "" {
-		g.sendResponse(w, Response{Success: false, Error: "node_id is required"})
-		return
-	}
-
-	respChan := g.Kernel.DispatchExtended("gw-"+time.Now().Format("150405"), kernel.ActionNodeUnregister, req.NodeID)
-	resp := <-respChan
-
-	// ⚠️ 同步清理 visualizer GlobalPowerMap — 无论 kernel 找没找到
-	// 因为 kernel 和 visualizer 是独立的节点存储，删除必须同步
-	if g.unregisterSimFallback != nil {
-		if fbErr := g.unregisterSimFallback(req.NodeID); fbErr == nil {
-			logWithTimestamp("[Gateway] 🗑️ Visualizer data cleaned for node %s", req.NodeID)
-		}
-	}
-
-	errStr := ""
-	if resp.Error != nil {
-		errStr = resp.Error.Error()
-	}
-
-	g.sendResponse(w, Response{
-		Success:  resp.Success,
-		Data:     resp.Data,
-		Error:    errStr,
-		Duration: resp.Duration,
-	})
-}
-
-func (g *OpcGateway) handleNodeHeartbeat(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, `{"error":"Only POST allowed"}`, http.StatusMethodNotAllowed)
-		return
-	}
-
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		g.sendResponse(w, Response{Success: false, Error: "Failed to read request body"})
-		return
-	}
-	defer r.Body.Close()
-
-	var heartbeat map[string]interface{}
-	if err := json.Unmarshal(body, &heartbeat); err != nil {
-		g.sendResponse(w, Response{Success: false, Error: fmt.Sprintf("Invalid JSON: %v", err)})
-		return
-	}
-
-	nodeID, _ := heartbeat["node_id"].(string)
-	if nodeID == "" {
-		g.sendResponse(w, Response{Success: false, Error: "node_id is required for heartbeat"})
-		return
-	}
-
-	// Inject the Gateway-observed IP into heartbeat payload so kernel can
-	// update it even for nodes that were registered before the IP-fix was deployed.
-	heartbeat["ip_address"] = extractClientIP(r)
-
-	// Check if node exists in kernel
-	kernelRespChan := g.Kernel.DispatchExtended("gw-"+time.Now().Format("150405"), kernel.ActionNodeHeartbeat, heartbeat)
-	kernelResp := <-kernelRespChan
-
-	// Update Scheduler metrics
-	if g.Scheduler != nil {
-		g.Scheduler.UpdateNodeHeartbeat(nodeID, 15, 45.0, 62.0, 24.0)
-	}
-
-	g.sendResponse(w, Response{
-		Success:  kernelResp.Success,
-		Data:     kernelResp.Data,
-		Error:    fmt.Sprintf("%v", kernelResp.Error),
-		Duration: kernelResp.Duration,
-	})
-}
-
-func (g *OpcGateway) handleNodeList(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, `{"error":"Only GET allowed"}`, http.StatusMethodNotAllowed)
-		return
-	}
-
-	nodes := g.Kernel.NodeMgr.ListNodes()
-	nodeData := make([]map[string]interface{}, 0, len(nodes))
-
-	for _, node := range nodes {
-		ipAddr := ""
-		if node.Register.IPAddress != "" {
-			ipAddr = node.Register.IPAddress
-		}
-		nodeData = append(nodeData, map[string]interface{}{
-			"node_id":       node.Register.NodeID,
-			"node_type":     node.Register.NodeType,
-			"platform":      node.Register.Platform,
-			"region":        node.Register.Region,
-			"gpu_type":      node.Register.GPUType,
-			"status":        node.Register.Status,
-			"version":       node.Register.Version,
-			"ip_address":    ipAddr, // Gateway-observed source IP at registration
-			"registered_at": node.Register.RegisteredAt.Format(time.RFC3339),
-			"active_tasks":     node.Metrics.ActiveTasks,
-			"cpu_utilization":  node.Metrics.CPUUtilization,
-			"gpu_utilization":  node.Metrics.GPUUtilization,
-			"temperature":      node.Metrics.Temperature,
-			"memory_used_gb":   node.Metrics.MemoryUsedGB,
-		})
-	}
-
-	g.sendResponse(w, Response{
-		Success: true,
-		Data:    nodeData,
-	})
-}
-
-func (g *OpcGateway) handleNodeMetrics(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, `{"error":"Only GET allowed"}`, http.StatusMethodNotAllowed)
-		return
-	}
-
-	nodeID := r.URL.Query().Get("node_id")
-	if nodeID == "" {
-		g.sendResponse(w, Response{Success: false, Error: "node_id is required"})
-		return
-	}
-
-	metrics, err := g.Kernel.NodeMgr.GetNodeMetrics(nodeID)
-	if err != nil {
-		g.sendResponse(w, Response{Success: false, Error: fmt.Sprintf("%v", err)})
-		return
-	}
-
-	g.sendResponse(w, Response{
-		Success: true,
-		Data:    metrics,
-	})
-}
-
-// handleNodesStats returns aggregated statistics for all nodes
-func (g *OpcGateway) handleNodesStats(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, `{"error":"Only GET allowed"}`, http.StatusMethodNotAllowed)
-		return
-	}
-
-	nodes := g.Kernel.NodeMgr.ListNodes()
-
-	// Aggregate statistics
-	onlineCount := 0
-	offlineCount := 0
-	byRegion := make(map[string]int)
-	byType := make(map[string]int)
-	byVersion := make(map[string]int)
-	totalTasks := 0
-	activeTasks := 0
-	totalCPU := 0.0
-	totalMem := 0.0
-
-	nodeList := make([]map[string]interface{}, 0, len(nodes))
-
-	for _, node := range nodes {
-		nodeData := map[string]interface{}{
-			"node_id":         node.Register.NodeID,
-			"status":          node.Register.Status,
-			"version":          node.Register.Version,
-			"platform":         node.Register.Platform,
-			"region":           node.Register.Region,
-			"gpu_type":         node.Register.GPUType,
-			"ip_address":       node.Register.IPAddress,
-			"registered_at":    node.Register.RegisteredAt,
-			"active_tasks":     node.Metrics.ActiveTasks,
-			"total_tasks":      node.Metrics.TotalTasks,
-			"cpu_utilization":  node.Metrics.CPUUtilization,
-			"memory_used_gb":   node.Metrics.MemoryUsedGB,
-		}
-		nodeList = append(nodeList, nodeData)
-
-		if node.Register.Status == "online" {
-			onlineCount++
-		} else {
-			offlineCount++
-		}
-
-		// By region
-		region := node.Register.Region
-		if region == "" {
-			region = "unknown"
-		}
-		byRegion[region]++
-
-		// By type
-		nodeType := "cpu"
-		if node.Register.GPUType != "" {
-			nodeType = "gpu"
-		}
-		byType[nodeType]++
-
-		// By version
-		ver := node.Register.Version
-		if ver == "" {
-			ver = "unknown"
-		}
-		byVersion[ver]++
-
-		// Totals
-		totalTasks += node.Metrics.TotalTasks
-		activeTasks += node.Metrics.ActiveTasks
-		totalCPU += node.Metrics.CPUUtilization
-		totalMem += node.Metrics.MemoryUsedGB
-	}
-
-	stats := map[string]interface{}{
-		"total_nodes":   len(nodes),
-		"online_nodes":  onlineCount,
-		"offline_nodes": offlineCount,
-		"total_tasks":   totalTasks,
-		"active_tasks":  activeTasks,
-		"avg_cpu_util":  totalCPU / float64(max(len(nodes), 1)),
-		"avg_mem_used":  totalMem / float64(max(len(nodes), 1)),
-		"by_region":      byRegion,
-		"by_type":        byType,
-		"by_version":     byVersion,
-		"nodes":          nodeList,
-	}
-
-	g.sendResponse(w, Response{
-		Success: true,
-		Data:    stats,
-	})
-}
+// (Node handlers moved to handler_nodes.go, Task handlers moved to handler_tasks.go)
 
 func max(a, b int) int {
 	if a > b {
 		return a
 	}
 	return b
-}
-
-func (g *OpcGateway) handleTaskSubmit(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, `{"error":"Only POST allowed"}`, http.StatusMethodNotAllowed)
-		return
-	}
-
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		g.sendResponse(w, Response{Success: false, Error: "Failed to read request body"})
-		return
-	}
-	defer r.Body.Close()
-
-	var task kernel.TaskSubmit
-	if err := json.Unmarshal(body, &task); err != nil {
-		g.sendResponse(w, Response{Success: false, Error: fmt.Sprintf("Invalid JSON: %v", err)})
-		return
-	}
-
-	// Support node, node_id, and assigned_node — map everything to AssignedNode
-	// Priority: node > node_id > assigned_node
-	if task.Node != "" {
-		if task.AssignedNode == "" {
-			task.AssignedNode = task.Node
-		}
-		if task.NodeID == "" {
-			task.NodeID = task.Node
-		}
-	}
-	if task.NodeID != "" && task.AssignedNode == "" {
-		task.AssignedNode = task.NodeID
-	}
-	if task.AssignedNode != "" && task.NodeID == "" {
-		task.NodeID = task.AssignedNode
-	}
-
-	// If only payload is provided, use it as the command
-	if task.Command == "" && task.Payload != "" {
-		task.Command = task.Payload
-	}
-
-	task.SubmittedAt = time.Now()
-	if task.Priority == 0 {
-		task.Priority = 5
-	}
-	if task.SourceType == "" {
-		task.SourceType = "api"
-	}
-	if task.SubmittedBy == "" {
-		task.SubmittedBy = "gateway"
-	}
-	if task.MaxRetries == 0 {
-		task.MaxRetries = 3
-	}
-
-	// Record task submission in Prometheus metrics
-	if g.Metrics != nil {
-		g.MetricsCollector.RecordTaskSubmission()
-	}
-
-	// 银河计划 Phase 2: 创建任务进度跟踪
-	if g.TaskTracker != nil {
-		g.TaskTracker.CreateTask(task.TaskID, task.AssignedNode)
-		g.TaskTracker.UpdateStage(task.TaskID, StageQueued, "submitted",
-			fmt.Sprintf("任务已提交: %s", task.Command))
-	}
-
-	// If composer is available, decompose complex tasks
-	if g.Composer != nil && !isSimpleTask(task.Command) {
-		logWithTimestamp("[Composer] 🧠 Complex task detected, decomposing: %s", task.Command)
-		go func(cmd string, tid string) {
-			result, err := g.Composer.Run(composer.TaskComposerInput{
-				TaskID:       tid,
-				OriginalTask: cmd,
-			})
-			if err != nil {
-				logWithTimestamp("[Composer] ❌ Decompose failed: %v", err)
-			} else {
-				successCount := 0
-				for _, r := range result.Results {
-					if r.Success {
-						successCount++
-					}
-				}
-				logWithTimestamp("[Composer] ✅ Task %s: %d subtasks, %d success, final=%d chars",
-					tid, len(result.Subtasks), successCount, len(result.FinalResult))
-			}
-		}(task.Command, task.TaskID)
-	} else if g.Composer != nil {
-		logWithTimestamp("[Composer] ➡️ Simple command, direct dispatch: %s", task.Command)
-	}
-
-	respChan := g.Kernel.DispatchExtended("gw-"+time.Now().Format("150405"), kernel.ActionTaskSubmit, &task)
-	resp := <-respChan
-
-	// Phase 3: 任务 WS 推送 — 如果任务指定了目标节点，尝试 WS 推送
-	// 推送成功 → Worker 立即收到，无需 HTTP 轮询
-	// 推送失败 → Worker 通过 HTTP poll 兜底（向后兼容）
-	if resp.Success && task.AssignedNode != "" && g.wsHub != nil {
-		pollItem := &TaskPollItem{
-			TaskID:     task.TaskID,
-			Command:    task.Command,
-			Timeout:    task.Timeout,
-			Priority:   task.Priority,
-			NodeID:     task.AssignedNode,
-			SourceType: task.SourceType,
-		}
-		if g.wsHub.PushTask(task.AssignedNode, pollItem) {
-			logWithTimestamp("[WS Push] 📡 任务 %s 已推送到 %s", task.TaskID, task.AssignedNode)
-		} else {
-			logWithTimestamp("[WS Push] ⚠️ 任务 %s WS 推送失败 (%s 不在线)，等待 HTTP poll", task.TaskID, task.AssignedNode)
-		}
-	}
-
-	// 审计日志：任务提交
-	g.auditLog(task.NodeID, AuditTaskSubmit, "task", task.TaskID,
-		fmt.Sprintf("cmd=%s priority=%d", task.Command, task.Priority), resp.Success)
-
-	g.sendResponse(w, Response{
-		Success:  resp.Success,
-		Data:     resp.Data,
-		Error:    fmt.Sprintf("%v", resp.Error),
-		Duration: resp.Duration,
-	})
-}
-
-// chunkedSize 大结果分块阈值 (1MB)
-const chunkedSize = 1 * 1024 * 1024
-
-func (g *OpcGateway) handleTaskResult(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, `{"error":"Only POST allowed"}`, http.StatusMethodNotAllowed)
-		return
-	}
-
-	// Optimized (2026-07-05): 大结果分块传输，避免整块阻塞
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		g.sendResponse(w, Response{Success: false, Error: "Failed to read request body"})
-		return
-	}
-	defer r.Body.Close()
-
-	// 快速路径：小结果直接解析
-	if len(body) < chunkedSize {
-		var result kernel.TaskResult
-		if err := json.Unmarshal(body, &result); err != nil {
-			g.sendResponse(w, Response{Success: false, Error: fmt.Sprintf("Invalid JSON: %v", err)})
-			return
-		}
-		body = mustMarshalJSON(result) // re-marshal for consistent format
-	}
-	// 大结果：仍用完整解析（Go 的 json.Unmarshal 已足够快）
-	// 真正的大输出应走 stream 端点 (handleTaskProgress)
-	var result kernel.TaskResult
-	if err := json.Unmarshal(body, &result); err != nil {
-		g.sendResponse(w, Response{Success: false, Error: fmt.Sprintf("Invalid JSON: %v", err)})
-		return
-	}
-	// 如果 stdout/stderr 太大，提醒走 stream 端点
-	totalSize := len(result.Stdout) + len(result.Stderr)
-	if totalSize > chunkedSize {
-		logWithTimestamp("[TaskResult] ⚠️ 结果 %d bytes，建议使用 POST /api/v1/tasks/progress 流式获取", totalSize)
-	}
-
-	// Record task completion in Prometheus metrics
-	if g.Metrics != nil {
-		duration, _ := time.ParseDuration(result.Duration)
-		g.MetricsCollector.RecordTaskCompletion(result.Success, duration.Seconds())
-	}
-
-	respChan := g.Kernel.DispatchExtended("gw-"+time.Now().Format("150405"), kernel.ActionTaskResult, &result)
-	resp := <-respChan
-
-	// 银河计划 Phase 2: 更新任务进度跟踪
-	if g.TaskTracker != nil {
-		if result.Success {
-			g.TaskTracker.CompleteTask(result.TaskID, result.Stdout)
-		} else {
-			g.TaskTracker.FailTask(result.TaskID, result.Stderr)
-		}
-	}
-
-	// 审计日志：任务结果
-	g.auditLog(result.ExecutedOn, AuditTaskSubmit, "task", result.TaskID,
-		fmt.Sprintf("success=%v duration=%s", result.Success, result.Duration), resp.Success)
-
-	g.sendResponse(w, Response{
-		Success:  resp.Success,
-		Data:     resp.Data,
-		Error:    fmt.Sprintf("%v", resp.Error),
-		Duration: resp.Duration,
-	})
-}
-
-func (g *OpcGateway) handleTaskList(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, `{"error":"Only GET allowed"}`, http.StatusMethodNotAllowed)
-		return
-	}
-
-	nodes := g.Kernel.NodeMgr.ListNodes()
-	tasks := make(map[string][]map[string]interface{})
-
-	for _, node := range nodes {
-		tasks[node.Register.NodeID] = []map[string]interface{}{}
-		ip := node.Register.IPAddress
-		if ip == "" {
-			ip = "127.0.0.1"
-		}
-		for taskID, ts := range node.Tasks {
-			createdAt := ""
-			if !ts.Created.IsZero() {
-				createdAt = ts.Created.Format("15:04:05")
-			} else if !ts.Task.SubmittedAt.IsZero() {
-				createdAt = ts.Task.SubmittedAt.Format("15:04:05")
-			}
-			tasks[node.Register.NodeID] = append(tasks[node.Register.NodeID], map[string]interface{}{
-				"task_id":     taskID,
-				"status":      ts.Status,
-				"command":     ts.Task.Command,
-				"source_type": ts.Task.SourceType,
-				"submitted_by": ts.Task.SubmittedBy,
-				"priority":    ts.Task.Priority,
-				"submitted_at": createdAt,
-				"node_ip":     ip,
-			})
-		}
-	}
-
-	g.sendResponse(w, Response{
-		Success: true,
-		Data:    tasks,
-	})
-}
-
-func (g *OpcGateway) handleTaskCancel(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, `{"error":"Only POST allowed"}`, http.StatusMethodNotAllowed)
-		return
-	}
-
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		g.sendResponse(w, Response{Success: false, Error: "Failed to read request body"})
-		return
-	}
-	defer r.Body.Close()
-
-	var req struct {
-		TaskID string `json:"task_id"`
-	}
-	if err := json.Unmarshal(body, &req); err != nil {
-		g.sendResponse(w, Response{Success: false, Error: fmt.Sprintf("Invalid JSON: %v", err)})
-		return
-	}
-
-	if req.TaskID == "" {
-		g.sendResponse(w, Response{Success: false, Error: "task_id is required"})
-		return
-	}
-
-	respChan := g.Kernel.DispatchExtended("gw-"+time.Now().Format("150405"), kernel.ActionTaskCancel, req.TaskID)
-	resp := <-respChan
-
-	errStr := ""
-	if resp.Error != nil {
-		errStr = resp.Error.Error()
-	}
-
-	g.sendResponse(w, Response{
-		Success:  resp.Success,
-		Data:     resp.Data,
-		Error:    errStr,
-		Duration: resp.Duration,
-	})
 }
 
 // ==================== File Download Endpoint ====================
@@ -1685,312 +1143,8 @@ func isSimpleTask(cmd string) bool {
 	return true
 }
 
-// ====== LLM 代理端点（Worker 节点通过 Gateway 中转调用 NewAPI） ======
-
-// handleLlmProxy 接收 Worker 的 LLM 请求，通过 Gateway 转发到 NewAPI
-// 目的：Windows 等无法访问外网的节点可以通过 Gateway 中转
-func (g *OpcGateway) handleLlmProxy(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, `{"error":"Only POST allowed"}`, http.StatusMethodNotAllowed)
-		return
-	}
-
-	// 读取请求体（透传 OpenAI Chat API 格式）
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, `{"error":"read body failed"}`, http.StatusBadRequest)
-		return
-	}
-	defer r.Body.Close()
-
-	// 注入 reasoning: false（默认关掉 thinking，调用方如需可显式传 true）
-	var reqMap map[string]interface{}
-	if err := json.Unmarshal(body, &reqMap); err == nil {
-		if _, exists := reqMap["reasoning"]; !exists {
-			reqMap["reasoning"] = false
-		}
-		modified, err := json.Marshal(reqMap)
-		if err == nil {
-			body = modified
-		}
-	}
-
-	// 从 config.json → composer 读取 LLM 配置
-	apiURL := g.composerAPI
-	apiKey := g.composerKey
-	timeout := 60
-	if apiURL == "" {
-		apiURL = "https://ai.zhangtuokeji.top:9090/v1"
-		apiKey = "sk-28PRiilecewqbNN9G1TGHhQwML6KCa8yMtvO5HH1KzuuLKbB"
-	}
-
-	// 构造请求到上游
-	targetURL := strings.TrimRight(apiURL, "/") + "/chat/completions"
-	req, err := http.NewRequest("POST", targetURL, bytes.NewReader(body))
-	if err != nil {
-		http.Error(w, `{"error":"create upstream request failed"}`, http.StatusInternalServerError)
-		return
-	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+apiKey)
-
-	// 用禁用 HTTP/2 的 transport（NewAPI proxy 的 HTTP/2 不稳定）
-	transport := &http.Transport{
-		TLSNextProto: make(map[string]func(authority string, c *tls.Conn) http.RoundTripper),
-	}
-	client := &http.Client{
-		Timeout:   time.Duration(timeout) * time.Second,
-		Transport: transport,
-	}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		logWithTimestamp("[LLM Proxy] ❌ Upstream call failed: %v", err)
-		http.Error(w, fmt.Sprintf(`{"error":"upstream call failed: %v"}`, err), http.StatusBadGateway)
-		return
-	}
-	defer resp.Body.Close()
-
-	// 透传状态码和头部
-	for key, vals := range resp.Header {
-		for _, v := range vals {
-			w.Header().Add(key, v)
-		}
-	}
-	w.WriteHeader(resp.StatusCode)
-	io.Copy(w, resp.Body)
-}
-
-// ====== Phase 3: Expert List Handler ======
-
-// handleExpertList 返回所有已注册的专家 Agent 列表
-func (g *OpcGateway) handleExpertList(w http.ResponseWriter, r *http.Request) {
-	if g.ExpertRegistry == nil {
-		g.sendResponse(w, Response{Success: false, Error: "Expert registry not initialized"})
-		return
-	}
-
-	experts := g.ExpertRegistry.List()
-	type expertInfo struct {
-		ID          string   `json:"id"`
-		Name        string   `json:"name"`
-		Nickname    string   `json:"nickname"`
-		Domain      string   `json:"domain"`
-		Description string   `json:"description"`
-		Tags        []string `json:"tags"`
-	}
-
-	list := make([]expertInfo, 0, len(experts))
-	for _, e := range experts {
-		list = append(list, expertInfo{
-			ID:          e.ID,
-			Name:        e.Name,
-			Nickname:    e.Nickname,
-			Domain:      e.Domain,
-			Description: e.Description,
-			Tags:        e.Tags,
-		})
-	}
-
-	g.sendResponse(w, Response{
-		Success: true,
-		Data: map[string]interface{}{
-			"experts": list,
-			"count":   len(list),
-		},
-	})
-}
-
-// ====== Agent Think Handler (Layer 2) ======
-
-// handleAgentThink 接收自然语言任务 → AI 思考 → 执行 → 回答
-func (g *OpcGateway) handleAgentThink(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, `{"error":"Only POST allowed"}`, http.StatusMethodNotAllowed)
-		return
-	}
-
-	if g.Agent == nil {
-		g.sendResponse(w, Response{
-			Success: false,
-			Error:   "Agent not initialized",
-		})
-		return
-	}
-
-	var req agent.AgentRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		g.sendResponse(w, Response{
-			Success: false,
-			Error:   fmt.Sprintf("Invalid request body: %v", err),
-		})
-		return
-	}
-
-	if req.Task == "" {
-		g.sendResponse(w, Response{
-			Success: false,
-			Error:   "task is required",
-		})
-		return
-	}
-
-	logWithTimestamp("[Agent] 🧠 Think request: %s (session=%s)", req.Task, req.SessionID)
-
-	ctx, cancel := context.WithTimeout(r.Context(), 120*time.Second)
-	defer cancel()
-
-	resp, err := g.Agent.Think(ctx, &req)
-	if err != nil {
-		logWithTimestamp("[Agent] ❌ Think failed: %v", err)
-		g.sendResponse(w, Response{
-			Success: false,
-			Error:   fmt.Sprintf("Agent think failed: %v", err),
-		})
-		return
-	}
-
-	logWithTimestamp("[Agent] ✅ Think complete: %d plan steps, result=%d chars",
-		len(resp.Plan), len(resp.Result))
-
-	g.sendResponse(w, Response{
-		Success: true,
-		Data:    resp,
-	})
-}
-
-// handleAgentStream — SSE 流式端到端对话
-// 前端通过 POST 请求，后端逐步推送 thinking → plan → step → result（SSE 格式）
-func (g *OpcGateway) handleAgentStream(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, `{"error":"Only POST allowed"}`, http.StatusMethodNotAllowed)
-		return
-	}
-
-	if g.Agent == nil {
-		g.sendResponse(w, Response{Success: false, Error: "Agent not initialized"})
-		return
-	}
-
-	var req agent.AgentRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		g.sendResponse(w, Response{Success: false, Error: fmt.Sprintf("Invalid request body: %v", err)})
-		return
-	}
-	if req.Task == "" {
-		g.sendResponse(w, Response{Success: false, Error: "task is required"})
-		return
-	}
-
-	logWithTimestamp("[Agent] 🧠 Stream request: %s (session=%s)", req.Task, req.SessionID)
-
-	// SSE headers
-	w.Header().Set("Content-Type", "text/event-stream")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Connection", "keep-alive")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.WriteHeader(http.StatusOK)
-
-	flusher, ok := w.(http.Flusher)
-	if !ok {
-		g.sendResponse(w, Response{Success: false, Error: "streaming not supported"})
-		return
-	}
-
-	// 发送 SSE 事件辅助函数
-	sendSSE := func(eventType, data string) {
-		fmt.Fprintf(w, "event: %s\ndata: %s\n\n", eventType, data)
-		flusher.Flush()
-	}
-
-	// 心跳（每 5 秒确保连接存活）
-	// ⚠️ 模型开始输出后立即停止心跳，避免 data race（两个 goroutine 同时写 ResponseWriter）
-	heartbeatDone := make(chan struct{})
-	firstContent := make(chan struct{}, 1)
-	go func() {
-		ticker := time.NewTicker(5 * time.Second)
-		defer ticker.Stop()
-		for {
-			select {
-			case <-ticker.C:
-				fmt.Fprintf(w, ": heartbeat\n\n")
-				flusher.Flush()
-			case <-firstContent:
-				return
-			case <-heartbeatDone:
-				return
-			}
-		}
-	}()
-	defer close(heartbeatDone)
-
-	// 流式回调 → SSE 事件
-	ctx, cancel := context.WithTimeout(r.Context(), 120*time.Second)
-	defer cancel()
-
-	hasSentContent := false
-	cb := func(ev agent.StreamEvent) {
-		// 第一个内容事件到达时停止心跳
-		if !hasSentContent {
-			hasSentContent = true
-			close(firstContent)
-		}
-		switch ev.Type {
-		case "thought_chunk":
-			sendSSE("thought", ev.Data)
-		case "step_start":
-			sendSSE("step", ev.Data)
-		case "step_chunk":
-			sendSSE("step_output", ev.Data)
-		case "step_done":
-			sendSSE("step_end", ev.Data)
-		case "result_chunk":
-			sendSSE("result", ev.Data)
-		case "result":
-			sendSSE("result", ev.Data)
-		case "thinking":
-			sendSSE("status", ev.Data)
-		case "error":
-			sendSSE("error", ev.Data)
-		case "done":
-			sendSSE("done", "")
-		default:
-			js, _ := json.Marshal(ev)
-			if js != nil {
-				sendSSE(ev.Type, string(js))
-			}
-		}
-	}
-
-	_, err := g.Agent.ThinkStream(ctx, &req, cb)
-	if err != nil {
-		logWithTimestamp("[Agent] ❌ Stream failed: %v", err)
-		sendSSE("error", fmt.Sprintf("内部错误: %v", err))
-		sendSSE("done", "")
-		return
-	}
-
-	logWithTimestamp("[Agent] ✅ Stream complete: session=%s", req.SessionID)
-}
-
-// handleAIPage — 独立 AI 对话页面（从 web/ai.html 读取）
-func (g *OpcGateway) handleAIPage(w http.ResponseWriter, r *http.Request) {
-	// 从 web/ai.html 读取页面
-	webDir := filepath.Join(filepath.Dir(os.Args[0]), "..", "web")
-	if _, err := os.Stat(webDir); os.IsNotExist(err) {
-		webDir = "web"
-	}
-	htmlPath := filepath.Join(webDir, "ai.html")
-	
-	html, err := os.ReadFile(htmlPath)
-	if err != nil {
-		http.Error(w, "⚠️ 页面文件未找到: "+htmlPath, http.StatusNotFound)
-		return
-	}
-
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Write(html)
-}
+// ====== LLM 代理端点、Agent Think/Stream、Expert List ======
+// (Moved to handler_llm.go)
 
 // findRecentAttachments 在话题中查找指定用户最近一条带附件的消息
 func findRecentAttachments(topic, from string) []Attachment {
