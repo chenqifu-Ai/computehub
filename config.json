@@ -6,7 +6,8 @@
   },
   "kernel": {
     "buffer_size": 100,
-    "max_states": 1000
+    "max_states": 1000,
+    "max_nodes": 50
   },
   "executor": {
     "sandbox_path": "/tmp/opc-sandbox"
@@ -53,5 +54,14 @@
         "timeout": 60
       }
     }
+  },
+  "agent_keys": {
+    "小智": "xiaozhi-key-2026",
+    "米智": "mizhi-key-2026",
+    "端智": "duanzhi-key-2026",
+    "丁智": "dingzhi-key-2026",
+    "软智": "ruanzhi-key-2026",
+    "超智": "chaozhi-key-2026",
+    "福智": "fuzhi-key-2026"
   }
 }

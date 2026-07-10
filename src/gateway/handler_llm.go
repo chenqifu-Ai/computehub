@@ -18,7 +18,7 @@ import (
 
 // ====== LLM 代理端点（Worker 节点通过 Gateway 中转调用 NewAPI） ======
 
-// handleLlmProxy 接收 Worker 的 LLM 请求，通过 Gateway 转发到 NewAPI
+// handleLlmProxy 接收 Worker 的 LLM 请求，通过 Gateway 转发到 NewAPI 或本地 OpenClaw
 func (g *OpcGateway) handleLlmProxy(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, `{"error":"Only POST allowed"}`, http.StatusMethodNotAllowed)
@@ -32,16 +32,59 @@ func (g *OpcGateway) handleLlmProxy(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	// 注入 reasoning: false（默认关掉 thinking）
+	// 解析请求，判断目标
 	var reqMap map[string]interface{}
-	if err := json.Unmarshal(body, &reqMap); err == nil {
-		if _, exists := reqMap["reasoning"]; !exists {
-			reqMap["reasoning"] = false
+	if err := json.Unmarshal(body, &reqMap); err != nil {
+		http.Error(w, `{"error":"invalid json"}`, http.StatusBadRequest)
+		return
+	}
+
+	model, _ := reqMap["model"].(string)
+
+	// 如果 model 是 openclaw，路由到本地 OpenClaw Gateway
+	if model == "openclaw" || model == "openclaw/main" {
+		openclawURL := "http://localhost:18789/v1/chat/completions"
+		openclawToken := "146aaa219c512bd2495e24d4ffb0c6f1422e5767be997351"
+
+		// 确保 model 正确
+		reqMap["model"] = "openclaw"
+		modified, _ := json.Marshal(reqMap)
+
+		upstreamReq, err := http.NewRequest("POST", openclawURL, bytes.NewReader(modified))
+		if err != nil {
+			http.Error(w, `{"error":"create openclaw request failed"}`, http.StatusInternalServerError)
+			return
 		}
-		modified, err := json.Marshal(reqMap)
-		if err == nil {
-			body = modified
+		upstreamReq.Header.Set("Content-Type", "application/json")
+		upstreamReq.Header.Set("Authorization", "Bearer "+openclawToken)
+
+		client := &http.Client{Timeout: 300 * time.Second}
+		resp, err := client.Do(upstreamReq)
+		if err != nil {
+			logWithTimestamp("[LLM Proxy] ❌ OpenClaw call failed: %v", err)
+			http.Error(w, fmt.Sprintf(`{"error":"openclaw call failed: %v"}`, err), http.StatusBadGateway)
+			return
 		}
+		defer resp.Body.Close()
+
+		for key, vals := range resp.Header {
+			for _, v := range vals {
+				w.Header().Add(key, v)
+			}
+		}
+		w.WriteHeader(resp.StatusCode)
+		io.Copy(w, resp.Body)
+		return
+	}
+
+	// 默认路由到 NewAPI
+	// 注入 reasoning: false（默认关掉 thinking）
+	if _, exists := reqMap["reasoning"]; !exists {
+		reqMap["reasoning"] = false
+	}
+	modified, err := json.Marshal(reqMap)
+	if err == nil {
+		body = modified
 	}
 
 	apiURL := g.composerAPI
@@ -86,6 +129,7 @@ func (g *OpcGateway) handleLlmProxy(w http.ResponseWriter, r *http.Request) {
 	io.Copy(w, resp.Body)
 }
 
+// ====== Phase 3: Expert List Handler ======
 // ====== Phase 3: Expert List Handler ======
 
 func (g *OpcGateway) handleExpertList(w http.ResponseWriter, r *http.Request) {

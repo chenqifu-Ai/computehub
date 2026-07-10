@@ -92,13 +92,15 @@ func (g *OpcGateway) handleOCR(w http.ResponseWriter, r *http.Request) {
 	output, err := executeOCR(imgData, req.Lang, req.Timeout)
 	duration := time.Since(start).Milliseconds()
 
-	// Update stats
-	ocrStats.TotalRuns++
-	ocrStats.TotalChars += int64(len(output))
-	if ocrStats.TotalRuns == 1 {
-		ocrStats.AvgMs = duration
-	} else {
-		ocrStats.AvgMs = (ocrStats.AvgMs*(ocrStats.TotalRuns-1) + duration) / ocrStats.TotalRuns
+	// Update stats only on successful OCR
+	if err == nil {
+		ocrStats.TotalRuns++
+		ocrStats.TotalChars += int64(len(output))
+		if ocrStats.TotalRuns == 1 {
+			ocrStats.AvgMs = duration
+		} else {
+			ocrStats.AvgMs = (ocrStats.AvgMs*(ocrStats.TotalRuns-1) + duration) / ocrStats.TotalRuns
+		}
 	}
 
 	if err != nil {
@@ -214,6 +216,5 @@ func (g *OpcGateway) handleOCRStats(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func init() {
-	logWithTimestamp("📝 OCR stats initialized: total_runs=0 avg_ms=0")
-}
+// init 已移除 — 避免三合一 binary 启动时打印干扰 TUI/Worker 子命令
+// OCR stats 在首次调用 handleOCR 时自动初始化

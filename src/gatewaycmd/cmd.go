@@ -56,9 +56,10 @@ type Config struct {
 	Gallery struct {
 		RootDir string `json:"root_dir"`
 	} `json:"gallery"`
+	AgentKeys map[string]string `json:"agent_keys"`
 }
 
-func loadConfig() (Config, error) {
+func loadConfig(configPath string) (Config, error) {
 	config := Config{}
 	config.Gateway.Port = 8282
 	config.Gateway.MaxConnections = 100
@@ -73,17 +74,28 @@ func loadConfig() (Config, error) {
 	config.Composer.TimeoutSeconds = 120
 	config.Gallery.RootDir = "~/gallery"
 
-
 	var configFile string
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		homeDir = "."
 	}
-	configPaths := []string{"config.json", filepath.Join(homeDir, "config.json")}
-	for _, path := range configPaths {
-		if _, err := os.Stat(path); err == nil {
-			configFile = path
-			break
+
+	// Priority: --config flag > ./config.json > ~/config.json
+	if configPath != "" {
+		if _, err := os.Stat(configPath); err == nil {
+			configFile = configPath
+			logWithTimestamp("📋 Config path from --config flag: %s", configPath)
+		} else {
+			logWithTimestamp("⚠️  --config path not found: %s, falling back to defaults", configPath)
+		}
+	}
+	if configFile == "" {
+		configPaths := []string{"config.json", filepath.Join(homeDir, "config.json")}
+		for _, path := range configPaths {
+			if _, err := os.Stat(path); err == nil {
+				configFile = path
+				break
+			}
 		}
 	}
 
@@ -114,17 +126,21 @@ func loadConfig() (Config, error) {
 }
 
 func Run(args []string) {
-	// Parse --port override
+	// Parse --port and --config overrides
 	portOverride := 0
+	configOverride := ""
 	for i, a := range args {
 		if a == "--port" && i+1 < len(args) {
 			fmt.Sscanf(args[i+1], "%d", &portOverride)
+		}
+		if a == "--config" && i+1 < len(args) {
+			configOverride = args[i+1]
 		}
 	}
 
 	logWithTimestamp("🚀 Starting ComputeHub Gateway Service v%s...", version.Short())
 
-	config, err := loadConfig()
+	config, err := loadConfig(configOverride)
 	if err != nil {
 		logWithTimestamp("❌ Failed to load config: %v", err)
 		os.Exit(1)
@@ -159,7 +175,16 @@ func Run(args []string) {
 		logWithTimestamp("📝 Composer configured: model=%s, max_concurrency=%d",
 			config.Composer.Model, config.Composer.MaxConcurrency)
 	} else {
-		logWithTimestamp("⚠️  Composer not configured (api_url/api_key empty). Task decomposition disabled.")
+		logWithTimestamp("⚠️  ════════════════════════════════════════════════════════")
+		logWithTimestamp("⚠️  Composer not configured (api_url/api_key empty)")
+		logWithTimestamp("⚠️  Agent features disabled: /ai page, task decomposition, LLM proxy")
+		logWithTimestamp("⚠️  To enable, set in config.json:")
+		logWithTimestamp("⚠️    composer.api_url:  https://ai.zhangtuokeji.top:9090/v1")
+		logWithTimestamp("⚠️    composer.api_key:  <your-api-key>")
+		logWithTimestamp("⚠️    composer.model:    qwen3.6-35b")
+		logWithTimestamp("⚠️  Or set env vars: CONFIG_COMPOSER_API_URL, CONFIG_COMPOSER_API_KEY")
+		logWithTimestamp("⚠️  ════════════════════════════════════════════════════════")
+		gwConfig.ComposerMaxConcurrency = 1 // 默认值，避免配置校验失败
 	}
 
 	// 环境变量覆盖（12-Factor App）
@@ -222,6 +247,14 @@ func Run(args []string) {
 		RootDir: galleryDir,
 	})
 	logWithTimestamp("🎨 Gallery root: %s", galleryDir)
+
+	// 初始化 Agent API Key 认证
+	if len(config.AgentKeys) > 0 {
+		gateway.SetAgentKeys(config.AgentKeys)
+		logWithTimestamp("🔑 Agent API keys configured: %d agents", len(config.AgentKeys))
+	} else {
+		logWithTimestamp("⚠️  Agent API keys not configured (no auth for /api/v1/agent/*)")
+	}
 
 	logWithTimestamp("🌐 ComputeHub Gateway v%s listening on :%d", version.Short(), port)
 	// ServeWithServer 内部已处理优雅关闭（SIGINT/SIGTERM）

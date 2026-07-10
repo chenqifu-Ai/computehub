@@ -20,6 +20,7 @@ package workercmd
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -240,7 +241,7 @@ func (m *OpenClawManager) Install(version string) (string, error) {
 		m.lastError = fmt.Sprintf("npm install 失败: %v", err)
 		b.WriteString(fmt.Sprintf("  ❌ %s\n", m.lastError))
 		b.WriteString(fmt.Sprintf("  输出: %s\n", string(output)))
-		return b.String(), fmt.Errorf(m.lastError)
+		return b.String(), errors.New(m.lastError)
 	}
 
 	// 4. 验证安装
@@ -248,7 +249,7 @@ func (m *OpenClawManager) Install(version string) (string, error) {
 	if newPath == "" {
 		m.lastError = "安装后找不到 openclaw 命令"
 		b.WriteString(fmt.Sprintf("  ❌ %s\n", m.lastError))
-		return b.String(), fmt.Errorf(m.lastError)
+		return b.String(), errors.New(m.lastError)
 	}
 
 	m.installPath = newPath
@@ -312,7 +313,7 @@ func (m *OpenClawManager) Start(port int) (string, error) {
 		m.lastError = fmt.Sprintf("启动失败: %v", err)
 		b.WriteString(fmt.Sprintf("  ❌ %s\n", m.lastError))
 		b.WriteString(fmt.Sprintf("  输出: %s\n", string(output)))
-		return b.String(), fmt.Errorf(m.lastError)
+		return b.String(), errors.New(m.lastError)
 	}
 
 	// 5. 等待服务就绪

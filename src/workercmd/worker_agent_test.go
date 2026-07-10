@@ -207,7 +207,7 @@ func TestNewWorkerToolRegistry_Basic(t *testing.T) {
 		runningTasks: make(map[string]*exec.Cmd),
 	}
 
-	tr := newWorkerToolRegistry(state, nil)
+	tr := newWorkerToolRegistry(state, nil, nil)
 	if tr == nil {
 		t.Fatal("newWorkerToolRegistry returned nil")
 	}
@@ -235,7 +235,7 @@ func TestSafetyCheck_Approved(t *testing.T) {
 		nodeID: "test-safety",
 	}
 
-	tr := newWorkerToolRegistry(state, nil)
+	tr := newWorkerToolRegistry(state, nil, nil)
 	safetyEntry := tr.Get("safety_check")
 	if safetyEntry == nil {
 		t.Fatal("safety_check tool not registered")
@@ -275,7 +275,7 @@ func TestSafetyCheck_Rejected_NoRollback(t *testing.T) {
 		nodeID: "test-safety-reject",
 	}
 
-	tr := newWorkerToolRegistry(state, nil)
+	tr := newWorkerToolRegistry(state, nil, nil)
 	safetyEntry := tr.Get("safety_check")
 
 	result, err := safetyEntry.Execute(context.Background(), map[string]interface{}{
@@ -310,7 +310,7 @@ func TestSafetyCheck_Rejected_TooShortRollback(t *testing.T) {
 		nodeID: "test-safety-short",
 	}
 
-	tr := newWorkerToolRegistry(state, nil)
+	tr := newWorkerToolRegistry(state, nil, nil)
 	safetyEntry := tr.Get("safety_check")
 
 	result, err := safetyEntry.Execute(context.Background(), map[string]interface{}{
@@ -341,7 +341,7 @@ func TestSafetyCheck_Rejected_NoReason(t *testing.T) {
 		nodeID: "test-safety-noreason",
 	}
 
-	tr := newWorkerToolRegistry(state, nil)
+	tr := newWorkerToolRegistry(state, nil, nil)
 	safetyEntry := tr.Get("safety_check")
 
 	result, err := safetyEntry.Execute(context.Background(), map[string]interface{}{
@@ -371,7 +371,7 @@ func TestSafetyCheck_WindowsRisk(t *testing.T) {
 		nodeID: "test-safety-win",
 	}
 
-	tr := newWorkerToolRegistry(state, nil)
+	tr := newWorkerToolRegistry(state, nil, nil)
 	safetyEntry := tr.Get("safety_check")
 
 	result, err := safetyEntry.Execute(context.Background(), map[string]interface{}{
@@ -420,7 +420,7 @@ func TestExecLocal_ForbiddenCommands(t *testing.T) {
 		nodeID: "test-exec",
 	}
 
-	tr := newWorkerToolRegistry(state, nil)
+	tr := newWorkerToolRegistry(state, nil, nil)
 	execEntry := tr.Get("exec_local")
 	if execEntry == nil {
 		t.Fatal("exec_local tool not registered")
@@ -464,7 +464,7 @@ func TestExecLocal_NoCommand(t *testing.T) {
 		nodeID: "test-exec-nocmd",
 	}
 
-	tr := newWorkerToolRegistry(state, nil)
+	tr := newWorkerToolRegistry(state, nil, nil)
 	execEntry := tr.Get("exec_local")
 
 	_, err := execEntry.Execute(context.Background(), map[string]interface{}{})
@@ -561,7 +561,7 @@ func TestNewWorkerToolRegistry_UpgradeManagerTools(t *testing.T) {
 	// We'll just test that the tools are registered, not execute them (they need Gateway)
 	um := NewUpgradeManager(state)
 
-	tr := newWorkerToolRegistry(state, um)
+	tr := newWorkerToolRegistry(state, um, nil)
 	if tr == nil {
 		t.Fatal("newWorkerToolRegistry returned nil")
 	}

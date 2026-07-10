@@ -224,15 +224,28 @@ func (g *OpcGateway) registerRoutes(port int, dashboardDir ...string) {
 	http.HandleFunc("/api/v1/llm/chat/completions", g.handleLlmProxy)
 	logWithTimestamp("🌉 LLM Proxy endpoint registered: /api/v1/llm/chat/completions")
 
+	// ── AI Chat page (always available, independent of Agent) ──
+	http.HandleFunc("/ai", g.handleAIPage)
+	logWithTimestamp("🤖 AI Chat page: /ai")
+
 	// ── Agent Think (Layer 2: natural language task execution) ──
 	if g.Agent != nil {
 		http.HandleFunc("/api/v1/agent/think", g.handleAgentThink)
 		http.HandleFunc("/api/v1/agent/stream", g.handleAgentStream)
-		http.HandleFunc("/ai", g.handleAIPage)
 		logWithTimestamp("🧠 Agent Think endpoint registered: /api/v1/agent/think")
 		logWithTimestamp("🌊 Agent Stream endpoint registered: /api/v1/agent/stream")
-		logWithTimestamp("🤖 AI Chat page: /ai")
+	} else {
+		logWithTimestamp("⚠️  Agent not initialized — /api/v1/agent/think and /api/v1/agent/stream unavailable")
+		logWithTimestamp("💡  Set composer.api_url and composer.api_key in config.json or CONFIG_COMPOSER_API_URL env var")
 	}
+
+	// ── Unified Agent API (for other OpenClaw Agents) ──
+	http.HandleFunc("/api/v1/agent/exec", g.handleAgentExec)
+	http.HandleFunc("/api/v1/agent/chat", g.handleAgentChat)
+	http.HandleFunc("/api/v1/agent/llm", g.handleAgentLlm)
+	http.HandleFunc("/api/v1/agent/status", g.handleAgentStatus)
+	http.HandleFunc("/api/v1/agent/upload", g.handleAgentUpload)
+	logWithTimestamp("🤝 Unified Agent API registered: /api/v1/agent/*")
 
 	// ── Dashboard static files (if directory provided) ──
 	if len(dashboardDir) > 0 && dashboardDir[0] != "" {
