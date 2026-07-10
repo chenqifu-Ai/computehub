@@ -77,7 +77,7 @@ var defaultConfig = Config{
 	MemoryGB:          0,
 	PollInterval:      10 * time.Second,
 	HeartbeatInterval: 25 * time.Second,
-	MaxConcurrent:     4,
+	MaxConcurrent:     16,
 	ReportDir:         "/tmp/computehub-worker",
 }
 

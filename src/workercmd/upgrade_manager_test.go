@@ -210,8 +210,8 @@ func TestDefaultConfig(t *testing.T) {
 	if defaultConfig.GatewayURL != "http://localhost:8282" {
 		t.Errorf("default GatewayURL should be http://localhost:8282, got %s", defaultConfig.GatewayURL)
 	}
-	if defaultConfig.MaxConcurrent != 4 {
-		t.Errorf("default MaxConcurrent should be 4, got %d", defaultConfig.MaxConcurrent)
+	if defaultConfig.MaxConcurrent != 16 {
+		t.Errorf("default MaxConcurrent should be 16, got %d", defaultConfig.MaxConcurrent)
 	}
 	if defaultConfig.HeartbeatInterval != 25*time.Second {
 		t.Errorf("default HeartbeatInterval should be 25s, got %v", defaultConfig.HeartbeatInterval)
