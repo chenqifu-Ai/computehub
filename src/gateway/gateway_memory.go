@@ -811,6 +811,12 @@ func (g *OpcGateway) handleMemoryTags(w http.ResponseWriter, r *http.Request) {
 func (g *OpcGateway) handleMemoryPage(w http.ResponseWriter, r *http.Request) {
 	webDir := filepath.Join(filepath.Dir(os.Args[0]), "..", "web")
 	if _, err := os.Stat(webDir); os.IsNotExist(err) {
+		// 回退: 用 /proc/self/exe 获取真实路径
+		if exe, err := os.Readlink("/proc/self/exe"); err == nil {
+			webDir = filepath.Join(filepath.Dir(exe), "..", "web")
+		}
+	}
+	if _, err := os.Stat(webDir); os.IsNotExist(err) {
 		webDir = "web"
 	}
 	htmlPath := filepath.Join(webDir, "memory.html")

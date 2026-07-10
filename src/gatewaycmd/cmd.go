@@ -37,6 +37,7 @@ type Config struct {
 	Kernel struct {
 		BufferSize int `json:"buffer_size"`
 		MaxStates  int `json:"max_states"`
+		MaxNodes   int `json:"max_nodes"`
 	} `json:"kernel"`
 	Executor struct {
 		SandboxPath string `json:"sandbox_path"`

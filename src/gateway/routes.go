@@ -232,8 +232,12 @@ func (g *OpcGateway) registerRoutes(port int, dashboardDir ...string) {
 	if g.Agent != nil {
 		http.HandleFunc("/api/v1/agent/think", g.handleAgentThink)
 		http.HandleFunc("/api/v1/agent/stream", g.handleAgentStream)
+		http.HandleFunc("/api/v1/openclaw/chat", g.handleOpenClawChat)
+		http.HandleFunc("/ai", g.handleAIPage)
 		logWithTimestamp("🧠 Agent Think endpoint registered: /api/v1/agent/think")
 		logWithTimestamp("🌊 Agent Stream endpoint registered: /api/v1/agent/stream")
+		logWithTimestamp("🤖 AI Chat page: /ai")
+		logWithTimestamp("🔗 OpenClaw Chat proxy: /api/v1/openclaw/chat")
 	} else {
 		logWithTimestamp("⚠️  Agent not initialized — /api/v1/agent/think and /api/v1/agent/stream unavailable")
 		logWithTimestamp("💡  Set composer.api_url and composer.api_key in config.json or CONFIG_COMPOSER_API_URL env var")

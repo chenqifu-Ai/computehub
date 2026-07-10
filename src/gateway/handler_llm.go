@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
@@ -333,9 +334,73 @@ func (g *OpcGateway) handleAgentStream(w http.ResponseWriter, r *http.Request) {
 	logWithTimestamp("[Agent] ✅ Stream complete: session=%s", req.SessionID)
 }
 
+// handleOpenClawChat — 通过 OpenClaw Gateway 发送消息并返回回复
+func (g *OpcGateway) handleOpenClawChat(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req struct {
+		Message string `json:"message"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+	if req.Message == "" {
+		http.Error(w, "Message is required", http.StatusBadRequest)
+		return
+	}
+
+	// 调用 bridge 脚本
+	ctx, cancel := context.WithTimeout(r.Context(), 120*time.Second)
+	defer cancel()
+
+	cmd := exec.CommandContext(ctx, "node",
+		filepath.Join(filepath.Dir(os.Args[0]), "..", "scripts", "openclaw-bridge.js"),
+		req.Message)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Bridge error: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	// 解析输出（JSON Lines）
+	lines := strings.Split(strings.TrimSpace(string(output)), "\n")
+	var result string
+	for _, line := range lines {
+		var msg struct {
+			Type string `json:"type"`
+			Data string `json:"data"`
+		}
+		if err := json.Unmarshal([]byte(line), &msg); err != nil {
+			continue
+		}
+		if msg.Type == "done" {
+			result = msg.Data
+			break
+		}
+	}
+
+	if result == "" {
+		http.Error(w, "No reply from OpenClaw", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"reply": result})
+}
+
 // handleAIPage — 独立 AI 对话页面
 func (g *OpcGateway) handleAIPage(w http.ResponseWriter, r *http.Request) {
 	webDir := filepath.Join(filepath.Dir(os.Args[0]), "..", "web")
+	if _, err := os.Stat(webDir); os.IsNotExist(err) {
+		// 回退: 用 /proc/self/exe 获取真实路径
+		if exe, err := os.Readlink("/proc/self/exe"); err == nil {
+			webDir = filepath.Join(filepath.Dir(exe), "..", "web")
+		}
+	}
 	if _, err := os.Stat(webDir); os.IsNotExist(err) {
 		webDir = "web"
 	}
