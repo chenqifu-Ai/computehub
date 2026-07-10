@@ -1343,7 +1343,8 @@ async function askOllama(msg) {
           }
         }
       }
-      chat.scrollTop = chat.scrollHeight;
+      // 等 DOM 渲染完再滚到底部
+      requestAnimationFrame(() => { chat.scrollTop = chat.scrollHeight; });
     }
 
     // 保存到历史
@@ -1405,7 +1406,7 @@ async function askAgent(msg) {
         }
       }
     }
-    chat.scrollTop = chat.scrollHeight;
+    requestAnimationFrame(() => { chat.scrollTop = chat.scrollHeight; });
     // 保存到历史
     chatHistory.push({role: "assistant", content: full});
     saveChatMessage("assistant", full);
@@ -1464,6 +1465,7 @@ async function askOpenClaw(msg) {
     }
     // 最终渲染 Markdown
     contentDiv.innerHTML = `<div class="msg-body">${renderMarkdown(full)}</div>`;
+    requestAnimationFrame(() => { chat.scrollTop = chat.scrollHeight; });
     chatHistory.push({role: "assistant", content: full});
     saveChatMessage("assistant", full);
   } catch(e) {
@@ -1516,7 +1518,7 @@ function appendMsg(role, text, thinking) {
     + '<div class="msg-body">'+renderMarkdown(text)+'</div>'
     + '<span class="msg-time">'+timeStr+'</span>';
   chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
+  requestAnimationFrame(() => { chat.scrollTop = chat.scrollHeight; });
   return div;
 }
 
